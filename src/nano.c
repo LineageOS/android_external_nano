@@ -1528,6 +1528,11 @@ int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
     }
 #endif
 
+    /* Workaround for enter key*/
+    if (input == 10) {
+        input = NANO_CONTROL_M;
+    }
+
     /* Check for a shortcut in the main list. */
     s = get_shortcut(MMAIN, &input, meta_key, func_key);
 
