@@ -87,6 +87,11 @@ int do_statusbar_input(bool *meta_key, bool *func_key, bool *have_shortcut,
     }
 #endif
 
+    /* Workaround for enter key*/
+    if (input == 10) {
+        input = NANO_CONTROL_M;
+    }
+
     /* Check for a shortcut in the current list. */
     s = get_shortcut(currmenu, &input, meta_key, func_key);
 
