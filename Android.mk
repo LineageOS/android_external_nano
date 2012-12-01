@@ -43,16 +43,14 @@ include $(BUILD_EXECUTABLE)
 # ========================================================
 # nano configs
 # ========================================================
-etc_files := $(shell ls -1 $(LOCAL_PATH)/etc/)
 
-copy_to := $(addprefix $(TARGET_OUT)/etc/$(LOCAL_MODULE)/,$(etc_files))
-copy_from := $(addprefix $(LOCAL_PATH)/etc/,$(etc_files))
-
-$(copy_to) : PRIVATE_MODULE := system_etcdir
-$(copy_to) : $(TARGET_OUT)/etc/$(LOCAL_MODULE)/% : $(LOCAL_PATH)/etc/% | $(ACP)
-	$(transform-prebuilt-to-target)
-
-ALL_PREBUILT += $(copy_to)
+include $(CLEAR_VARS)
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE := nano_config
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)/nano
+LOCAL_SRC_FILES := $(shell ls -1 $(LOCAL_PATH)/etc/)
+include $(BUILD_PREBUILT)
 
 # ========================================================
 include $(call all-makefiles-under,$(LOCAL_PATH))
