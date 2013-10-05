@@ -23,8 +23,7 @@ LOCAL_SRC_FILES:= \
 	src/winio.c
 LOCAL_C_INCLUDES += \
 	$(LOCAL_PATH) \
-	external/clearsilver \
-	external/clearsilver/util/regex \
+	external/busybox/android/regex \
 	external/libncurses/include
 LOCAL_CFLAGS += \
 	-DHAVE_CONFIG_H \
