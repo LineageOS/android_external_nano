@@ -1,4 +1,4 @@
-/* $Id: chars.c 4453 2009-12-02 03:36:22Z astyanax $ */
+/* $Id: chars.c 4555 2013-01-03 04:23:10Z astyanax $ */
 /**************************************************************************
  *   chars.c                                                              *
  *                                                                        *
@@ -79,12 +79,12 @@ bool is_byte(int c)
     return ((unsigned int)c == (unsigned char)c);
 }
 
-static void mbtowc_reset(void)
+void mbtowc_reset(void)
 {
     IGNORE_CALL_RESULT(mbtowc(NULL, NULL, 0));
 }
 
-static void wctomb_reset(void)
+void wctomb_reset(void)
 {
     IGNORE_CALL_RESULT(wctomb(NULL, 0));
 }
@@ -630,7 +630,7 @@ char *mbstrcasestr(const char *haystack, const char *needle)
 	return NULL;
     } else
 #endif
-	return strcasestr(haystack, needle);
+	return (char *) strcasestr(haystack, needle);
 }
 
 #if !defined(NANO_TINY) || !defined(DISABLE_TABCOMP)
@@ -820,7 +820,7 @@ char *mbstrchr(const char *s, const char *c)
 	return (char *)q;
     } else
 #endif
-	return strchr(s, *c);
+	return (char *) strchr(s, *c);
 }
 #endif /* !NANO_TINY || !DISABLE_JUSTIFY */
 
@@ -840,7 +840,7 @@ char *mbstrpbrk(const char *s, const char *accept)
 	return NULL;
     } else
 #endif
-	return strpbrk(s, accept);
+	return (char *) strpbrk(s, accept);
 }
 
 /* This function is equivalent to strpbrk(), except in that it scans the

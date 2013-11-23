@@ -211,7 +211,7 @@
 #define PACKAGE_NAME "GNU nano"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GNU nano 2.2.4"
+#define PACKAGE_STRING "GNU nano 2.3.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "nano"
@@ -220,7 +220,7 @@
 #define PACKAGE_URL "http://www.gnu.org/software/nano/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.2.4"
+#define PACKAGE_VERSION "2.3.2"
 
 /* Where data are placed to. */
 #define PKGDATADIR "/usr/local/share/nano"
@@ -264,7 +264,7 @@
 
 
 /* Version number of package */
-#define VERSION "2.2.4"
+#define VERSION "2.3.2"
 
 /* Number of bits in a file offset, on hosts where this is settable. */
 /* #undef _FILE_OFFSET_BITS */

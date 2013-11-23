@@ -1,4 +1,4 @@
-/* $Id: nano.c 4489 2010-03-21 05:31:43Z astyanax $ */ 
+/* $Id: nano.c 4549 2013-01-01 03:24:39Z astyanax $ */
 /**************************************************************************
  *   nano.c                                                               *
  *                                                                        *
@@ -520,6 +520,7 @@ openfilestruct *make_new_opennode(void)
 #ifndef NANO_TINY
     newnode->current_stat = NULL;
     newnode->last_action = OTHER;
+    newnode->lock_filename = NULL;
 #endif
 
     return newnode;
@@ -605,6 +606,10 @@ void finish(void)
 #if !defined(NANO_TINY) && defined(ENABLE_NANORC)
     if (!no_rcfiles && ISSET(HISTORYLOG))
 	save_history();
+    if (!no_rcfiles && ISSET(POS_HISTORY)) {
+	update_poshistory(openfile->filename, openfile->current->lineno, xplustabs()+1);
+	save_poshistory();
+    }
 #endif
 
 #ifdef DEBUG
@@ -841,6 +846,8 @@ void usage(void)
 #endif
 #ifdef ENABLE_NANORC
 #ifndef NANO_TINY
+    print_opt("-G", "--locking",
+	N_("Use (vim-style) lock files"));
     print_opt("-H", "--historylog",
 	N_("Log & read search/replace string history"));
 #endif
@@ -856,6 +863,10 @@ void usage(void)
 	N_("Don't convert files from DOS/Mac format"));
 #endif
     print_opt("-O", "--morespace", N_("Use one more line for editing"));
+#ifndef NANO_TINY
+    print_opt("-P", "--poslog",
+	N_("Log & read location of cursor position"));
+#endif
 #ifndef DISABLE_JUSTIFY
     print_opt(_("-Q <str>"), _("--quotestr=<str>"),
 	N_("Quoting string"));
@@ -1050,6 +1061,12 @@ void do_exit(void)
     /* If the user chose not to save, or if the user chose to save and
      * the save succeeded, we're ready to exit. */
     if (i == 0 || (i == 1 && do_writeout(TRUE))) {
+
+#ifndef NANO_TINY
+        if (ISSET(LOCKING) && openfile->lock_filename)
+            delete_lockfile(openfile->lock_filename);
+#endif /* NANO_TINY */
+
 #ifdef ENABLE_MULTIBUFFER
 	/* Exit only if there are no more open file buffers. */
 	if (!close_buffer())
@@ -1063,7 +1080,11 @@ void do_exit(void)
     display_main_list();
 }
 
-
+/* Another placeholder for function mapping */
+void do_cancel(void)
+{
+    ;
+}
 
 static struct sigaction pager_oldaction, pager_newaction;  /* Original and temporary handlers for SIGINT. */
 static bool pager_sig_failed = FALSE; /* Did sigaction() fail without changing the signal handlers? */
@@ -1185,6 +1206,12 @@ RETSIGTYPE handle_hupterm(int signal)
 /* Handler for SIGTSTP (suspend). */
 RETSIGTYPE do_suspend(int signal)
 {
+
+    if (ISSET(RESTRICTED)) {
+        nano_disabled_msg();
+	return;
+    }
+
 #ifndef DISABLE_MOUSE
     /* Turn mouse support off. */
     disable_mouse_support();
@@ -1212,7 +1239,7 @@ RETSIGTYPE do_suspend(int signal)
 }
 
 /* the subnfunc version */
-void do_suspend_void(void) 
+void do_suspend_void(void)
 {
     if (ISSET(SUSPEND))
 	do_suspend(0);
@@ -1379,6 +1406,12 @@ void do_toggle(int flag)
     desc = _(flagtostr(flag));
     statusbar("%s %s", desc, enabled ? _("enabled") :
 	_("disabled"));
+}
+
+/* Bleh */
+void do_toggle_void(void)
+{
+;
 }
 #endif /* !NANO_TINY */
 
@@ -1580,7 +1613,7 @@ int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
 	     * for verbatim input, turn off prepending of wrapped
 	     * text. */
 	    if (have_shortcut && (!have_shortcut || s == NULL || s->scfunc !=
-		DO_VERBATIM_INPUT))
+		do_verbatim_input))
 		wrap_reset();
 #endif
 
@@ -1615,10 +1648,10 @@ int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
 		default:
 		    /* If the function associated with this shortcut is
 		     * cutting or copying text, indicate this. */
-		    if (s->scfunc == DO_CUT_TEXT_VOID
+		    if (s->scfunc == do_cut_text_void
 #ifndef NANO_TINY
-			|| s->scfunc == DO_COPY_TEXT || s->scfunc ==
-			DO_CUT_TILL_END
+			|| s->scfunc == do_copy_text || s->scfunc ==
+			do_cut_till_end
 #endif
 			)
 			cut_copy = TRUE;
@@ -1630,13 +1663,13 @@ int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
 			    print_view_warning();
 			else {
 #ifndef NANO_TINY
-			    if (s->scfunc ==  DO_TOGGLE)
+			    if (s->scfunc == do_toggle_void)
 				do_toggle(s->toggle);
 			    else {
 #else
 			    {
 #endif
-				iso_me_harder_funcmap(s->scfunc);
+				s->scfunc();
 #ifdef ENABLE_COLOR
 				if (f && !f->viewok && openfile->syntax != NULL
 					&& openfile->syntax->nmultis > 0) {
@@ -1991,7 +2024,7 @@ void do_output(char *output, size_t output_len, bool allow_cntrls)
 #endif
     }
 
-    /* Well we might also need a full refresh if we've changed the 
+    /* Well we might also need a full refresh if we've changed the
        line length to be a new multiple of COLS */
     if (ISSET(SOFTWRAP) && edit_refresh_needed == FALSE)
 	if (strlenpt(openfile->current->data) / COLS  != orig_lenpt / COLS)
@@ -2079,8 +2112,10 @@ int main(int argc, char **argv)
 	{"backup", 0, NULL, 'B'},
 	{"backupdir", 1, NULL, 'C'},
 	{"tabstospaces", 0, NULL, 'E'},
+	{"locking", 0, NULL, 'G'},
 	{"historylog", 0, NULL, 'H'},
 	{"noconvert", 0, NULL, 'N'},
+	{"poslog", 0, NULL, 'P'},
 	{"smooth", 0, NULL, 'S'},
 	{"quickblank", 0, NULL, 'U'},
 	{"undo", 0, NULL, 'u'},
@@ -2126,11 +2161,11 @@ int main(int argc, char **argv)
     while ((optchr =
 #ifdef HAVE_GETOPT_LONG
 	getopt_long(argc, argv,
-		"h?ABC:DEFHIKLNOQ:RST:UVWY:abcdefgijklmo:pqr:s:tuvwxz$",
+		"h?ABC:DEFGHIKLNOPQ:RST:UVWY:abcdefgijklmo:pqr:s:tuvwxz$",
 		long_options, NULL)
 #else
 	getopt(argc, argv,
-		"h?ABC:DEFHIKLNOQ:RST:UVWY:abcdefgijklmo:pqr:s:tuvwxz$")
+		"h?ABC:DEFGHIKLNOPQ:RST:UVWY:abcdefgijklmo:pqr:s:tuvwxz$")
 #endif
 		) != -1) {
 	switch (optchr) {
@@ -2168,6 +2203,9 @@ int main(int argc, char **argv)
 #endif
 #ifdef ENABLE_NANORC
 #ifndef NANO_TINY
+	    case 'G':
+		SET(LOCKING);
+		break;
 	    case 'H':
 		SET(HISTORYLOG);
 		break;
@@ -2190,6 +2228,11 @@ int main(int argc, char **argv)
 	    case 'O':
 		SET(MORE_SPACE);
 		break;
+#ifndef NANO_TINY
+	    case 'P':
+		SET(POS_HISTORY);
+		break;
+#endif
 #ifndef DISABLE_JUSTIFY
 	    case 'Q':
 		quotestr = mallocstrcpy(quotestr, optarg);
@@ -2424,7 +2467,7 @@ int main(int argc, char **argv)
 
 #ifndef DISABLE_WRAPPING
     /* Overwrite an rcfile "set nowrap" or --disable-wrapping-as-root
-       if a --fill option was given on the command line. */ 
+       if a --fill option was given on the command line. */
     if (fill_used)
 	UNSET(NO_WRAP);
 #endif
@@ -2438,10 +2481,20 @@ int main(int argc, char **argv)
     /* Set up the search/replace history. */
     history_init();
 #ifdef ENABLE_NANORC
-    if (!no_rcfiles && ISSET(HISTORYLOG))
-	load_history();
-#endif
-#endif
+    if (!no_rcfiles) {
+	if (ISSET(HISTORYLOG) || ISSET(POS_HISTORY)) {
+	    if (check_dotnano() == 0) {
+		UNSET(HISTORYLOG);
+		UNSET(POS_HISTORY);
+	    }
+	}
+	if (ISSET(HISTORYLOG))
+	    load_history();
+	if (ISSET(POS_HISTORY))
+	    load_poshistory();
+    }
+#endif /* ENABLE_NANORC */
+#endif /* NANO_TINY */
 
 #ifndef NANO_TINY
     /* Set up the backup directory (unless we're using restricted mode,
@@ -2600,6 +2653,15 @@ int main(int argc, char **argv)
 		    iline = 1;
 		    icol = 1;
 		}
+#ifndef NANO_TINY
+                  else {
+		    /* See if we have a POS history to use if we haven't overridden it */
+		    ssize_t savedposline, savedposcol;
+		    if (check_poshistory(argv[i], &savedposline, &savedposcol))
+			do_gotolinecolumn(savedposline, savedposcol, FALSE, FALSE, FALSE,
+			FALSE);
+		}
+#endif /* NANO_TINY */
 	    }
 	}
     }
@@ -2637,6 +2699,14 @@ int main(int argc, char **argv)
     if (startline > 1 || startcol > 1)
 	do_gotolinecolumn(startline, startcol, FALSE, FALSE, FALSE,
 		FALSE);
+# ifndef NANO_TINY
+    else {
+	/* See if we have a POS history to use if we haven't overridden it */
+	ssize_t savedposline, savedposcol;
+	if (check_poshistory(argv[optind], &savedposline, &savedposcol))
+	    do_gotolinecolumn(savedposline, savedposcol, FALSE, FALSE, FALSE, FALSE);
+    }
+#endif /* NANO_TINY */
 
     display_main_list();
 

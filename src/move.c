@@ -1,4 +1,4 @@
-/* $Id: move.c 4486 2010-03-21 04:56:37Z astyanax $ */
+/* $Id: move.c 4548 2012-12-30 19:20:10Z astyanax $ */
 /**************************************************************************
  *   move.c                                                               *
  *                                                                        *
@@ -79,7 +79,7 @@ void do_page_up(void)
 	if (ISSET(SOFTWRAP) && openfile->current) {
 	    skipped += strlenpt(openfile->current->data) / COLS;
 #ifdef DEBUG
-    fprintf(stderr, "do_page_up: i = %d, skipped = %d based on line %ld len %d\n", i, (unsigned long) skipped, 
+    fprintf(stderr, "do_page_up: i = %d, skipped = %d based on line %ld len %d\n", i, (unsigned long) skipped,
 openfile->current->lineno, strlenpt(openfile->current->data));
 #endif
 	}

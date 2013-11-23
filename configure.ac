@@ -18,11 +18,11 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 #
-# $Id: configure.ac 4484 2010-03-07 19:35:46Z astyanax $
+# $Id: configure.ac 4570 2013-03-22 14:06:58Z astyanax $
 
-AC_INIT([GNU nano], [2.2.4], [nano-devel@gnu.org], [nano])
+AC_INIT([GNU nano], [2.3.2], [nano-devel@gnu.org], [nano])
 AC_CONFIG_SRCDIR([src/nano.c])
-AC_CANONICAL_TARGET([])
+AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
 
@@ -49,8 +49,7 @@ AC_DEFINE_DIR([PKGDATADIR], [pkgdatadir], [Where data are placed to.])
 
 dnl Checks for header files.
 
-AC_HEADER_STDC
-AC_CHECK_HEADERS(getopt.h libintl.h limits.h regex.h sys/param.h wchar.h wctype.h stdarg.h)
+AC_CHECK_HEADERS(getopt.h libintl.h limits.h regex.h sys/param.h wchar.h wctype.h stdarg.h magic.h)
 
 dnl Checks for options.
 
@@ -442,7 +441,17 @@ if eval "test x$CURSES_LIB_NAME = x"; then
     AC_CHECK_HEADERS(ncurses.h)
 
     if test x$enable_utf8 != xno; then
-	AC_CHECK_LIB(ncursesw, get_wch, [CURSES_LIB="-lncursesw" CPPFLAGS="-I/usr/include/ncursesw $CPPFLAGS" CURSES_LIB_NAME=ncursesw CURSES_LIB_WIDE=yes])
+	OLDLIBS="$LIBS"
+	AC_CHECK_TOOL(NCURSESW_CONFIG, ncursesw5-config, no)
+	if test "x$NCURSESW_CONFIG" != xno; then
+	    CURSES_LIB=`$NCURSESW_CONFIG --libs`
+	    LIBS="$CURSES_LIB $LIBS"
+	    CPPFLAGS="`$NCURSESW_CONFIG --cflags` $CPPFLAGS"
+	    AC_CHECK_LIB(ncursesw, get_wch, [CURSES_LIB_NAME=ncursesw CURSES_LIB_WIDE=yes])
+	else
+	    AC_CHECK_LIB(ncursesw, get_wch, [CURSES_LIB="-lncursesw" CURSES_LIB_NAME=ncursesw CURSES_LIB_WIDE=yes])
+	fi
+	LIBS="$OLDLIBS"
     fi
 
     if eval "test x$CURSES_LIB_NAME = x"; then
@@ -519,7 +528,22 @@ fi
 if test x$color_support = xyes; then
 	# now check for the end of word boundary support (/< and />)
 	AC_MSG_CHECKING([for GNU-style word boundary regex support])
-	AC_TRY_RUN([
+
+	AC_ARG_WITH(wordbounds,
+        [  --with-wordbounds            Use GNU-style word boundary delimiters],
+	[ case "$with_wordbounds" in
+	    no)
+		AC_MSG_RESULT(no)
+		;;
+	    *)
+		AC_MSG_RESULT(yes)
+		# We explicitly don't check if the user forced the option, because
+		# this is needed for cross compilers and we cant test the target
+		AC_DEFINE(GNU_WORDBOUNDS, 1, [Define if the system supports GNU-style word boundaries in regexes.]) gnu_wordbounds=yes,
+                ;;
+          esac
+        ], [
+	    AC_TRY_RUN([
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -536,11 +560,13 @@ int main(void)
         return 1;
     return 0;
 }],
-	AC_MSG_RESULT(yes)
-	AC_DEFINE(GNU_WORDBOUNDS, 1, [Define if the system supports GNU-style word boundaries in regexes.]) gnu_wordbounds=yes,
-	AC_MSG_RESULT(no),
-        AC_MSG_WARN([*** Can't check for GNU-style word boundary support when cross-compiling])
-)
+	    AC_MSG_RESULT(yes)
+	    AC_DEFINE(GNU_WORDBOUNDS, 1, [Define if the system supports GNU-style word boundaries in regexes.]) gnu_wordbounds=yes,
+	    AC_MSG_RESULT(no),
+	    AC_MSG_WARN([*** Can't check for GNU-style word boundary support when cross-compiling])
+	)
+])
+
 #    if test x$CURSES_LIB_NAME = xcurses; then
 	AC_MSG_CHECKING([whether _XOPEN_SOURCE_EXTENDED is needed])
 	AC_TRY_RUN([
@@ -583,6 +609,7 @@ AC_MSG_RESULT(yes),
 AC_MSG_RESULT(no),
 AC_MSG_WARN([*** Can't check for macro redefinability when cross-compiling]))
 
+AC_CHECK_LIB(magic, magic_open)
 
 # Check for groff html support
 AC_MSG_CHECKING([for HTML support in groff])

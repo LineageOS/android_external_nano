@@ -1,4 +1,4 @@
-/* $Id: utils.c 4453 2009-12-02 03:36:22Z astyanax $ */
+/* $Id: utils.c 4563 2013-01-13 08:37:54Z astyanax $ */
 /**************************************************************************
  *   utils.c                                                              *
  *                                                                        *
@@ -71,6 +71,10 @@ bool parse_num(const char *str, ssize_t *val)
     ssize_t j;
 
     assert(str != NULL);
+
+    /* Man page for strtol() says this is required, and
+       it looks like it is! */
+    errno = 0;
 
     j = (ssize_t)strtol(str, &first_error, 10);
 

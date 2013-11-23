@@ -28,6 +28,7 @@ For the future (no targeted version, catch-all)
   FFFD (Replacement Character) per sequence instead of one per byte.
 
 For version 2.4:
+- New regression framework built on expect.
 - Allow text searches in the help browser.
 - Handle window resizes better.  After we resize, we should stay
   wherever we were before we resized, as Pico does.
@@ -95,4 +96,4 @@ For version 1.0:
 - Unjustify command (^U after ^J) [DONE =-].
 - Username completion (~user) [DONE =-].
 
-$Id: TODO 4402 2009-08-17 07:52:10Z astyanax $
+$Id: TODO 4513 2010-08-06 01:20:51Z astyanax $

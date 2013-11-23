@@ -1,3 +1,153 @@
+2013-03-17 Chris Allegretta <chrisa@asty.org>
+        * Revert r4547 as we should have a new release and the overlap code is not yet
+          ready for public consumption.
+
+2013-01-20 Chris Allegretta <chrisa@asty.org>
+        * src/text.c (do_histify): Don't allow sigwinch to be received while justifying
+          as that puts us into a wacky state.  Fixess crash on justify by Joshua Rogers.
+	* configure.ac: Added --with-wordbounds option to let cross compilers force
+	  whether their target system support GNU-style word boundaries or not.  
+	  Originally reported by dave festing.
+	* doc/man/nanorc.5: Fix typo in softwrap description, reported by
+	  cbart387@Savannah.
+
+2013-01-19 Chris Allegretta <chrisa@asty.org>
+        * configure.ac: Make ncurses checking to set $LIBS and check the ncursesw lib
+          actually works before defaulting to it over ncurses!  Shock!
+
+2013-01-13 Chris Allegretta <chrisa@asty.org>
+        * src/utils.c (parse_num): Initalize errno before calling strtol().  Fixes issue
+          where trying to go to a line number too long will break legitimate goto-lines
+          for the remainder of the editing session, reported by Joshua Rogers.
+
+2013-01-09 Mike Frysinger <vapier@gentoo.org>
+        * configure.ac: Check for ncursesw5-config and base $CPPFLAGS based on it.
+
+2013-01-09 Fabian Groffen <grobian@Savannah>
+        * configure.ac, src/nano.h: Make search for ncursesw more generalized.
+
+2013-01-02 David Benjamin <davidben@Savannah>
+        * src/search.c (parse_syntax): Fix blatantly and dangerously incorrect  code for 
+          deleting old syntaxes.
+
+2013-01-02 Mike Frysinger <vapier@gentoo.org>
+        * src/files.c (cwd_tab_completion): Remove unnecessary variables
+        * src/search.c (search_init): Fix gcc complaints on certain versions
+
+2013-01-02 Eitan Adler <lists@eitanadler.com>
+        * configure.ac: Remove unnecessary checks
+        * src/nano.h, NEWS: Fix redundant wording
+
+2012-12-31 Chris Allegretta <chrisa@asty.org>
+        * src/*: Introduce (basic) vim-style file locks.  Does not allow vim to recover
+          our changes, and just lets a vim user know we're editing a file.  Commands line "-G" 
+          or "--locking", nanorc option "locking".  New functions 
+          src/files.c:do_lockfile(), write_lockfile(), and delete_lockfile().
+
+2012-02-05 Chris Allegretta <chrisa@asty.org>
+	* src/*: Fix overlapping strings highlighting each other.  new variables in edit_draw 
+	  (slmatcharray, pbegin, paintok), new logic (with repeated setting od values in the 
+	  array but its BFI after all).  FIXME: Need to create a new 'overlap'
+	* src/*: Fix a silly issue with the argument to nregcomp, as it's confusing to the caller
+	* src/nano.h: Change the color types to a compiler macro (COLORWIDTH), may not actually 
+	  even be worth doing, but someday who knows how wide a color curses implementation might 
+	  be, and maybe we'll even start checking for it in autoconf!
+
+GNU nano 2.3.1 - 2011.05.10
+2011-05-10 Chris Allegretta <chrisa@asty.org>
+        * text.c (do_enter): Only increment totsize by the auto-indented amount, size the previous line's size was
+	  already counted.  Fixes bug reported by Robert Spanjaard.
+
+2011-05-08 Chris Allegretta <chrisa@asty.org>
+	* doc/syntax/Makefile.am: Finally get around to sorting the syntax file list
+
+2011-05-08 Matthew Wild <mattj100@Savannah>
+	* doc/syntax/spec.nanorc: New lua syntax highlighting config
+
+2011-03-28 Asterios Dramis <asterios.dramis@gmail.com>
+	* doc/syntax/spec.nanorc: New RPM spec file highlighting config
+
+2011-03-12 Chris Allegretta <chrisa@asty.org>
+	* po/*: Sync latest translation fixes, add an update_linguas.sh script.  Rename
+	  existing update.pl to update_sources.pl to make it more specific.
+      
+2011-03-04 Chris Allegretta <chrisa@asty.org>
+	* color.c (color_update): Add check for whether the file even exists
+	  before we try to run the magic check on it.  Fixes error messages to stderr
+	  when reading in files that don't exist, reported by Mike Frysinger.
+
+2011-03-03 Chris Allegretta <chrisa@asty.org>
+	* color.c (color_update): Remove unneeded debugging message from
+	  libmagic commit.  Fixed extra messages going to stderr reported by Mike Frysinger.
+
+GNU nano 2.3.0 - 2011.02.26
+2011-02-26 Chris Allegretta <chrisa@asty.org>
+	* Change RAW in function_type enum to RAWINPUT, to fix compilation on AIX, 
+	  reported by Richard G  Daniel <skunk@iskunk.org>.
+
+2011-02-23 Chris Allegretta <chrisa@asty.org>
+	* Fix some more severe warnings from 'g++ -pedantic', from patch originally 
+	  by Eitan Adler <lists@eitanadler.com>
+
+2011-02-23 Kamil Dudka <kdudka@redhat.com>
+	* doc/man/nanorc.5: Fix small typo
+
+2011-02-22 Chris Allegretta <chrisa@asty.org>
+	* color.c (nfreeregex): Fix that we were trying to set the pointer passed by value
+	  to NULL.  Fixes crashes on file save reported by Ken Tyler and Matthieu Lejeune. 
+
+2011-02-18 Chris Allegretta <chrisa@asty.org>
+	* New saved cursor position history option.  Command line option -P or --poslog, rc file
+	  entry "poslog".  Search history changes to ~/.nano/search_history, cursor position log
+	  is ~/.nano/filepos_history.  Added checks to move the legacy .nano_history file to the new
+	  location.  Several new functions to files.c: load_poshistory(), save_poshistory(), 
+	  check_poshistory(), update_poshistory(), and reworking of histfilename().  New FAQ entry
+	  4.15 discussing the change and offering an interoperability workaround.
+	* files.c (load_history): Set last_search to the last search value we loaded from history,
+	  so do_research will succeed without needing to manually load the last seach in.  Fixes
+	  bug reported by Matthieu Lejeune.
+
+2011-02-12 Chris Allegretta <chrisa@asty.org>
+	* Initial libmagic implementation, adapted from Eitan Adler <eitanadlerlist@gmail.com>.
+	  New nanorc entry "magic" to enable this functionality, nanorc file and man page updates.
+
+2011-02-06 Chris Allegretta <chrisa@asty.org>
+        * src/*: Retire iso_me_harder_funcmap based on suggestion by <bernd.spaeth@gmx.net>
+	  This does add 20KB to nano's executable size but it gets rid of a lot of indirection
+	  that makes people stomach turn.  There are several new stub functions and need of more
+	  tidying as a result of this.
+	* files.c (write_file): Fix problems with writing the backup file (albeit interactively)
+	  with new function prompt_failed_backupwrite(), allows more secure handling of problems
+	  with failing to write the backup file compared to 'allow_insecure_backup'.
+	* winio.c (edit_redraw): Removed unused variable
+
+2010-11-15 Chris Allegretta <chrisa@asty.org>
+	* Add a section to the FAQ about using nanorc on Win32 systems.
+
+2010-11-12 Chris Allegretta <chrisa@asty.org>
+	* Add check for RESTRICTED mode back to speller, suspend and insert file
+	  routines, since adding key bindings broke the fact that they should be
+	  disabled in restricted mode.  Fixes Savannah bug 31625 reported by
+	  Charlie Somerville.
+
+GNU nano 2.2.5 - 2010.08.05
+2010-08-04 Lauri Kasanen <curaga@operamail.comcuraga@operamail.com>
+        * doc/syntax/mgp.nanorc: New Magicpoint syntax highlighting definition
+
+2010-08-04 Peter <exodus@savannah>
+	* doc/syntax/tex.nanorc: No longer highlight escaped comments
+
+2010-06-20 Chris Allegretta <chrisa@asty.org>
+	* New rc file option allow_insecure_backup, allows the previous security
+	  fixes for backup files to be overridden if you're really positive
+	  you want to.  Fixes Savannah bug 29732 by Brian Szymanski <skibrianski>.
+
+2010-05-23 Chris Allegretta <chrisa@asty.org>
+	* files.c (write_file): Don't even try to chown() the backup
+	  file unless we're root, since it's probably going to fail if
+	  we're editing a file we don't own.  Fixes Savannah bug
+	  29514: [nano 2.2.2] backup should ignore chown errors.
+
 GNU nano 2.2.4 - 2010.04.15
 2010-04-07 Chris Allegretta <chrisa@asty.org>
 	* doc/man/nano.1,nanorc.5: Remove the backup file warnings now

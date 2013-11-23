@@ -1,4 +1,4 @@
-/* $Id: text.c 4499 2010-04-14 03:14:40Z astyanax $ */ 
+/* $Id: text.c 4565 2013-01-20 07:51:34Z astyanax $ */
 /**************************************************************************
  *   text.c                                                               *
  *                                                                        *
@@ -481,7 +481,7 @@ void do_undo(void)
 	strcpy(&data[u->begin + strlen(u->strdata)], &f->data[u->begin]);
 	free(f->data);
 	f->data = data;
-	if (u->xflags == UNDO_DEL_BACKSPACE)
+	if (u->xflags == UNdel_backspace)
 	    openfile->current_x += strlen(u->strdata);
 	break;
 #ifndef DISABLE_WRAPPING
@@ -626,7 +626,7 @@ void do_redo(void)
 #ifndef DISABLE_WRAPPING
     case SPLIT:
 	undidmsg = _("line wrap");
-	if (u->xflags & UNDO_SPLIT_MADENEW)
+	if (u->xflags & UNsplit_madenew)
 	    prepend_wrap = TRUE;
         do_wrap(f, TRUE);
 	renumber(f);
@@ -711,7 +711,7 @@ void do_enter(bool undoing)
 #ifndef NANO_TINY
     if (ISSET(AUTOINDENT)) {
 	strncpy(newnode->data, openfile->current->data, extra);
-	openfile->totsize += mbstrlen(newnode->data);
+	openfile->totsize += extra;
     }
 #endif
     null_at(&openfile->current->data, openfile->current_x);
@@ -739,6 +739,11 @@ void do_enter(bool undoing)
     openfile->placewewant = xplustabs();
 
     edit_refresh_needed = TRUE;
+}
+
+/* Need this again... */
+void do_enter_void(void) {
+    do_enter(FALSE);
 }
 
 #ifndef NANO_TINY
@@ -850,7 +855,7 @@ void add_undo(undo_type current_action)
     /* Ugh, if we were called while cutting not-to-end, non-marked and on the same lineno,
        we need to  abort here */
     u = fs->current_undo;
-    if (current_action == CUT && u && u->type == CUT 
+    if (current_action == CUT && u && u->type == CUT
 	&& !u->mark_set && u->lineno == fs->current->lineno)
 	return;
 
@@ -1016,8 +1021,8 @@ void update_undo(undo_type action)
         if (fs->current_x == u->begin) {
 	    /* They're deleting */
 	    if (!u->xflags)
-		u->xflags = UNDO_DEL_DEL;
-	    else if (u->xflags != UNDO_DEL_DEL) {
+		u->xflags = UNdel_del;
+	    else if (u->xflags != UNdel_del) {
 		add_undo(action);
 		return;
 	    }
@@ -1030,8 +1035,8 @@ void update_undo(undo_type action)
 	} else if (fs->current_x == u->begin - 1) {
 	    /* They're backspacing */
 	    if (!u->xflags)
-		u->xflags = UNDO_DEL_BACKSPACE;
-	    else if (u->xflags != UNDO_DEL_BACKSPACE) {
+		u->xflags = UNdel_backspace;
+	    else if (u->xflags != UNdel_backspace) {
 		add_undo(action);
 		return;
 	    }
@@ -1071,7 +1076,7 @@ void update_undo(undo_type action)
     case SPLIT:
 	/* This will only be called if we made a completely new line,
 	   and as such we should note that so we can destroy it later */
-	u->xflags = UNDO_SPLIT_MADENEW;
+	u->xflags = UNsplit_madenew;
 	break;
 #endif /* DISABLE_WRAPPING */
     case UNSPLIT:
@@ -1976,6 +1981,8 @@ void do_justify(bool full_justify)
     if (full_justify)
 	openfile->current = openfile->fileage;
 
+    allow_pending_sigwinch(FALSE);
+
     while (TRUE) {
 	size_t i;
 	    /* Generic loop variable. */
@@ -2283,7 +2290,7 @@ void do_justify(bool full_justify)
 	&finished, FALSE);
     s = get_shortcut(currmenu, &kbinput, &meta_key, &func_key);
 
-    if (s && s->scfunc == DO_UNCUT_TEXT) {
+    if (s && s->scfunc == do_uncut_text) {
 	/* Splice the justify buffer back into the file, but only if we
 	 * actually justified something. */
 	if (first_par_line != NULL) {
@@ -2346,6 +2353,9 @@ void do_justify(bool full_justify)
     /* Display the shortcut list with UnCut. */
     shortcut_init(FALSE);
     display_main_list();
+
+    allow_pending_sigwinch(TRUE);
+
 }
 
 /* Justify the current paragraph. */
@@ -2921,6 +2931,11 @@ void do_spell(void)
     FILE *temp_file;
     char *temp = safe_tempfile(&temp_file);
     const char *spell_msg;
+
+    if (ISSET(RESTRICTED)) {
+        nano_disabled_msg();
+	return;
+    }
 
     if (temp == NULL) {
 	statusbar(_("Error writing temp file: %s"), strerror(errno));

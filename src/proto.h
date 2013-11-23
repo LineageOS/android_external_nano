@@ -1,4 +1,4 @@
-/* $Id: proto.h 4460 2009-12-09 16:51:43Z astyanax $ */
+/* $Id: proto.h 4569 2013-03-17 22:09:38Z astyanax $ */
 /**************************************************************************
  *   proto.h                                                              *
  *                                                                        *
@@ -85,6 +85,8 @@ extern ssize_t tabsize;
 
 #ifndef NANO_TINY
 extern char *backup_dir;
+extern const char *locking_prefix;
+extern const char *locking_suffix;
 #endif
 #ifndef DISABLE_OPERATINGDIR
 extern char *operating_dir;
@@ -113,6 +115,8 @@ extern filestruct *searchbot;
 extern filestruct *replace_history;
 extern filestruct *replaceage;
 extern filestruct *replacebot;
+extern poshiststruct *poshistory;
+void update_poshistory(char *filename, ssize_t lineno, ssize_t xpos);
 #endif
 
 #ifdef HAVE_REGEX_H
@@ -251,6 +255,7 @@ void do_cut_text_void(void);
 #ifndef NANO_TINY
 void do_copy_text(void);
 void do_cut_till_end(void);
+
 #endif
 void do_uncut_text(void);
 
@@ -291,6 +296,8 @@ bool check_operating_dir(const char *currpath, bool allow_tabcomp);
 #endif
 #ifndef NANO_TINY
 void init_backup_dir(void);
+int delete_lockfile(const char *lockfilename);
+int write_lockfile(const char *lockfilename, const char *origfilename, bool modified);
 #endif
 int copy_file(FILE *inn, FILE *out);
 bool write_file(const char *name, FILE *f_open, bool tmp, append_type
@@ -321,6 +328,10 @@ char *histfilename(void);
 void load_history(void);
 bool writehist(FILE *hist, filestruct *histhead);
 void save_history(void);
+int check_dotnano(void);
+void load_poshistory(void);
+void save_poshistory(void);
+int check_poshistory(const char *file, ssize_t *line, ssize_t *column);
 #endif
 
 /* All functions in global.c. */
@@ -460,6 +471,7 @@ void allow_pending_sigwinch(bool allow);
 #endif
 #ifndef NANO_TINY
 void do_toggle(int flag);
+void do_toggle_void(void);
 #endif
 void disable_extended_io(void);
 #ifdef USE_SLANG
@@ -546,6 +558,7 @@ char *parse_argument(char *ptr);
 char *parse_next_regex(char *ptr);
 bool nregcomp(const char *regex, int eflags);
 void parse_syntax(char *ptr);
+void parse_magic_syntax(char *ptr);
 void parse_include(char *ptr);
 short color_to_short(const char *colorname, bool *bright);
 void parse_colors(char *ptr, bool icase);
@@ -611,6 +624,8 @@ filestruct *find_history(const filestruct *h_start, const filestruct
 void update_history(filestruct **h, const char *s);
 char *get_history_older(filestruct **h);
 char *get_history_newer(filestruct **h);
+void get_history_older_void(void);
+void get_history_newer_void(void);
 #ifndef DISABLE_TABCOMP
 char *get_history_completion(filestruct **h, const char *s, size_t len);
 #endif
@@ -631,6 +646,7 @@ void do_undo(void);
 void do_redo(void);
 #endif
 void do_enter(bool undoing);
+void do_enter_void(void);
 #ifndef NANO_TINY
 RETSIGTYPE cancel_command(int signal);
 bool execute_command(const char *command);
@@ -752,7 +768,7 @@ int get_mouseinput(int *mouse_x, int *mouse_y, bool allow_shortcuts);
 #endif
 const sc *get_shortcut(int menu, int *kbinput, bool
 	*meta_key, bool *func_key);
-const sc *first_sc_for(int menu, short func);
+const sc *first_sc_for(int menu, void (*func)(void));
 void blank_line(WINDOW *win, int y, int x, int n);
 void blank_titlebar(void);
 void blank_topbar(void);
@@ -793,7 +809,7 @@ int strtomenu(char *input);
 void assign_keyinfo(sc *s);
 void xon_complaint(void);
 void xoff_complaint(void);
-int sc_seq_or (short func, int defaultval);
+int sc_seq_or (void (*func)(void), int defaultval);
 void do_suspend_void(void);
 
 extern const char *cancel_msg;
@@ -820,7 +836,6 @@ extern const char *backup_file_msg;
 extern const char *gototext_msg;
 extern const char *new_buffer_msg;
 
-void iso_me_harder_funcmap(short func);
 void enable_nodelay(void);
 void disable_nodelay(void);
 
@@ -831,5 +846,23 @@ extern const char *regexp_msg;
 #ifdef NANO_EXTRA
 void do_credits(void);
 #endif
+
+/* May as just throw these here since they are just placeholders */
+void do_cancel(void);
+void case_sens_void(void);
+void regexp_void(void);
+void gototext_void(void);
+void to_files_void(void);
+void dos_format_void(void);
+void mac_format_void(void);
+void append_void(void);
+void prepend_void(void);
+void backup_file_void(void);
+void new_buffer_void(void);
+void backwards_void(void);
+void goto_dir_void(void);
+void no_replace_void(void);
+void ext_cmd_void(void);
+
 
 #endif /* !PROTO_H */
