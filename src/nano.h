@@ -112,6 +112,7 @@
 	/* Mark a string that will be sent to gettext() later. */
 
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
