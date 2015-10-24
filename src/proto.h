@@ -684,10 +684,10 @@ void align(char **str);
 void null_at(char **data, size_t index);
 void unsunder(char *str, size_t true_len);
 void sunder(char *str);
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
 #ifndef HAVE_GETLINE
 ssize_t ngetline(char **lineptr, size_t *n, FILE *stream);
 #endif
+#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
 #ifndef HAVE_GETDELIM
 ssize_t ngetdelim(char **lineptr, size_t *n, int delim, FILE *stream);
 #endif
