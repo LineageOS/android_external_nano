@@ -23,7 +23,6 @@ LOCAL_SRC_FILES:= \
 	src/winio.c
 LOCAL_C_INCLUDES += \
 	$(LOCAL_PATH) \
-	external/busybox/android/regex \
 	external/libncurses/include
 LOCAL_CFLAGS += \
 	-DHAVE_CONFIG_H \
@@ -31,8 +30,6 @@ LOCAL_CFLAGS += \
 	-DSYSCONFDIR=\"/system/etc/nano\"
 LOCAL_SHARED_LIBRARIES += \
 	libncurses
-LOCAL_STATIC_LIBRARIES += \
-	libclearsilverregex
 LOCAL_MODULE := nano
 LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
 LOCAL_MODULE_TAGS := debug
