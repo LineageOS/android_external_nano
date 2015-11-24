@@ -1,4 +1,4 @@
-/* $Id: nano.h 4453 2009-12-02 03:36:22Z astyanax $ */
+/* $Id: nano.h 4508 2010-06-21 03:10:10Z astyanax $ */
 /**************************************************************************
  *   nano.h                                                               *
  *                                                                        *
@@ -481,6 +481,7 @@ enum
     REBIND_KEYPAD,
     NO_CONVERT,
     BACKUP_FILE,
+    INSECURE_BACKUP,
     NO_COLOR_SYNTAX,
     PRESERVE,
     HISTORYLOG,

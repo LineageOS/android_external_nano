@@ -1,4 +1,4 @@
-/* $Id: rcfile.c 4453 2009-12-02 03:36:22Z astyanax $ */
+/* $Id: rcfile.c 4508 2010-06-21 03:10:10Z astyanax $ */
 /**************************************************************************
  *   rcfile.c                                                             *
  *                                                                        *
@@ -77,6 +77,7 @@ static const rcoption rcopts[] = {
 #ifndef NANO_TINY
     {"autoindent", AUTOINDENT},
     {"backup", BACKUP_FILE},
+    {"allow_insecure_backup", INSECURE_BACKUP},
     {"backupdir", 0},
     {"backwards", BACKWARDS_SEARCH},
     {"casesensitive", CASE_SENSITIVE},
