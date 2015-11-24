@@ -1,4 +1,4 @@
-/* $Id: utils.c 4893 2014-05-15 20:00:46Z bens $ */
+/* $Id: utils.c 4948 2014-06-09 14:23:53Z bens $ */
 /**************************************************************************
  *   utils.c                                                              *
  *                                                                        *
@@ -72,8 +72,8 @@ bool parse_num(const char *str, ssize_t *val)
 
     assert(str != NULL);
 
-    /* Man page for strtol() says this is required, and
-       it looks like it is! */
+    /* The manual page for strtol() says this is required, and
+     * it looks like it is! */
     errno = 0;
 
     j = (ssize_t)strtol(str, &first_error, 10);
@@ -261,7 +261,8 @@ bool regexp_bol_or_eol(const regex_t *preg, const char *string)
 
 /* Fix the regex if we're on platforms which require an adjustment
  * from GNU-style to BSD-style word boundaries. */
-const char *fixbounds(const char *r) {
+const char *fixbounds(const char *r)
+{
 #ifndef GNU_WORDBOUNDS
     int i, j = 0;
     char *r2 = charalloc(strlen(r) * 5);
@@ -272,15 +273,15 @@ const char *fixbounds(const char *r) {
 #endif
 
     for (i = 0; i < strlen(r); i++) {
-        if (r[i] != '\0' && r[i] == '\\' && (r[i+1] == '>' || r[i+1] == '<')) {
-            strcpy(&r2[j], "[[:");
-            r2[j+3] = r[i+1];
-            strcpy(&r2[j+4], ":]]");
-            i++;
-            j += 6;
-        } else
-            r2[j] = r[i];
-        j++;
+	if (r[i] != '\0' && r[i] == '\\' && (r[i + 1] == '>' || r[i + 1] == '<')) {
+	    strcpy(&r2[j], "[[:");
+	    r2[j + 3] = r[i + 1];
+	    strcpy(&r2[j + 4], ":]]");
+	    i++;
+	    j += 6;
+	} else
+	    r2[j] = r[i];
+	j++;
     }
     r2[j] = '\0';
     r3 = mallocstrcpy(NULL, r2);

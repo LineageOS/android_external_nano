@@ -1,4 +1,4 @@
-/* $Id: text.c 4934 2014-05-29 18:50:13Z bens $ */
+/* $Id: text.c 5055 2014-07-02 20:52:27Z bens $ */
 /**************************************************************************
  *   text.c                                                               *
  *                                                                        *
@@ -64,9 +64,11 @@ void do_mark(void)
 #endif /* !NANO_TINY */
 
 /* Delete the character under the cursor. */
-void do_delete(void)
+void do_deletion(undo_type action)
 {
+#ifndef NANO_TINY
     size_t orig_lenpt = 0;
+#endif
 
     assert(openfile->current != NULL && openfile->current->data != NULL && openfile->current_x <= strlen(openfile->current->data));
 
@@ -81,10 +83,11 @@ void do_delete(void)
 	assert(openfile->current_x < strlen(openfile->current->data));
 
 #ifndef NANO_TINY
-	update_undo(DEL);
-#endif
+	update_undo(action);
+
 	if (ISSET(SOFTWRAP))
 	    orig_lenpt = strlenpt(openfile->current->data);
+#endif
 
 	/* Let's get dangerous. */
 	charmove(&openfile->current->data[openfile->current_x],
@@ -106,7 +109,7 @@ void do_delete(void)
 	assert(openfile->current_x == strlen(openfile->current->data));
 
 #ifndef NANO_TINY
-	add_undo(DEL);
+	add_undo(action);
 #endif
 	/* If we're deleting at the end of a line, we need to call
 	 * edit_refresh(). */
@@ -140,14 +143,21 @@ void do_delete(void)
     } else
 	return;
 
+#ifndef NANO_TINY
     if (ISSET(SOFTWRAP) && edit_refresh_needed == FALSE)
 	if (strlenpt(openfile->current->data) / COLS != orig_lenpt / COLS)
 	    edit_refresh_needed = TRUE;
+#endif
 
     set_modified();
 
     if (edit_refresh_needed == FALSE)
 	update_line(openfile->current, openfile->current_x);
+}
+
+void do_delete(void)
+{
+    do_deletion(DEL);
 }
 
 /* Backspace over one character.  That is, move the cursor left one
@@ -157,7 +167,7 @@ void do_backspace(void)
     if (openfile->current != openfile->fileage ||
 	openfile->current_x > 0) {
 	do_left();
-	do_delete();
+	do_deletion(BACK);
     }
 }
 
@@ -370,23 +380,15 @@ void undo_cut(undo *u)
     if (!u->cutbuffer)
 	return;
 
-    cutbuffer = copy_filestruct(u->cutbuffer);
-
-    /* Compute cutbottom for the uncut using our copy. */
-    for (cutbottom = cutbuffer; cutbottom->next != NULL; cutbottom = cutbottom->next)
-	;
-
     /* Get to where we need to uncut from. */
     if (u->xflags == UNcut_cutline)
 	goto_line_posx(u->mark_begin_lineno, 0);
     else
 	goto_line_posx(u->mark_begin_lineno, u->mark_begin_x);
 
-    copy_from_filestruct(cutbuffer);
-    free_filestruct(cutbuffer);
-    cutbuffer = NULL;
+    copy_from_filestruct(u->cutbuffer);
 
-    if (u->xflags == UNcut_cutline)
+    if (u->xflags != UNcut_marked_forward && u->type != PASTE)
 	goto_line_posx(u->mark_begin_lineno, u->mark_begin_x);
 }
 
@@ -397,6 +399,10 @@ void redo_cut(undo *u)
     if (!u->cutbuffer)
 	return;
 
+    filestruct *oldcutbuffer = cutbuffer, *oldcutbottom = cutbottom;
+    cutbuffer = NULL;
+    cutbottom = NULL;
+
     goto_line_posx(u->lineno, u->begin);
 
     if (ISSET(NO_NEWLINES) && openfile->current->lineno != u->lineno) {
@@ -404,33 +410,30 @@ void redo_cut(undo *u)
 	openfile->placewewant = xplustabs();
     }
 
-    openfile->mark_set = u->mark_set;
-    if (cutbuffer)
-	free(cutbuffer);
-    cutbuffer = NULL;
-
+    openfile->mark_set = TRUE;
     openfile->mark_begin = fsfromline(u->mark_begin_lineno);
-
-    if (!ISSET(CUT_TO_END))
-	openfile->mark_set = TRUE;
-
     openfile->mark_begin_x = (u->xflags == UNcut_cutline) ? 0 : u->mark_begin_x;
-    do_cut_text(FALSE, u->to_end, TRUE);
+
+    do_cut_text(FALSE, FALSE, TRUE);
+
     openfile->mark_set = FALSE;
     openfile->mark_begin = NULL;
     openfile->mark_begin_x = 0;
     edit_refresh_needed = TRUE;
+
+    if (cutbuffer != NULL)
+	free_filestruct(cutbuffer);
+    cutbuffer = oldcutbuffer;
+    cutbottom = oldcutbottom;
 }
 
 /* Undo the last thing(s) we did. */
 void do_undo(void)
 {
-    bool gotolinecolumn = FALSE;
     undo *u = openfile->current_undo;
     filestruct *t = 0;
     size_t len = 0;
     char *undidmsg, *data;
-    filestruct *oldcutbuffer = cutbuffer, *oldcutbottom = cutbottom;
 
     if (!u) {
 	statusbar(_("Nothing in undo buffer!"));
@@ -439,7 +442,7 @@ void do_undo(void)
 
     filestruct *f = fsfromline(u->mark_begin_lineno);
     if (!f) {
-	statusbar(_("Internal error: can't match line %d.  Please save your work."), u->mark_begin_lineno);
+	statusbar(_("Internal error: can't match line %ld.  Please save your work."), (long)u->mark_begin_lineno);
 	return;
     }
 #ifdef DEBUG
@@ -459,6 +462,7 @@ void do_undo(void)
 	f->data = data;
 	goto_line_posx(u->lineno, u->begin);
 	break;
+    case BACK:
     case DEL:
 	undidmsg = _("text delete");
 	len = strlen(f->data) + strlen(u->strdata) + 1;
@@ -471,30 +475,28 @@ void do_undo(void)
 	goto_line_posx(u->mark_begin_lineno, u->mark_begin_x);
 	break;
 #ifndef DISABLE_WRAPPING
-    case SPLIT:
+    case SPLIT_END:
 	undidmsg = _("line wrap");
-	f->data = (char *) nrealloc(f->data, strlen(f->data) + strlen(u->strdata) + 1);
-	strcpy(&f->data[strlen(f->data) - 1], u->strdata);
-	if (u->strdata2 != NULL)
-	    f->next->data = mallocstrcpy(f->next->data, u->strdata2);
-	else {
-	    filestruct *foo = openfile->current->next;
-	    unlink_node(foo);
-	    delete_node(foo);
-	}
-	renumber(f);
-	gotolinecolumn = TRUE;
+	goto_line_posx(u->lineno, u->begin);
+	openfile->current_undo = openfile->current_undo->next;
+	openfile->last_action = OTHER;
+	while (openfile->current_undo->type != SPLIT_BEGIN)
+	    do_undo();
+	u = openfile->current_undo;
+	f = openfile->current;
 	break;
 #endif /* !DISABLE_WRAPPING */
-    case UNSPLIT:
+    case JOIN:
 	undidmsg = _("line join");
 	t = make_new_node(f);
 	t->data = mallocstrcpy(NULL, u->strdata);
-	data = mallocstrncpy(NULL, f->data, u->begin + 1);
-	data[u->begin] = '\0';
+	data = mallocstrncpy(NULL, f->data, u->mark_begin_x + 1);
+	data[u->mark_begin_x] = '\0';
 	free(f->data);
 	f->data = data;
 	splice_node(f, t, f->next);
+	if (f == openfile->filebot)
+	    openfile->filebot = t;
 	goto_line_posx(u->lineno, u->begin);
 	break;
     case CUT_EOF:
@@ -510,8 +512,10 @@ void do_undo(void)
 	undidmsg = _("line break");
 	if (f->next) {
 	    filestruct *foo = f->next;
-	    f->data = (char *) nrealloc(f->data, strlen(f->data) + strlen(&f->next->data[u->mark_begin_x]) + 1);
+	    f->data = charealloc(f->data, strlen(f->data) + strlen(&f->next->data[u->mark_begin_x]) + 1);
 	    strcat(f->data, &f->next->data[u->mark_begin_x]);
+	    if (foo == openfile->filebot)
+		openfile->filebot = f;
 	    unlink_node(foo);
 	    delete_node(foo);
 	}
@@ -519,6 +523,7 @@ void do_undo(void)
 	break;
     case INSERT:
 	undidmsg = _("text insert");
+	filestruct *oldcutbuffer = cutbuffer, *oldcutbottom = cutbottom;
 	cutbuffer = NULL;
 	cutbottom = NULL;
 	/* When we updated mark_begin_lineno in update_undo, it was effectively
@@ -529,6 +534,8 @@ void do_undo(void)
 	openfile->mark_set = TRUE;
 	goto_line_posx(u->lineno, u->begin);
 	cut_marked();
+	if (u->cutbuffer != NULL)
+	    free_filestruct(u->cutbuffer);
 	u->cutbuffer = cutbuffer;
 	u->cutbottom = cutbottom;
 	cutbuffer = oldcutbuffer;
@@ -547,22 +554,21 @@ void do_undo(void)
 	break;
     }
 
-    renumber(f);
-    if (gotolinecolumn)
-	do_gotolinecolumn(u->lineno, u->begin, FALSE, FALSE, FALSE, TRUE);
     statusbar(_("Undid action (%s)"), undidmsg);
+
+    renumber(f);
     openfile->current_undo = openfile->current_undo->next;
     openfile->last_action = OTHER;
+    openfile->placewewant = xplustabs();
     set_modified();
 }
 
 /* Redo the last thing(s) we undid. */
 void do_redo(void)
 {
-    bool gotolinecolumn = FALSE;
     undo *u = openfile->undotop;
     size_t len = 0;
-    char *undidmsg, *data;
+    char *redidmsg, *data;
 
     for (; u != NULL && u->next != openfile->current_undo; u = u->next)
 	;
@@ -587,7 +593,7 @@ void do_redo(void)
 
     switch (u->type) {
     case ADD:
-	undidmsg = _("text add");
+	redidmsg = _("text add");
 	len = strlen(f->data) + strlen(u->strdata) + 1;
         data = charalloc(len);
 	strncpy(data, f->data, u->begin);
@@ -597,8 +603,9 @@ void do_redo(void)
 	f->data = data;
 	goto_line_posx(u->mark_begin_lineno, u->mark_begin_x);
 	break;
+    case BACK:
     case DEL:
-	undidmsg = _("text delete");
+	redidmsg = _("text delete");
 	len = strlen(f->data) + strlen(u->strdata) + 1;
 	data = charalloc(len);
         strncpy(data, f->data, u->begin);
@@ -606,69 +613,73 @@ void do_redo(void)
 	free(f->data);
 	f->data = data;
 	openfile->current_x = u->begin;
-	openfile->placewewant = xplustabs();
 	goto_line_posx(u->lineno, u->begin);
 	break;
     case ENTER:
-	undidmsg = _("line break");
+	redidmsg = _("line break");
 	goto_line_posx(u->lineno, u->begin);
 	do_enter(TRUE);
 	break;
 #ifndef DISABLE_WRAPPING
-    case SPLIT:
-	undidmsg = _("line wrap");
-	if (u->xflags & UNsplit_madenew)
-	    prepend_wrap = TRUE;
-        do_wrap(f, TRUE);
-	renumber(f);
-	gotolinecolumn = TRUE;
+    case SPLIT_BEGIN:
+	redidmsg = _("line wrap");
+	goto_line_posx(u->lineno, u->begin);
+	openfile->current_undo = u;
+	openfile->last_action = OTHER;
+	while (openfile->current_undo->type != SPLIT_END)
+	    do_redo();
+	u = openfile->current_undo;
+	goto_line_posx(u->lineno, u->begin);
 	break;
 #endif /* !DISABLE_WRAPPING */
-    case UNSPLIT:
-	undidmsg = _("line join");
+    case JOIN:
+	redidmsg = _("line join");
 	len = strlen(f->data) + strlen(u->strdata) + 1;
 	f->data = charealloc(f->data, len);
 	strcat(f->data, u->strdata);
 	if (f->next != NULL) {
 	    filestruct *tmp = f->next;
+	    if (tmp == openfile->filebot)
+		openfile->filebot = f;
 	    unlink_node(tmp);
 	    delete_node(tmp);
 	}
 	renumber(f);
-	goto_line_posx(u->lineno, u->begin);
+	goto_line_posx(u->mark_begin_lineno, u->mark_begin_x);
 	break;
     case CUT_EOF:
     case CUT:
-	undidmsg = _("text cut");
+	redidmsg = _("text cut");
 	redo_cut(u);
 	break;
     case PASTE:
-	undidmsg = _("text uncut");
+	redidmsg = _("text uncut");
 	redo_paste(u);
 	break;
     case REPLACE:
-	undidmsg = _("text replace");
+	redidmsg = _("text replace");
 	data = u->strdata;
 	u->strdata = f->data;
 	f->data = data;
 	goto_line_posx(u->lineno, u->begin);
 	break;
     case INSERT:
-	undidmsg = _("text insert");
+	redidmsg = _("text insert");
 	goto_line_posx(u->lineno, u->begin);
 	copy_from_filestruct(u->cutbuffer);
+	free_filestruct(u->cutbuffer);
+	u->cutbuffer = NULL;
 	break;
     default:
-	undidmsg = _("Internal error: unknown type.  Please save your work.");
+	redidmsg = _("Internal error: unknown type.  Please save your work.");
 	break;
     }
 
-    if (gotolinecolumn)
-	do_gotolinecolumn(u->lineno, u->begin, FALSE, FALSE, FALSE, TRUE);
-    statusbar(_("Redid action (%s)"), undidmsg);
+    statusbar(_("Redid action (%s)"), redidmsg);
 
     openfile->current_undo = u;
     openfile->last_action = OTHER;
+    openfile->placewewant = xplustabs();
     set_modified();
 }
 #endif /* !NANO_TINY */
@@ -843,17 +854,12 @@ void add_undo(undo_type current_action)
     char *data;
     openfilestruct *fs = openfile;
 	/* Last thing we cut to set up the undo for uncut. */
-    ssize_t wrap_loc;
-	/* For calculating split beginning. */
-
-    if (!ISSET(UNDOABLE))
-	return;
 
     /* Ugh, if we were called while cutting not-to-end, non-marked, and
      * on the same lineno, we need to abort here. */
     u = fs->current_undo;
     if (u && u->mark_begin_lineno == fs->current->lineno &&
-	((current_action == CUT && u->type == CUT && !u->mark_set) ||
+	((current_action == CUT && u->type == CUT && !u->mark_set && keeping_cutbuffer()) ||
 	(current_action == ADD && u->type == ADD && u->mark_begin_x == fs->current_x)))
 	return;
 
@@ -873,70 +879,80 @@ void add_undo(undo_type current_action)
     u->type = current_action;
     u->lineno = fs->current->lineno;
     u->begin = fs->current_x;
-    u->next = fs->undotop;
-    fs->undotop = u;
-    fs->current_undo = u;
+#ifndef DISABLE_WRAPPING
+    if (u->type == SPLIT_BEGIN) {
+	/* Some action, most likely an ADD, was performed that invoked
+	 * do_wrap().  Rearrange the undo order so that this previous
+	 * action is after the SPLIT_BEGIN undo. */
+	u->next = fs->undotop->next ;
+	fs->undotop->next = u;
+    } else
+#endif
+    {
+	u->next = fs->undotop;
+	fs->undotop = u;
+	fs->current_undo = u;
+    }
     u->strdata = NULL;
-    u->strdata2 = NULL;
     u->cutbuffer = NULL;
     u->cutbottom = NULL;
-    u->mark_set = 0;
+    u->mark_set = FALSE;
     u->mark_begin_lineno = fs->current->lineno;
     u->mark_begin_x = fs->current_x;
     u->xflags = 0;
-    u->to_end = FALSE;
 
     switch (u->type) {
     /* We need to start copying data into the undo buffer
      * or we won't be able to restore it later. */
     case ADD:
 	break;
+    case BACK:
     case DEL:
 	if (u->begin != strlen(fs->current->data)) {
 	    char *char_buf = charalloc(mb_cur_max() + 1);
 	    int char_buf_len = parse_mbchar(&fs->current->data[u->begin], char_buf, NULL);
-	    char_buf[char_buf_len] = '\0';
-	    u->strdata = char_buf;  /* Note: there is likely more memory allocated than necessary. */
-	    u->mark_begin_x += char_buf_len;
+	    null_at(&char_buf, char_buf_len);
+	    u->strdata = char_buf;
+	    if (u->type == BACK)
+		u->mark_begin_x += char_buf_len;
 	    break;
 	}
-	/* Else purposely fall into unsplit code. */
-	current_action = u->type = UNSPLIT;
-    case UNSPLIT:
+	/* Else purposely fall into the line-joining code. */
+    case JOIN:
 	if (fs->current->next) {
+	    if (u->type == BACK) {
+		u->lineno = fs->current->next->lineno;
+		u->begin = 0;
+	    }
 	    data = mallocstrcpy(NULL, fs->current->next->data);
 	    u->strdata = data;
 	}
+	current_action = u->type = JOIN;
 	break;
 #ifndef DISABLE_WRAPPING
-    case SPLIT:
-	wrap_loc = break_line(openfile->current->data, fill
-#ifndef DISABLE_HELP
-	, FALSE
-#endif
-	);
-	u->strdata = mallocstrcpy(NULL, &openfile->current->data[wrap_loc]);
-	/* Don't bother saving the next line if we're not prepending,
-	 * as a new line will be created. */
-	if (prepend_wrap)
-	    u->strdata2 = mallocstrcpy(NULL, fs->current->next->data);
-	u->begin = wrap_loc;
+    case SPLIT_BEGIN:
+	current_action = fs->undotop->type;
+	break;
+    case SPLIT_END:
 	break;
 #endif /* !DISABLE_WRAPPING */
     case INSERT:
+	break;
     case REPLACE:
 	data = mallocstrcpy(NULL, fs->current->data);
 	u->strdata = data;
 	break;
     case CUT_EOF:
-	u->to_end = TRUE;
+	cutbuffer_reset();
+	break;
     case CUT:
+	cutbuffer_reset();
 	u->mark_set = openfile->mark_set;
 	if (u->mark_set) {
 	    u->mark_begin_lineno = openfile->mark_begin->lineno;
 	    u->mark_begin_x = openfile->mark_begin_x;
 	}
-	else if (!ISSET(CUT_TO_END) && !u->to_end) {
+	else if (!ISSET(CUT_TO_END)) {
 	    /* The entire line is being cut regardless of the cursor position. */
 	    u->begin = 0;
 	    u->xflags = UNcut_cutline;
@@ -947,7 +963,7 @@ void add_undo(undo_type current_action)
 	    statusbar(_("Internal error: cannot set up uncut.  Please save your work."));
 	else {
 	    if (u->cutbuffer)
-		free(u->cutbuffer);
+		free_filestruct(u->cutbuffer);
 	    u->cutbuffer = copy_filestruct(cutbuffer);
 	    u->mark_begin_lineno = fs->current->lineno;
 	    u->mark_begin_x = fs->current_x;
@@ -963,8 +979,8 @@ void add_undo(undo_type current_action)
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "fs->current->data = \"%s\", current_x = %lu, u->begin = %d, type = %d\n",
-			fs->current->data,  (unsigned long) fs->current_x, u->begin, current_action);
+    fprintf(stderr, "fs->current->data = \"%s\", current_x = %lu, u->begin = %lu, type = %d\n",
+			fs->current->data, (unsigned long)fs->current_x, (unsigned long)u->begin, current_action);
     fprintf(stderr, "left add_undo...\n");
 #endif
     fs->last_action = current_action;
@@ -979,14 +995,11 @@ void update_undo(undo_type action)
     undo *u;
     openfilestruct *fs = openfile;
 
-    if (!ISSET(UNDOABLE))
-	return;
-
 #ifdef DEBUG
-        fprintf(stderr, "action = %d, fs->last_action = %d,  openfile->current->lineno = %lu",
-		action, fs->last_action, (unsigned long) openfile->current->lineno);
+        fprintf(stderr, "action = %d, fs->last_action = %d, openfile->current->lineno = %ld",
+		action, fs->last_action, (long)openfile->current->lineno);
 	if (fs->current_undo)
-	    fprintf(stderr, "fs->current_undo->lineno = %lu\n",  (unsigned long) fs->current_undo->lineno);
+	    fprintf(stderr, "fs->current_undo->lineno = %ld\n", (long)fs->current_undo->lineno);
 	else
 	    fprintf(stderr, "\n");
 #endif
@@ -994,7 +1007,7 @@ void update_undo(undo_type action)
     /* Change to an add if we're not using the same undo struct
      * that we should be using. */
     if (action != fs->last_action
-	|| (action != ENTER && action != CUT && action != INSERT && action != SPLIT
+	|| (action != ENTER && action != CUT && action != INSERT
 	    && openfile->current->lineno != fs->current_undo->lineno)) {
         add_undo(action);
 	return;
@@ -1006,12 +1019,12 @@ void update_undo(undo_type action)
     switch (u->type) {
     case ADD: {
 #ifdef DEBUG
-        fprintf(stderr, "fs->current->data = \"%s\", current_x = %lu, u->begin = %d\n",
-			fs->current->data, (unsigned long) fs->current_x, u->begin);
+        fprintf(stderr, "fs->current->data = \"%s\", current_x = %lu, u->begin = %lu\n",
+			fs->current->data, (unsigned long)fs->current_x, (unsigned long)u->begin);
 #endif
 	char *char_buf = charalloc(mb_cur_max());
 	size_t char_buf_len = parse_mbchar(&fs->current->data[u->mark_begin_x], char_buf, NULL);
-	u->strdata = addstrings(u->strdata, u->strdata?strlen(u->strdata):0, char_buf, char_buf_len);
+	u->strdata = addstrings(u->strdata, u->strdata ? strlen(u->strdata) : 0, char_buf, char_buf_len);
 #ifdef DEBUG
 	fprintf(stderr, "current undo data now \"%s\"\n", u->strdata);
 #endif
@@ -1019,25 +1032,26 @@ void update_undo(undo_type action)
 	u->mark_begin_x = fs->current_x;
 	break;
     }
+    case BACK:
     case DEL: {
 	char *char_buf = charalloc(mb_cur_max());
 	size_t char_buf_len = parse_mbchar(&fs->current->data[fs->current_x], char_buf, NULL);
-        if (fs->current_x == u->begin) {
+	if (fs->current_x == u->begin) {
 	    /* They're deleting. */
 	    u->strdata = addstrings(u->strdata, strlen(u->strdata), char_buf, char_buf_len);
 	    u->mark_begin_x = fs->current_x;
-	} else if (fs->current_x == u->begin - char_buf_len){
+	} else if (fs->current_x == u->begin - char_buf_len) {
 	    /* They're backspacing. */
 	    u->strdata = addstrings(char_buf, char_buf_len, u->strdata, strlen(u->strdata));
 	    u->begin = fs->current_x;
 	} else {
 	    /* They deleted something else on the line. */
 	    free(char_buf);
-	    add_undo(DEL);
+	    add_undo(u->type);
 	    return;
 	}
 #ifdef DEBUG
-	fprintf(stderr, "current undo data now \"%s\"\nu->begin = %d\n", u->strdata, u->begin);
+	fprintf(stderr, "current undo data now \"%s\"\nu->begin = %lu\n", u->strdata, (unsigned long)u->begin);
 #endif
 	break;
     }
@@ -1046,7 +1060,7 @@ void update_undo(undo_type action)
 	if (!cutbuffer)
 	    break;
 	if (u->cutbuffer)
-	    free(u->cutbuffer);
+	    free_filestruct(u->cutbuffer);
 	u->cutbuffer = copy_filestruct(cutbuffer);
 	if (u->mark_set) {
 	    /* If the "marking" operation was from right-->left or
@@ -1060,14 +1074,19 @@ void update_undo(undo_type action)
 		ssize_t line = u->lineno;
 		u->lineno = u->mark_begin_lineno;
 		u->mark_begin_lineno = line;
-	    }
-	} else if (!ISSET(CUT_TO_END)) {
+	    } else
+		u->xflags = UNcut_marked_forward;
+	} else {
 	    /* Compute cutbottom for the uncut using our copy. */
 	    u->cutbottom = u->cutbuffer;
 	    while (u->cutbottom->next != NULL)
 		u->cutbottom = u->cutbottom->next;
-	    if (!u->to_end)
-		u->lineno++;
+	    u->lineno = u->mark_begin_lineno + u->cutbottom->lineno - u->cutbuffer->lineno;
+	    if (ISSET(CUT_TO_END) || u->type == CUT_EOF) {
+		u->begin = strlen(u->cutbottom->data);
+		if(u->lineno == u->mark_begin_lineno)
+		u->begin += u->mark_begin_x;
+	    }
 	}
 	break;
     case REPLACE:
@@ -1082,13 +1101,10 @@ void update_undo(undo_type action)
 	u->mark_begin_x = fs->current_x;
 	break;
 #ifndef DISABLE_WRAPPING
-    case SPLIT:
-	/* This will only be called if we made a completely new line,
-	 * and as such we should note that so we can destroy it later. */
-	u->xflags = UNsplit_madenew;
-	break;
+    case SPLIT_BEGIN:
+    case SPLIT_END:
 #endif /* !DISABLE_WRAPPING */
-    case UNSPLIT:
+    case JOIN:
 	/* These cases are handled by the earlier check for a new line and action. */
     case OTHER:
 	break;
@@ -1097,9 +1113,7 @@ void update_undo(undo_type action)
 #ifdef DEBUG
     fprintf(stderr, "Done in update_undo (type was %d)\n", action);
 #endif
-
-    }
-
+}
 #endif /* !NANO_TINY */
 
 #ifndef DISABLE_WRAPPING
@@ -1110,10 +1124,8 @@ void wrap_reset(void)
     prepend_wrap = FALSE;
 }
 
-/* We wrap the given line.  Precondition: we assume the cursor has been
- * moved forward since the last typed character.  Return TRUE if we
- * wrapped, and FALSE otherwise. */
-bool do_wrap(filestruct *line, bool undoing)
+/* Try wrapping the given line.  Return TRUE if wrapped, FALSE otherwise. */
+bool do_wrap(filestruct *line)
 {
     size_t line_len;
 	/* The length of the line we wrap. */
@@ -1129,16 +1141,10 @@ bool do_wrap(filestruct *line, bool undoing)
 	/* The text after the wrap point. */
     size_t after_break_len;
 	/* The length of after_break. */
-    bool prepending = FALSE;
-	/* Do we prepend to the next line? */
     const char *next_line = NULL;
 	/* The next line, minus indentation. */
     size_t next_line_len = 0;
 	/* The length of next_line. */
-    char *new_line = NULL;
-	/* The line we create. */
-    size_t new_line_len = 0;
-	/* The eventual length of new_line. */
 
     /* There are three steps.  First, we decide where to wrap.  Then, we
      * create the new wrap line.  Finally, we clean up. */
@@ -1178,9 +1184,6 @@ bool do_wrap(filestruct *line, bool undoing)
 	return FALSE;
 
 #ifndef NANO_TINY
-    if (!undoing)
-	add_undo(SPLIT);
-
     /* If autoindent is turned on, and we're on the character just after
      * the indentation, we don't wrap. */
     if (ISSET(AUTOINDENT)) {
@@ -1191,7 +1194,13 @@ bool do_wrap(filestruct *line, bool undoing)
 	if (wrap_loc == indent_len)
 	    return FALSE;
     }
+
+    add_undo(SPLIT_BEGIN);
 #endif
+
+    size_t old_x = openfile->current_x;
+    filestruct * oldLine = openfile->current;
+    openfile->current = line;
 
     /* Step 2, making the new wrap line.  It will consist of indentation
      * followed by the text after the wrap point, optionally followed by
@@ -1212,9 +1221,15 @@ bool do_wrap(filestruct *line, bool undoing)
 	const char *end = after_break + move_mbleft(after_break,
 		after_break_len);
 
+	/* Go to the end of the line. */
+	openfile->current_x = line_len;
+
 	/* If after_break doesn't end in a blank, make sure it ends in a
 	 * space. */
 	if (!is_blank_mbchar(end)) {
+#ifndef NANO_TINY
+	    add_undo(ADD);
+#endif
 	    line_len++;
 	    line->data = charealloc(line->data, line_len + 1);
 	    line->data[line_len - 1] = ' ';
@@ -1222,128 +1237,42 @@ bool do_wrap(filestruct *line, bool undoing)
 	    after_break = line->data + wrap_loc;
 	    after_break_len++;
 	    openfile->totsize++;
+	    openfile->current_x++;
+#ifndef NANO_TINY
+	    update_undo(ADD);
+#endif
 	}
 
 	next_line = line->next->data;
 	next_line_len = strlen(next_line);
 
 	if (after_break_len + next_line_len <= fill) {
-	    prepending = TRUE;
-	    new_line_len += next_line_len;
+	    /* Delete the LF to join the two lines. */
+	    do_delete();
+	    /* Delete any leading blanks from the joined-on line. */
+	    while (is_blank_mbchar(&line->data[openfile->current_x]))
+		do_delete();
+	    renumber(line);
 	}
     }
 
-    /* new_line_len is now the length of the text that will be wrapped
-     * to the next line, plus (if we're prepending to it) the length of
-     * the text of the next line. */
-    new_line_len += after_break_len;
+    /* Go to the wrap location and split the line there. */
+    openfile->current_x = wrap_loc;
+    do_enter(FALSE);
 
-#ifndef NANO_TINY
-    if (ISSET(AUTOINDENT)) {
-	if (prepending) {
-	    /* If we're prepending, the indentation will come from the
-	     * next line. */
-	    indent_string = next_line;
-	    indent_len = indent_length(indent_string);
-	    next_line += indent_len;
-	} else {
-	    /* Otherwise, it will come from this line, in which case
-	     * we should increase new_line_len to make room for it. */
-	    new_line_len += indent_len;
-	    openfile->totsize += mbstrnlen(indent_string, indent_len);
-	}
-    }
-#endif
-
-    /* Now we allocate the new line and copy the text into it. */
-    new_line = charalloc(new_line_len + 1);
-    new_line[0] = '\0';
-
-#ifndef NANO_TINY
-    if (ISSET(AUTOINDENT)) {
-	/* Copy the indentation. */
-	strncpy(new_line, indent_string, indent_len);
-	new_line[indent_len] = '\0';
-	new_line_len += indent_len;
-    }
-#endif
-
-    /* Copy all the text after the wrap point of the current line. */
-    strcat(new_line, after_break);
-
-    /* Break the current line at the wrap point. */
-    null_at(&line->data, wrap_loc);
-
-    if (prepending) {
-#ifndef NANO_TINY
-	if (!undoing)
-	    update_undo(SPLIT);
-#endif
-	/* If we're prepending, copy the text from the next line, minus
-	 * the indentation that we already copied above. */
-	strcat(new_line, next_line);
-
-	free(line->next->data);
-	line->next->data = new_line;
-
-	/* If the NO_NEWLINES flag isn't set, and text has been added to
-	 * the magicline, make a new magicline. */
-	if (!ISSET(NO_NEWLINES) && openfile->filebot->data[0] != '\0')
-	    new_magicline();
+    if (old_x < wrap_loc) {
+	openfile->current_x = old_x;
+	openfile->current = oldLine;
+	prepend_wrap = TRUE;
     } else {
-	/* Otherwise, make a new line and copy the text after where we
-	 * broke this line to the beginning of the new line. */
-	splice_node(openfile->current, make_new_node(openfile->current),
-		openfile->current->next);
-
-	/* If the current line is the last line of the file, move the
-	 * last line of the file down to the next line. */
-	if (openfile->filebot == openfile->current)
-	    openfile->filebot = openfile->current->next;
-
-	openfile->current->next->data = new_line;
-
-	openfile->totsize++;
-    }
-
-    /* Step 3, clean up.  Reposition the cursor and mark, and do some
-     * other sundry things. */
-
-    /* Set the prepend_wrap flag, so that later wraps of this line will
-     * be prepended to the next line. */
-    prepend_wrap = TRUE;
-
-    /* Each line knows its number.  We recalculate these if we inserted
-     * a new line. */
-    if (!prepending)
-	renumber(line);
-
-    /* If the cursor was after the break point, we must move it.  We
-     * also clear the prepend_wrap flag in this case. */
-    if (openfile->current_x > wrap_loc) {
+	openfile->current_x += (old_x - wrap_loc);
 	prepend_wrap = FALSE;
-
-	openfile->current = openfile->current->next;
-	openfile->current_x -= wrap_loc
-#ifndef NANO_TINY
-		- indent_len
-#endif
-		;
-	openfile->placewewant = xplustabs();
     }
 
+    openfile->placewewant = xplustabs();
+
 #ifndef NANO_TINY
-    /* If the mark was on this line after the wrap point, we move it
-     * down.  If it was on the next line and we prepended to that line,
-     * we move it right. */
-    if (openfile->mark_set) {
-	if (openfile->mark_begin == line && openfile->mark_begin_x >
-		wrap_loc) {
-	    openfile->mark_begin = line->next;
-	    openfile->mark_begin_x -= wrap_loc - indent_len + 1;
-	} else if (prepending && openfile->mark_begin == line->next)
-	    openfile->mark_begin_x += after_break_len;
-    }
+    add_undo(SPLIT_END);
 #endif
 
     return TRUE;
@@ -1439,16 +1368,7 @@ ssize_t break_line(const char *line, ssize_t goal
     char_len = parse_mbchar(line, NULL, NULL);
     line += char_len;
 
-    while (*line != '\0' && (is_blank_mbchar(line)
-#ifndef DISABLE_HELP
-	|| (newln && *line == '\n')
-#endif
-	)) {
-#ifndef DISABLE_HELP
-	if (newln && *line == '\n')
-	    break;
-#endif
-
+    while (*line != '\0' && is_blank_mbchar(line)) {
 	char_len = parse_mbchar(line, NULL, NULL);
 
 	line += char_len;
@@ -1972,7 +1892,6 @@ void do_justify(bool full_justify)
     bool modified_save = openfile->modified;
 
     int kbinput;
-    bool meta_key, func_key;
     const sc *s;
 
     /* Move to the beginning of the current line, so that justifying at
@@ -2287,12 +2206,13 @@ void do_justify(bool full_justify)
 
     /* Display the shortcut list with UnJustify. */
     uncutfunc->desc = unjust_tag;
+    currmenu = MMAIN;
     display_main_list();
 
     /* Now get a keystroke and see if it's unjustify.  If not, put back
      * the keystroke and return. */
-    kbinput = do_input(&meta_key, &func_key, FALSE);
-    s = get_shortcut(MMAIN, &kbinput, &meta_key);
+    kbinput = do_input(FALSE);
+    s = get_shortcut(&kbinput);
 
     if (s && s->scfunc == do_uncut_text) {
 	/* Splice the justify buffer back into the file, but only if we
@@ -2384,7 +2304,6 @@ bool do_int_spell_fix(const char *word)
     char *save_search, *save_replace;
     size_t match_len, current_x_save = openfile->current_x;
     size_t pww_save = openfile->placewewant;
-    bool meta_key = FALSE, func_key = FALSE;
     filestruct *edittop_save = openfile->edittop;
     filestruct *current_save = openfile->current;
 	/* Save where we are. */
@@ -2472,8 +2391,7 @@ bool do_int_spell_fix(const char *word)
 		TRUE,
 #endif
 		MSPELL, word,
-		&meta_key, &func_key,
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 		NULL,
 #endif
 		edit_refresh, _("Edit a replacement")) == -1);
@@ -3113,7 +3031,7 @@ void do_linter(void)
     while ((bytesread = read(lint_fd[0], read_buff_ptr,
 	pipe_buff_size)) > 0) {
 #ifdef DEBUG
-	fprintf(stderr, "text.c:do_linter:%d bytes (%s)\n", bytesread, read_buff_ptr);
+	fprintf(stderr, "text.c:do_linter:%ld bytes (%s)\n", (long)bytesread, read_buff_ptr);
 #endif
 	read_buff_read += bytesread;
 	read_buff_size += pipe_buff_size;
@@ -3170,7 +3088,7 @@ void do_linter(void)
 			    }
 
 #ifdef DEBUG
-			    fprintf(stderr, "text.c:do_lint:Successful parse! %d:%d:%s\n", tmplineno, tmpcolno, message);
+			    fprintf(stderr, "text.c:do_lint:Successful parse! %ld:%ld:%s\n", (long)tmplineno, (long)tmpcolno, message);
 #endif
 			    /* Nice.  We have a lint message we can use. */
 			    parsesuccess++;
@@ -3215,7 +3133,6 @@ void do_linter(void)
     while (1) {
 	ssize_t tmpcol = 1;
 	int kbinput;
-	bool meta_key, func_key;
 
 	if (curlint->colno > 0)
 	    tmpcol = curlint->colno;
@@ -3270,8 +3187,8 @@ void do_linter(void)
 	    bottombars(MLINTER);
 	}
 
-        kbinput = get_kbinput(bottomwin, &meta_key, &func_key);
-	s = get_shortcut(currmenu, &kbinput, &meta_key);
+	kbinput = get_kbinput(bottomwin);
+	s = get_shortcut(&kbinput);
 	tmplint = curlint;
 
 	if (!s)

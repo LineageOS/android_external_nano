@@ -1,4 +1,4 @@
-/* $Id: nano.c 4924 2014-05-28 15:44:11Z bens $ */
+/* $Id: nano.c 5054 2014-07-02 20:29:57Z bens $ */
 /**************************************************************************
  *   nano.c                                                               *
  *                                                                        *
@@ -612,11 +612,11 @@ void finish(void)
     /* Restore the old terminal settings. */
     tcsetattr(0, TCSANOW, &oldterm);
 
-#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
-    if (!no_rcfiles && ISSET(HISTORYLOG))
+#ifndef DISABLE_HISTORIES
+    if (ISSET(HISTORYLOG))
 	save_history();
-    if (!no_rcfiles && ISSET(POS_HISTORY)) {
-	update_poshistory(openfile->filename, openfile->current->lineno, xplustabs()+1);
+    if (ISSET(POS_HISTORY)) {
+	update_poshistory(openfile->filename, openfile->current->lineno, xplustabs() + 1);
 	save_poshistory();
     }
 #endif
@@ -734,7 +734,7 @@ void die_save_file(const char *die_filename
 void window_init(void)
 {
     /* If the screen height is too small, get out. */
-    editwinrows = LINES - 5 + no_more_space() + no_help();
+    editwinrows = LINES - 5 + more_space() + no_help();
     if (COLS < MIN_EDITOR_COLS || editwinrows < MIN_EDITOR_ROWS)
 	die(_("Window size is too small for nano...\n"));
 
@@ -755,10 +755,10 @@ void window_init(void)
 	delwin(bottomwin);
 
     /* Set up the windows. */
-    topwin = newwin(2 - no_more_space(), COLS, 0, 0);
-    edit = newwin(editwinrows, COLS, 2 - no_more_space(), 0);
+    topwin = newwin(2 - more_space(), COLS, 0, 0);
+    edit = newwin(editwinrows, COLS, 2 - more_space(), 0);
     bottomwin = newwin(3 - no_help(), COLS, editwinrows + (2 -
-	no_more_space()), 0);
+	more_space()), 0);
 
     /* Turn the keypad on for the windows, if necessary. */
     if (!ISSET(REBIND_KEYPAD)) {
@@ -856,13 +856,15 @@ void usage(void)
 #ifndef DISABLE_MULTIBUFFER
     print_opt("-F", "--multibuffer", N_("Enable multiple file buffers"));
 #endif
-#ifndef DISABLE_NANORC
 #ifndef NANO_TINY
     print_opt("-G", "--locking",
 	N_("Use (vim-style) lock files"));
+#endif
+#ifndef DISABLE_HISTORIES
     print_opt("-H", "--historylog",
 	N_("Log & read search/replace string history"));
 #endif
+#ifndef DISABLE_NANORC
     print_opt("-I", "--ignorercfiles",
 	N_("Don't look at nanorc files"));
 #endif
@@ -875,7 +877,7 @@ void usage(void)
 	N_("Don't convert files from DOS/Mac format"));
 #endif
     print_opt("-O", "--morespace", N_("Use one more line for editing"));
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
     print_opt("-P", "--poslog",
 	N_("Log & read location of cursor position"));
 #endif
@@ -906,8 +908,8 @@ void usage(void)
     print_opt("-c", "--const", N_("Constantly show cursor position"));
     print_opt("-d", "--rebinddelete",
 	N_("Fix Backspace/Delete confusion problem"));
-#ifndef NANO_TINY
     print_opt("-h", "--help", N_("Show this help text"));
+#ifndef NANO_TINY
     print_opt("-i", "--autoindent",
 	N_("Automatically indent new lines"));
     print_opt("-k", "--cut", N_("Cut from cursor to end of line"));
@@ -924,8 +926,10 @@ void usage(void)
 #endif
     print_opt("-p", "--preserve",
 	N_("Preserve XON (^Q) and XOFF (^S) keys"));
+#ifndef DISABLE_NANORC
     print_opt("-q", "--quiet",
 	N_("Silently ignore startup issues like rc file errors"));
+#endif
 #ifndef DISABLE_WRAPJUSTIFY
     print_opt(_("-r <#cols>"), _("--fill=<#cols>"),
 	N_("Set hard-wrapping point at column #cols"));
@@ -936,10 +940,6 @@ void usage(void)
 #endif
     print_opt("-t", "--tempfile",
 	N_("Auto save on exit, don't prompt"));
-#ifndef NANO_TINY
-    print_opt("-u", "--undo", N_("Allow generic undo [EXPERIMENTAL]"));
-#endif
-
     print_opt("-v", "--view", N_("View mode (read-only)"));
 #ifndef DISABLE_WRAPPING
     print_opt("-w", "--nowrap", N_("Don't hard-wrap long lines"));
@@ -976,6 +976,9 @@ void version(void)
 #endif
 #ifndef DISABLE_HELP
     printf(" --enable-help");
+#endif
+#ifndef DISABLE_HISTORIES
+    printf(" --enable-histories");
 #endif
 #ifndef DISABLE_JUSTIFY
     printf(" --enable-justify");
@@ -1016,6 +1019,9 @@ void version(void)
 #endif
 #ifdef DISABLE_HELP
     printf(" --disable-help");
+#endif
+#ifdef DISABLE_HISTORIES
+    printf(" --disable-histories");
 #endif
 #ifdef DISABLE_JUSTIFY
     printf(" --disable-justify");
@@ -1067,16 +1073,15 @@ void version(void)
 }
 
 /* Return 1 if the MORE_SPACE flag is set, and 0 otherwise.  This is
- * used to calculate the relative screen position while taking this flag
- * into account, since it adds one line to the edit window. */
-int no_more_space(void)
+ * used to calculate the sizes and Y coordinates of the subwindows. */
+int more_space(void)
 {
     return ISSET(MORE_SPACE) ? 1 : 0;
 }
 
 /* Return 2 if the NO_HELP flag is set, and 0 otherwise.  This is used
- * to calculate the relative screen position while taking this flag into
- * account, since it removes two lines from the edit window. */
+ * to calculate the sizes and Y coordinates of the subwindows, because
+ * having NO_HELP adds two lines to the edit window. */
 int no_help(void)
 {
     return ISSET(NO_HELP) ? 2 : 0;
@@ -1090,9 +1095,10 @@ void nano_disabled_msg(void)
 
 /* If the current file buffer has been modified, and the TEMP_FILE flag
  * isn't set, ask whether or not to save the file buffer.  If the
- * TEMP_FILE flag is set, save it unconditionally.  Then, if more than
- * one file buffer is open, close the current file buffer and switch to
- * the next one.  If only one file buffer is open, exit from nano. */
+ * TEMP_FILE flag is set and the current file has a name, save it
+ * unconditionally.  Then, if more than one file buffer is open, close
+ * the current file buffer and switch to the next one.  If only one file
+ * buffer is open, exit from nano. */
 void do_exit(void)
 {
     int i;
@@ -1101,13 +1107,31 @@ void do_exit(void)
      * save. */
     if (!openfile->modified)
 	i = 0;
-    /* If the TEMP_FILE flag is set, pretend the user chose to save. */
-    else if (ISSET(TEMP_FILE))
+    /* If the TEMP_FILE flag is set and the current file has a name,
+     * pretend the user chose to save. */
+    else if (openfile->filename[0] != '\0' && ISSET(TEMP_FILE))
 	i = 1;
     /* Otherwise, ask the user whether or not to save. */
-    else
+    else {
+	/* If the TEMP_FILE flag is set, and the current file doesn't
+	 * have a name, handle it the same way Pico does. */
+	if (ISSET(TEMP_FILE)) {
+	    curs_set(0);
+
+	    /* Warn that the current file has no name. */
+	    statusbar(_("No file name"));
+	    beep();
+
+	    /* Ensure that we see the warning. */
+	    doupdate();
+	    napms(2000);
+
+	    curs_set(1);
+	}
+
 	i = do_yesno_prompt(FALSE,
 		_("Save modified buffer (ANSWERING \"No\" WILL DESTROY CHANGES) ? "));
+    }
 
 #ifdef DEBUG
     dump_filestruct(openfile->fileage);
@@ -1433,11 +1457,9 @@ void do_toggle(int flag)
 #endif
 #ifndef DISABLE_COLOR
 	case NO_COLOR_SYNTAX:
-	    edit_refresh();
-	    break;
 #endif
 	case SOFTWRAP:
-	    total_refresh();
+	    edit_refresh();
 	    break;
     }
 
@@ -1565,11 +1587,10 @@ void terminal_init(void)
 }
 
 /* Read in a character, interpret it as a shortcut or toggle if
- * necessary, and return it.  Set meta_key to TRUE if the character is a
- * meta sequence, set func_key to TRUE if the character is a function key.
+ * necessary, and return it.
  * If allow_funcs is FALSE, don't actually run any functions associated
  * with shortcut keys. */
-int do_input(bool *meta_key, bool *func_key, bool allow_funcs)
+int do_input(bool allow_funcs)
 {
     int input;
 	/* The character we read in. */
@@ -1577,27 +1598,24 @@ int do_input(bool *meta_key, bool *func_key, bool allow_funcs)
 	/* The input buffer. */
     static size_t kbinput_len = 0;
 	/* The length of the input buffer. */
-    bool cut_copy = FALSE;
-	/* Are we cutting or copying text? */
+    bool preserve = FALSE;
+	/* Preserve the contents of the cutbuffer? */
     const sc *s;
     bool have_shortcut;
 
     /* Read in a character. */
-    input = get_kbinput(edit, meta_key, func_key);
+    input = get_kbinput(edit);
 
 #ifndef DISABLE_MOUSE
-    if (allow_funcs) {
-	/* If we got a mouse click and it was on a shortcut, read in the
-	 * shortcut character. */
-	if (*func_key && input == KEY_MOUSE) {
-	    if (do_mouse() == 1)
-		input = get_kbinput(edit, meta_key, func_key);
-	    else {
-		*meta_key = FALSE;
-		*func_key = FALSE;
-		input = ERR;
-	    }
-	}
+    if (func_key && input == KEY_MOUSE) {
+	/* We received a mouse click. */
+	if (do_mouse() == 1)
+	    /* The click was on a shortcut -- read in the character
+	     * that it was converted into. */
+	    input = get_kbinput(edit);
+	else
+	    /* The click was invalid or has been handled -- get out. */
+	    return ERR;
     }
 #endif
 
@@ -1607,7 +1625,7 @@ int do_input(bool *meta_key, bool *func_key, bool allow_funcs)
     }
 
     /* Check for a shortcut in the main list. */
-    s = get_shortcut(MMAIN, &input, meta_key);
+    s = get_shortcut(&input);
 
     /* If we got a shortcut from the main list, or a "universal"
      * edit window shortcut, set have_shortcut to TRUE. */
@@ -1616,11 +1634,11 @@ int do_input(bool *meta_key, bool *func_key, bool allow_funcs)
     /* If we got a non-high-bit control key, a meta key sequence, or a
      * function key, and it's not a shortcut or toggle, throw it out. */
     if (!have_shortcut) {
-	if (is_ascii_cntrl_char(input) || *meta_key || *func_key) {
+	if (is_ascii_cntrl_char(input) || meta_key || func_key) {
 	    statusbar(_("Unknown Command"));
 	    beep();
-	    *meta_key = FALSE;
-	    *func_key = FALSE;
+	    meta_key = FALSE;
+	    func_key = FALSE;
 	    input = ERR;
 	}
     }
@@ -1647,12 +1665,11 @@ int do_input(bool *meta_key, bool *func_key, bool allow_funcs)
 	 * output all the characters in the input buffer if it isn't
 	 * empty.  Note that it should be empty if we're in view
 	 * mode. */
-	 if (have_shortcut || get_key_buffer_len() == 0) {
+	if (have_shortcut || get_key_buffer_len() == 0) {
 #ifndef DISABLE_WRAPPING
 	    /* If we got a shortcut or toggle, and it's not the shortcut
 	     * for verbatim input, turn off prepending of wrapped text. */
-	    if (have_shortcut && (!have_shortcut || s == NULL || s->scfunc !=
-		do_verbatim_input))
+	    if (have_shortcut && s->scfunc != do_verbatim_input)
 		wrap_reset();
 #endif
 
@@ -1678,55 +1695,51 @@ int do_input(bool *meta_key, bool *func_key, bool allow_funcs)
 	}
 
 	if (have_shortcut) {
-	    switch (input) {
-		/* Handle the normal edit-window shortcuts. */
-		default:
-		    /* If the function associated with this shortcut is
-		     * cutting or copying text, indicate this. */
-		    if (s->scfunc == do_cut_text_void
+	    /* If the function associated with this shortcut is
+	     * cutting or copying text, remember this. */
+	    if (s->scfunc == do_cut_text_void
 #ifndef NANO_TINY
-			|| s->scfunc == do_copy_text || s->scfunc ==
-			do_cut_till_end
+		|| s->scfunc == do_copy_text || s->scfunc == do_cut_till_eof
 #endif
-			)
-			cut_copy = TRUE;
+		)
+		preserve = TRUE;
 
-		    if (s->scfunc != 0) {
-			const subnfunc *f = sctofunc((sc *) s);
-			if (ISSET(VIEW_MODE) && f && !f->viewok)
-			    print_view_warning();
-			else {
+	    if (s->scfunc != 0) {
+		const subnfunc *f = sctofunc((sc *) s);
+		if (ISSET(VIEW_MODE) && f && !f->viewok)
+		    print_view_warning();
+		else {
 #ifndef NANO_TINY
-			    if (s->scfunc == do_toggle_void)
-				do_toggle(s->toggle);
-			    else
+		    if (s->scfunc == do_toggle_void) {
+			do_toggle(s->toggle);
+			if (s->toggle != CUT_TO_END)
+			    preserve = TRUE;
+		    } else
 #endif
-			    {
-				s->scfunc();
+		    {
+			/* Execute the function of the shortcut. */
+			s->scfunc();
 #ifndef DISABLE_COLOR
-				if (f && !f->viewok && openfile->syntax != NULL
-					&& openfile->syntax->nmultis > 0) {
-				    reset_multis(openfile->current, FALSE);
-				}
+			if (f && !f->viewok && openfile->syntax != NULL
+				&& openfile->syntax->nmultis > 0)
+			    reset_multis(openfile->current, FALSE);
 #endif
-				if (edit_refresh_needed) {
+			if (edit_refresh_needed) {
 #ifdef DEBUG
-				    fprintf(stderr, "running edit_refresh() as edit_refresh_needed is true\n");
+			    fprintf(stderr, "running edit_refresh() as edit_refresh_needed is true\n");
 #endif
-				    edit_refresh();
-				    edit_refresh_needed = FALSE;
-				}
-			    }
+			    edit_refresh();
+			    edit_refresh_needed = FALSE;
 			}
 		    }
-		    break;
+		}
 	    }
 	}
     }
 
-    /* If we aren't cutting or copying text, blow away the text in the
-     * cutbuffer. */
-    if (!cut_copy)
+    /* If we aren't cutting or copying text, and the key wasn't a toggle,
+     * blow away the text in the cutbuffer upon the next cutting action. */
+    if (!preserve)
 	cutbuffer_reset();
 
     return input;
@@ -1750,8 +1763,12 @@ int do_mouse(void)
     int mouse_x, mouse_y;
     int retval = get_mouseinput(&mouse_x, &mouse_y, TRUE);
 
+    if (retval != 0)
+	/* The click is wrong or already handled. */
+	return retval;
+
     /* We can click on the edit window to move the cursor. */
-    if (retval == 0 && wmouse_trafo(edit, &mouse_y, &mouse_x, FALSE)) {
+    if (wmouse_trafo(edit, &mouse_y, &mouse_x, FALSE)) {
 	bool sameline;
 	    /* Did they click on the line with the cursor?  If they
 	     * clicked on the cursor, we set the mark. */
@@ -1764,20 +1781,21 @@ int do_mouse(void)
 	sameline = (mouse_y == openfile->current_y);
 
 #ifdef DEBUG
-	    fprintf(stderr, "mouse_y = %d, current_y = %d\n", mouse_y, openfile->current_y);
+	fprintf(stderr, "mouse_y = %d, current_y = %ld\n", mouse_y, (long)openfile->current_y);
 #endif
 
+#ifndef NANO_TINY
 	if (ISSET(SOFTWRAP)) {
-	    int i = 0;
+	    size_t i = 0;
 	    for (openfile->current = openfile->edittop;
 		 openfile->current->next && i < mouse_y;
 		 openfile->current = openfile->current->next, i++) {
 		openfile->current_y = i;
 		i += strlenpt(openfile->current->data) / COLS;
 	    }
-
 #ifdef DEBUG
-	    fprintf(stderr, "do_mouse(): moving to current_y = %d, i %d\n", openfile->current_y, i);
+	    fprintf(stderr, "do_mouse(): moving to current_y = %ld, index i = %lu\n",
+			(long)openfile->current_y, (unsigned long)i);
 	    fprintf(stderr, "            openfile->current->data = \"%s\"\n", openfile->current->data);
 #endif
 
@@ -1785,18 +1803,19 @@ int do_mouse(void)
 		openfile->current = openfile->current->prev;
 		openfile->current_x = actual_x(openfile->current->data, mouse_x + (mouse_y - openfile->current_y) * COLS);
 #ifdef DEBUG
-	    fprintf(stderr, "do_mouse(): i > mouse_y, mouse_x = %d, current_x to = %d\n", mouse_x, openfile->current_x);
+		fprintf(stderr, "do_mouse(): i > mouse_y, mouse_x = %d, current_x to = %lu\n",
+			mouse_x, (unsigned long)openfile->current_x);
 #endif
 	    } else {
 	        openfile->current_x = actual_x(openfile->current->data, mouse_x);
 #ifdef DEBUG
-	    fprintf(stderr, "do_mouse(): i <= mouse_y, mouse_x = %d, setting current_x to = %d\n", mouse_x, openfile->current_x);
+		fprintf(stderr, "do_mouse(): i <= mouse_y, mouse_x = %d, setting current_x to = %lu\n",
+			mouse_x, (unsigned long)openfile->current_x);
 #endif
 	    }
-
-	    openfile->placewewant = xplustabs();
-
-	} else {
+	} else
+#endif /* NANO_TINY */
+	{
 	    /* Move to where the click occurred. */
 	    for (; openfile->current_y < mouse_y && openfile->current !=
 		   openfile->filebot; openfile->current_y++)
@@ -1807,9 +1826,9 @@ int do_mouse(void)
 
 	    openfile->current_x = actual_x(openfile->current->data,
 		get_page_start(xplustabs()) + mouse_x);
-
-	    openfile->placewewant = xplustabs();
 	}
+
+	openfile->placewewant = xplustabs();
 
 #ifndef NANO_TINY
 	/* Clicking where the cursor is toggles the mark, as does
@@ -1817,12 +1836,16 @@ int do_mouse(void)
 	 * the line. */
 	if (sameline && openfile->current_x == current_x_save)
 	    do_mark();
+	else
 #endif
+	    /* The cursor moved; clean the cutbuffer on the next cut. */
+	    cutbuffer_reset();
 
 	edit_redraw(current_save, pww_save);
     }
 
-    return retval;
+    /* No more handling is needed. */
+    return 2;
 }
 #endif /* !DISABLE_MOUSE */
 
@@ -1830,7 +1853,7 @@ int do_mouse(void)
 void alloc_multidata_if_needed(filestruct *fileptr)
 {
     if (!fileptr->multidata)
-	fileptr->multidata = (short *) nmalloc(openfile->syntax->nmultis * sizeof(short));
+	fileptr->multidata = (short *)nmalloc(openfile->syntax->nmultis * sizeof(short));
 }
 
 /* Precalculate the multi-line start and end regex info so we can
@@ -1865,7 +1888,7 @@ void precalc_multicolorinfo(void)
 		int startx = 0;
 		int nostart = 0;
 #ifdef DEBUG
-		fprintf(stderr, "working on lineno %lu... ", (unsigned long) fileptr->lineno);
+		fprintf(stderr, "working on lineno %ld... ", (long)fileptr->lineno);
 #endif
 
 		alloc_multidata_if_needed(fileptr);
@@ -1882,7 +1905,7 @@ void precalc_multicolorinfo(void)
 		     * encompassed, which should speed up rendering later. */
 		    startx += startmatch.rm_eo;
 #ifdef DEBUG
-		    fprintf(stderr, "start found at pos %d... ", startx);
+		    fprintf(stderr, "start found at pos %lu... ", (unsigned long)startx);
 #endif
 
 		    /* Look first on this line for an end. */
@@ -1899,7 +1922,7 @@ void precalc_multicolorinfo(void)
 		    /* Nice, we didn't find the end regex on this line.  Let's start looking for it. */
 		    for (endptr = fileptr->next; endptr != NULL; endptr = endptr->next) {
 #ifdef DEBUG
-			fprintf(stderr, "\nadvancing to line %lu to find end... ", (unsigned long) endptr->lineno);
+			fprintf(stderr, "\nadvancing to line %ld to find end... ", (long)endptr->lineno);
 #endif
 			/* Check for keyboard input, again. */
 			if ((cur_check = time(NULL)) - last_check > 1) {
@@ -1908,7 +1931,7 @@ void precalc_multicolorinfo(void)
 				goto precalc_cleanup;
 			}
 			if (regexec(tmpcolor->end, endptr->data, 1, &endmatch, 0) == 0)
-			   break;
+			    break;
 		    }
 
 		    if (endptr == NULL) {
@@ -1925,24 +1948,24 @@ void precalc_multicolorinfo(void)
 		     * the lines in between and the end properly. */
 		    fileptr->multidata[tmpcolor->id] |= CENDAFTER;
 #ifdef DEBUG
-		    fprintf(stderr, "marking line %lu as CENDAFTER\n", (unsigned long) fileptr->lineno);
+		    fprintf(stderr, "marking line %ld as CENDAFTER\n", (long)fileptr->lineno);
 #endif
 		    for (fileptr = fileptr->next; fileptr != endptr; fileptr = fileptr->next) {
 			alloc_multidata_if_needed(fileptr);
 			fileptr->multidata[tmpcolor->id] = CWHOLELINE;
 #ifdef DEBUG
-			fprintf(stderr, "marking intermediary line %lu as CWHOLELINE\n", (unsigned long) fileptr->lineno);
+			fprintf(stderr, "marking intermediary line %ld as CWHOLELINE\n", (long)fileptr->lineno);
 #endif
 		    }
 		    alloc_multidata_if_needed(endptr);
 		    fileptr->multidata[tmpcolor->id] |= CBEGINBEFORE;
 #ifdef DEBUG
-		    fprintf(stderr, "marking line %lu as CBEGINBEFORE\n", (unsigned long) fileptr->lineno);
+		    fprintf(stderr, "marking line %ld as CBEGINBEFORE\n", (long)fileptr->lineno);
 #endif
 		    /* Skip to the end point of the match. */
 		    startx = endmatch.rm_eo;
 #ifdef DEBUG
-		    fprintf(stderr, "jumping to line %lu pos %d to continue\n", (unsigned long) fileptr->lineno, startx);
+		    fprintf(stderr, "jumping to line %ld pos %lu to continue\n", (long)fileptr->lineno, (unsigned long)startx);
 #endif
 		}
 		if (nostart && startx == 0) {
@@ -1965,15 +1988,22 @@ precalc_cleanup:
  * TRUE. */
 void do_output(char *output, size_t output_len, bool allow_cntrls)
 {
-    size_t current_len, orig_lenpt = 0, i = 0;
+    size_t current_len, i = 0;
+#ifndef NANO_TINY
+    size_t orig_lenpt = 0;
+#endif
+
     char *char_buf = charalloc(mb_cur_max());
     int char_buf_len;
 
     assert(openfile->current != NULL && openfile->current->data != NULL);
 
     current_len = strlen(openfile->current->data);
+
+#ifndef NANO_TINY
     if (ISSET(SOFTWRAP))
 	orig_lenpt = strlenpt(openfile->current->data);
+#endif
 
     while (i < output_len) {
 	/* If allow_cntrls is TRUE, convert nulls and newlines
@@ -2042,7 +2072,7 @@ void do_output(char *output, size_t output_len, bool allow_cntrls)
 #ifndef DISABLE_WRAPPING
 	/* If we're wrapping text, we need to call edit_refresh(). */
 	if (!ISSET(NO_WRAP))
-	    if (do_wrap(openfile->current, FALSE))
+	    if (do_wrap(openfile->current))
 		edit_refresh_needed = TRUE;
 #endif
 
@@ -2054,11 +2084,13 @@ void do_output(char *output, size_t output_len, bool allow_cntrls)
 #endif
     }
 
-    /* Well we might also need a full refresh if we've changed the
+#ifndef NANO_TINY
+    /* Well, we might also need a full refresh if we've changed the
      * line length to be a new multiple of COLS. */
     if (ISSET(SOFTWRAP) && edit_refresh_needed == FALSE)
-	if (strlenpt(openfile->current->data) / COLS  != orig_lenpt / COLS)
+	if (strlenpt(openfile->current->data) / COLS != orig_lenpt / COLS)
 	    edit_refresh_needed = TRUE;
+#endif
 
     free(char_buf);
 
@@ -2077,10 +2109,8 @@ void do_output(char *output, size_t output_len, bool allow_cntrls)
 int main(int argc, char **argv)
 {
     int optchr;
-    ssize_t startline = 1;
-	/* Line to try and start at. */
-    ssize_t startcol = 1;
-	/* Column to try and start at. */
+    ssize_t startline = 0, startcol = 0;
+	/* Target line and column when specified on the command line. */
 #ifndef DISABLE_WRAPJUSTIFY
     bool fill_used = FALSE;
 	/* Was the fill option used? */
@@ -2191,11 +2221,11 @@ int main(int argc, char **argv)
     while ((optchr =
 #ifdef HAVE_GETOPT_LONG
 	getopt_long(argc, argv,
-		"ABC:DEFGHIKLNOPQ:RST:UVWY:abcdefghijklmno:pqr:s:tuvwxz$",
+		"ABC:DEFGHIKLNOPQ:RST:UVWY:abcdefghijklmno:pqr:s:tvwxz$",
 		long_options, NULL)
 #else
 	getopt(argc, argv,
-		"ABC:DEFGHIKLNOPQ:RST:UVWY:abcdefghijklmno:pqr:s:tuvwxz$")
+		"ABC:DEFGHIKLNOPQ:RST:UVWY:abcdefghijklmno:pqr:s:tvwxz$")
 #endif
 		) != -1) {
 	switch (optchr) {
@@ -2231,15 +2261,17 @@ int main(int argc, char **argv)
 		SET(MULTIBUFFER);
 		break;
 #endif
-#ifndef DISABLE_NANORC
 #ifndef NANO_TINY
 	    case 'G':
 		SET(LOCKING);
 		break;
+#endif
+#ifndef DISABLE_HISTORIES
 	    case 'H':
 		SET(HISTORYLOG);
 		break;
 #endif
+#ifndef DISABLE_NANORC
 	    case 'I':
 		no_rcfiles = TRUE;
 		break;
@@ -2258,7 +2290,7 @@ int main(int argc, char **argv)
 	    case 'O':
 		SET(MORE_SPACE);
 		break;
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 	    case 'P':
 		SET(POS_HISTORY);
 		break;
@@ -2334,9 +2366,11 @@ int main(int argc, char **argv)
 	    case 'p':
 		SET(PRESERVE);
 		break;
+#ifndef DISABLE_NANORC
 	    case 'q':
 		SET(QUIET);
 		break;
+#endif
 #ifndef DISABLE_WRAPJUSTIFY
 	    case 'r':
 		if (!parse_num(optarg, &wrap_at)) {
@@ -2355,11 +2389,6 @@ int main(int argc, char **argv)
 	    case 't':
 		SET(TEMP_FILE);
 		break;
-#ifndef NANO_TINY
-	    case 'u':
-		SET(UNDOABLE);
-		break;
-#endif
 	    case 'v':
 		SET(VIEW_MODE);
 		break;
@@ -2396,14 +2425,16 @@ int main(int argc, char **argv)
     if (*(tail(argv[0])) == 'r')
 	SET(RESTRICTED);
 
-    /* If we're using restricted mode, disable suspending, backups, and
-     * reading rcfiles, since they all would allow reading from or
-     * writing to files not specified on the command line. */
+    /* If we're using restricted mode, disable suspending, backups,
+     * rcfiles, and history files, since they all would allow reading
+     * from or writing to files not specified on the command line. */
     if (ISSET(RESTRICTED)) {
 	UNSET(SUSPEND);
 	UNSET(BACKUP_FILE);
 #ifndef DISABLE_NANORC
 	no_rcfiles = TRUE;
+	UNSET(HISTORYLOG);
+	UNSET(POS_HISTORY);
 #endif
     }
 
@@ -2501,7 +2532,7 @@ int main(int argc, char **argv)
 
 #ifndef DISABLE_WRAPPING
     /* Overwrite an rcfile "set nowrap" or --disable-wrapping-as-root
-       if a --fill option was given on the command line. */
+     * if a --fill option was given on the command line. */
     if (fill_used)
 	UNSET(NO_WRAP);
 #endif
@@ -2511,24 +2542,24 @@ int main(int argc, char **argv)
     if (ISSET(BOLD_TEXT))
 	hilite_attribute = A_BOLD;
 
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
     /* Set up the search/replace history. */
     history_init();
-#ifndef DISABLE_NANORC
-    if (!no_rcfiles) {
-	if (ISSET(HISTORYLOG) || ISSET(POS_HISTORY)) {
-	    if (check_dotnano() == 0) {
-		UNSET(HISTORYLOG);
-		UNSET(POS_HISTORY);
-	    }
+    /* Verify that the home directory and ~/.nano subdir exist. */
+    if (ISSET(HISTORYLOG) || ISSET(POS_HISTORY)) {
+	get_homedir();
+	if (homedir == NULL || check_dotnano() == 0) {
+	    UNSET(HISTORYLOG);
+	    UNSET(POS_HISTORY);
 	}
-	if (ISSET(HISTORYLOG))
-	    load_history();
-	if (ISSET(POS_HISTORY))
-	    load_poshistory();
     }
-#endif /* !DISABLE_NANORC */
+    if (ISSET(HISTORYLOG))
+	load_history();
+    if (ISSET(POS_HISTORY))
+	load_poshistory();
+#endif /* !DISABLE_HISTORIES */
 
+#ifndef NANO_TINY
     /* Set up the backup directory (unless we're using restricted mode,
      * in which case backups are disabled, since they would allow
      * reading from or writing to files not specified on the command
@@ -2536,7 +2567,7 @@ int main(int argc, char **argv)
      * that backup files will be saved there. */
     if (!ISSET(RESTRICTED))
 	init_backup_dir();
-#endif /* !NANO_TINY */
+#endif
 
 #ifndef DISABLE_OPERATINGDIR
     /* Set up the operating directory.  This entails chdir()ing there,
@@ -2692,7 +2723,7 @@ int main(int argc, char **argv)
      * new buffers. */
     {
 	int i = optind + 1;
-	ssize_t iline = 1, icol = 1;
+	ssize_t iline = 0, icol = 0;
 
 	for (; i < argc; i++) {
 	    /* If there's a +LINE or +LINE,COLUMN flag here, it is
@@ -2704,13 +2735,13 @@ int main(int argc, char **argv)
 	    else {
 		open_buffer(argv[i], FALSE);
 
-		if (iline > 1 || icol > 1) {
+		if (iline > 0 || icol > 0) {
 		    do_gotolinecolumn(iline, icol, FALSE, FALSE, FALSE,
 			FALSE);
 		    iline = 1;
 		    icol = 1;
 		}
-#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
+#ifndef DISABLE_HISTORIES
                   else {
 		    /* See if we have a POS history to use if we haven't overridden it. */
 		    ssize_t savedposline, savedposcol;
@@ -2754,10 +2785,10 @@ int main(int argc, char **argv)
 	    precalc_multicolorinfo();
 #endif
 
-    if (startline > 1 || startcol > 1)
+    if (startline > 0 || startcol > 0)
 	do_gotolinecolumn(startline, startcol, FALSE, FALSE, FALSE,
 		FALSE);
-#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
+#ifndef DISABLE_HISTORIES
     else {
 	/* See if we have a POS history to use if we haven't overridden it. */
 	ssize_t savedposline, savedposcol;
@@ -2771,8 +2802,6 @@ int main(int argc, char **argv)
     display_buffer();
 
     while (TRUE) {
-	bool meta_key, func_key;
-
 	/* Make sure the cursor is in the edit window. */
 	reset_cursor();
 	wnoutrefresh(edit);
@@ -2801,7 +2830,7 @@ int main(int argc, char **argv)
         currmenu = MMAIN;
 
 	/* Read in and interpret characters. */
-	do_input(&meta_key, &func_key, TRUE);
+	do_input(TRUE);
     }
 
     /* We should never get here. */

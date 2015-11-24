@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sat May 10 22:54:14 2014 -->
+<!-- CreationDate: Wed Jul  2 22:42:47 2014 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -117,8 +117,8 @@ spaces.</p>
 <p style="margin-left:11%;"><b>&minus;F
 (&minus;&minus;multibuffer)</b></p>
 
-<p style="margin-left:22%;">Enable multiple file buffers,
-if available.</p>
+<p style="margin-left:22%;">Enable multiple file buffers
+(if support for them has been compiled in).</p>
 
 <p style="margin-left:11%;"><b>&minus;G
 (&minus;&minus;locking)</b></p>
@@ -130,15 +130,14 @@ when editing files.</p>
 (&minus;&minus;historylog)</b></p>
 
 <p style="margin-left:22%;">Log search and replace strings
-to <i>~/.nano_history</i>, so they can be retrieved in later
-sessions, if <i>nanorc</i> support is available.</p>
+to <i>~/.nano/search_history</i>, so they can be retrieved
+in later sessions.</p>
 
 <p style="margin-left:11%;"><b>&minus;I
 (&minus;&minus;ignorercfiles)</b></p>
 
-<p style="margin-left:22%;">Don&rsquo;t look at
-<i>SYSCONFDIR/nanorc</i> or <i>~/.nanorc</i>, if
-<i>nanorc</i> support is available.</p>
+<p style="margin-left:22%;">Don&rsquo;t look at the
+system&rsquo;s <b>nanorc</b> nor at <b>~/.nanorc</b>.</p>
 
 <p style="margin-left:11%;"><b>&minus;K
 (&minus;&minus;rebindkeypad)</b></p>
@@ -187,13 +186,13 @@ stands for a Tab.</p>
 
 <p style="margin-left:22%;">Restricted mode: don&rsquo;t
 read or write to any file not specified on the command line;
-don&rsquo;t read any <i>nanorc</i> files; don&rsquo;t allow
-suspending; don&rsquo;t allow a file to be appended to,
-prepended to, or saved under a different name if it already
-has one; don&rsquo;t use backup files nor spell checking.
-This restricted mode is also accessible by invoking
-<b>nano</b> with any name beginning with &rsquo;r&rsquo;
-(e.g. &quot;rnano&quot;).</p>
+don&rsquo;t read any <i>nanorc</i> files nor history files;
+don&rsquo;t allow suspending nor spell checking; don&rsquo;t
+allow a file to be appended to, prepended to, or saved under
+a different name if it already has one; and don&rsquo;t use
+backup files. This restricted mode is also accessible by
+invoking <b>nano</b> with any name beginning with
+&rsquo;r&rsquo; (e.g. &quot;rnano&quot;).</p>
 
 <p style="margin-left:11%;"><b>&minus;S
 (&minus;&minus;smooth)</b></p>
@@ -229,12 +228,12 @@ and exit.</p>
 accurately by treating punctuation characters as part of a
 word.</p>
 
-<p style="margin-left:11%;"><b>&minus;Y</b> <i>str</i>
-<b>(&minus;&minus;syntax=</b><i>str</i><b>)</b></p>
+<p style="margin-left:11%;"><b>&minus;Y</b> <i>name</i>
+<b>(&minus;&minus;syntax=</b><i>name</i><b>)</b></p>
 
-<p style="margin-left:22%;">Specify a specific syntax
-highlighting from the <i>nanorc</i> to use, if
-available.</p>
+<p style="margin-left:22%;">Specify the name of the syntax
+highlighting to use from among the ones defined in the
+<i>nanorc</i> files.</p>
 
 <p style="margin-left:11%;"><b>&minus;c
 (&minus;&minus;const)</b></p>
@@ -304,8 +303,9 @@ sensitive data to disk first.</p>
 <p style="margin-left:11%;"><b>&minus;o</b> <i>dir</i>
 <b>(&minus;&minus;operatingdir=</b><i>dir</i><b>)</b></p>
 
-<p style="margin-left:22%;">Set operating directory. Makes
-<b>nano</b> set up something similar to a chroot.</p>
+<p style="margin-left:22%;">Set the operating directory.
+This makes <b>nano</b> set up something similar to a
+chroot.</p>
 
 <p style="margin-left:11%;"><b>&minus;p
 (&minus;&minus;preserve)</b></p>
@@ -318,7 +318,7 @@ terminal.</p>
 (&minus;&minus;quiet)</b></p>
 
 <p style="margin-left:22%;">Do not report errors in the
-<i>nanorc</i> file nor ask them to be acknowledged by
+<i>nanorc</i> files nor ask them to be acknowledged by
 pressing Enter at startup.</p>
 
 <p style="margin-left:11%;"><b>&minus;r</b> <i>number</i>
@@ -344,13 +344,6 @@ checker command.</p>
 <p style="margin-left:22%;">Always save changed buffer
 without prompting. Same as Pico&rsquo;s <b>&minus;t</b>
 option.</p>
-
-<p style="margin-left:11%;"><b>&minus;u
-(&minus;&minus;undo)</b></p>
-
-<p style="margin-left:22%;">Enable the experimental
-generic-purpose undo/redo code. The default undo and redo
-shortcuts are Meta-U and Meta-E, respectively.</p>
 
 <p style="margin-left:11%;"><b>&minus;v
 (&minus;&minus;view)</b></p>
@@ -400,10 +393,11 @@ Pico.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>nano</b>
-will read initialization files in the following order:
-<i>SYSCONFDIR/nanorc</i>, then <i>~/.nanorc</i>. Please see
-<b>nanorc(5)</b> and the example file <b>nanorc.sample</b>,
-both of which should be provided with <b>nano</b>.</p>
+will read initialization files in the following order: the
+system&rsquo;s <b>nanorc</b> (if it exists), and then the
+user&rsquo;s <b>~/.nanorc</b> (if it exists). Please see
+<b>nanorc</b>(5) for more information on the possible
+contents of those files.</p>
 
 <h2>NOTES
 <a name="NOTES"></a>
@@ -412,7 +406,7 @@ both of which should be provided with <b>nano</b>.</p>
 
 <p style="margin-left:11%; margin-top: 1em">If no
 alternative spell checker command is specified on the
-command line or in one of the <i>nanorc</i> files,
+command line nor in one of the <i>nanorc</i> files,
 <b>nano</b> will check the <b>SPELL</b> environment variable
 for one.</p>
 

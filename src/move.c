@@ -1,4 +1,4 @@
-/* $Id: move.c 4894 2014-05-16 10:34:05Z bens $ */
+/* $Id: move.c 5013 2014-06-23 18:20:12Z bens $ */
 /**************************************************************************
  *   move.c                                                               *
  *                                                                        *
@@ -55,7 +55,10 @@ void do_page_up(void)
     /* If there's less than a page of text left on the screen, put the
      * cursor at the beginning of the first line of the file, and then
      * update the edit window. */
-    if (openfile->current->lineno == 1 || (!ISSET(SOFTWRAP) &&
+    if (openfile->current->lineno == 1 || (
+#ifndef NANO_TINY
+	!ISSET(SOFTWRAP) &&
+#endif
 	openfile->current->lineno <= editwinrows - 2)) {
 	do_first_line();
 	return;
@@ -63,7 +66,6 @@ void do_page_up(void)
 
     /* If we're not in smooth scrolling mode, put the cursor at the
      * beginning of the top line of the edit window, as Pico does. */
-
 #ifndef NANO_TINY
     if (!ISSET(SMOOTH_SCROLL)) {
 #endif
@@ -76,13 +78,15 @@ void do_page_up(void)
     for (i = editwinrows - 2; i - skipped > 0 && openfile->current !=
 	openfile->fileage; i--) {
 	openfile->current = openfile->current->prev;
+#ifndef NANO_TINY
 	if (ISSET(SOFTWRAP) && openfile->current) {
 	    skipped += strlenpt(openfile->current->data) / COLS;
 #ifdef DEBUG
-    fprintf(stderr, "do_page_up: i = %d, skipped = %d based on line %lu len %d\n",
-	i, skipped, (unsigned long) openfile->current->lineno, strlenpt(openfile->current->data));
+	    fprintf(stderr, "do_page_up: i = %d, skipped = %d based on line %ld len %lu\n",
+			i, skipped, (long)openfile->current->lineno, (unsigned long)strlenpt(openfile->current->data));
 #endif
 	}
+#endif
     }
 
     openfile->current_x = actual_x(openfile->current->data,
@@ -90,7 +94,7 @@ void do_page_up(void)
 
 #ifdef DEBUG
     fprintf(stderr, "do_page_up: openfile->current->lineno = %lu, skipped = %d\n",
-	(unsigned long) openfile->current->lineno, skipped);
+	(unsigned long)openfile->current->lineno, skipped);
 #endif
 
     /* Scroll the edit window up a page. */
@@ -126,7 +130,7 @@ void do_page_down(void)
 	openfile->filebot; i--) {
 	openfile->current = openfile->current->next;
 #ifdef DEBUG
-    fprintf(stderr, "do_page_down: moving to line %lu\n", (unsigned long) openfile->current->lineno);
+	fprintf(stderr, "do_page_down: moving to line %lu\n", (unsigned long)openfile->current->lineno);
 #endif
 
     }
@@ -514,12 +518,12 @@ void do_up(
      * smooth scrolling mode, or up half a page if we're not.  If
      * scroll_only is TRUE, scroll the edit window up one line
      * unconditionally. */
-    if (openfile->current_y == 0 || (ISSET(SOFTWRAP) && openfile->edittop->lineno == openfile->current->next->lineno)
+    if (openfile->current_y == 0
 #ifndef NANO_TINY
-	|| scroll_only
+	|| (ISSET(SOFTWRAP) && openfile->edittop->lineno == openfile->current->next->lineno) || scroll_only
 #endif
 	)
-	edit_scroll(UP_DIR,
+	edit_scroll(UPWARD,
 #ifndef NANO_TINY
 		(ISSET(SMOOTH_SCROLL) || scroll_only) ? 1 :
 #endif
@@ -612,7 +616,7 @@ void do_down(
 	if (amount < 1 || scroll_only)
 	    amount = 1;
 #endif
-	edit_scroll(DOWN_DIR,
+	edit_scroll(DOWNWARD,
 #ifndef NANO_TINY
 		(ISSET(SMOOTH_SCROLL) || scroll_only) ? amount :
 #endif
@@ -623,7 +627,11 @@ void do_down(
      * we were on before and the line we're on now.  The former needs to
      * be redrawn if we're not on the first page, and the latter needs
      * to be drawn unconditionally. */
-    if (ISSET(SOFTWRAP) || openfile->current_y < editwinrows - 1) {
+    if (openfile->current_y < editwinrows - 1
+#ifndef NANO_TINY
+	|| ISSET(SOFTWRAP)
+#endif
+	) {
 	if (need_vertical_update(0))
 	    update_line(openfile->current->prev, 0);
 	update_line(openfile->current, openfile->current_x);

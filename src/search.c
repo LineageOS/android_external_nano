@@ -1,4 +1,4 @@
-/* $Id: search.c 4921 2014-05-28 14:34:11Z bens $ */
+/* $Id: search.c 5052 2014-07-02 19:12:38Z bens $ */
 /**************************************************************************
  *   search.c                                                             *
  *                                                                        *
@@ -32,7 +32,7 @@
 
 static bool search_last_line = FALSE;
 	/* Have we gone past the last line while searching? */
-#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
+#ifndef DISABLE_HISTORIES
 static bool history_changed = FALSE;
 	/* Have any of the history lists changed? */
 #endif
@@ -137,8 +137,6 @@ int search_init(bool replacing, bool use_answer)
 {
     int i = 0;
     char *buf;
-    sc *s;
-    bool meta_key = FALSE, func_key = FALSE;
     static char *backupstring = NULL;
 	/* The search string we'll be using. */
 
@@ -177,8 +175,7 @@ int search_init(bool replacing, bool use_answer)
 	TRUE,
 #endif
 	replacing ? MREPLACE : MWHEREIS, backupstring,
-	&meta_key, &func_key,
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 	&search_history,
 #endif
 	/* TRANSLATORS: This is the main search prompt. */
@@ -216,13 +213,7 @@ int search_init(bool replacing, bool use_answer)
 	statusbar(_("Cancelled"));
 	return -1;
     } else {
-	void (*func)(void) = NULL;
-
-	for  (s = sclist; s != NULL; s = s->next)
-	    if ((s->menu & currmenu) && i == s->seq) {
-	        func = s->scfunc;
-		break;
-	    }
+	functionptrtype func = func_from_key(&i);
 
 	if (i == -2 || i == 0 ) {
 #ifdef HAVE_REGEX_H
@@ -249,7 +240,7 @@ int search_init(bool replacing, bool use_answer)
 		backupstring = mallocstrcpy(backupstring, answer);
 		return 1;
 #endif
-	} else if (func == do_replace || func == no_replace_void) {
+	} else if (func == do_replace || func == flip_replace_void) {
 		backupstring = mallocstrcpy(backupstring, answer);
 		return -2;	/* Call the opposite search function. */
 	} else if (func == do_gotolinecolumn_void) {
@@ -286,7 +277,6 @@ bool findnextstr(
     ssize_t current_y_find = openfile->current_y;
     filestruct *fileptr = openfile->current;
     const char *rev_start = fileptr->data, *found = NULL;
-    const subnfunc *f;
     time_t lastkbcheck = time(NULL);
 
     /* rev_start might end up 1 character before the start or after the
@@ -305,9 +295,11 @@ bool findnextstr(
     enable_nodelay();
     while (TRUE) {
 	if (time(NULL) - lastkbcheck > 1) {
+	    int input = parse_kbinput(edit);
+
 	    lastkbcheck = time(NULL);
-	    f = getfuncfromkey(edit);
-	    if (f && f->scfunc == do_cancel) {
+
+	    if (input && func_from_key(&input) == do_cancel) {
 		statusbar(_("Cancelled"));
 		return FALSE;
 	    }
@@ -474,7 +466,7 @@ void do_search(void)
     else
 	last_search = mallocstrcpy(last_search, answer);
 
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
     /* If answer is not "", add this search string to the search history
      * list. */
     if (answer[0] != '\0')
@@ -910,7 +902,6 @@ void do_replace(void)
 {
     filestruct *edittop_save, *begin;
     size_t begin_x, pww_save;
-    bool meta_key = FALSE, func_key = FALSE;
     ssize_t numreplaced;
     int i;
 
@@ -940,7 +931,7 @@ void do_replace(void)
     /* If answer is not "", add answer to the search history list and
      * copy answer into last_search. */
     if (answer[0] != '\0') {
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 	update_history(&search_history, answer);
 #endif
 	last_search = mallocstrcpy(last_search, answer);
@@ -953,14 +944,13 @@ void do_replace(void)
 	TRUE,
 #endif
 	MREPLACEWITH, last_replace,
-	&meta_key, &func_key,
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 	&replace_history,
 #endif
 	/* TRANSLATORS: This is a prompt. */
 	edit_refresh, _("Replace with"));
 
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
     /* Add this replace string to the replace history list.  i == 0
      * means that the string is not "". */
     if (i == 0)
@@ -1027,11 +1017,9 @@ void goto_line_posx(ssize_t line, size_t pos_x)
 void do_gotolinecolumn(ssize_t line, ssize_t column, bool use_answer,
 	bool interactive, bool save_pos, bool allow_update)
 {
-    bool meta_key = FALSE, func_key = FALSE;
-    const sc *s;
-
     if (interactive) {
 	char *ans = mallocstrcpy(NULL, answer);
+	functionptrtype func;
 
 	/* Ask for the line and column. */
 	int i = do_prompt(FALSE,
@@ -1039,8 +1027,7 @@ void do_gotolinecolumn(ssize_t line, ssize_t column, bool use_answer,
 		TRUE,
 #endif
 		MGOTOLINE, use_answer ? ans : "",
-		&meta_key, &func_key,
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 		NULL,
 #endif
 		/* TRANSLATORS: This is a prompt. */
@@ -1055,9 +1042,9 @@ void do_gotolinecolumn(ssize_t line, ssize_t column, bool use_answer,
 	    return;
 	}
 
-	s = get_shortcut(currmenu, &i, &meta_key);
+	func = func_from_key(&i);
 
-	if (s && s->scfunc == gototext_void) {
+	if (func == gototext_void) {
 	    /* Keep answer up on the statusbar. */
 	    search_init(TRUE, TRUE);
 
@@ -1304,14 +1291,14 @@ void do_find_bracket(void)
     free(bracket_set);
     free(found_ch);
 }
+#endif /* !NANO_TINY */
 
-#ifndef DISABLE_NANORC
+#ifndef DISABLE_HISTORIES
 /* Indicate whether any of the history lists have changed. */
 bool history_has_changed(void)
 {
     return history_changed;
 }
-#endif
 
 /* Initialize the search and replace history lists. */
 void history_init(void)
@@ -1408,10 +1395,8 @@ void update_history(filestruct **h, const char *s)
     *hbot = (*hbot)->next;
     (*hbot)->data = mallocstrcpy(NULL, "");
 
-#ifndef DISABLE_NANORC
     /* Indicate that the history's been changed. */
     history_changed = TRUE;
-#endif
 
     /* Set the current position in the list to the bottom. */
     *h = *hbot;
@@ -1510,4 +1495,4 @@ char *get_history_completion(filestruct **h, const char *s, size_t len)
     return (char *)s;
 }
 #endif /* !DISABLE_TABCOMP */
-#endif /* !NANO_TINY */
+#endif /* !DISABLE_HISTORIES */

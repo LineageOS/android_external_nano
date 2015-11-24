@@ -104,18 +104,18 @@ File: nano.info,  Node: Command Line Options,  Prev: Overview,  Up: Introduction
      Convert typed tabs to spaces.
 
 '-F, --multibuffer'
-     Enable multiple file buffers, if available.
+     Enable multiple file buffers (if support for them has been compiled
+     in).
 
 '-G, --locking'
      Enable vim-style file locking when editing files.
 
 '-H, --historylog'
-     Log search and replace strings to ~/.nano_history, so they can be
-     retrieved in later sessions, if nanorc support is available.
+     Log search and replace strings to ~/.nano/search_history, so they
+     can be retrieved in later sessions.
 
 '-I, --ignorercfiles'
-     Don't look at SYSCONFDIR/nanorc or ~/.nanorc, if nanorc support is
-     available.
+     Don't look at the system's nanorc file nor at the user's ~/.nanorc.
 
 '-K, --rebindkeypad'
      Interpret the numeric keypad keys so that they all work properly.
@@ -132,8 +132,8 @@ File: nano.info,  Node: Command Line Options,  Prev: Overview,  Up: Introduction
      Use the blank line below the titlebar as extra editing space.
 
 '-P, --poslog'
-     Log and later read back the location of the cursor and place it
-     there again.
+     Log for each file the last location of the cursor, and read it back
+     upon reopening the file and place it there again.
 
 '-Q <str>, --quotestr=<str>'
      Set the quoting string for justifying.  The default value is
@@ -146,12 +146,12 @@ File: nano.info,  Node: Command Line Options,  Prev: Overview,  Up: Introduction
 
 '-R, --restricted'
      Restricted mode: don't read or write to any file not specified on
-     the command line; don't read any nanorc files; don't allow
-     suspending; don't allow a file to be appended to, prepended to, or
-     saved under a different name if it already has one; don't use
-     backup files nor spell checking.  This restricted mode is also
-     accessible by invoking 'nano' with any name beginning with 'r'
-     (e.g.  "rnano").
+     the command line; don't read any nanorc files nor history files;
+     don't allow suspending nor spell checking; don't allow a file to be
+     appended to, prepended to, or saved under a different name if it
+     already has one; and don't use backup files.  This restricted mode
+     is also accessible by invoking 'nano' with any name beginning with
+     'r' (e.g.  "rnano").
 
 '-S, --smooth'
      Enable smooth scrolling.  Text will scroll line-by-line, instead of
@@ -172,9 +172,9 @@ File: nano.info,  Node: Command Line Options,  Prev: Overview,  Up: Introduction
      Detect word boundaries more accurately by treating punctuation
      characters as parts of words.
 
-'-Y <str>, --syntax=<str>'
-     Specify a specific syntax from the nanorc to use for highlighting,
-     if available.  See *Note Syntax Highlighting::, for more info.
+'-Y <name>, --syntax=<name>'
+     Specify a specific syntax from the nanorc files to use for
+     highlighting.  See *Note Syntax Highlighting::, for more info.
 
 '-c, --const'
      Constantly display the cursor position and line number on the
@@ -222,10 +222,10 @@ File: nano.info,  Node: Command Line Options,  Prev: Overview,  Up: Introduction
 
 '-p, --preserve'
      Preserve the ^Q (XON) and ^S (XOFF) sequences so data being sent to
-     the editor can be can be stopped and started.
+     the editor can be stopped and started.
 
 '-q, --quiet'
-     Do not report errors in the nanorc file and ask them to be
+     Do not report errors in the nanorc file nor ask them to be
      acknowledged by pressing Enter at startup.
 
 '-r <number>, --fill=<number>'
@@ -246,11 +246,6 @@ File: nano.info,  Node: Command Line Options,  Prev: Overview,  Up: Introduction
      Don't ask whether or not to save the current contents of the file
      when exiting, assume yes.  This is most useful when using 'nano' as
      the composer of a mailer program.
-
-'-u, --undo'
-     Enable the experimental generic-purpose undo/redo code.  The
-     default undo and redo shortcuts are Meta-U and Meta-E,
-     respectively.
 
 '-v, --view'
      Don't allow the contents of the file to be altered.  Note that this
@@ -478,8 +473,8 @@ following global toggles are available:
      toggles the -O ('--morespace') command line option.
 
 'Whitespace Display Toggle (Meta-P)'
-     toggles whitespace display mode if you have a "whitespace" option
-     in your nanorc.  See *Note Whitespace::, for more info.
+     toggles whitespace-display mode.  See *Note Whitespace::, for more
+     info.
 
 'Tabs to Spaces Toggle (Meta-Q)'
      toggles the -E ('--tabstospaces') command line option.
@@ -508,8 +503,9 @@ File: nano.info,  Node: Nanorc Files,  Next: The File Browser,  Prev: Feature To
 
 The nanorc files contain the default settings for 'nano'.  They should
 be in Unix format, not in DOS or Mac format.  During startup, 'nano'
-will first read the system-wide settings, from /etc/nanorc, and then the
-user-specific settings, from ~/.nanorc.
+will first read the system-wide settings, from /etc/nanorc (the exact
+path might be different), and then the user-specific settings, from
+~/.nanorc.
 
    A nanorc file accepts a series of "set" and "unset" commands, which
 can be used to configure 'nano' on startup without using command-line
@@ -594,8 +590,8 @@ The supported settings in a nanorc file are:
      titlecolor" for more details.
 
 'set/unset historylog'
-     Enable ~/.nano_history for saving and reading search/replace
-     strings.
+     Enable the use of ~/.nano/search_history for saving and reading
+     search/replace strings.
 
 'set keycolor fgcolor,bgcolor'
      Specify the color combination to use for the shortcut key combos in
@@ -730,9 +726,6 @@ The supported settings in a nanorc file are:
      green, yellow, magenta, and cyan.  And either "fgcolor" or
      ",bgcolor" may be left out.
 
-'set/unset undo'
-     Enable the experimental generic-purpose undo/redo code.
-
 'set/unset view'
      Disallow file modification.
 
@@ -838,8 +831,8 @@ nanorc file:
      menus where the function exists by using 'all').
 
 'unbind key menu'
-     Unbinds 'key' from the specified 'menu' (or from all menus where it
-     exists by using 'all').
+     Unbinds 'key' from 'menu' (or from all menus where it exists by
+     using 'all').
 
    The format of 'key' should be one of:
 
@@ -873,7 +866,8 @@ nanorc file:
      multibuffer is enabled).
 
 'whereis'
-     Searches for text in the current buffer.
+     Searches for text in the current buffer - or for filenames matching
+     a string in the current list in the file browser
 
 'searchagain'
      Repeats the last search command.
@@ -972,6 +966,9 @@ nanorc file:
 'gotoline'
      Goes to a specific line (and column if specified).
 
+'gototext'
+     Switches from targetting a line number to searching for text.
+
 'findbracket'
      Moves the cursor to the bracket (brace, parenthesis, etc.)  that
      matches (pairs) with the one under the cursor.
@@ -1029,12 +1026,15 @@ nanorc file:
 'nexthistory'
      Shows the next history entry in the prompt menus (e.g.  search).
 
-'dontreplace'
-     Switches back to searching instead of replacing.
+'flipreplace'
+     Toggles between searching for something and replacing something.
 
-'gototext'
-     Searches for files matching a string in the file browser (reading
-     or writing files).
+'flipexecute'
+     Toggles between inserting a file and executing a command.
+
+'flipnewbuffer'
+     Toggles between inserting into the current buffer and into a new
+     empty buffer.
 
 'dosformat'
      When writing a file, switches to writing a DOS format (CR/LF).
@@ -1051,6 +1051,13 @@ nanorc file:
 
 'backup'
      When writing a file, creates a backup of the current file.
+
+'tofiles'
+     Starts the file browser, allowing to select a file from a list.
+
+'gotodir'
+     Goes to a directory to be specified, allowing to browse anywhere in
+     the filesystem.
 
 'firstfile'
      Goes to the first file when using the file browser (reading or
@@ -1163,8 +1170,9 @@ nanorc file:
      The 'go to directory' menu in the file browser.
 
 'all'
-     A special name meaning: apply to all menus where this function
-     exists.
+     A special name that encompasses all menus.  For 'bind' it means all
+     menus where the specified 'function' exists; for 'unbind' it means
+     all menus where the specified 'key' exists.
 
 
 File: nano.info,  Node: The File Browser,  Next: Pico Compatibility,  Prev: Nanorc Files,  Up: Top
@@ -1259,7 +1267,9 @@ familiar with compiling programs with autoconf support:
      Disable the mini file browser when reading or writing files.
 
 '--disable-color'
-     Disable support for syntax coloring of files using the nanorc file.
+     Disable support for the syntax coloring of files.  This also
+     eliminates the -Y command-line option, which chooses a specific
+     syntax.
 
 '--disable-extra'
      Disable extra features.  At the moment, this is just
@@ -1269,6 +1279,13 @@ familiar with compiling programs with autoconf support:
      Disable the help function.  Doing this makes the binary much
      smaller, but makes it difficult for new users to learn more than
      very basic things about using the editor.
+
+'--disable-histories'
+     Disable the code for the handling of the history files: the search
+     and replace strings that were used, and the cursor position at
+     which each file was closed.  This also eliminates the -H and -P
+     command-line options, which switch on the logging of search/replace
+     strings and cursor positions.
 
 '--disable-justify'
      Disable the justify and unjustify functions.
@@ -1285,14 +1302,18 @@ familiar with compiling programs with autoconf support:
 
 '--disable-multibuffer'
      Disable support for opening multiple files at a time and switching
-     between them on the fly.
+     between them on the fly.  This also eliminates the -F command-line
+     option, which switches the use of multiple file buffers on.
 
 '--disable-nanorc'
      Disable support for reading the nanorc files at startup.  With such
      support, you can store custom settings in a system-wide and a
      per-user nanorc file rather than having to pass command-line
      options to get the desired behavior.  See *Note Nanorc Files::, for
-     more info.
+     more info.  Disabling this also eliminates the -I and -q
+     command-line options; the first inhibits the reading of
+     nanorcfiles, and the second suppresses warnings about errors in
+     those files.
 
 '--disable-operatingdir'
      Disable setting the operating directory.  This also eliminates the
@@ -1314,6 +1335,8 @@ familiar with compiling programs with autoconf support:
      This option disables all the above.  It also disables some of the
      larger internals of the editor, like the marking code and the
      cut-to-end-of-line code.  It also disables the function toggles.
+     By using the enabling counterpart of the above options together
+     with -enable-tiny, specific features can be switched back on.
 
 '--enable-debug'
      Enable support for runtime debug output.  This can get pretty
@@ -1321,7 +1344,7 @@ familiar with compiling programs with autoconf support:
      working on the nano source.
 
 '--disable-nls'
-     Disables Native Language support.  This will disable use of the
+     Disables Native Language support.  This will disable the use of any
      available GNU 'nano' translations.
 
 '--disable-wrapping-as-root'
@@ -1350,25 +1373,25 @@ Node: Top199
 Node: Introduction550
 Node: Overview990
 Node: Command Line Options1874
-Ref: Expert Mode8834
-Node: Editor Basics9791
-Node: Entering Text10071
-Node: Special Functions10397
-Node: The Cutbuffer11437
-Node: The Mark12124
-Node: The Titlebar12861
-Node: The Statusbar13577
-Node: Shortcut Lists14150
-Node: Using the Mouse14430
-Node: Online Help15023
-Node: Feature Toggles15399
-Node: Nanorc Files17510
-Node: Settings18732
-Ref: Whitespace25594
-Node: Syntax Highlighting25952
-Node: Rebinding Keys29553
-Node: The File Browser37504
-Node: Pico Compatibility38326
-Node: Building and Configure Options40986
+Ref: Expert Mode8719
+Node: Editor Basics9676
+Node: Entering Text9956
+Node: Special Functions10282
+Node: The Cutbuffer11322
+Node: The Mark12009
+Node: The Titlebar12746
+Node: The Statusbar13462
+Node: Shortcut Lists14035
+Node: Using the Mouse14315
+Node: Online Help14908
+Node: Feature Toggles15284
+Node: Nanorc Files17346
+Node: Settings18604
+Ref: Whitespace25405
+Node: Syntax Highlighting25763
+Node: Rebinding Keys29364
+Node: The File Browser37852
+Node: Pico Compatibility38674
+Node: Building and Configure Options41334
 
 End Tag Table

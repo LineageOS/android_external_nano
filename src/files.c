@@ -1,4 +1,4 @@
-/* $Id: files.c 4878 2014-05-13 21:11:59Z bens $ */
+/* $Id: files.c 5059 2014-07-11 11:16:15Z astyanax $ */
 /**************************************************************************
  *   files.c                                                              *
  *                                                                        *
@@ -141,7 +141,7 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
     mypid = getpid();
 
     if (gethostname(myhostname, 31) < 0) {
-       statusbar(_("Couldn't determine hostname for lock file: %s"), strerror(errno));
+       statusbar(_("Couldn't determine hosttname for lock file: %s"), strerror(errno));
        return -1;
     }
 
@@ -210,7 +210,7 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "In write_lockfile(), write successful (wrote %d bytes)\n", wroteamt);
+    fprintf(stderr, "In write_lockfile(), write successful (wrote %lu bytes)\n", (unsigned long)wroteamt);
 #endif
 
     if (fclose(filestream) == EOF) {
@@ -244,9 +244,10 @@ int do_lockfile(const char *filename)
 {
     char *lockdir = dirname((char *) mallocstrcpy(NULL, filename));
     char *lockbase = basename((char *) mallocstrcpy(NULL, filename));
-    ssize_t lockfilesize = (sizeof (char *) * (strlen(filename)
-                   + strlen(locking_prefix) + strlen(locking_suffix) + 3));
-    char *lockfilename = (char *) nmalloc(lockfilesize);
+    size_t lockfilesize = strlen(filename) + strlen(locking_prefix)
+		+ strlen(locking_suffix) + 3;
+    char *lockfilename = charalloc(lockfilesize);
+    char *lockfiledir = NULL;
     char lockprog[12], lockuser[16];
     struct stat fileinfo;
     int lockfd, lockpid;
@@ -259,8 +260,8 @@ int do_lockfile(const char *filename)
     if (stat(lockfilename, &fileinfo) != -1) {
         ssize_t readtot = 0;
         ssize_t readamt = 0;
-        char *lockbuf = (char *) nmalloc(8192);
-        char *promptstr = (char *) nmalloc(128);
+        char *lockbuf = charalloc(8192);
+        char *promptstr = charalloc(128);
         int ans;
         if ((lockfd = open(lockfilename, O_RDONLY)) < 0) {
             statusbar(_("Error opening lock file %s: %s"),
@@ -294,7 +295,16 @@ int do_lockfile(const char *filename)
             blank_statusbar();
             return -1;
         }
+    } else {
+	lockfiledir = mallocstrcpy(NULL, lockfilename);
+	lockfiledir = dirname(lockfiledir);
+	if (stat(lockfiledir, &fileinfo) == -1) {
+	    statusbar(_("Error writing lock file: Directory \'%s\' doesn't exist"),
+		lockfiledir);
+	    return 0;
+	}
     }
+
 
     return write_lockfile(lockfilename, filename, FALSE);
 }
@@ -477,8 +487,8 @@ bool close_buffer(void)
     if (openfile == openfile->next)
 	return FALSE;
 
-#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
-        update_poshistory(openfile->filename, openfile->current->lineno, xplustabs()+1);
+#ifndef DISABLE_HISTORIES
+    update_poshistory(openfile->filename, openfile->current->lineno, xplustabs() + 1);
 #endif
 
     /* Switch to the next file buffer. */
@@ -881,7 +891,7 @@ void read_file(FILE *f, int fd, const char *filename, bool undoable, bool checkw
 int open_file(const char *filename, bool newfie, FILE **f)
 {
     struct stat fileinfo, fileinfo2;
-    int fd;
+    int fd, quiet = 0;
     char *full_filename;
 
     assert(filename != NULL && f != NULL);
@@ -897,22 +907,28 @@ int open_file(const char *filename, bool newfie, FILE **f)
 
 
 #ifndef NANO_TINY
-    if (ISSET(LOCKING))
-        if (do_lockfile(full_filename) < 0)
-            return -1;
+    if (ISSET(LOCKING)) {
+	int lockstatus = do_lockfile(full_filename);
+        if (lockstatus < 0)
+	    return -1;
+	else if (lockstatus == 0)
+	    quiet = 1;
+    }
 #endif
 
     if (stat(full_filename, &fileinfo) == -1) {
 	/* Well, maybe we can open the file even if the OS says it's
 	 * not there. */
         if ((fd = open(filename, O_RDONLY)) != -1) {
-	    statusbar(_("Reading File"));
+	    if (!quiet)
+		statusbar(_("Reading File"));
 	    free(full_filename);
 	    return 0;
 	}
 
 	if (newfie) {
-	    statusbar(_("New File"));
+	    if (!quiet)
+		statusbar(_("New File"));
 	    return -2;
 	}
 	statusbar(_("\"%s\" not found"), filename);
@@ -1009,7 +1025,7 @@ void do_insertfile(
     filestruct *edittop_save = openfile->edittop;
     size_t current_x_save = openfile->current_x;
     ssize_t current_y_save = openfile->current_y;
-    bool edittop_inside = FALSE, meta_key = FALSE, func_key = FALSE;
+    bool edittop_inside = FALSE;
     const sc *s;
 #ifndef NANO_TINY
     bool right_side_up = FALSE, single_line = FALSE;
@@ -1026,17 +1042,16 @@ void do_insertfile(
 		_("Command to execute in new buffer [from %s] ") :
 #endif
 		_("Command to execute [from %s] ");
-	} else {
-#endif
+	} else
+#endif /* NANO_TINY */
+	{
 	    msg =
 #ifndef DISABLE_MULTIBUFFER
 		ISSET(MULTIBUFFER) ?
 		_("File to insert into new buffer [from %s] ") :
 #endif
 		_("File to insert [from %s] ");
-#ifndef NANO_TINY
 	}
-#endif
 
 	i = do_prompt(TRUE,
 #ifndef DISABLE_TABCOMP
@@ -1046,8 +1061,7 @@ void do_insertfile(
 		execute ? MEXTCMD :
 #endif
 		MINSERTFILE, ans,
-		&meta_key, &func_key,
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 		NULL,
 #endif
 		edit_refresh, msg,
@@ -1073,7 +1087,7 @@ void do_insertfile(
 
 	    ans = mallocstrcpy(ans, answer);
 
-	    s = get_shortcut(currmenu, &i, &meta_key);
+	    s = get_shortcut(&i);
 
 #ifndef NANO_TINY
 #ifndef DISABLE_MULTIBUFFER
@@ -1081,16 +1095,15 @@ void do_insertfile(
 		/* Don't allow toggling if we're in view mode. */
 		if (!ISSET(VIEW_MODE))
 		    TOGGLE(MULTIBUFFER);
+		else
+		    beep();
 		continue;
-	    } else
+	    }
 #endif
-	    if (s && s->scfunc == ext_cmd_void) {
+	    if (s && s->scfunc == flip_execute_void) {
 		execute = !execute;
 		continue;
 	    }
-#ifndef DISABLE_BROWSER
-	    else
-#endif
 #endif /* !NANO_TINY */
 
 #ifndef DISABLE_BROWSER
@@ -1188,18 +1201,19 @@ void do_insertfile(
 	    }
 #endif
 
-#if !defined(DISABLE_MULTIBUFFER) && !defined(DISABLE_NANORC)
+#if !defined(DISABLE_MULTIBUFFER) && !defined(DISABLE_HISTORIES)
 	    if (ISSET(MULTIBUFFER)) {
 		/* Update the screen to account for the current
 		 * buffer. */
 		display_buffer();
 
-#ifndef NANO_TINY
 		ssize_t savedposline, savedposcol;
-		if (!execute && ISSET(POS_HISTORY)
-			&& check_poshistory(answer, &savedposline, &savedposcol))
-		    do_gotolinecolumn(savedposline, savedposcol, FALSE, FALSE, FALSE, FALSE);
+		if (ISSET(POS_HISTORY) &&
+#ifndef NANO_TINY
+			!execute &&
 #endif
+			check_poshistory(answer, &savedposline, &savedposcol))
+		    do_gotolinecolumn(savedposline, savedposcol, FALSE, FALSE, FALSE, FALSE);
 	    } else
 #endif
 	    {
@@ -1280,7 +1294,7 @@ void do_insertfile(
 void do_insertfile_void(void)
 {
     if (ISSET(RESTRICTED)) {
-        nano_disabled_msg();
+	nano_disabled_msg();
 	return;
     }
 
@@ -1675,12 +1689,14 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 	/* The file descriptor we use. */
     mode_t original_umask = 0;
 	/* Our umask, from when nano started. */
+#ifndef NANO_TINY
     bool realexists;
 	/* The result of stat().  TRUE if the file exists, FALSE
 	 * otherwise.  If name is a link that points nowhere, realexists
 	 * is FALSE. */
     struct stat st;
 	/* The status fields filled in by stat(). */
+#endif
     bool anyexists;
 	/* The result of lstat().  The same as realexists, unless name
 	 * is a link. */
@@ -1729,10 +1745,10 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 	goto cleanup_and_exit;
     }
 
+#ifndef NANO_TINY
     /* Check whether the file (at the end of the symlink) exists. */
     realexists = (stat(realname, &st) != -1);
 
-#ifndef NANO_TINY
     /* If we haven't stat()d this file before (say, the user just
      * specified it interactively), stat and save the value now,
      * or else we will chase null pointers when we do modtime checks,
@@ -1840,7 +1856,7 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 
 	if (ISSET(INSECURE_BACKUP))
 	    backup_cflags = O_WRONLY | O_CREAT | O_APPEND;
-        else
+	else
 	    backup_cflags = O_WRONLY | O_CREAT | O_EXCL | O_APPEND;
 
 	backup_fd = open(backupname, backup_cflags,
@@ -1856,8 +1872,8 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 	    goto cleanup_and_exit;
 	}
 
-        /* We shouldn't worry about chown()ing something if we're not
-	   root, since it's likely to fail! */
+	/* We shouldn't worry about chown()ing something if we're not
+	 * root, since it's likely to fail! */
 	if (geteuid() == NANO_ROOT_UID && fchown(backup_fd,
 		openfile->current_stat->st_uid, openfile->current_stat->st_gid) == -1
 		&& !ISSET(INSECURE_BACKUP)) {
@@ -2206,7 +2222,8 @@ bool write_marked_file(const char *name, FILE *f_open, bool tmp,
 /* Write the current file to disk.  If the mark is on, write the current
  * marked selection to disk.  If exiting is TRUE, write the file to disk
  * regardless of whether the mark is on, and without prompting if the
- * TEMP_FILE flag is set.  Return TRUE on success or FALSE on error. */
+ * TEMP_FILE flag is set and the current file has a name.  Return TRUE
+ * on success or FALSE on error. */
 bool do_writeout(bool exiting)
 {
     int i;
@@ -2216,7 +2233,7 @@ bool do_writeout(bool exiting)
 #ifndef DISABLE_EXTRA
     static bool did_credits = FALSE;
 #endif
-    bool retval = FALSE, meta_key = FALSE, func_key = FALSE;
+    bool retval = FALSE;
     const sc *s;
 
     currmenu = MWRITEFILE;
@@ -2271,8 +2288,7 @@ bool do_writeout(bool exiting)
 		TRUE,
 #endif
 		MWRITEFILE, ans,
-		&meta_key, &func_key,
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 		NULL,
 #endif
 		edit_refresh, "%s%s%s", msg,
@@ -2291,7 +2307,7 @@ bool do_writeout(bool exiting)
 	    break;
 	} else {
 	    ans = mallocstrcpy(ans, answer);
-	    s = get_shortcut(currmenu, &i, &meta_key);
+	    s = get_shortcut(&i);
 
 #ifndef DISABLE_BROWSER
 	    if (s && s->scfunc == to_files_void) {
@@ -2409,8 +2425,10 @@ bool do_writeout(bool exiting)
 		/* Complain if the file exists, the name hasn't changed,
 		 * and the stat information we had before does not match
 		 * what we have now. */
-		else if (name_exists && openfile->current_stat && (openfile->current_stat->st_mtime < st.st_mtime ||
-                    openfile->current_stat->st_dev != st.st_dev || openfile->current_stat->st_ino != st.st_ino)) {
+		else if (name_exists && openfile->current_stat &&
+			(openfile->current_stat->st_mtime < st.st_mtime ||
+			openfile->current_stat->st_dev != st.st_dev ||
+			openfile->current_stat->st_ino != st.st_ino)) {
 		    i = do_yesno_prompt(FALSE,
 			_("File was modified since you opened it, continue saving ? "));
 		    if (i == 0 || i == -1)
@@ -2897,8 +2915,8 @@ const char *tail(const char *foo)
     return tmp;
 }
 
-#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
-/* Return the constructed dorfile path, or NULL if we can't find the home
+#ifndef DISABLE_HISTORIES
+/* Return the constructed dirfile path, or NULL if we can't find the home
  * directory.  The string is dynamically allocated, and should be
  * freed. */
 char *construct_filename(const char *str)
@@ -2935,7 +2953,7 @@ char *poshistfilename(void)
 
 void history_error(const char *msg, ...)
 {
-   va_list ap;
+    va_list ap;
 
     va_start(ap, msg);
     vfprintf(stderr, _(msg), ap);
@@ -2956,32 +2974,36 @@ int check_dotnano(void)
 
     if (stat(nanodir, &dirstat) == -1) {
 	if (mkdir(nanodir, S_IRWXU | S_IRWXG | S_IRWXO) == -1) {
-	    history_error(N_("Unable to create directory %s: %s\nIt is required for saving/loading search history or cursor position\n"),
-		nanodir, strerror(errno));
+	    history_error(N_("Unable to create directory %s: %s\n"
+			     "It is required for saving/loading search history or cursor positions.\n"),
+				nanodir, strerror(errno));
 	    return 0;
 	}
     } else if (!S_ISDIR(dirstat.st_mode)) {
-	history_error(N_("Path %s is not a directory and needs to be.\nNano will be unable to load or save search or cursor position history\n"));
+	history_error(N_("Path %s is not a directory and needs to be.\n"
+			 "Nano will be unable to load or save search history or cursor positions.\n"),
+				nanodir);
 	return 0;
     }
     return 1;
 }
 
-/* Load histories from ~/.nano_history. */
+/* Load the search and replace histories from ~/.nano/search_history. */
 void load_history(void)
 {
     char *nanohist = histfilename();
     char *legacyhist = legacyhistfilename();
     struct stat hstat;
 
-
     if (stat(legacyhist, &hstat) != -1 && stat(nanohist, &hstat) == -1) {
 	if (rename(legacyhist, nanohist) == -1)
-	    history_error(N_("Detected a legacy nano history file (%s) which I tried to move\nto the preferred location (%s) but encountered an error: %s"),
-		legacyhist, nanohist, strerror(errno));
+	    history_error(N_("Detected a legacy nano history file (%s) which I tried to move\n"
+			     "to the preferred location (%s) but encountered an error: %s"),
+				legacyhist, nanohist, strerror(errno));
 	else
-	    history_error(N_("Detected a legacy nano history file (%s) which I moved\nto the preferred location (%s)\n(see the nano FAQ about this change)"),
-		legacyhist, nanohist);
+	    history_error(N_("Detected a legacy nano history file (%s) which I moved\n"
+			     "to the preferred location (%s)\n(see the nano FAQ about this change)"),
+				legacyhist, nanohist);
     }
 
     /* Assume do_rcfile() has reported a missing home directory. */
@@ -3048,7 +3070,7 @@ bool writehist(FILE *hist, filestruct *h)
     return TRUE;
 }
 
-/* Save histories to ~/.nano/search_history. */
+/* Save the search and replace histories to ~/.nano/search_history. */
 void save_history(void)
 {
     char *nanohist;
@@ -3083,7 +3105,7 @@ void save_history(void)
     }
 }
 
-/* Analogs for the POS history. */
+/* Save the recorded last file positions to ~/.nano/filepos_history. */
 void save_poshistory(void)
 {
     char *poshist;
@@ -3103,10 +3125,10 @@ void save_poshistory(void)
 	     * history file. */
 	    chmod(poshist, S_IRUSR | S_IWUSR);
 
-            for (posptr = poshistory; posptr != NULL; posptr = posptr->next) {
+	    for (posptr = poshistory; posptr != NULL; posptr = posptr->next) {
 		statusstr = charalloc(strlen(posptr->filename) + 2 * sizeof(ssize_t) + 4);
-		sprintf(statusstr, "%s %d %d\n", posptr->filename, (int) posptr->lineno,
-			(int) posptr->xno);
+		sprintf(statusstr, "%s %ld %ld\n", posptr->filename, (long)posptr->lineno,
+			(long)posptr->xno);
 		if (fwrite(statusstr, sizeof(char), strlen(statusstr), hist) < strlen(statusstr))
 		    history_error(N_("Error writing %s: %s"), poshist,
 			strerror(errno));
@@ -3118,27 +3140,27 @@ void save_poshistory(void)
     }
 }
 
-/* Update the POS history, given a filename line and column.  If no
- * entry is found, add a new entry on the end. */
+/* Update the recorded last file positions, given a filename, a line
+ * and a column.  If no entry is found, add a new one at the end. */
 void update_poshistory(char *filename, ssize_t lineno, ssize_t xpos)
 {
-   poshiststruct *posptr, *posprev = NULL;
-   char *fullpath = get_full_path(filename);
+    poshiststruct *posptr, *posprev = NULL;
+    char *fullpath = get_full_path(filename);
 
     if (fullpath == NULL)
-        return;
+	return;
 
     for (posptr = poshistory; posptr != NULL; posptr = posptr->next) {
-        if (!strcmp(posptr->filename, fullpath)) {
+	if (!strcmp(posptr->filename, fullpath)) {
 	    posptr->lineno = lineno;
 	    posptr->xno = xpos;
-            return;
-        }
+	    return;
+	}
 	posprev = posptr;
     }
 
     /* Didn't find it, make a new node yo! */
-    posptr = (poshiststruct *) nmalloc(sizeof(poshiststruct));
+    posptr = (poshiststruct *)nmalloc(sizeof(poshiststruct));
     posptr->filename = mallocstrcpy(NULL, fullpath);
     posptr->lineno = lineno;
     posptr->xno = xpos;
@@ -3152,10 +3174,9 @@ void update_poshistory(char *filename, ssize_t lineno, ssize_t xpos)
     free(fullpath);
 }
 
-
-/* Check the POS history to see if file matches an existing entry.  If
- * so, return 1 and set line and column to the right values.  Otherwise,
- * return 0. */
+/* Check the recorded last file positions to see if the given file
+ * matches an existing entry.  If so, return 1 and set line and column
+ * to the retrieved values.  Otherwise, return 0. */
 int check_poshistory(const char *file, ssize_t *line, ssize_t *column)
 {
     poshiststruct *posptr;
@@ -3176,7 +3197,7 @@ int check_poshistory(const char *file, ssize_t *line, ssize_t *column)
     return 0;
 }
 
-/* Load histories from ~/.nano_history. */
+/* Load the recorded file positions from ~/.nano/filepos_history. */
 void load_poshistory(void)
 {
     char *nanohist = poshistfilename();
@@ -3198,21 +3219,21 @@ void load_poshistory(void)
 	    ssize_t read, lineno, xno;
 	    poshiststruct *posptr;
 
-	    /* See if we can find the file we're currently editing. */
+	    /* Read and parse each line, and put the data into the
+	     * positions history structure. */
 	    while ((read = getline(&line, &buf_len, hist)) >= 0) {
 		if (read > 0 && line[read - 1] == '\n') {
 		    read--;
 		    line[read] = '\0';
 		}
-		if (read > 0) {
+		if (read > 0)
 		    unsunder(line, read);
-		}
 		lineptr = parse_next_word(line);
 		xptr = parse_next_word(lineptr);
 		lineno = atoi(lineptr);
 		xno = atoi(xptr);
 		if (poshistory == NULL) {
-		    poshistory = (poshiststruct *) nmalloc(sizeof(poshiststruct));
+		    poshistory = (poshiststruct *)nmalloc(sizeof(poshiststruct));
 		    poshistory->filename = mallocstrcpy(NULL, line);
 		    poshistory->lineno = lineno;
 		    poshistory->xno = xno;
@@ -3220,13 +3241,12 @@ void load_poshistory(void)
 		} else {
 		    for (posptr = poshistory; posptr->next != NULL; posptr = posptr->next)
 			;
-		    posptr->next = (poshiststruct *) nmalloc(sizeof(poshiststruct));
+		    posptr->next = (poshiststruct *)nmalloc(sizeof(poshiststruct));
 		    posptr->next->filename = mallocstrcpy(NULL, line);
 		    posptr->next->lineno = lineno;
 		    posptr->next->xno = xno;
 		    posptr->next->next = NULL;
 		}
-
 	    }
 
 	    fclose(hist);
@@ -3235,5 +3255,4 @@ void load_poshistory(void)
 	free(nanohist);
     }
 }
-
-#endif /* !NANO_TINY && !DISABLE_NANORC */
+#endif /* !DISABLE_HISTORIES */

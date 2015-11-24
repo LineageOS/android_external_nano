@@ -1,4 +1,4 @@
-/* $Id: rcfile.c 4878 2014-05-13 21:11:59Z bens $ */
+/* $Id: rcfile.c 5035 2014-06-29 09:33:51Z bens $ */
 /**************************************************************************
  *   rcfile.c                                                             *
  *                                                                        *
@@ -95,7 +95,6 @@ static const rcoption rcopts[] = {
     {"smarthome", SMART_HOME},
     {"smooth", SMOOTH_SCROLL},
     {"tabstospaces", TABS_TO_SPACES},
-    {"undo", UNDOABLE},
     {"whitespace", 0},
     {"wordbounds", WORD_BOUNDS},
     {"softwrap", SOFTWRAP},
@@ -144,7 +143,9 @@ void rcfile_error(const char *msg, ...)
 
     fprintf(stderr, "\n");
 }
+#endif /* !DISABLE_NANORC */
 
+#if !defined(DISABLE_NANORC) || !defined(DISABLE_HISTORIES)
 /* Parse the next word from the string, null-terminate it, and return
  * a pointer to the first character after the null terminator.  The
  * returned pointer will point to '\0' if we hit the end of the line. */
@@ -164,7 +165,9 @@ char *parse_next_word(char *ptr)
 
     return ptr;
 }
+#endif /* !DISABLE_NANORC || !DISABLE_HISTORIES */
 
+#ifndef DISABLE_NANORC
 /* Parse an argument, with optional quotes, after a keyword that takes
  * one.  If the next word starts with a ", we say that it ends with the
  * last " of the line.  Otherwise, we interpret it as usual, so that the
@@ -383,7 +386,7 @@ void parse_syntax(char *ptr)
 int check_bad_binding(sc *s)
 {
 #define BADLISTLEN 1
-    int badtypes[BADLISTLEN] = {META};
+    key_type badtypes[BADLISTLEN] = {META};
     int badseqs[BADLISTLEN] = { 91 };
     int i;
 
@@ -392,6 +395,24 @@ int check_bad_binding(sc *s)
 	    return 1;
 
     return 0;
+}
+
+/* Check whether the given executable function is "universal" (meaning
+ * any horizontal movement or deletion) and thus is present in almost
+ * all menus. */
+bool is_universal(void (*func))
+{
+    if (func == do_left || func == do_right ||
+	func == do_home || func == do_end ||
+#ifndef NANO_TINY
+	func == do_prev_word_void || func == do_next_word_void ||
+#endif
+	func == do_verbatim_input || func == do_cut_text_void ||
+	func == do_delete || func == do_backspace ||
+	func == do_tab || func == do_enter)
+	return TRUE;
+    else
+	return FALSE;
 }
 
 /* Bind or unbind a key combo, to or from a function. */
@@ -446,7 +467,7 @@ void parse_binding(char *ptr, bool dobind)
 	funcptr = ptr;
 	ptr = parse_next_word(ptr);
 
-	if (!strcmp(funcptr, "")) {
+	if (funcptr[0] == '\0') {
 	    rcfile_error(N_("Must specify a function to bind the key to"));
 	    return;
 	}
@@ -455,7 +476,7 @@ void parse_binding(char *ptr, bool dobind)
     menuptr = ptr;
     ptr = parse_next_word(ptr);
 
-    if (!strcmp(menuptr, "")) {
+    if (menuptr[0] == '\0') {
 	/* TRANSLATORS: Do not translate the word "all". */
 	rcfile_error(N_("Must specify a menu (or \"all\") in which to bind/unbind the key"));
 	return;
@@ -484,6 +505,26 @@ void parse_binding(char *ptr, bool dobind)
 #endif
 
     if (dobind) {
+	subnfunc *f;
+	int mask = 0;
+
+	/* Tally up the menus where the function exists. */
+	for (f = allfuncs; f != NULL; f = f->next)
+	    if (f->scfunc == newsc->scfunc)
+		mask = mask | f->menus;
+
+	/* Now limit the given menu to those where the function exists. */
+	if (is_universal(newsc->scfunc))
+	    menu = menu & MMOST;
+	else
+	    menu = menu & mask;
+
+	if (!menu) {
+	    rcfile_error(N_("Function '%s' does not exist in menu '%s'"), funcptr, menuptr);
+	    free(newsc);
+	    return;
+	}
+
 	newsc->keystr = keycopy;
 	newsc->menu = menu;
 	newsc->type = strtokeytype(newsc->keystr);
@@ -763,8 +804,8 @@ void parse_colors(char *ptr, bool icase)
 		0)) ? mallocstrcpy(NULL, fgstr) : NULL;
 
 	    /* Lame way to skip another static counter. */
-            newcolor->id = endsyntax->nmultis;
-            endsyntax->nmultis++;
+	    newcolor->id = endsyntax->nmultis;
+	    endsyntax->nmultis++;
 	}
     }
 }
@@ -967,19 +1008,19 @@ static void check_vitals_mapped(void)
     int inmenus[VITALS] = { MMAIN, MHELP, MWHEREIS, MREPLACE, MGOTOLINE };
 
     for  (v = 0; v < VITALS; v++) {
-       for (f = allfuncs; f != NULL; f = f->next) {
-           if (f->scfunc == vitals[v] && f->menus & inmenus[v]) {
-               const sc *s = first_sc_for(inmenus[v], f->scfunc);
-               if (!s) {
-                   fprintf(stderr, _("Fatal error: no keys mapped for function "
+	for (f = allfuncs; f != NULL; f = f->next) {
+	    if (f->scfunc == vitals[v] && f->menus & inmenus[v]) {
+		const sc *s = first_sc_for(inmenus[v], f->scfunc);
+		if (!s) {
+		    fprintf(stderr, _("Fatal error: no keys mapped for function "
 				     "\"%s\".  Exiting.\n"), f->desc);
-                   fprintf(stderr, _("If needed, use nano with the -I option "
+		    fprintf(stderr, _("If needed, use nano with the -I option "
 				     "to adjust your nanorc settings.\n"));
-                   exit(1);
-               }
-           break;
-           }
-       }
+		     exit(1);
+		}
+		break;
+	    }
+	}
     }
 }
 
@@ -1265,9 +1306,6 @@ void parse_rcfile(FILE *rcstream
 		else
 		    rcfile_error(N_("Cannot unset option \"%s\""),
 			rcopts[i].name);
-		/* If undo/redo was enabled, reinitialize the lists. */
-		if (strcasecmp(rcopts[i].name, "undo") == 0)
-		    shortcut_init();
 		break;
 	    }
 	}

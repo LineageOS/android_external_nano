@@ -184,7 +184,7 @@ backups are enabled.
 </p>
 </dd>
 <dt><code>-F, --multibuffer</code></dt>
-<dd><p>Enable multiple file buffers, if available.
+<dd><p>Enable multiple file buffers (if support for them has been compiled in).
 </p>
 </dd>
 <dt><code>-G, --locking</code></dt>
@@ -192,13 +192,12 @@ backups are enabled.
 </p>
 </dd>
 <dt><code>-H, --historylog</code></dt>
-<dd><p>Log search and replace strings to ~/.nano_history, so they can be
-retrieved in later sessions, if nanorc support is available.
+<dd><p>Log search and replace strings to ~/.nano/search_history, so they can be
+retrieved in later sessions.
 </p>
 </dd>
 <dt><code>-I, --ignorercfiles</code></dt>
-<dd><p>Don&rsquo;t look at SYSCONFDIR/nanorc or ~/.nanorc, if nanorc support is
-available.
+<dd><p>Don&rsquo;t look at the system&rsquo;s nanorc file nor at the user&rsquo;s ~/.nanorc.
 </p>
 </dd>
 <dt><code>-K, --rebindkeypad</code></dt>
@@ -220,8 +219,8 @@ won&rsquo;t work properly with this option enabled.
 </p>
 </dd>
 <dt><code>-P, --poslog</code></dt>
-<dd><p>Log and later read back the location of the cursor and place it
-there again.
+<dd><p>Log for each file the last location of the cursor, and read it
+back upon reopening the file and place it there again.
 </p>
 </dd>
 <dt><code>-Q &lt;str&gt;, --quotestr=&lt;str&gt;</code></dt>
@@ -237,9 +236,10 @@ Note that <code>\t</code> above stands for a literal Tab character.
 </dd>
 <dt><code>-R, --restricted</code></dt>
 <dd><p>Restricted mode: don&rsquo;t read or write to any file not specified on the
-command line; don&rsquo;t read any nanorc files; don&rsquo;t allow suspending; don&rsquo;t
+command line; don&rsquo;t read any nanorc files nor history files; don&rsquo;t allow
+suspending nor spell checking; don&rsquo;t
 allow a file to be appended to, prepended to, or saved under a different
-name if it already has one; don&rsquo;t use backup files nor spell checking.
+name if it already has one; and don&rsquo;t use backup files.
 This restricted mode is also accessible by invoking <code>nano</code> with
 any name beginning with &rsquo;r&rsquo; (e.g. &quot;rnano&quot;).
 </p>
@@ -268,9 +268,9 @@ keystroke instead of 25.  Note that -c overrides this.
 characters as parts of words.
 </p>
 </dd>
-<dt><code>-Y &lt;str&gt;, --syntax=&lt;str&gt;</code></dt>
-<dd><p>Specify a specific syntax from the nanorc to use for highlighting, if
-available.  See See <a href="#Syntax-Highlighting">Syntax Highlighting</a>, for more info.
+<dt><code>-Y &lt;name&gt;, --syntax=&lt;name&gt;</code></dt>
+<dd><p>Specify a specific syntax from the nanorc files to use for highlighting.
+See See <a href="#Syntax-Highlighting">Syntax Highlighting</a>, for more info.
 </p>
 </dd>
 <dt><code>-c, --const</code></dt>
@@ -326,11 +326,11 @@ a chroot.
 </dd>
 <dt><code>-p, --preserve</code></dt>
 <dd><p>Preserve the ^Q (XON) and ^S (XOFF) sequences so data being sent to the
-editor can be can be stopped and started.
+editor can be stopped and started.
 </p>
 </dd>
 <dt><code>-q, --quiet</code></dt>
-<dd><p>Do not report errors in the nanorc file and ask them to be acknowledged
+<dd><p>Do not report errors in the nanorc file nor ask them to be acknowledged
 by pressing Enter at startup.
 </p>
 </dd>
@@ -354,11 +354,6 @@ SPELL is not set, its own interactive spell checker that requires the
 <dd><p>Don&rsquo;t ask whether or not to save the current contents of the file when
 exiting, assume yes.  This is most useful when using <code>nano</code> as the
 composer of a mailer program.
-</p>
-</dd>
-<dt><code>-u, --undo</code></dt>
-<dd><p>Enable the experimental generic-purpose undo/redo code.  The default undo
-and redo shortcuts are Meta-U and Meta-E, respectively.
 </p>
 </dd>
 <dt><code>-v, --view</code></dt>
@@ -648,8 +643,8 @@ following global toggles are available:
 </p>
 </dd>
 <dt><code>Whitespace Display Toggle (Meta-P)</code></dt>
-<dd><p>toggles whitespace display mode if you have a &quot;whitespace&quot; option in
-your nanorc.  See See <a href="#Whitespace">Whitespace</a>, for more info.
+<dd><p>toggles whitespace-display mode.
+See See <a href="#Whitespace">Whitespace</a>, for more info.
 </p>
 </dd>
 <dt><code>Tabs to Spaces Toggle (Meta-Q)</code></dt>
@@ -691,8 +686,9 @@ Next: <a href="#The-File-Browser" accesskey="n" rel="next">The File Browser</a>,
 
 <p>The nanorc files contain the default settings for <code>nano</code>.  They
 should be in Unix format, not in DOS or Mac format.  During startup,
-<code>nano</code> will first read the system-wide settings, from /etc/nanorc,
-and then the user-specific settings, from ~/.nanorc.
+<code>nano</code> will first read the system-wide settings, from /etc/nanorc
+(the exact path might be different), and then the user-specific settings,
+from ~/.nanorc.
 </p>
 <p>A nanorc file accepts a series of &quot;set&quot; and &quot;unset&quot; commands, which can
 be used to configure <code>nano</code> on startup without using command-line
@@ -796,7 +792,8 @@ See &quot;set titlecolor&quot; for more details.
 </p>
 </dd>
 <dt><code>set/unset historylog</code></dt>
-<dd><p>Enable ~/.nano_history for saving and reading search/replace strings.
+<dd><p>Enable the use of ~/.nano/search_history for saving and reading
+search/replace strings.
 </p>
 </dd>
 <dt><code>set keycolor fgcolor,bgcolor</code></dt>
@@ -965,10 +962,6 @@ white, black, red, blue, green, yellow, magenta, and cyan.
 And either &quot;fgcolor&quot; or &quot;,bgcolor&quot; may be left out.
 </p>
 </dd>
-<dt><code>set/unset undo</code></dt>
-<dd><p>Enable the experimental generic-purpose undo/redo code.
-</p>
-</dd>
 <dt><code>set/unset view</code></dt>
 <dd><p>Disallow file modification.
 </p>
@@ -1093,7 +1086,7 @@ nanorc file:
 </p>
 </dd>
 <dt><code>unbind key menu</code></dt>
-<dd><p>Unbinds <code>key</code> from the specified <code>menu</code>
+<dd><p>Unbinds <code>key</code> from <code>menu</code>
 (or from all menus where it exists by using <code>all</code>).
 </p>
 </dd>
@@ -1144,7 +1137,8 @@ is enabled).
 </p>
 </dd>
 <dt><code>whereis</code></dt>
-<dd><p>Searches for text in the current buffer.
+<dd><p>Searches for text in the current buffer &ndash; or for filenames matching
+a string in the current list in the file browser
 </p>
 </dd>
 <dt><code>searchagain</code></dt>
@@ -1273,6 +1267,10 @@ syntax highlighting defines one).
 <dd><p>Goes to a specific line (and column if specified).
 </p>
 </dd>
+<dt><code>gototext</code></dt>
+<dd><p>Switches from targetting a line number to searching for text.
+</p>
+</dd>
 <dt><code>findbracket</code></dt>
 <dd><p>Moves the cursor to the bracket (brace, parenthesis, etc.) that matches
 (pairs) with the one under the cursor.
@@ -1343,12 +1341,17 @@ syntax highlighting defines one).
 <dd><p>Shows the next history entry in the prompt menus (e.g. search).
 </p>
 </dd>
-<dt><code>dontreplace</code></dt>
-<dd><p>Switches back to searching instead of replacing.
+<dt><code>flipreplace</code></dt>
+<dd><p>Toggles between searching for something and replacing something.
 </p>
 </dd>
-<dt><code>gototext</code></dt>
-<dd><p>Searches for files matching a string in the file browser (reading or writing files).
+<dt><code>flipexecute</code></dt>
+<dd><p>Toggles between inserting a file and executing a command.
+</p>
+</dd>
+<dt><code>flipnewbuffer</code></dt>
+<dd><p>Toggles between inserting into the current buffer and into a new
+empty buffer.
 </p>
 </dd>
 <dt><code>dosformat</code></dt>
@@ -1369,6 +1372,15 @@ syntax highlighting defines one).
 </dd>
 <dt><code>backup</code></dt>
 <dd><p>When writing a file, creates a backup of the current file.
+</p>
+</dd>
+<dt><code>tofiles</code></dt>
+<dd><p>Starts the file browser, allowing to select a file from a list.
+</p>
+</dd>
+<dt><code>gotodir</code></dt>
+<dd><p>Goes to a directory to be specified, allowing to browse anywhere
+in the filesystem.
 </p>
 </dd>
 <dt><code>firstfile</code></dt>
@@ -1510,7 +1522,9 @@ position to the end of the line.
 </p>
 </dd>
 <dt><code>all</code></dt>
-<dd><p>A special name meaning: apply to all menus where this function exists.
+<dd><p>A special name that encompasses all menus.  For <code>bind</code> it means
+all menus where the specified <code>function</code> exists; for <code>unbind</code>
+it means all menus where the specified <code>key</code> exists.
 </p></dd>
 </dl>
 
@@ -1630,7 +1644,8 @@ familiar with compiling programs with autoconf support:
 </p>
 </dd>
 <dt><code>--disable-color</code></dt>
-<dd><p>Disable support for syntax coloring of files using the nanorc file.
+<dd><p>Disable support for the syntax coloring of files.  This also eliminates
+the -Y command-line option, which chooses a specific syntax.
 </p>
 </dd>
 <dt><code>--disable-extra</code></dt>
@@ -1642,6 +1657,14 @@ stuff.
 <dd><p>Disable the help function.  Doing this makes the binary much smaller,
 but makes it difficult for new users to learn more than very basic
 things about using the editor.
+</p>
+</dd>
+<dt><code>--disable-histories</code></dt>
+<dd><p>Disable the code for the handling of the history files: the search and
+replace strings that were used, and the cursor position at which each
+file was closed.  This also eliminates the -H and -P command-line
+options, which switch on the logging of search/replace strings and
+cursor positions.
 </p>
 </dd>
 <dt><code>--disable-justify</code></dt>
@@ -1661,7 +1684,8 @@ command-line option, which enables the mouse functionality.
 </dd>
 <dt><code>--disable-multibuffer</code></dt>
 <dd><p>Disable support for opening multiple files at a time and switching
-between them on the fly.
+between them on the fly.  This also eliminates the -F command-line
+option, which switches the use of multiple file buffers on.
 </p>
 </dd>
 <dt><code>--disable-nanorc</code></dt>
@@ -1669,6 +1693,9 @@ between them on the fly.
 support, you can store custom settings in a system-wide and a per-user
 nanorc file rather than having to pass command-line options to get
 the desired behavior.  See See <a href="#Nanorc-Files">Nanorc Files</a>, for more info.
+Disabling this also eliminates the -I and -q command-line options;
+the first inhibits the reading of nanorcfiles, and the second
+suppresses warnings about errors in those files.
 </p>
 </dd>
 <dt><code>--disable-operatingdir</code></dt>
@@ -1693,7 +1720,9 @@ command-line option, which enables long-line wrapping.
 <dt><code>--enable-tiny</code></dt>
 <dd><p>This option disables all the above.  It also disables some of the larger
 internals of the editor, like the marking code and the cut-to-end-of-line
-code.  It also disables the function toggles.
+code.  It also disables the function toggles.  By using the enabling
+counterpart of the above options together with &ndash;enable-tiny, specific
+features can be switched back on.
 </p>
 </dd>
 <dt><code>--enable-debug</code></dt>
@@ -1702,7 +1731,7 @@ chances are you only want this feature when you&rsquo;re working on the nano sou
 </p>
 </dd>
 <dt><code>--disable-nls</code></dt>
-<dd><p>Disables Native Language support.  This will disable use of the
+<dd><p>Disables Native Language support.  This will disable the use of any
 available GNU <code>nano</code> translations.
 </p>
 </dd>

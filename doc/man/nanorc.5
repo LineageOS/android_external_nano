@@ -1,4 +1,6 @@
 .\" Hey, EMACS: -*- nroff -*-
+.\" $Id: nanorc.5 5023 2014-06-27 16:27:52Z bens $
+.\"
 .\" Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011,
 .\" 2013, 2014 Free Software Foundation, Inc.
 .\"
@@ -18,8 +20,7 @@
 .\"   Documentation License along with this program.  If not, see
 .\"   <http://www.gnu.org/licenses/>.
 .\"
-.\" $Id: nanorc.5 4852 2014-05-09 21:02:14Z bens $
-.TH NANORC 5 "version 2.3.3" "May 2014"
+.TH NANORC 5 "version 2.3.5" "June 2014"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .SH NAME
@@ -28,8 +29,8 @@ nanorc \- GNU nano's rcfile
 The \fInanorc\fP file contains the default settings for \fBnano\fP, a
 small and friendly editor.  The file should be in Unix format, not in
 DOS or Mac format.  During startup, \fBnano\fP will first read the
-system-wide settings, from \fBSYSCONFDIR/nanorc\fP, and then the
-user-specific settings, from \fB~/.nanorc\fP.
+system-wide settings, from \fB/etc/nanorc\fP (the exact path might be
+different), and then the user-specific settings, from \fB~/.nanorc\fP.
 
 .SH OPTIONS
 The configuration file accepts a series of \fBset\fP and \fBunset\fP
@@ -52,7 +53,7 @@ The supported commands and arguments are:
 .TP 3
 .B set/unset allow_insecure_backup
 When backing up files, allow the backup to succeed even if its permissions
-can't be (re)set due to special OS considerations.  You should 
+can't be (re)set due to special OS considerations.  You should
 NOT enable this option unless you are sure you need it.
 .TP
 .B set/unset autoindent
@@ -99,7 +100,7 @@ in the two help lines at the bottom of the screen.
 See \fBset titlecolor\fR for more details.
 .TP
 .B set/unset historylog
-Enable the use of \fB~/.nano_history\fP for saving and reading
+Enable the use of \fB~/.nano/search_history\fP for saving and reading
 search/replace strings.
 .TP
 .B set keycolor \fIfgcolor\fR,\fIbgcolor\fR
@@ -168,7 +169,7 @@ keystroke instead of 25.
 .TP
 .B set/unset quiet
 \fBnano\fP will not report errors in the \fInanorc\fP file nor ask them
-to be acknowledged by pressing Enter at startup.  If this is used it
+to be acknowledged by pressing Enter at startup.  If this is used, it
 should be placed at the top of the file to be fully effective.
 .TP
 .B set quotestr "\fIstring\fP"
@@ -218,7 +219,7 @@ Allow \fBnano\fP to be suspended.
 .TP
 .B set tabsize \fIn\fP
 Use a tab size of \fIn\fP columns.  The value of \fIn\fP must be greater
-than 0.  The default value is 8.  
+than 0.  The default value is 8.
 .TP
 .B set/unset tabstospaces
 Convert typed tabs to spaces.
@@ -231,9 +232,6 @@ Specify the color combination to use for the titlebar.
 Valid color names for foreground and background are:
 .BR white , \ black , \ red , \ blue , \ green , \ yellow , \ magenta ", and " cyan .
 And either "\fIfgcolor\fR" or ",\fIbgcolor\fR" may be left out.
-.TP
-.B set/unset undo
-Enable the experimental generic-purpose undo/redo code.
 .TP
 .B set/unset view
 Disallow file modification.
@@ -274,11 +272,11 @@ be compared against the very first line of the file to be edited,
 to determine whether this syntax should be used for that file.
 .TP
 .BR magic " [""\fIregex\fR"" ...]
-For the currently defined syntax, add one or more regexes which 
+For the currently defined syntax, add one or more regexes which
 will be compared against the result of querying the \fBmagic\fP
 database about the file to be edited, to determine whether this
 syntax should be used for that file.  This
-functionality only works when \fBlibmagic\fP is installed on the 
+functionality only works when \fBlibmagic\fP is installed on the
 system and will be silently ignored otherwise.
 .TP
 .B color \fIfgcolor\fR,\fIbgcolor\fR """\fIregex\fR""" ...
@@ -328,21 +326,21 @@ context of menu \fImenu\fP (or in all menus where the function exists
 by using \fBall\fP).
 .TP
 .BI unbind " key menu"
-Unbinds the key \fIkey\fP from the menu named \fImenu\fP (or from all 
+Unbinds the key \fIkey\fP from the menu named \fImenu\fP (or from all
 menus where it exists by using \fBall\fP).
 
 .TP
 The format of \fIkey\fP should be one of:
 .TP
-.B ^ 
+.B ^
 followed by an alpha character or the word "Space".
 Example: ^C
 .TP
-.B M- 
+.B M-
 followed by a printable character or the word "Space".
 Example: M-C
 .TP
-.B F 
+.B F
 followed by a numeric value from 1 to 16.
 Example: F10
 .TP
@@ -367,7 +365,8 @@ Inserts a file into the current buffer (or into a new buffer when multibuffer
 is enabled).
 .TP
 .B whereis
-Searches for text in the current buffer.
+Searches for text in the current buffer -- or for filenames matching
+a string in the current list in the file browser.
 .TP
 .B searchagain
 Repeats the last search command.
@@ -464,6 +463,9 @@ Goes to the last line of the file.
 .B gotoline
 Goes to a specific line (and column if specified).
 .TP
+.B gototext
+Switches from targetting a line number to searching for text.
+.TP
 .B findbracket
 Moves the cursor to the bracket (brace, parenthesis, etc.) that matches
 (pairs) with the one under the cursor.
@@ -517,11 +519,22 @@ Shows the previous history entry in the prompt menus (e.g. search).
 .B nexthistory
 Shows the next history entry in the prompt menus (e.g. search).
 .TP
-.B dontreplace
-Switches back to searching instead of replacing.
+.B flipreplace
+Toggles between searching for something and replacing something.
 .TP
-.B gototext
-Searches for files matching a string in the file browser (reading or writing files).
+.B flipexecute
+Toggles between inserting a file and executing a command.
+.TP
+.B flipnewbuffer
+Toggles between inserting into the current buffer and into a new
+empty buffer.
+.TP
+.B tofiles
+Starts the file browser, allowing to select a file from a list.
+.TP
+.B gotodir
+Goes to a directory to be specified, allowing to browse anywhere
+in the filesystem.
 .TP
 .B dosformat
 When writing a file, switches to writing a DOS format (CR/LF).
@@ -585,7 +598,7 @@ Toggles whether typed tabs will be converted to spaces.
 Toggles whether a backup will be made of the file to be edited.
 .TP
 .B multibuffer
-Toggles the use of multiple file buffers (if available).
+Toggles the use of multiple file buffers (if support for them has been compiled in).
 .TP
 .B mouse
 Toggles mouse support.
@@ -643,15 +656,17 @@ The 'search for a file' menu in the file browser.
 The 'go to directory' menu in the file browser.
 .TP
 .B all
-A special name meaning: apply to all menus where this function exists.
+A special name that encompasses all menus.
+For \fBbind\fR it means all menus where the specified \fIfunction\fR exists;
+for \fBunbind\fR it means all menus where the specified \fIkey\fR exists.
 
 .SH FILES
 .TP
-.B SYSCONFDIR/nanorc
-System-wide configuration file
+.B /etc/nanorc
+System-wide configuration file.
 .TP
 .B ~/.nanorc
-Per-user configuration file
+Per-user configuration file.
 .SH SEE ALSO
 .TP
 \fBnano\fP(1)

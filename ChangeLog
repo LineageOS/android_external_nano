@@ -1,17 +1,348 @@
+2014-07-11  Chris Allegretta <chrisa@asty.org>
+	* src/files.c (do_lockfile, open_file): If locking fails,
+	allow the lock failure message to be preserved AND
+	preserve the filename passed on the cmdline.  Fixes
+	Savannah bug #42668.
+
+2014-07-02  Chris Allegretta <chrisa@asty.org>
+	* src/files.c (do_lockfile): Check whether the directory
+	of the file we're trying to lock exists, and make the
+	resulting error message more intuitive.  Fixes
+	Savannah bug #42639 reported by Benno Schulenberg.
+
+2014-07-02  Mark Majeres  <mark@engine12.com>
+	* src/text.c (undo_cut, redo_cut, update_undo): Handle the
+	cases of cutting-from-cursor-to-end-of-line correctly.
+	* src/nano.c (do_input): Don't preserve the cutbuffer when
+	CUT_TO_END is toggled -- it would intermix two cut types.
+	* src/text.c (redo_cut, do_undo, do_redo): Don't forget to
+	free the cutbuffer after use.
+
+2014-07-02  Benno Schulenberg  <bensberg@justemail.net>
+	* src/proto.h: Add a typedef for a pointer to a function.
+	* src/global.c (func_from_key): New wrapper.
+	* src/prompt.c (get_prompt_string, do_prompt): Use the new
+	wrapper to make the code a bit cleaner.
+	* src/help.c (do_help, parse_help_input): Use the wrapper.
+	* src/browser.c (do_browser, parse_browser_input): Likewise.
+	* src/search.c (search_init, do_gotolinecolumn): Likewise.
+	* src/search.c (findnextstr): Replace a call of old wrapper
+	'getfuncfromkey()' with	a call of new 'func_from_key()'.
+	* src/winio.c (getfuncfromkey): Delete now unneeded wrapper.
+	* src/nano.c (usage, main), doc/texinfo/nano.texi: Properly
+	exclude the --quiet option when --disable-nanorc was given.
+
+2014-07-01  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c (do_browser), src/help.c (do_help): Make sure
+	to always set 'currmenu', so that we can rely on it.
+	* src/*.c (get_shortcut): Now that 'currmenu' is really global,
+	stop passing it around.
+	* src/help.c (help_init), src/winio.c (bottombars): There are
+	no tagless functions, so there is no need to check.
+	* src/prompt.c (do_prompt, get_prompt_string): Don't pass the
+	menu, just set it earlier.
+	* src/prompt.c (get_prompt_string): Group the arguments better.
+	* src/global.c (shortcut_init), src/browser.c (do_filesearch):
+	Show that it is possible to have backwards, regular-expressive
+	and case-sensitive searching in the file browser.
+	* src/browser.c (filesearch_init, do_filesearch): Now delete
+	these abilities again and all provisions for them.
+	* src/global.c (shortcut_init): Add two defines to make the
+	functions list clearer.
+
+2014-06-30  Mark Majeres  <mark@engine12.com>
+	* src/cut.c, src/global.c, src/nano.c: Rename 'cut_till_end' to
+	'cut_till_eof', and 'do_cut_till_end' to 'do_cut_till_eof', to
+	reduce confusion with CUT_TO_END, which is about end-of-line.
+
+2014-06-30  Benno Schulenberg  <bensberg@justemail.net>
+	* src/color.c (color_update): When there are no syntaxes, for example
+	with --ignorercfiles, do not try to find one, because that would lead
+	to the magic database being searched, which slows down startup a lot.
+	* src/color.c (color_update): Move some variables to a better place.
+	* src/*: Make 'meta_key' and 'func_key' into global variables, instead
+	of having them declared everywhere and passing them around endlessly.
+	* src/global.c (sc_seq_or): Now fix a bug introduced somewhere after
+	2.3.2 where binding a movement function to a Meta key would make the
+	corresponding Arrow key stop working (producing a character instead).
+
+2014-06-29  Benno Schulenberg  <bensberg@justemail.net>
+	* src/rcfile.c: Fix compilation with --enable-tiny --enable-nanorc.
+	* src/winio.c (parse_kbinput, get_escape_seq_kbinput): Make Ctrl-Left
+	and Ctrl-Right produce special codes, and map these codes to Prevword
+	and Nextword instead of reducing them to a plain Left and Right.  The
+	codes 539 and 554 were so chosen because some terminals produce these.
+
+2014-06-29  Mark Majeres  <mark@engine12.com>
+	* src/text.c (do_undo): Update the pointer to the bottom of the file
+	when undoing line deletions at file's end.
+
+2014-06-28  Benno Schulenberg  <bensberg@justemail.net>
+	* src/prompt.c (do_statusbar_input): Remove the useless parameters
+	'have_shortcut and 'allow_funcs'; the latter is only ever TRUE.
+	* src/global.c (shortcut_init), src/prompt.c (do_statusbar_input):
+	Eradicate the execute flag -- it is only FALSE for functions that are
+	empty placeholders (so executing them will not do anything anyway) or
+	for functions ('total_refresh', 'do_suspend_void') that do not exist
+	in menus with a prompt.  The only two exceptions are 'do_cancel' and
+	'do_gotolinecolumn_void'.  The first is handled specially, so do that
+	too for the second and then get to drop 140 parameters.
+	* src/global.c (strtosc): Move recognition of the toggles to the end,
+	use a single assignment of do_toggle_void, trim the unneeded braces.
+
+2014-06-27  Benno Schulenberg  <bensberg@justemail.net>
+	* src/global.c (shortcut_init): Add default keybindings for Cut,
+	PrevWord and NextWord in the prompt input lines; the code for those
+	special operations already exists, just the shortcuts were missing.
+	* src/rcfile.c (parse_binding): When binding keys, only allow those
+	menus where the bound function is actually present.  This reduces
+	the meaning of 'all' to "all menus where the function exists".
+	* src/rcfile.c (is_universal): New function, returning TRUE for the
+	functions that are present in most menus but only listed in MMAIN.
+	* doc/man/nanorc.5, doc/texinfo/nano.texi: Update the docs for this.
+	* prompt.c (find_statusbar_bracket_match, do_statusbar_find_bracket):
+	Remove these functions and thus the ability to search for a matching
+	bracket in a prompt input line.  The find_bracket function never had
+	a default keybinding outside MMAIN, so is unlikely to have been used.
+	* src/prompt.c (do_statusbar_input): Normalize the indentation.
+	* src/winio.c: Normalize some whitespace.
+	* Makefile.am, nano.spec.in: Stop distributing the BUGS file.
+	* BUGS: Remove obsolete file, as all the bugs in it have been fixed
+	long ago.  Nowadays bugs are tracked on Savannah.
+	* configure.ac: Silence a useless warning about ignoring datarootdir.
+
+2014-06-25  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c (do_browser): Allow 'firstfile' and 'lastfile' to be
+	rebound to Ctrl keys -- checking meta_key is wrong, the function has
+	already been determined, that is all that matters.
+	* src/help.c (do_help): Same thing for 'firstline'/'lastline'.
+
+2014-06-23  Benno Schulenberg  <bensberg@justemail.net>
+	* src/nano.h, src/move.c (do_up, do_down), src/winio.c (edit_scrol):
+	Rename UP_DIR and DOWN_DIR to UPWARD and DOWNWARD, for clarity.
+	* src/proto.h, src/global.c, src/search.c: Rename 'no_replace_void()'
+	to 'flip_replace_void()', to show what it actually does.
+	* doc/man/nanorc.5, doc/texinfo/nano.texi: Update the docs for that.
+	* src/global.c (strtosc): Add the bindable function 'gotodir'.
+	* doc/man/nanorc.5, doc/texinfo/nano.texi: Document the bindable
+	functions 'tofiles','gotodir' and 'flipnewbuffer', and correct
+	the description of 'gototext' (not being about the file browser).
+	* doc/syntax/nanorc.nanorc: Show Ins and Del as valid rebindable keys.
+	* src/help.c (do_help): Normalize the indentation.
+	* src/files.c (do_insertfile): Give audible feedback when flipping
+	the new buffer to off is not allowed in view mode.
+
+2014-06-22  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c (parse_browser_input), src/help.c (parse_help_input):
+	Remove two pointless calls of get_shortcut(), and adjust the comments.
+	* src/nano.c (do_toggle): When toggling softwrap, only the edit window
+	needs to be refreshed, not the entire screen.
+	* src/browser.c (do_browser): Remove superfluous abortion variable,
+	and place two comments better.
+	* src/text.c (do_redo): Rename 'undidmsg' to 'redidmsg', to be apt.
+
+2014-06-22  Mark Majeres  <mark@engine12.com>
+	* src/text.c (do_redo): When redoing a line join at the tail
+	of the file, make sure openfile->filebot is updated.
+	* src/text.c (undo_cut, redo_cut, do_undo, add_undo, update_undo):
+	Fix three leaks of the cutbuffer, shorten and regroup some stuff,
+	and remove an unneeded iteration of cutbottom.
+
+2014-06-21  Mark Majeres  <mark@engine12.com>
+	* src/text.c (undo_cut, add_undo): When undoing a cut-till-eof,
+	put the cursor back where the cut started, and not at the end.
+	* src/text.c (do_undo): When undoing a line break at the tail
+	of the file, make sure openfile->filebot is updated.
+
+2014-06-21  David Lawrence Ramsey  <pooka109@gmail.com>
+	* src/move.c, src/nano.c: Miscellaneous whitespace fixes, one
+	type fix, and one more #ifdef NANO_TINY.
+
+2014-06-20  Benno Schulenberg  <bensberg@justemail.net>
+	* src/proto.h, src/global.c: Remove two obsolete variables and an
+	unneeded extern, and regroup some stuff.
+	* src/files.c (check_dotnano): Wrap long lines and actually report
+	the name that is not a directory.
+	* src/*: Miscellaneous whitespace adjustments and comment tweaks.
+	* src/files.c: Fix compilation with --enable-tiny --enable-browser.
+	* doc/man/nano.1, doc/texinfo/nano.texi: History logging no longer
+	depends upon nanorc support, plus many other tweaks.
+	* src/global.c (strtosc): Fix compilation with --enable-tiny
+	--enable-histories --enable-nanorc.
+	* src/text.c: Fix compilation with --enable-tiny --enable-wrapping.
+	* src/files.c (do_insertfile): Fix compilation with --enable-tiny
+	--enable-histories --enable-multibuffer.
+	* src/nano.c: Fix compilation with --enable-tiny --enable-mouse.
+	* doc/man/nanorc.5, doc/texinfo/nano.texi: Explain better what "all"
+	means when rebinding keys.  This is a fix for Savannah bug #42552.
+	* src/nano.c (main): Make +1 and +,1 start on line one column one,
+	overriding a historical position.  This fixes Savannah bug #42538.
+
+2014-06-19  Benno Schulenberg  <bensberg@justemail.net>
+	* src/nano.c (window_init): Rename 'no_more_space()' to 'more_space()'
+	for consistency, and tweak the related comments.
+	* src/files.c: Update some comments to match the current status.
+	* src/nano (finish, main): Allow -H/--historylog and -P/--poslog to
+	function also when -I/--ignorercfiles is given.
+	* configure.ac: Add a --disable-histories flag, to disable the code
+	for the histories of search/replace strings and cursor positions.
+	* doc/texinfo/nano.texi: Document the new configure flag.
+	* src/*: Transform many DISABLE_NANORC to the new DISABLE_HISTORIES.
+	This completes the fix for Savannah bug #42539.
+
+2014-06-18  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c: Rename 'to_end' to 'to_eof', to lessen confusion
+	with CUT_TO_END (which is about cutting to end-of-line).
+	* src/text.c: Upon better thought, elide the unneeded 'to_eof'.
+	* src/text.c: And elide a totally unused 'strdata2'.
+	* src/text.c: Rename the undo type UNSPLIT to JOIN, for clarity.
+	* src/global.c, src/rcfile.c: Rename function_type to key_type.
+	* src/text.c (break_line): Remove a condition and a break that
+	cancel each other.
+
+2014-06-18  Mark Majeres  <mark@engine12.com>
+	* src/text.c (add_undo): Don't start a new undo for CUT when the
+	cutbuffer is being preserved, because then the cuts are contiguous
+	and will form a single undo item.  And make sure the cutbuffer will
+	be cleared when a new undo item for CUT is created.
+	* src/cut.c (keeping_cutbuffer): New function, to access the status
+	of 'keep_cutbuffer' from the undo/redo code in src/text.c.
+	* src/cut.c (do_copy_text): Blow away the contents of the cutbuffer
+	if the mark is set or the cursor has moved between two copy commands.
+
+2014-06-17  Mark Majeres  <mark@engine12.com>
+	* src/text.c (do_undo, do_redo): After an undo or redo, update the
+	'placewewant' (the desired horizontal position of the cursor).
+
+2014-06-17  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_undo, do_redo): Remove obsolete boolean variable.
+	* doc/man/nano.1, doc/man/nanorc.5, doc/texinfo/nano.texi: Replace
+	SYSCONFDIR with an absolute path or a circumlocution, as suggested
+	by Mike Frysinger, plus some other tweaks.
+
+2014-06-16  David Lawrence Ramsey  <pooka109@gmail.com>
+	* src/nano.c (do_exit): Display the message "No file name" on the
+	statusbar for two seconds when --tempfile was given and the current
+	buffer has no name.  This fixes Savannah bug #41750.
+
+2014-06-16  Benno Schulenberg  <bensberg@justemail.net>
+	* configure.ac: For the sake of statically linked systems, make sure
+	the compiler also links against libz, which is used by libmagic.
+	This fixes Savannah bug #38378, reported by Alan Hourihane.
+	* src/nano.c (do_mouse, do_input): Don't bother returning zero when
+	the cursor moved, just reset the cutbuffer directly.  This avoids an
+	"Unknown Command" message on every cursor-positioning mouse click.
+	* src/nano.c (do_mouse): Put a common statement outside of then/else.
+	* src/Makefile.am: Remove -I m4; it is needed only at the top level.
+	* Makefile.am: Trim the contents of EXTRA_DIST to what is required.
+	* doc/man/nano.1, doc/man/nanorc.5, doc/texinfo/nano.texi: Update
+	the docs for the changed location of nano's search history.
+	* doc/man/nano.1, doc/man/nanorc.5, doc/texinfo/nano.texi: Change
+	some wordings, triggered by Savannah bug #52539.
+
+2014-06-14  Mark Majeres  <mark@engine12.com>
+	* src/nano.h, src/text.c (undo_cut, update_undo): When undoing a
+	backwards cut, put the cursor back in front of it, where it was.
+
+2014-06-13  Benno Schulenberg  <bensberg@justemail.net>
+	* src/nano.c (do_input): Repositioning the cursor with the mouse
+	(result == 0) should break a series of ^Ks.
+	* src/nano.c (do_mouse): Clicking on the titlebar or the statusbar
+	should not break a series of ^Ks, thus result must not be zero.
+	* src/nano.c (do_input): A toggle should not break a series of ^Ks.
+	* src/winio.c (get_shortcut): Do not treat holding both Control and
+	Meta the same as holding only Control.
+	* src/global.c, src/rcfile.c, src/nano.h, src/nano.c, src/text.c:
+	Remove the --undo option, having the undo functions always enabled.
+	If wished, the user can unbind them.  This fixes Savannah bug #42456.
+	* doc/man/{nano.1,nanorc.5}, doc/texinfo/nano.texi: Update the docs.
+	* nano.spec.in: Remove useless info dir file from the build directory,
+	don't clean this directory first, it's unnecessary, add a suggestion
+	for a pico symlink, and update the license and the source URL.
+
+2014-06-11  Benno Schulenberg  <bensberg@justemail.net>
+	* src/winio.c (get_mouseinput): Produce the correct return value for
+	when a mouse event reinserted something into the keyboard buffer.
+	* src/nano.c (do_input): Do not continue when there is a spurious
+	mouse event (a touch of the touchpad, for example) but get out.
+	Continuing would result in the cutbuffer being cleared upon the
+	next cut.  These two changes together fix Savannah bug #42326.
+	* src/nano.c (do_input): Always accept mouse events, also when
+	just looking for Unjustify.  This fixes Savannah bug #42322.
+	* src/nano.c (do_input): Remove a superfluous switch statement.
+	* src/winio.c (get_mouseinput): Set the type of a reinserted key,
+	also when it is a function key.  This fixes Savannah bug #42092.
+
+2014-06-10  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c, src/files.c, src/nano.c src/prompt.c, src/winio.c:
+	A few minimalistic whitespace adjustments.
+	* src/rcfile.c (check_bad_binding): Avoid a compiler warning.
+
+2014-06-10  David Lawrence Ramsey  <pooka109@gmail.com>
+	* src/winio.c: One more type fix and two tiny message tweaks.
+
+2014-06-09  David Lawrence Ramsey  <pooka109@gmail.com>
+	* src/*.c: Cosmetic tweaks of comments and whitespace.
+	* src/help.c, src/rcfile.c, src/winio.c: Elide a function call by
+	not comparing with an empty string but checking for the final \0.
+	* src/files.c, src/nano.c, src/text.c, src/winio.c: Type fixes in
+	debugging stuff -- line numbers are long, x positions unsigned long.
+	* src/files.c, src/move.c, src/nano.c, src/text.c, src/winio.c:
+	Make tiny nano a bit tinier by preening out some soft-wrap stuff.
+	* src/global.c, src/nano.c, src/winio.c: A few more cosmetic tweaks
+	(whitespace, order, braces, parentheses, and a typo) and type fixes.
+
+2014-06-09  Benno Schulenberg  <bensberg@justemail.net>
+	* src/nano.c (do_input): Remove two superfluous false conditions.
+	* src/nano.h, src/text.c (add_undo): Avoid a compiler warning with
+	--disable-wrapping.
+
+2014-06-09  Mark Majeres  <mark@engine12.com>
+	* src/text.c (do_undo, do_redo, add_undo, update_undo, do-wrap):
+	Rewrite the line-wrapping code to make use of the existing line-break
+	code.  And undo line wraps together with their causal text additions,
+	and not as separate actions because the user did not make them.
+
+2014-06-08  Mark Majeres  <mark@engine12.com>
+	* src/text.c (do_delete, do_deletion, do_undo, do_redo, update_undo):
+	Differentiate between undoing a Delete and undoing a Backspace -- the
+	cursor should be in a slightly but significantly different position.
+
+2014-06-04  Benno Schulenberg  <bensberg@justemail.net>
+	* src/global.c (shortcut_init), src/files.c (do_insertfile): Rename
+	'ext_cmd_void' to 'flip_execute_void' to better match what it does.
+	* src/global.c (strtosc), doc/man/nanorc.5, doc/texinfo/nano.texi:
+	Add function name 'flipexecute' to enable rebinding ^X in the menus
+	Read File and Execute Command.
+
+2014-06-04  David Lawrence Ramsey  <pooka109@gmail.com>
+	* src/*.c: Adjustments of whitespace and comments.
+	* doc/nanorc.sample.in: Interpunction tweaks.
+	* src/global.c (add_to_funcs): Add cast to subnfunc* for nmalloc().
+	* src/files.c (do_lockfile): Properly make the variable 'lockfilesize'
+	a size_t instead of a ssize_t, since it holds the result of strlen().
+	And use charalloc() instead of (char *)nmalloc().
+	* src/text.c (do_undo): Use charealloc() and not (char *)nrealloc().
+	* src/text.c (add_undo): Make use of null_at() to both null-terminate
+	the multibyte character and align it to use only the amount of memory
+	necessary.
+
+GNU nano 2.3.4 - 2014.06.02
 2014-06-02  Chris Allegretta <chrisa@asty.org>
 	* doc/syntax/default.nanorc: Can't do trailing spaces in the
-	  default syntax or it will hilight the spaces as you type
-	  them into a new file, which for non-programming is infuriating. 
+	  default syntax or it will hilight the spaces as you type them
+	  into a new file, which for non-programming is infuriating.
 
 2014-05-29  Mark Majeres  <mark@engine12.com>
 	* src/text.c (do_delete): For the undo structure, differentiate
 	between deleting a newline and any other character.
 
 2014-05-29  Chris Allegretta <chrisa@asty.org>
-	* src/chars.c (addstrings): Needs to be available even on
-	  non-utf-8 sustems.
-	* nano-regress: Added --disable-utf8 to regression check
+	* src/chars.c (addstrings): This function needs to be available even
+	  on non-utf-8 systems.
+	* nano-regress: Added --disable-utf8 to regression check.
 
+GNU nano 2.3.3 - 2014.05.29
 2014-05-28  Chris Allegretta <chrisa@asty.org>
 	* doc/syntax/mutt.nanorc: Include Benno's awesome signature
 	  matcher, modified slightly to also work for quoted sigs.
@@ -728,7 +1059,7 @@
 	* doc/syntax/makefile.nanorc: Highlight trailing whitespace.
 
 2014-02-26  Benno Schulenberg  <bensberg@justemail.net>
-	* src/global.c (shortcut_init):  Put PageUp and PageDown
+	* src/global.c (shortcut_init): Put PageUp and PageDown
 	and also WhereIs and WhereIsNext together in the help lines
 	of the file browser, and WriteOut and Readfile in the help
 	lines of the main window -- related stuff in one column.
@@ -988,6 +1319,7 @@ GNU nano 2.3.0 - 2011.02.26
 	  with failing to write the backup file compared to 'allow_insecure_backup'.
 	* winio.c (edit_redraw): Removed unused variable.
 
+GNU nano 2.2.6 - 2010.11.22
 2010-11-15 Chris Allegretta <chrisa@asty.org>
 	* Add a section to the FAQ about using nanorc on Win32 systems.
 
@@ -1054,7 +1386,7 @@ GNU nano 2.2.4 - 2010.04.15
 2010-03-21 Chris Allegretta <chrisa@asty.org>
 	* nano.c (page_stdin et al): Don't attempt to reset/reopen the terminal
 	  settings when reading stdin if it was aborted with SIGINT.  May fix
-	  Savannah bug #29114 reported by  Mike Frysinger.
+	  Savannah bug #29114 reported by Mike Frysinger.
 
 2010-03-21 Mike Frysinger <vapier@gentoo.org>
 	* doc/syntax/c.nanorc: Add additional support for #include_next and #pragma.
@@ -1250,8 +1582,7 @@ GNU nano 2.1.99pre1 - 2009.11.15
 	  writing the same file we originally opened.
 
 2009-11-13 Chris Allegretta <chrisa@asty.org>
-	* winio.c: Add new static maxsize to be able to easier calculation with
-	  softwrap.
+	* winio.c: Add new static maxsize for easier calculation with softwrap.
 	* nano.c (do_mouse): Fix mouse support not working with soft wrapping.
 	  Fixes Savannah bug #27549 reported by Hannes Schueller.
 
@@ -1307,11 +1638,11 @@ GNU nano 2.1.11 - 2009.09.14
 
 2009-08-29 Chris Allegretta <chrisa@asty.org>
 	* Fix more soft wrapping issues, particularly with scrolling,
-	  discovered by Hannes <mr_creosote@mutantwatch.de>.
+	  discovered by Hannes Schueller <mr_creosote@mutantwatch.de>.
 
 2009-08-19 Chris Allegretta <chrisa@asty.org>
 	* Fix issue with soft wrapping not displaying the last character of each line,
-	  fixed bug discovered by Hannes <mr_creosote@mutantwatch.de>.
+	  fixed bug discovered by Hannes Schueller <mr_creosote@mutantwatch.de>.
 
 2009-08-17 Mike Frysinger <vapier@gentoo.org>
 	* doc/syntax/(gentoo|sh|tcl).nanorc: Fix problems with empty regexes on POSIX.
@@ -1321,6 +1652,7 @@ GNU nano 2.1.11 - 2009.09.14
 	* Initial soft line wrapping implementation.  Command-line flags -$ or --softwrap.
 	* nano.c, text.c: Clean up some fprintf warnings in debug mode due to printing
 	  a size_t without using the zd specifier.
+
 2009-08-13 Chris Allegretta <chrisa@asty.org>
 	* New global flag implementation courtesy of Adam Wysocki <gophi@arcabit.pl>, allows
 	  previous undo flag to be implemented consistent with other flags.
@@ -1331,9 +1663,9 @@ GNU nano 2.1.10 - 2009.07.28
 	  Fixes crash on cutting last line discovered by Eitan Adler <eitanadlerlist@gmail.com>.
 
 2009-07-11 Chris Allegretta <chrisa@asty.org>
-	* nano-regress: Small tweaks
-	* Change undo code to off unless enabled via a command line option (-u/--undo).  Until this code
-	  stabilizes this is the only responsible way to treat it.
+	* nano-regress: Small tweaks.
+	* Change undo code to off unless enabled via a command line option (-u/--undo).
+	  Until this code stabilizes this is the only responsible way to treat it.
 
 2009-03-08 Chris Allegretta <chrisa@asty.org>
 	* TODO: Break out some targets for various features into 2.2
@@ -1367,7 +1699,7 @@ GNU nano 2.1.9 - 2009.02.16
 
 2009-02-14 Chris Allegretta <chrisa@asty.org>
 	* nano.c (precalc_multicolorinfo): Add debugging so we have a better clue if further
-	  issues arise.   Also start at the beginning of later lines when trying to match the
+	  issues arise.  Also start at the beginning of later lines when trying to match the
 	  end of a multi-line regex.  Fixes more overly aggressive highlighting found by
 	  Mike Frysinger.  Finally, advance to the match end for performance.
 
@@ -1381,7 +1713,7 @@ GNU nano 2.1.9 - 2009.02.16
 	  errors about the rcfile and asking user to press enter.  Also, nano should
 	  now only ask for one enter press when there is an error when not using -q.
 	  Based on discussion between Eitan Adler and Mike Frysinger.
-	* rcfile.c (parse_keybinding):  Significant cleanups and fixes for
+	* rcfile.c (parse_keybinding): Significant cleanups and fixes for
 	  detecting and reporting errors in key bindings code.
 
 2009-02-08 Chris Allegretta <chrisa@asty.org>
@@ -1398,7 +1730,7 @@ GNU nano 2.1.8 - 2009.02.07
 	  causes nano to segfault.
 
 2009-02-05 Chris Allegretta <chrisa@asty.org>
-	* More color syntax speedups:  Determine in reset_multis() whether we really need to call
+	* More color syntax speedups: Determine in reset_multis() whether we really need to call
 	  edit_refresh().  Additional global var edit_refresh_needed() to hopefully reduce
 	  repeated calls to the function.  New helper funcs reset_multis_before() and
 	  reset_multis_after().
@@ -1498,7 +1830,7 @@ GNU nano 2.1.5 - 2008.08.30
 	  treating ^G the same as ^M.
 
 2008-08-28 Chris Allegretta <chrisa@asty.org>
-	* configure.ac, rcfile.c:  Add support for an alternate rcfilename at configure time.  Maybe this
+	* configure.ac, rcfile.c: Add support for an alternate rcfilename at configure time.  Maybe this
 	  should become a command line option some day, but I don't see the need currently.  Start of
 	  fix for Savannah bug #24128: Add nanorc support to win32 platform.
 
@@ -1621,8 +1953,8 @@ GNU nano 2.1.1 - 2008.04.01
 	* winio.c: Fix shortcut labels not being translated.
 
 2008-03-17  Mike Frysinger <vapier@gentoo.org>
-	 * */.gitignore: Git ignore files for those running a local git
-	   against SVN.
+	* */.gitignore: Git ignore files for those running a local git
+	  against SVN.
 
 2008-03-16  Benno Schulenberg <bensberg@justemail.net>
 	* src/help.c, src/global: Fix help strings no longer being

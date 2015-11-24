@@ -18,13 +18,17 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 #
-# $Id: configure.ac 4932 2014-05-29 05:25:44Z astyanax $
+# $Id: configure.ac 5027 2014-06-27 20:35:37Z bens $
 
-AC_INIT([GNU nano], [2.3.4], [nano-devel@gnu.org], [nano])
+AC_INIT([GNU nano], [2.3.5], [nano-devel@gnu.org], [nano])
 AC_CONFIG_SRCDIR([src/nano.c])
 AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
+
+dnl Silence a pointless warning from the gettext Makefile.
+
+AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
 dnl Make sure the ONCE macros are available.
 
@@ -96,6 +100,12 @@ AC_ARG_ENABLE(help,
 AS_HELP_STRING([--disable-help], [Disable help functions]))
 if test "x$enable_help" = xno; then
     AC_DEFINE(DISABLE_HELP, 1, [Define this to disable the help text display.])
+fi
+
+AC_ARG_ENABLE(histories,
+AS_HELP_STRING([--disable-histories], [Disable search and position histories]))
+if test "x$enable_histories" = xno; then
+    AC_DEFINE(DISABLE_HISTORIES, 1, [Define this to disable search and position histories.])
 fi
 
 AC_ARG_ENABLE(justify,
@@ -185,6 +195,9 @@ if test "x$enable_tiny" = xyes; then
     fi
     if test "x$enable_help" != xyes; then
 	AC_DEFINE(DISABLE_HELP, 1, [Define this to disable the help text display.])
+    fi
+    if test "x$enable_histories" != xyes; then
+	AC_DEFINE(DISABLE_HISTORIES, 1, [Define this to disable search and position histories.])
     fi
     if test "x$enable_justify" != xyes; then
 	AC_DEFINE(DISABLE_JUSTIFY, 1, [Define this to disable the justify routines.])
@@ -649,6 +662,8 @@ AC_MSG_WARN([*** Can't check for macro redefinability when cross-compiling]))
 AS_IF([test "x$enable_libmagic" != "xno"], [
   AC_CHECK_HEADERS_ONCE([magic.h])
   AC_CHECK_LIB(magic, magic_open)
+  AC_CHECK_HEADERS_ONCE([zlib.h])
+  AC_CHECK_LIB(z, inflate)
 ])
 
 # Check for groff html support.

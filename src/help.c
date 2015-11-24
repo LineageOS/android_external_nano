@@ -1,4 +1,4 @@
-/* $Id: help.c 4876 2014-05-13 20:34:15Z bens $ */
+/* $Id: help.c 5051 2014-07-02 09:29:05Z bens $ */
 /**************************************************************************
  *   help.c                                                               *
  *                                                                        *
@@ -37,23 +37,21 @@ static char *help_text = NULL;
 void do_help(void (*refresh_func)(void))
 {
     int kbinput = ERR;
-    bool meta_key, func_key, old_no_help = ISSET(NO_HELP);
+    bool old_no_help = ISSET(NO_HELP);
     size_t line = 0;
 	/* The line number in help_text of the first displayed help
 	 * line.  This variable is zero-based. */
     size_t last_line = 0;
 	/* The line number in help_text of the last help line.  This
 	 * variable is zero-based. */
-#ifndef DISABLE_MOUSE
     int oldmenu = currmenu;
 	/* The menu we were called from. */
-#endif
     const char *ptr;
 	/* The current line of the help text. */
     size_t old_line = (size_t)-1;
 	/* The line we were on before the current line. */
-    const sc *s;
-    const subnfunc *f;
+    functionptrtype func;
+	/* The function of the key the user typed in. */
 
     curs_set(0);
     blank_edit();
@@ -64,11 +62,9 @@ void do_help(void (*refresh_func)(void))
 
     assert(help_text != NULL);
 
-#ifndef DISABLE_MOUSE
     /* Set currmenu to allow clicking on the help screen's shortcut
      * list, after help_init() is called. */
     currmenu = MHELP;
-#endif
 
     if (ISSET(NO_HELP)) {
 	/* Make sure that the help screen's shortcut list will actually
@@ -123,57 +119,46 @@ void do_help(void (*refresh_func)(void))
 
 	old_line = line;
 
-	kbinput = get_kbinput(edit, &meta_key, &func_key);
+	kbinput = get_kbinput(edit);
 
 #ifndef DISABLE_MOUSE
 	if (kbinput == KEY_MOUSE) {
-		int mouse_x, mouse_y;
-		get_mouseinput(&mouse_x, &mouse_y, TRUE);
-		continue;    /* Redraw the screen. */
+	    int mouse_x, mouse_y;
+	    get_mouseinput(&mouse_x, &mouse_y, TRUE);
+	    continue;    /* Redraw the screen. */
 	}
 #endif
 
-	parse_help_input(&kbinput, &meta_key);
-	s = get_shortcut(MHELP, &kbinput, &meta_key);
-	if (!s)
-	    continue;
-	f = sctofunc((sc *) s);
-	if (!f)
-	    continue;
+	func = parse_help_input(&kbinput);
 
-	if (f->scfunc == total_refresh) {
-		total_redraw();
-	} else if (f->scfunc == do_page_up) {
-		if (line > editwinrows - 2)
-		    line -= editwinrows - 2;
-		else
-		    line = 0;
-	} else if (f->scfunc == do_page_down) {
-		if (line + (editwinrows - 1) < last_line)
-		    line += editwinrows - 2;
-	} else if (f->scfunc == do_up_void) {
-		if (line > 0)
-		    line--;
-	} else if (f->scfunc == do_down_void) {
-		if (line + (editwinrows - 1) < last_line)
-		    line++;
-	} else if (f->scfunc == do_first_line) {
-		if (meta_key)
-		    line = 0;
-	} else if (f->scfunc == do_last_line) {
-		if (meta_key) {
-		    if (line + (editwinrows - 1) < last_line)
-			line = last_line - (editwinrows - 1);
-		}
-	} else if (f->scfunc == do_exit) {
-	    /* Abort the help browser. */
+	if (func == total_refresh) {
+	    total_redraw();
+	} else if (func == do_page_up) {
+	    if (line > editwinrows - 2)
+		line -= editwinrows - 2;
+	    else
+		line = 0;
+	} else if (func == do_page_down) {
+	    if (line + (editwinrows - 1) < last_line)
+		line += editwinrows - 2;
+	} else if (func == do_up_void) {
+	    if (line > 0)
+		line--;
+	} else if (func == do_down_void) {
+	    if (line + (editwinrows - 1) < last_line)
+		line++;
+	} else if (func == do_first_line) {
+	    line = 0;
+	} else if (func == do_last_line) {
+	    if (line + (editwinrows - 1) < last_line)
+		line = last_line - (editwinrows - 1);
+	} else if (func == do_exit) {
+	    /* Exit from the help browser. */
 	    break;
 	}
     }
 
-#ifndef DISABLE_MOUSE
     currmenu = oldmenu;
-#endif
 
     if (old_no_help) {
 	blank_bottombars();
@@ -419,9 +404,6 @@ void help_init(void)
 	if ((f->menus & currmenu) == 0)
 	    continue;
 
-	if (!f->desc || !strcmp(f->desc, ""))
-	    continue;
-
 	/* Let's simply show the first two shortcuts from the list. */
 	for (s = sclist, scsfound = 0; s != NULL; s = s->next) {
 
@@ -479,29 +461,22 @@ void help_init(void)
     assert(strlen(help_text) <= allocsize + 1);
 }
 
-/* Determine the shortcut key corresponding to the values of kbinput
- * (the key itself) and meta_key (whether the key is a meta sequence).
- * Also convert certain non-shortcut keys into their corresponding
- * shortcut keys. */
-void parse_help_input(int *kbinput, bool *meta_key)
+/* Return the function that is bound to the given key, accepting certain
+ * plain characters too, for consistency with the file browser. */
+functionptrtype parse_help_input(int *kbinput)
 {
-    get_shortcut(MHELP, kbinput, meta_key);
-
-    if (!*meta_key) {
+    if (!meta_key) {
 	switch (*kbinput) {
-	    /* For consistency with the file browser. */
 	    case ' ':
-		*kbinput = KEY_NPAGE;
-		break;
+		return do_page_down;
 	    case '-':
-		*kbinput = KEY_PPAGE;
-		break;
+		return do_page_up;
 	    case 'E':
 	    case 'e':
-		*kbinput = sc_seq_or(do_exit, 0);
-		break;
+		return do_exit;
 	}
     }
+    return func_from_key(kbinput);
 }
 
 /* Calculate the next line of help_text, starting at ptr. */

@@ -1,4 +1,4 @@
-/* $Id: nano.h 4908 2014-05-25 19:41:49Z bens $ */
+/* $Id: nano.h 5054 2014-07-02 20:29:57Z bens $ */
 /**************************************************************************
  *   nano.h                                                               *
  *                                                                        *
@@ -31,8 +31,8 @@
 #ifdef NEED_XOPEN_SOURCE_EXTENDED
 #ifndef _XOPEN_SOURCE_EXTENDED
 #define _XOPEN_SOURCE_EXTENDED 1
-#endif /* _XOPEN_SOURCE_EXTENDED */
-#endif /* NEED_XOPEN_SOURCE_EXTENDED */
+#endif
+#endif
 
 #ifdef __TANDEM
 /* Tandem NonStop Kernel support. */
@@ -176,7 +176,7 @@ typedef enum {
 } append_type;
 
 typedef enum {
-    UP_DIR, DOWN_DIR
+    UPWARD, DOWNWARD
 } scroll_dir;
 
 typedef enum {
@@ -185,10 +185,14 @@ typedef enum {
 
 typedef enum {
     CONTROL, META, FKEY, RAWINPUT
-}  function_type;
+}  key_type;
 
 typedef enum {
-    ADD, DEL, REPLACE, SPLIT, UNSPLIT, CUT, CUT_EOF, PASTE, ENTER, INSERT, OTHER
+    ADD, DEL, BACK, CUT, CUT_EOF, REPLACE,
+#ifndef DISABLE_WRAPPING
+    SPLIT_BEGIN, SPLIT_END,
+#endif
+    JOIN, PASTE, INSERT, ENTER, OTHER
 } undo_type;
 
 typedef struct color_pair {
@@ -329,8 +333,6 @@ typedef struct undo {
 	/* Where did this action begin or end. */
     char *strdata;
 	/* String type data we will use for copying the affected line back. */
-    char *strdata2;
-	/* Sigh, need this too, it looks like. */
     int xflags;
 	/* Some flag data we need. */
 
@@ -341,16 +343,15 @@ typedef struct undo {
 	/* Copy of cutbottom. */
     bool mark_set;
 	/* Was the marker set when we cut? */
-    bool to_end;
-	/* Was this a cut to end? */
     ssize_t mark_begin_lineno;
 	/* copy copy copy */
     size_t mark_begin_x;
 	/* Another shadow variable. */
     struct undo *next;
 } undo;
+#endif /* !NANO_TINY */
 
-
+#ifndef DISABLE_HISTORIES
 typedef struct poshiststruct {
     char *filename;
 	/* The file. */
@@ -360,9 +361,7 @@ typedef struct poshiststruct {
 	/* x position in the file we left off on. */
     struct poshiststruct *next;
 } poshiststruct;
-
-#endif /* !NANO_TINY */
-
+#endif
 
 typedef struct openfilestruct {
     char *filename;
@@ -442,14 +441,13 @@ typedef struct rcoption {
    long flag;
 	/* The flag associated with it, if any. */
 } rcoption;
-
 #endif
 
 typedef struct sc {
     char *keystr;
 	/* The shortcut key for a function, ASCII version. */
-    function_type type;
-	/* What kind of function key it is, for convenience later. */
+    key_type type;
+	/* What kind of command key it is, for convenience later. */
     int seq;
 	/* The actual sequence to check on the type is determined. */
     int menu;
@@ -534,7 +532,6 @@ enum
     NO_NEWLINES,
     BOLD_TEXT,
     QUIET,
-    UNDOABLE,
     SOFTWRAP,
     POS_HISTORY,
     LOCKING,
@@ -567,17 +564,18 @@ enum
 #define NANO_CONTROL_7 31
 #define NANO_CONTROL_8 127
 
+/* Codes for "modified" Arrow keys.  Chosen like this because some
+ * terminals produce them, and they are beyond KEY_MAX of ncurses. */
+#define CONTROL_LEFT 539
+#define CONTROL_RIGHT 554
 
 #ifndef NANO_TINY
 /* Extra bits for the undo function. */
 #define UNdel_del		(1<<0)
-#define UNdel_backspace	(1<<1)
-#define UNsplit_madenew	(1<<2)
+#define UNdel_backspace		(1<<1)
+#define UNcut_marked_forward	(1<<2)
 #define UNcut_cutline		(1<<3)
 #endif /* !NANO_TINY */
-
-#define VIEW TRUE
-#define NOVIEW FALSE
 
 /* The maximum number of entries displayed in the main shortcut list. */
 #define MAIN_VISIBLE (((COLS + 40) / 20) * 2)
