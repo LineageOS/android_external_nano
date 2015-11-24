@@ -1,4 +1,4 @@
-/* $Id: nano.h 5054 2014-07-02 20:29:57Z bens $ */
+/* $Id: nano.h 5100 2015-01-03 07:24:17Z astyanax $ */
 /**************************************************************************
  *   nano.h                                                               *
  *                                                                        *
@@ -252,6 +252,8 @@ typedef struct syntaxtype {
 	/* The colors used in this syntax. */
     char *linter;
 	/* The command to lint this type of file. */
+    char *formatter;
+        /* Use this formatter command (for programming lang mainly) */
     int nmultis;
 	/* How many multi-line strings this syntax has. */
     struct syntaxtype *next;

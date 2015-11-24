@@ -1,4 +1,4 @@
-/* $Id: global.c 5050 2014-07-02 08:47:09Z bens $ */
+/* $Id: global.c 5143 2015-03-20 12:22:49Z bens $ */
 /**************************************************************************
  *   global.c                                                             *
  *                                                                        *
@@ -285,21 +285,7 @@ void flip_execute_void(void)
 {
 }
 
-/* Set the type of command key based on the string. */
-key_type strtokeytype(const char *str)
-{
-    if (str[0] == '^')
-        return CONTROL;
-    else if (str[0] == 'M')
-        return META;
-    else if (str[0] == 'F')
-        return FKEY;
-    else
-	return RAWINPUT;
-}
-
-/* Add a string to the function list struct.
- * Does not allow updates, not yet anyway. */
+/* Add a function to the function list. */
 void add_to_funcs(void (*func)(void), int menus, const char *desc, const char *help,
     bool blank_after, bool viewok)
 {
@@ -326,54 +312,26 @@ void add_to_funcs(void (*func)(void), int menus, const char *desc, const char *h
 #endif
 }
 
-/* Return the first shortcut in the list of shortcuts that
- * matches the given func in the given menu. */
-const sc *first_sc_for(int menu, void (*func)(void))
-{
-    const sc *s;
-
-    for (s = sclist; s != NULL; s = s->next)
-	if ((s->menu & menu) && s->scfunc == func)
-	    return s;
-
-#ifdef DEBUG
-    fprintf(stderr, "Whoops, returning null given func %ld in menu %x\n", (long)func, menu);
-#endif
-    /* Otherwise... */
-    return NULL;
-}
-
-
-/* Add a string to the shortcut list.
- * Allows updates to existing entries in the list. */
+/* Add a key combo to the shortcut list. */
 void add_to_sclist(int menu, const char *scstring, void (*func)(void), int toggle)
 {
-    sc *s;
+    static sc *tailsc;
+    sc *s = (sc *)nmalloc(sizeof(sc));
 
-    if (sclist == NULL) {
-	sclist = (sc *)nmalloc(sizeof(sc));
-	s = sclist;
-        s->next = NULL;
-    } else {
-	for (s = sclist; s->next != NULL; s = s->next)
-            if (s->menu == menu && s->keystr == scstring)
-		break;
+    /* Start the list, or tack on the next item. */
+    if (sclist == NULL)
+	sclist = s;
+    else
+	tailsc->next = s;
+    tailsc = s;
+    s->next = NULL;
 
-        if (s->menu != menu || s->keystr != scstring) { /* i.e. this is not a replace... */
-#ifdef DEBUG
-            fprintf(stderr, "No match found...\n");
-#endif
-	    s->next = (sc *)nmalloc(sizeof(sc));
-	    s = s->next;
-            s->next = NULL;
-        }
-    }
-
-    s->type = strtokeytype(scstring);
+    /* Fill in the data. */
     s->menu = menu;
+    s->scfunc = func;
     s->toggle = toggle;
     s->keystr = (char *) scstring;
-    s->scfunc = func;
+    s->type = strtokeytype(scstring);
     assign_keyinfo(s);
 
 #ifdef DEBUG
@@ -389,6 +347,23 @@ void replace_scs_for(void (*oldfunc)(void), void (*newfunc)(void))
     for (s = sclist; s != NULL; s = s->next)
 	if (s->scfunc == oldfunc)
 	    s->scfunc = newfunc;
+}
+
+/* Return the first shortcut in the list of shortcuts that
+ * matches the given func in the given menu. */
+const sc *first_sc_for(int menu, void (*func)(void))
+{
+    const sc *s;
+
+    for (s = sclist; s != NULL; s = s->next)
+	if ((s->menu & menu) && s->scfunc == func)
+	    return s;
+
+#ifdef DEBUG
+    fprintf(stderr, "Whoops, returning null given func %ld in menu %x\n", (long)func, menu);
+#endif
+    /* Otherwise... */
+    return NULL;
 }
 
 /* Return the given menu's first shortcut sequence, or the default value
@@ -414,6 +389,19 @@ functionptrtype func_from_key(int *kbinput)
 	return s->scfunc;
     else
 	return NULL;
+}
+
+/* Return the type of command key based on the given string. */
+key_type strtokeytype(const char *str)
+{
+    if (str[0] == '^')
+	return CONTROL;
+    else if (str[0] == 'M')
+	return META;
+    else if (str[0] == 'F')
+	return FKEY;
+    else
+	return RAWINPUT;
 }
 
 /* Assign the info to the shortcut struct.
@@ -651,6 +639,7 @@ void shortcut_init(void)
     const char *nano_lint_msg = N_("Invoke the linter, if available");
     const char *nano_prevlint_msg = N_("Go to previous linter msg");
     const char *nano_nextlint_msg = N_("Go to next linter msg");
+    const char *nano_formatter_msg = N_("Invoke formatter, if available");
 #endif
 #endif /* !DISABLE_HELP */
 
@@ -746,7 +735,9 @@ void shortcut_init(void)
 
 #ifndef DISABLE_COLOR
     add_to_funcs(do_linter, MMAIN,
-	N_("To Linter"), IFSCHELP(nano_lint_msg), BLANKAFTER, NOVIEW);
+	N_("To Linter"), IFSCHELP(nano_lint_msg), TOGETHER, NOVIEW);
+    add_to_funcs(do_formatter, MMAIN,
+	N_("Formatter"), IFSCHELP(nano_formatter_msg), BLANKAFTER, NOVIEW);
 #endif
 
 #ifndef NANO_TINY
@@ -1019,6 +1010,8 @@ void shortcut_init(void)
 #ifndef DISABLE_COLOR
     add_to_sclist(MMAIN, "^T", do_linter, 0);
     add_to_sclist(MMAIN, "F12", do_linter, 0);
+    add_to_sclist(MMAIN, "^T", do_formatter, 0);
+    add_to_sclist(MMAIN, "F12", do_formatter, 0);
 #endif
 #endif
     add_to_sclist(MMAIN, "^C", do_cursorpos_void, 0);
@@ -1190,17 +1183,24 @@ void shortcut_init(void)
 }
 
 #ifndef DISABLE_COLOR
-void set_lint_shortcuts(void)
+void set_lint_or_format_shortcuts(void)
 {
 #ifndef DISABLE_SPELLER
-    replace_scs_for(do_spell, do_linter);
+    if (openfile->syntax->formatter) {
+	replace_scs_for(do_spell, do_formatter);
+	replace_scs_for(do_linter, do_formatter);
+    } else {
+	replace_scs_for(do_spell, do_linter);
+	replace_scs_for(do_formatter, do_linter);
+    }
 #endif
 }
 
 void set_spell_shortcuts(void)
 {
 #ifndef DISABLE_SPELLER
-    replace_scs_for(do_linter, do_spell);
+	replace_scs_for(do_formatter, do_spell);
+	replace_scs_for(do_linter, do_spell);
 #endif
 }
 #endif
@@ -1528,7 +1528,7 @@ int strtomenu(char *input)
 	return MHELP;
 #endif
 #ifndef DISABLE_SPELLER
-    else if (!strcasecmp(input, "spell"))
+    else if (!strcasecmp(input, "spell") || !strcasecmp(input, "formatter"))
 	return MSPELL;
 #endif
     else if (!strcasecmp(input, "linter"))

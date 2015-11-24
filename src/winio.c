@@ -1,4 +1,4 @@
-/* $Id: winio.c 5052 2014-07-02 19:12:38Z bens $ */
+/* $Id: winio.c 5149 2015-03-22 13:23:42Z bens $ */
 /**************************************************************************
  *   winio.c                                                              *
  *                                                                        *
@@ -3160,10 +3160,11 @@ void edit_redraw(filestruct *old_current, size_t pww_save)
 	}
 #endif /* !NANO_TINY */
 
-	/* Put edittop in range of current, get the difference in lines
-	 * between the original edittop and the current edittop, and
-	 * then restore the original edittop. */
-	edit_update(CENTER);
+	/* Make sure the current line is on the screen. */
+	if (ISSET(SMOOTH_SCROLL))
+	    edit_update(NONE);
+	else
+	    edit_update(CENTER);
 
 	/* Update old_current if we're not on the same page as
 	 * before. */
@@ -3229,8 +3230,7 @@ void edit_refresh(void)
 		(long)openfile->current->lineno, (long)openfile->edittop->lineno, maxrows);
 #endif
 
-	/* Put the top line of the edit window in range of the current
-	 * line. */
+	/* Make sure the current line is on the screen. */
 	edit_update(CENTER);
     }
 
@@ -3323,8 +3323,9 @@ void total_refresh(void)
 void display_main_list(void)
 {
 #ifndef DISABLE_COLOR
-    if (openfile->syntax && openfile->syntax->linter)
-	set_lint_shortcuts();
+    if (openfile->syntax
+	  && (openfile->syntax->formatter || openfile->syntax->linter))
+	set_lint_or_format_shortcuts();
     else
 	set_spell_shortcuts();
 #endif
@@ -3435,8 +3436,8 @@ void do_replace_highlight(bool highlight, const char *word)
 }
 
 #ifndef DISABLE_EXTRA
-#define CREDIT_LEN 57
-#define XLCREDIT_LEN 8
+#define CREDIT_LEN 54
+#define XLCREDIT_LEN 9
 
 /* Easter egg: Display credits.  Assume nodelay(edit) and scrollok(edit)
  * are FALSE. */
@@ -3458,15 +3459,11 @@ void do_credits(void)
 	"Rocco Corsi",
 	"David Lawrence Ramsey",
 	"David Benbennick",
+	"Mark Majeres",
 	"Mike Frysinger",
 	"Benno Schulenberg",
 	"Ken Tyler",
 	"Sven Guckes",
-	NULL,				/* credits[16], handled below. */
-	"Pauli Virtanen",
-	"Daniele Medri",
-	"Clement Laforet",
-	"Tedi Heriyanto",
 	"Bill Soudan",
 	"Christian Weisgerber",
 	"Erik Andersen",
@@ -3485,6 +3482,7 @@ void do_credits(void)
 	"Richard Kolb II",
 	NULL,				/* "The Free Software Foundation" */
 	"Linus Torvalds",
+	NULL,				/* "the many translators and the TP" */
 	NULL,				/* "For ncurses:" */
 	"Thomas Dickey",
 	"Pavel Curtis",
@@ -3496,7 +3494,7 @@ void do_credits(void)
 	"",
 	"",
 	"",
-	"(C) 1999 - 2014",
+	"(C) 1999 - 2015",
 	"Free Software Foundation, Inc.",
 	"",
 	"",
@@ -3511,19 +3509,11 @@ void do_credits(void)
 	N_("Brought to you by:"),
 	N_("Special thanks to:"),
 	N_("The Free Software Foundation"),
+	N_("the many translators and the TP"),
 	N_("For ncurses:"),
 	N_("and anyone else we forgot..."),
 	N_("Thank you for using nano!")
     };
-
-    /* credits[16]: Make sure this name is displayed properly, since we
-     * can't dynamically assign it above, using Unicode 00F6 (Latin
-     * Small Letter O with Diaresis) if applicable. */
-    credits[16] =
-#ifdef ENABLE_UTF8
-	using_utf8() ? "Florian K\xC3\xB6nig" :
-#endif
-	"Florian K\xF6nig";
 
     if (!old_more_space || !old_no_help) {
 	SET(MORE_SPACE);

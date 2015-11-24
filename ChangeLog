@@ -1,3 +1,192 @@
+GNU nano 2.4.0  - 2015.03.22
+2015-03-22  Benno Schulenberg  <bensberg@justemail.net>
+	* src/chars.c (move_mbleft): Start looking for a multibyte char
+	not at the start of the string, but only as far back as such a
+	char can possibly be.  Change suggested by Mark Majeres.
+	*  src/search.c (findnextstr): Step backward or forward not simply
+	one byte but one character (possibly multibyte).  Fixes Savannah
+	bug #42175, reported by myself, and the finding of ghosts seen in
+	https://lists.gnu.org/archive/html/nano-devel/2015-03/msg00055.html.
+	* src/winio.c (edit_redraw): Do not center the current line when
+	smooth scrolling is used.  This fixes Savannah bug #42654.
+
+2015-03-21  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_alt_speller): Remove some leftovers.
+	* src/search.c: Place some comments better and unwrap some lines.
+
+2015-03-21  Mark Majeres  <mark@engine12.com>
+	* src/text.c (do_alt_speller): Restore the positions of the mark
+	and the cursor in a better way: to the columns where they were.
+	This fixes Savannah bug #44542, reported by Benno Schulenberg.
+
+2015-03-20  Benno Schulenberg  <bensberg@justemail.net>
+	* src/nano.c (finish_stdin_pager, cancel_stdin_pager, stdin_pager):
+	Normalize the whitespace, remove an old comment, and place another
+	one better.
+	* src/text.c (do_undo): Make a message equal to another one.  It
+	was mistakenly changed in r4950.  (This	is translation-neutral.)
+	* src/global.c (shortcut_init): Keep related items together in the
+	^G help screen.
+
+2015-03-17  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_alt_speller): Do not set the modified flag when
+	an external spell checker didn't make any changes.  This fixes
+	Savannah bug #44320, reported by Cody A. Taylor.
+
+2015-03-14  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_formatter): Fix a message plus a few comments.
+
+2015-03-14  Mark Majeres  <mark@engine12.com>
+	* src/nano.c (renumber): Get out if there is nothing to renumber,
+	to prevent do_undo() from falling over trying to renumber emptiness.
+	This fixes Savannah bug #44488, reported by Dennis Decker Jensen.
+
+2015-03-08  Benno Schulenberg  <bensberg@justemail.net>
+	* src/proto.h, src/nano.c: Fix compilation with --enable-tiny plus
+	--enable-nanorc.
+	* src/rcfile.c (parse_binding): Fix the rebinding of toggles.
+	* doc/man/{nano.1,rnano.1,nanorc.5}, doc/texinfo/nano.texi: Update
+	years and version numbers in the docs in anticipation of a release.
+	* src/nano.c (version): Drop compile time from version information
+	to enable a reproducible build.  Proposed by Jérémy Bobbio and Jordi
+	Mallach (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=774388).
+
+2015-03-07  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/man/nanorc.5, doc/texinfo/nano.texi: Add a note about the
+	inherent imperfection of using regular expressions for syntax
+	highlighting, as suggested by Mike Frysinger in bug #30962.
+	* doc/man/nanorc.5: Improve the indentation of some lists.
+	* doc/man/nanorc.5, doc/texinfo/nano.texi: Remove the mistaken
+	square brackets around the arguments of "header" and "magic" --
+	those arguments are not optional.  Also add "formatter" to the
+	texinfo document, and slightly improve its punctuation.
+
+GNU nano 2.3.99pre2 - 2015.02.27
+2015-02-25  Chris Allegretta <chrisa@asty.org>
+	* src/rcfile.c (parse_binding): Add an exception for do_toggle() as
+	rebinding toggles broke with r5022.  (Fixed in r5134.)
+
+2015-02-21  Benno Schulenberg  <bensberg@justemail.net>
+	* README: Fix the explanation of how to subscribe to a mailing list.
+	* doc/syntax/{java,lua,python,ruby}.nanorc: Wrap some overlong lines.
+
+2015-02-18  Mike Frysinger  <vapier@gentoo.org>
+	* doc/syntax/sh.nanorc: Recognize also dash, openrc and runscript.
+
+2015-02-16  Mike Frysinger  <vapier@gentoo.org>
+	* .gitignore: Ignore the autotools 'compile' file.
+
+2015-02-15  Benno Schulenberg  <bensberg@justemail.net>
+	* src/file.c (do_lockfile): Also show the name of the affected file
+	when finding a lock file, for when many files are opened at once.
+	* src/file.c (do_lockfile): The user does the editing, not the editor.
+
+2015-02-09  Chris Allegretta <chrisa@asty.org>
+	* nano.spec.in: Add dependency on texinfo, docdir files for
+	RPM file creation.
+
+GNU nano 2.3.99pre2 - 2015.02.06
+2015-02-03  Alex Henrie  <alexhenrie24@gmail.com>
+	* src/cut.c (do_cut_text): Make sure to set modified even when
+	using --enable-tiny.
+
+2015-02-01  Kamil Dudka  <kdudka@redhat.com>
+	* src/files.c (write_lockfile): Avoid writing uninitialized bytes to
+	the lock file -- a simple null_at() would not initialize the buffer.
+	* src/files.c (do_lockfile): Make sure that 'lockprog' and 'lockuser'
+	are terminated -- strncpy() does not guarantee that on its own.
+	* src/files.c (do_lockfile): Avoid printing a wrong PID on the status
+	bar due to treating serialized PID bytes as signed integers.  This
+	addresses https://bugzilla.redhat.com/1186384 reported by Don Swaner.
+	* src/files.c (write_lockfile): Do not trim the nano version number
+	-- snprintf() counts the trailing zero into the size limit.
+
+2015-02-01  Benno Schulenberg  <bensberg@justemail.net>
+	* src/winio.c (do_credits): Add a general entry for all translators.
+	* src/nano.c (version), src/winio.c (do_credits): Update the copyright
+	years to include 2015.
+
+2015-01-13  Chris Allegretta <chrisa@asty.org>
+	* src/files.c (open_buffer): Check here for locking and properly
+	handle choosing to not open a file when locked instead of in
+	open_file().  Fixes Savannah bug 42373 reported by Benno Schulenberg.
+
+GNU nano 2.3.99pre1 - 2015.01.06
+2015-01-03  Chris Allegretta <chrisa@asty.org>
+	* New formatter code to support syntaxes like
+	go which have tools to automatically lint and reformat the text for
+	you (gofmt), which is lovely.  rcfile option formatter, function
+	text.c:do_formatter() and some other calls.
+
+2014-12-28  Benno Schulenberg  <bensberg@justemail.net>
+	* src/files.c (do_lockfile): Gettextize the "File being edited"
+	prompt, and improve its wording.
+	* src/winio.c (do_credits): Remove the names of past translators
+	from the Easter-egg scroll.
+	* THANKS: Add a missing	historical translator name.
+	* src/winio.c (do_credits): Add Mark to the scroll, for all his
+	undo work, colouring nano's interface, and other patches.
+
+2014-11-30  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/syntax/spec.nanorc: Colorize %pretrans and %posttrans fully.
+	Original patch from Savannah patch #8573 by Daniel Vrátil.
+
+2014-09-21  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/syntax/{perl,python,ruby,sh}.nanorc: Recognize also header
+	lines of the form "#!/usr/bin/env thing" besides "#!/bin/thing".
+	This fixes Savannah bug #43270 reported by Kitty.
+
+2014-08-29  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_justify): Replace the old get_shortcut() wrapper
+	with the new func_from_key().
+
+2014-08-10  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/texinfo/nano.texi: Improve some wordings and formatting.
+
+2014-08-07  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/syntax/nanorc.nanorc: Remove a mistaken OR which causes a
+	'Bad regex, empty (sub)expression' error on some systems.  This
+	fixes Savannah bug #42929 reported by Misty De Meo.
+
+2014-08-03  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/man/nano.1, doc/man/rnano.1: Tweak the formatting a bit so that
+	po4a will create a nicer POT file.
+	* doc/man/nanorc.5: Improve some of the wordings and formatting.
+
+2014-08-02  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/texinfo/nano.texi: Standardize the formatting of command-line
+	options -- each one separately.  Also add some more markup.
+
+2014-08-01  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/man/nano.1, doc/man/rnano.1: Separate short and long option
+	by a comma instead of putting the long one between parentheses.
+	And showing the required quotes around the argument of -Q.
+
+2014-07-31  Benno Schulenberg  <bensberg@justemail.net>
+	* src/files.c (do_insertfile): Adjust some indentation.
+	* src/prompt.c (do_statusbar_input), src/browser.c (do_browser):
+	Reorder a few things, and adjust some whitespace.
+
+2014-07-27  Benno Schulenberg  <bensberg@justemail.net>
+	* src/global.c (add_to_sclist): Remove the now unused and unneeded
+	addition ability from this builder function of the shortcut list.
+	* src/global.c (strtokeytype): Move this to a better place.
+	* src/global.c (first_sc_for): Move this too to a better place.
+	* src/prompt.c (do_yesno_prompt): Use the new and more direct
+	func_from_key() wrapper instead of get_shortcut().
+	* src/text.c (do_linter): Likewise.
+	* src/files.c (do_insertfile, do_writeout): Likewise.
+
+2014-07-24  Jordi Mallach  <jordi@gnu.org>
+	* doc/texinfo/nano.texi, doc/man/nanorc.5: Typo fix.
+
+2014-07-22  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/syntax/nanorc.nanorc: Remove 'undo' from the valid options.
+
+2014-07-21  Jordi Mallach  <jordi@gnu.org>
+	* doc/nanorc.sample.in: Remove ‘undo’ section which is now obsolete.
+
+GNU nano 2.3.6 - 2014.07.17
 2014-07-16  Jordi Mallach  <jordi@gnu.org>
 	* doc/man/rnano.1: Additional printing formatting improvement from
 	Bjarni Ingi Gislason.

@@ -23,6 +23,7 @@ Eivind Kjørstad <ekj@vestdata.no>		Norwegian Nynorsk translator
 Florian König <floki@bigfoot.com>		German translator
 Wojciech Kotwica <wkotwica@post.pl>		Polish translator
 Clement Laforet <clem_laf@wanadoo.fr>		French translator
+Daniele Medri <madrid@linux.it>			Italian translator
 Gergely Nagy <algernon@debian.org>		Hungarian translator
 Kalle Olavi Niemitalo <kon@iki.fi>		Finnish translator
 A. Murat EREN <meren@comu.edu.tr>		Turkish translator
@@ -84,4 +85,4 @@ Jeremy Robichaud <robicj@yahoo.com>		Beta tester
 Bill Soudan <wes0472@rit.edu>			Regex code, etc
 Ken Tyler <kent@werple.net.au>			Search fixes and more
 
-$Id: THANKS 4666 2014-03-22 20:37:14Z bens $
+$Id: THANKS 5098 2014-12-28 22:23:31Z bens $

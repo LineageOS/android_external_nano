@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Wed Jul  2 22:42:47 2014 -->
+<!-- CreationDate: Sun Mar 22 23:46:10 2015 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -69,31 +69,37 @@ rebind keys -- see the two separate sections on those.
 <p style="margin-left:11%; margin-top: 1em">Options in
 <i>nanorc</i> files take precedence over nano&rsquo;s
 defaults, and command-line options override <i>nanorc</i>
-settings. Also, options are unset by default, except for
-those that take arguments.</p>
+settings. Also, options that do not take an argument are
+unset by default. So using the <b>unset</b> command is only
+needed when wanting to override a setting of the
+system&rsquo;s <i>nanorc</i> file in your own
+<b>~/.nanorc</b>. Options that take an argument cannot be
+unset.</p>
 
-<p style="margin-left:11%; margin-top: 1em">Quotes inside
-string parameters don&rsquo;t have to be escaped with
-backslashes. The last double quote in the string will be
-treated as its end. For example, for the <b>brackets</b>
-option, &quot;<b>&quot;&rsquo;)&gt;]}</b>&quot; will match
+<p style="margin-left:11%; margin-top: 1em">Below, the
+<i>string</i> parameters need to be enclosed in double
+quotes. Quotes inside these string parameters don&rsquo;t
+have to be escaped with backslashes. The last double quote
+in the string will be treated as its end. For example, for
+the <b>brackets</b> option,
+&quot;<b>&quot;&rsquo;)&gt;]}</b>&quot; will match
 <b>&quot;</b>, <b>&rsquo;</b>, <b>)</b>, <b>&gt;</b>,
 <b>]</b>, and <b>}</b>.</p>
 
 <p style="margin-left:11%; margin-top: 1em">The supported
 commands and arguments are: <b><br>
-set/unset allow_insecure_backup</b></p>
+set allow_insecure_backup</b></p>
 
 <p style="margin-left:15%;">When backing up files, allow
 the backup to succeed even if its permissions can&rsquo;t be
 (re)set due to special OS considerations. You should NOT
 enable this option unless you are sure you need it.</p>
 
-<p style="margin-left:11%;"><b>set/unset autoindent</b></p>
+<p style="margin-left:11%;"><b>set autoindent</b></p>
 
 <p style="margin-left:15%;">Use auto-indentation.</p>
 
-<p style="margin-left:11%;"><b>set/unset backup</b></p>
+<p style="margin-left:11%;"><b>set backup</b></p>
 
 <p style="margin-left:15%;">Create backup files by adding a
 tilde (<b>~</b>) to each file&rsquo;s name.</p>
@@ -105,12 +111,12 @@ tilde (<b>~</b>) to each file&rsquo;s name.</p>
 <b>nano</b> puts unique backup files, if file backups are
 enabled.</p>
 
-<p style="margin-left:11%;"><b>set/unset backwards</b></p>
+<p style="margin-left:11%;"><b>set backwards</b></p>
 
 <p style="margin-left:15%;">Do backwards searches by
 default.</p>
 
-<p style="margin-left:11%;"><b>set/unset boldtext</b></p>
+<p style="margin-left:11%;"><b>set boldtext</b></p>
 
 <p style="margin-left:15%;">Use bold instead of reverse
 video for the titlebar, statusbar, key combos, and selected
@@ -128,28 +134,29 @@ include blank characters. Only closing punctuation (see
 brackets, can end sentences. The default value is
 &quot;<b>&quot;&rsquo;)&gt;]}</b>&quot;.</p>
 
-<p style="margin-left:11%;"><b>set/unset
-casesensitive</b></p>
+<p style="margin-left:11%;"><b>set casesensitive</b></p>
 
 <p style="margin-left:15%;">Do case-sensitive searches by
 default.</p>
 
-<p style="margin-left:11%;"><b>set/unset const</b></p>
+<p style="margin-left:11%;"><b>set const</b></p>
 
 <p style="margin-left:15%;">Constantly display the cursor
 position in the status bar.</p>
 
-<p style="margin-left:11%;"><b>set/unset cut</b></p>
+<p style="margin-left:11%;"><b>set cut</b></p>
 
 <p style="margin-left:15%;">Use cut-to-end-of-line by
 default, instead of cutting the whole line.</p>
 
-<p style="margin-left:11%;"><b>set fill</b> <i>n</i></p>
+<p style="margin-left:11%;"><b>set fill</b>
+<i>number</i></p>
 
 <p style="margin-left:15%;">Hard-wrap lines at column
-number <i>n</i>. If <i>n</i> is 0 or less, the maximum line
-length will be the screen width less <i>n</i> columns. The
-default value is &minus;8.</p>
+number <i>number</i>. If <i>number</i> is 0 or less, the
+maximum line length will be the screen width less
+<i>number</i> columns. The default value is
+<b>&minus;8</b>.</p>
 
 <p style="margin-left:11%;"><b>set functioncolor</b>
 <i>fgcolor</i>,<i>bgcolor</i></p>
@@ -159,7 +166,7 @@ to use for the function descriptions in the two help lines
 at the bottom of the screen. See <b>set titlecolor</b> for
 more details.</p>
 
-<p style="margin-left:11%;"><b>set/unset historylog</b></p>
+<p style="margin-left:11%;"><b>set historylog</b></p>
 
 <p style="margin-left:15%;">Enable the use of
 <b>~/.nano/search_history</b> for saving and reading
@@ -173,7 +180,7 @@ to use for the shortcut key combos in the two help lines at
 the bottom of the screen. See <b>set titlecolor</b> for more
 details.</p>
 
-<p style="margin-left:11%;"><b>set/unset locking</b></p>
+<p style="margin-left:11%;"><b>set locking</b></p>
 
 <p style="margin-left:15%;">Enable vim-style lock-files for
 when editing files.</p>
@@ -187,12 +194,12 @@ include blank characters. The opening set must come before
 the closing set, and the two sets must be in the same order.
 The default value is &quot;<b>(&lt;[{)&gt;]}</b>&quot;.</p>
 
-<p style="margin-left:11%;"><b>set/unset morespace</b></p>
+<p style="margin-left:11%;"><b>set morespace</b></p>
 
 <p style="margin-left:15%;">Use the blank line below the
 titlebar as extra editing space.</p>
 
-<p style="margin-left:11%;"><b>set/unset mouse</b></p>
+<p style="margin-left:11%;"><b>set mouse</b></p>
 
 <p style="margin-left:15%;">Enable mouse support, if
 available for your system. When enabled, mouse clicks can be
@@ -202,33 +209,32 @@ Window System, and on the console when gpm is running. Text
 can still be selected through dragging by holding down the
 Shift key.</p>
 
-<p style="margin-left:11%;"><b>set/unset
-multibuffer</b></p>
+<p style="margin-left:11%;"><b>set multibuffer</b></p>
 
 <p style="margin-left:15%;">Allow inserting files into
 their own buffers.</p>
 
-<p style="margin-left:11%;"><b>set/unset noconvert</b></p>
+<p style="margin-left:11%;"><b>set noconvert</b></p>
 
 <p style="margin-left:15%;">Don&rsquo;t convert files from
 DOS/Mac format.</p>
 
-<p style="margin-left:11%;"><b>set/unset nofollow</b></p>
+<p style="margin-left:11%;"><b>set nofollow</b></p>
 
 <p style="margin-left:15%;">Don&rsquo;t follow symlinks
 when writing files.</p>
 
-<p style="margin-left:11%;"><b>set/unset nohelp</b></p>
+<p style="margin-left:11%;"><b>set nohelp</b></p>
 
 <p style="margin-left:15%;">Don&rsquo;t display the two
 help lines at the bottom of the screen.</p>
 
-<p style="margin-left:11%;"><b>set/unset nonewlines</b></p>
+<p style="margin-left:11%;"><b>set nonewlines</b></p>
 
 <p style="margin-left:15%;">Don&rsquo;t automatically add a
 newline to the ends of files.</p>
 
-<p style="margin-left:11%;"><b>set/unset nowrap</b></p>
+<p style="margin-left:11%;"><b>set nowrap</b></p>
 
 <p style="margin-left:15%;">Don&rsquo;t hard-wrap text at
 all.</p>
@@ -242,12 +248,12 @@ Also, the current directory is changed to here, so files are
 inserted from this directory. By default, the operating
 directory feature is turned off.</p>
 
-<p style="margin-left:11%;"><b>set/unset poslog</b></p>
+<p style="margin-left:11%;"><b>set poslog</b></p>
 
 <p style="margin-left:15%;">Save the cursor position of
 files between editing sessions.</p>
 
-<p style="margin-left:11%;"><b>set/unset preserve</b></p>
+<p style="margin-left:11%;"><b>set preserve</b></p>
 
 <p style="margin-left:15%;">Preserve the XON and XOFF keys
 (^Q and ^S).</p>
@@ -262,13 +268,13 @@ punctuation, optionally followed by closing brackets (see
 <b>brackets</b>), can end sentences. The default value is
 &quot;<b>!.?</b>&quot;.</p>
 
-<p style="margin-left:11%;"><b>set/unset quickblank</b></p>
+<p style="margin-left:11%;"><b>set quickblank</b></p>
 
 <p style="margin-left:15%;">Do quick statusbar blanking.
 Statusbar messages will disappear after 1 keystroke instead
 of 25.</p>
 
-<p style="margin-left:11%;"><b>set/unset quiet</b></p>
+<p style="margin-left:11%;"><b>set quiet</b></p>
 
 <p style="margin-left:15%;"><b>nano</b> will not report
 errors in the <i>nanorc</i> file nor ask them to be
@@ -288,28 +294,26 @@ extended regular expression support, and
 &quot;<b>&gt;&nbsp;</b>&quot; otherwise. Note that
 &rsquo;\t&rsquo; stands for a literal Tab character.</p>
 
-<p style="margin-left:11%;"><b>set/unset
-rebinddelete</b></p>
+<p style="margin-left:11%;"><b>set rebinddelete</b></p>
 
 <p style="margin-left:15%;">Interpret the Delete key
 differently so that both Backspace and Delete work properly.
 You should only need to use this option if Backspace acts
 like Delete on your system.</p>
 
-<p style="margin-left:11%;"><b>set/unset
-rebindkeypad</b></p>
+<p style="margin-left:11%;"><b>set rebindkeypad</b></p>
 
 <p style="margin-left:15%;">Interpret the numeric keypad
 keys so that they all work properly. You should only need to
 use this option if they don&rsquo;t, as mouse support
 won&rsquo;t work properly with this option enabled.</p>
 
-<p style="margin-left:11%;"><b>set/unset regexp</b></p>
+<p style="margin-left:11%;"><b>set regexp</b></p>
 
 <p style="margin-left:15%;">Do extended regular expression
 searches by default.</p>
 
-<p style="margin-left:11%;"><b>set/unset smarthome</b></p>
+<p style="margin-left:11%;"><b>set smarthome</b></p>
 
 <p style="margin-left:15%;">Make the Home key smarter. When
 Home is pressed anywhere but at the very beginning of
@@ -318,12 +322,12 @@ that beginning (either forwards or backwards). If the cursor
 is already at that position, it will jump to the true
 beginning of the line.</p>
 
-<p style="margin-left:11%;"><b>set/unset smooth</b></p>
+<p style="margin-left:11%;"><b>set smooth</b></p>
 
 <p style="margin-left:15%;">Use smooth scrolling by
 default.</p>
 
-<p style="margin-left:11%;"><b>set/unset softwrap</b></p>
+<p style="margin-left:11%;"><b>set softwrap</b></p>
 
 <p style="margin-left:15%;">Enable soft line wrapping for
 easier viewing of very long lines.</p>
@@ -342,24 +346,24 @@ easier viewing of very long lines.</p>
 to use for the statusbar. See <b>set titlecolor</b> for more
 details.</p>
 
-<p style="margin-left:11%;"><b>set/unset suspend</b></p>
+<p style="margin-left:11%;"><b>set suspend</b></p>
 
 <p style="margin-left:15%;">Allow <b>nano</b> to be
 suspended.</p>
 
-<p style="margin-left:11%;"><b>set tabsize</b> <i>n</i></p>
+<p style="margin-left:11%;"><b>set tabsize</b>
+<i>number</i></p>
 
-<p style="margin-left:15%;">Use a tab size of <i>n</i>
-columns. The value of <i>n</i> must be greater than 0. The
-default value is 8.</p>
+<p style="margin-left:15%;">Use a tab size of <i>number</i>
+columns. The value of <i>number</i> must be greater than 0.
+The default value is <b>8</b>.</p>
 
-<p style="margin-left:11%;"><b>set/unset
-tabstospaces</b></p>
+<p style="margin-left:11%;"><b>set tabstospaces</b></p>
 
 <p style="margin-left:15%;">Convert typed tabs to
 spaces.</p>
 
-<p style="margin-left:11%;"><b>set/unset tempfile</b></p>
+<p style="margin-left:11%;"><b>set tempfile</b></p>
 
 <p style="margin-left:15%;">Save automatically on exit,
 don&rsquo;t prompt.</p>
@@ -374,7 +378,7 @@ and background are:
 and <b>cyan</b>. And either &quot;<i>fgcolor</i>&quot; or
 &quot;,<i>bgcolor</i>&quot; may be left out.</p>
 
-<p style="margin-left:11%;"><b>set/unset view</b></p>
+<p style="margin-left:11%;"><b>set view</b></p>
 
 <p style="margin-left:15%;">Disallow file modification.</p>
 
@@ -385,7 +389,7 @@ and <b>cyan</b>. And either &quot;<i>fgcolor</i>&quot; or
 indicate the presence of tabs and spaces. They must be
 single-column characters.</p>
 
-<p style="margin-left:11%;"><b>set/unset wordbounds</b></p>
+<p style="margin-left:11%;"><b>set wordbounds</b></p>
 
 <p style="margin-left:15%;">Detect word boundaries more
 accurately by treating punctuation characters as parts of
@@ -397,8 +401,16 @@ words.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">Coloring the
-different syntactic elements of a file can be defined via
-the following commands: <b><br>
+different syntactic elements of a file is done via regular
+expressions (see the <b>color</b> command below). This is
+inherently imperfect, because regular expressions are not
+powerful enough to fully parse a file. Nevertheless, regular
+expressions can do a lot and are easy to make, so they are a
+good fit for a small editor like <b>nano</b>.</p>
+
+<p style="margin-left:11%; margin-top: 1em">A separate
+syntax can be defined for each kind of file via the
+following commands: <b><br>
 syntax</b> &quot;<i>str</i>&quot;
 [&quot;<i>fileregex</i>&quot; ...]</p>
 
@@ -425,8 +437,16 @@ to files that don&rsquo;t match any other syntax&rsquo;s
 syntax, use the given <i>program</i> to invoke the linter
 (this overrides the speller function when defined).</p>
 
-<p style="margin-left:11%;"><b>header</b>
-[&quot;<i>regex</i>&quot; ...]</p>
+<p style="margin-left:11%;"><b>formatter</b> <i>program</i>
+[<i>arg</i> ...]</p>
+
+<p style="margin-left:22%;">For the currently defined
+syntax, use the given <i>program</i> to automatically
+reformat text. Useful in certain programming languages (e.g.
+go).</p>
+
+<p style="margin-left:11%;"><b>header</b> <i>regex</i>
+<b>...</b></p>
 
 <p style="margin-left:22%;">For the currently defined
 syntax, add one or more regexes which will be compared
@@ -434,8 +454,8 @@ against the very first line of the file to be edited, to
 determine whether this syntax should be used for that
 file.</p>
 
-<p style="margin-left:11%;"><b>magic</b>
-[&quot;<i>regex</i>&quot; ...]</p>
+<p style="margin-left:11%;"><b>magic</b> <i>regex</i>
+<b>...</b></p>
 
 <p style="margin-left:22%;">For the currently defined
 syntax, add one or more regexes which will be compared
@@ -537,547 +557,549 @@ be one of:</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
+<td width="15%"></td>
 <td width="3%">
 
 
 <p><b>^</b></p></td>
-<td width="8%"></td>
-<td width="78%">
+<td width="2%"></td>
+<td width="80%">
 
 
 <p>followed by an alpha character or the word
 &quot;Space&quot;. Example: ^C</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
+<td width="15%"></td>
 <td width="3%">
 
 
 <p><b>M-</b></p></td>
-<td width="8%"></td>
-<td width="78%">
+<td width="2%"></td>
+<td width="80%">
 
 
 <p>followed by a printable character or the word
 &quot;Space&quot;. Example: M-C</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
+<td width="15%"></td>
 <td width="3%">
 
 
 <p><b>F</b></p></td>
-<td width="8%"></td>
-<td width="78%">
+<td width="2%"></td>
+<td width="80%">
 
 
 <p>followed by a numeric value from 1 to 16. Example:
 F10</p> </td></tr>
 </table>
 
-<p style="margin-left:11%; margin-top: 1em">Valid
-<i>function</i> names to be bound include: <b><br>
-help</b></p>
+<p style="margin-left:11%;">Valid <i>function</i> names to
+be bound include:</p>
 
-<p style="margin-left:14%;">Invokes the help viewer.</p>
+<p style="margin-left:15%;"><b>help</b></p>
 
-<p style="margin-left:11%;"><b>cancel</b></p>
+<p style="margin-left:18%;">Invokes the help viewer.</p>
 
-<p style="margin-left:14%;">Cancels the current
+<p style="margin-left:15%;"><b>cancel</b></p>
+
+<p style="margin-left:18%;">Cancels the current
 command.</p>
 
-<p style="margin-left:11%;"><b>exit</b></p>
+<p style="margin-left:15%;"><b>exit</b></p>
 
-<p style="margin-left:14%;">Exits from the program (or from
+<p style="margin-left:18%;">Exits from the program (or from
 the help viewer or the file browser).</p>
 
-<p style="margin-left:11%;"><b>writeout</b></p>
+<p style="margin-left:15%;"><b>writeout</b></p>
 
-<p style="margin-left:14%;">Writes the current buffer to
+<p style="margin-left:18%;">Writes the current buffer to
 disk.</p>
 
-<p style="margin-left:11%;"><b>insert</b></p>
+<p style="margin-left:15%;"><b>insert</b></p>
 
-<p style="margin-left:14%;">Inserts a file into the current
+<p style="margin-left:18%;">Inserts a file into the current
 buffer (or into a new buffer when multibuffer is
 enabled).</p>
 
-<p style="margin-left:11%;"><b>whereis</b></p>
+<p style="margin-left:15%;"><b>whereis</b></p>
 
-<p style="margin-left:14%;">Searches for text in the
+<p style="margin-left:18%;">Searches for text in the
 current buffer -- or for filenames matching a string in the
 current list in the file browser.</p>
 
-<p style="margin-left:11%;"><b>searchagain</b></p>
+<p style="margin-left:15%;"><b>searchagain</b></p>
 
-<p style="margin-left:14%;">Repeats the last search
+<p style="margin-left:18%;">Repeats the last search
 command.</p>
 
-<p style="margin-left:11%;"><b>replace</b></p>
+<p style="margin-left:15%;"><b>replace</b></p>
 
-<p style="margin-left:14%;">Interactively replaces text
+<p style="margin-left:18%;">Interactively replaces text
 within the current buffer.</p>
 
-<p style="margin-left:11%;"><b>cut</b></p>
+<p style="margin-left:15%;"><b>cut</b></p>
 
-<p style="margin-left:14%;">Cuts and stores the current
+<p style="margin-left:18%;">Cuts and stores the current
 line (or the marked region).</p>
 
-<p style="margin-left:11%;"><b>copytext</b></p>
+<p style="margin-left:15%;"><b>copytext</b></p>
 
-<p style="margin-left:14%;">Copies the current line (or the
+<p style="margin-left:18%;">Copies the current line (or the
 marked region) without deleting it.</p>
 
-<p style="margin-left:11%;"><b>uncut</b></p>
+<p style="margin-left:15%;"><b>uncut</b></p>
 
-<p style="margin-left:14%;">Copies the currently stored
+<p style="margin-left:18%;">Copies the currently stored
 text into the current buffer at the current cursor
 position.</p>
 
-<p style="margin-left:11%;"><b>mark</b></p>
+<p style="margin-left:15%;"><b>mark</b></p>
 
-<p style="margin-left:14%;">Sets the mark at the current
+<p style="margin-left:18%;">Sets the mark at the current
 position, to start selecting text.</p>
 
-<p style="margin-left:11%;"><b>cutrestoffile</b></p>
+<p style="margin-left:15%;"><b>cutrestoffile</b></p>
 
-<p style="margin-left:14%;">Cuts all text from the cursor
+<p style="margin-left:18%;">Cuts all text from the cursor
 position till the end of the buffer.</p>
 
-<p style="margin-left:11%;"><b>curpos</b></p>
+<p style="margin-left:15%;"><b>curpos</b></p>
 
-<p style="margin-left:14%;">Shows the current cursor
+<p style="margin-left:18%;">Shows the current cursor
 position: the line, column, and character positions.</p>
 
-<p style="margin-left:11%;"><b>wordcount</b></p>
+<p style="margin-left:15%;"><b>wordcount</b></p>
 
-<p style="margin-left:14%;">Counts the number of words,
+<p style="margin-left:18%;">Counts the number of words,
 lines and characters in the current buffer.</p>
 
-<p style="margin-left:11%;"><b>speller</b></p>
+<p style="margin-left:15%;"><b>speller</b></p>
 
-<p style="margin-left:14%;">Invokes a spell-checking
+<p style="margin-left:18%;">Invokes a spell-checking
 program (or a linting program, if the current syntax
 highlighting defines one).</p>
 
-<p style="margin-left:11%;"><b>justify</b></p>
+<p style="margin-left:15%;"><b>justify</b></p>
 
-<p style="margin-left:14%;">Justifies the current
+<p style="margin-left:18%;">Justifies the current
 paragraph.</p>
 
-<p style="margin-left:11%;"><b>fulljustify</b></p>
+<p style="margin-left:15%;"><b>fulljustify</b></p>
 
-<p style="margin-left:14%;">Justifies the entire current
+<p style="margin-left:18%;">Justifies the entire current
 buffer.</p>
 
-<p style="margin-left:11%;"><b>indent</b></p>
+<p style="margin-left:15%;"><b>indent</b></p>
 
-<p style="margin-left:14%;">Indents (shifts to the right)
+<p style="margin-left:18%;">Indents (shifts to the right)
 the currently marked text.</p>
 
-<p style="margin-left:11%;"><b>unindent</b></p>
+<p style="margin-left:15%;"><b>unindent</b></p>
 
-<p style="margin-left:14%;">Unindents (shifts to the left)
+<p style="margin-left:18%;">Unindents (shifts to the left)
 the currently marked text.</p>
 
-<p style="margin-left:11%;"><b>left</b></p>
+<p style="margin-left:15%;"><b>left</b></p>
 
-<p style="margin-left:14%;">Goes left one position (in the
+<p style="margin-left:18%;">Goes left one position (in the
 editor or browser).</p>
 
-<p style="margin-left:11%;"><b>right</b></p>
+<p style="margin-left:15%;"><b>right</b></p>
 
-<p style="margin-left:14%;">Goes right one position (in the
+<p style="margin-left:18%;">Goes right one position (in the
 editor or browser).</p>
 
-<p style="margin-left:11%;"><b>up</b></p>
+<p style="margin-left:15%;"><b>up</b></p>
 
-<p style="margin-left:14%;">Goes one line up (in the editor
+<p style="margin-left:18%;">Goes one line up (in the editor
 or browser).</p>
 
-<p style="margin-left:11%;"><b>down</b></p>
+<p style="margin-left:15%;"><b>down</b></p>
 
-<p style="margin-left:14%;">Goes one line down (in the
+<p style="margin-left:18%;">Goes one line down (in the
 editor or browser).</p>
 
-<p style="margin-left:11%;"><b>scrollup</b></p>
+<p style="margin-left:15%;"><b>scrollup</b></p>
 
-<p style="margin-left:14%;">Scrolls up one line of text
+<p style="margin-left:18%;">Scrolls up one line of text
 from the current position.</p>
 
-<p style="margin-left:11%;"><b>scrolldown</b></p>
+<p style="margin-left:15%;"><b>scrolldown</b></p>
 
-<p style="margin-left:14%;">Scrolls down one line of text
+<p style="margin-left:18%;">Scrolls down one line of text
 from the current position.</p>
 
-<p style="margin-left:11%;"><b>nextword</b></p>
+<p style="margin-left:15%;"><b>nextword</b></p>
 
-<p style="margin-left:14%;">Moves the cursor to the
+<p style="margin-left:18%;">Moves the cursor to the
 beginning of the next word.</p>
 
-<p style="margin-left:11%;"><b>prevword</b></p>
+<p style="margin-left:15%;"><b>prevword</b></p>
 
-<p style="margin-left:14%;">Moves the cursor to the
+<p style="margin-left:18%;">Moves the cursor to the
 beginning of the previous word.</p>
 
-<p style="margin-left:11%;"><b>home</b></p>
+<p style="margin-left:15%;"><b>home</b></p>
 
-<p style="margin-left:14%;">Moves the cursor to the
+<p style="margin-left:18%;">Moves the cursor to the
 beginning of the current line.</p>
 
-<p style="margin-left:11%;"><b>end</b></p>
+<p style="margin-left:15%;"><b>end</b></p>
 
-<p style="margin-left:14%;">Moves the cursor to the end of
+<p style="margin-left:18%;">Moves the cursor to the end of
 the current line.</p>
 
-<p style="margin-left:11%;"><b>beginpara</b></p>
+<p style="margin-left:15%;"><b>beginpara</b></p>
 
-<p style="margin-left:14%;">Moves the cursor to the
+<p style="margin-left:18%;">Moves the cursor to the
 beginning of the current paragraph.</p>
 
-<p style="margin-left:11%;"><b>endpara</b></p>
+<p style="margin-left:15%;"><b>endpara</b></p>
 
-<p style="margin-left:14%;">Moves the cursor to the end of
+<p style="margin-left:18%;">Moves the cursor to the end of
 the current paragraph.</p>
 
-<p style="margin-left:11%;"><b>prevpage</b></p>
+<p style="margin-left:15%;"><b>prevpage</b></p>
 
-<p style="margin-left:14%;">Goes up one screenful.</p>
+<p style="margin-left:18%;">Goes up one screenful.</p>
 
-<p style="margin-left:11%;"><b>nextpage</b></p>
+<p style="margin-left:15%;"><b>nextpage</b></p>
 
-<p style="margin-left:14%;">Goes down one screenful.</p>
+<p style="margin-left:18%;">Goes down one screenful.</p>
 
-<p style="margin-left:11%;"><b>firstline</b></p>
+<p style="margin-left:15%;"><b>firstline</b></p>
 
-<p style="margin-left:14%;">Goes to the first line of the
+<p style="margin-left:18%;">Goes to the first line of the
 file.</p>
 
-<p style="margin-left:11%;"><b>lastline</b></p>
+<p style="margin-left:15%;"><b>lastline</b></p>
 
-<p style="margin-left:14%;">Goes to the last line of the
+<p style="margin-left:18%;">Goes to the last line of the
 file.</p>
 
-<p style="margin-left:11%;"><b>gotoline</b></p>
+<p style="margin-left:15%;"><b>gotoline</b></p>
 
-<p style="margin-left:14%;">Goes to a specific line (and
+<p style="margin-left:18%;">Goes to a specific line (and
 column if specified).</p>
 
-<p style="margin-left:11%;"><b>gototext</b></p>
+<p style="margin-left:15%;"><b>gototext</b></p>
 
-<p style="margin-left:14%;">Switches from targetting a line
+<p style="margin-left:18%;">Switches from targeting a line
 number to searching for text.</p>
 
-<p style="margin-left:11%;"><b>findbracket</b></p>
+<p style="margin-left:15%;"><b>findbracket</b></p>
 
-<p style="margin-left:14%;">Moves the cursor to the bracket
+<p style="margin-left:18%;">Moves the cursor to the bracket
 (brace, parenthesis, etc.) that matches (pairs) with the one
 under the cursor.</p>
 
-<p style="margin-left:11%;"><b>prevbuf</b></p>
+<p style="margin-left:15%;"><b>prevbuf</b></p>
 
-<p style="margin-left:14%;">Switches to editing/viewing the
+<p style="margin-left:18%;">Switches to editing/viewing the
 previous buffer when using multibuffer mode.</p>
 
-<p style="margin-left:11%;"><b>nextbuf</b></p>
+<p style="margin-left:15%;"><b>nextbuf</b></p>
 
-<p style="margin-left:14%;">Switches to editing/viewing the
+<p style="margin-left:18%;">Switches to editing/viewing the
 next buffer when using multibuffer mode.</p>
 
-<p style="margin-left:11%;"><b>verbatim</b></p>
+<p style="margin-left:15%;"><b>verbatim</b></p>
 
-<p style="margin-left:14%;">Inserts the next character
+<p style="margin-left:18%;">Inserts the next character
 verbatim into the file.</p>
 
-<p style="margin-left:11%;"><b>tab</b></p>
+<p style="margin-left:15%;"><b>tab</b></p>
 
-<p style="margin-left:14%;">Inserts a tab at the current
+<p style="margin-left:18%;">Inserts a tab at the current
 cursor location.</p>
 
-<p style="margin-left:11%;"><b>enter</b></p>
+<p style="margin-left:15%;"><b>enter</b></p>
 
-<p style="margin-left:14%;">Inserts a new line below the
+<p style="margin-left:18%;">Inserts a new line below the
 current one.</p>
 
-<p style="margin-left:11%;"><b>delete</b></p>
+<p style="margin-left:15%;"><b>delete</b></p>
 
-<p style="margin-left:14%;">Deletes the character under the
+<p style="margin-left:18%;">Deletes the character under the
 cursor.</p>
 
-<p style="margin-left:11%;"><b>backspace</b></p>
+<p style="margin-left:15%;"><b>backspace</b></p>
 
-<p style="margin-left:14%;">Deletes the character before
+<p style="margin-left:18%;">Deletes the character before
 the cursor.</p>
 
-<p style="margin-left:11%;"><b>undo</b></p>
+<p style="margin-left:15%;"><b>undo</b></p>
 
-<p style="margin-left:14%;">Undoes the last performed text
+<p style="margin-left:18%;">Undoes the last performed text
 action (add text, delete text, etc).</p>
 
-<p style="margin-left:11%;"><b>redo</b></p>
+<p style="margin-left:15%;"><b>redo</b></p>
 
-<p style="margin-left:14%;">Redoes the last undone action
+<p style="margin-left:18%;">Redoes the last undone action
 (i.e., it undoes an undo).</p>
 
-<p style="margin-left:11%;"><b>refresh</b></p>
+<p style="margin-left:15%;"><b>refresh</b></p>
 
-<p style="margin-left:14%;">Refreshes the screen.</p>
+<p style="margin-left:18%;">Refreshes the screen.</p>
 
-<p style="margin-left:11%;"><b>suspend</b></p>
+<p style="margin-left:15%;"><b>suspend</b></p>
 
-<p style="margin-left:14%;">Suspends the editor (if the
+<p style="margin-left:18%;">Suspends the editor (if the
 suspending function is enabled, see the
 &quot;suspendenable&quot; entry below).</p>
 
-<p style="margin-left:11%;"><b>casesens</b></p>
+<p style="margin-left:15%;"><b>casesens</b></p>
 
-<p style="margin-left:14%;">Toggles case sensitivity in
+<p style="margin-left:18%;">Toggles case sensitivity in
 searching (search/replace menus only).</p>
 
-<p style="margin-left:11%;"><b>regexp</b></p>
+<p style="margin-left:15%;"><b>regexp</b></p>
 
-<p style="margin-left:14%;">Toggles whether
+<p style="margin-left:18%;">Toggles whether
 searching/replacing is based on literal strings or regular
 expressions.</p>
 
-<p style="margin-left:11%;"><b>backwards</b></p>
+<p style="margin-left:15%;"><b>backwards</b></p>
 
-<p style="margin-left:14%;">Toggles whether
+<p style="margin-left:18%;">Toggles whether
 searching/replacing goes forward or backward.</p>
 
-<p style="margin-left:11%;"><b>prevhistory</b></p>
+<p style="margin-left:15%;"><b>prevhistory</b></p>
 
-<p style="margin-left:14%;">Shows the previous history
+<p style="margin-left:18%;">Shows the previous history
 entry in the prompt menus (e.g. search).</p>
 
-<p style="margin-left:11%;"><b>nexthistory</b></p>
+<p style="margin-left:15%;"><b>nexthistory</b></p>
 
-<p style="margin-left:14%;">Shows the next history entry in
+<p style="margin-left:18%;">Shows the next history entry in
 the prompt menus (e.g. search).</p>
 
-<p style="margin-left:11%;"><b>flipreplace</b></p>
+<p style="margin-left:15%;"><b>flipreplace</b></p>
 
-<p style="margin-left:14%;">Toggles between searching for
+<p style="margin-left:18%;">Toggles between searching for
 something and replacing something.</p>
 
-<p style="margin-left:11%;"><b>flipexecute</b></p>
+<p style="margin-left:15%;"><b>flipexecute</b></p>
 
-<p style="margin-left:14%;">Toggles between inserting a
+<p style="margin-left:18%;">Toggles between inserting a
 file and executing a command.</p>
 
-<p style="margin-left:11%;"><b>flipnewbuffer</b></p>
+<p style="margin-left:15%;"><b>flipnewbuffer</b></p>
 
-<p style="margin-left:14%;">Toggles between inserting into
+<p style="margin-left:18%;">Toggles between inserting into
 the current buffer and into a new empty buffer.</p>
 
-<p style="margin-left:11%;"><b>tofiles</b></p>
+<p style="margin-left:15%;"><b>tofiles</b></p>
 
-<p style="margin-left:14%;">Starts the file browser,
+<p style="margin-left:18%;">Starts the file browser,
 allowing to select a file from a list.</p>
 
-<p style="margin-left:11%;"><b>gotodir</b></p>
+<p style="margin-left:15%;"><b>gotodir</b></p>
 
-<p style="margin-left:14%;">Goes to a directory to be
+<p style="margin-left:18%;">Goes to a directory to be
 specified, allowing to browse anywhere in the
 filesystem.</p>
 
-<p style="margin-left:11%;"><b>dosformat</b></p>
+<p style="margin-left:15%;"><b>dosformat</b></p>
 
-<p style="margin-left:14%;">When writing a file, switches
+<p style="margin-left:18%;">When writing a file, switches
 to writing a DOS format (CR/LF).</p>
 
-<p style="margin-left:11%;"><b>macformat</b></p>
+<p style="margin-left:15%;"><b>macformat</b></p>
 
-<p style="margin-left:14%;">When writing a file, switches
+<p style="margin-left:18%;">When writing a file, switches
 to writing a Mac format.</p>
 
-<p style="margin-left:11%;"><b>append</b></p>
+<p style="margin-left:15%;"><b>append</b></p>
 
-<p style="margin-left:14%;">When writing a file, appends to
+<p style="margin-left:18%;">When writing a file, appends to
 the end instead of overwriting.</p>
 
-<p style="margin-left:11%;"><b>prepend</b></p>
+<p style="margin-left:15%;"><b>prepend</b></p>
 
-<p style="margin-left:14%;">When writing a file,
+<p style="margin-left:18%;">When writing a file,
 &rsquo;prepends&rsquo; (writes at the beginning) instead of
 overwriting.</p>
 
-<p style="margin-left:11%;"><b>backup</b></p>
+<p style="margin-left:15%;"><b>backup</b></p>
 
-<p style="margin-left:14%;">When writing a file, creates a
+<p style="margin-left:18%;">When writing a file, creates a
 backup of the current file.</p>
 
-<p style="margin-left:11%;"><b>firstfile</b></p>
+<p style="margin-left:15%;"><b>firstfile</b></p>
 
-<p style="margin-left:14%;">Goes to the first file when
+<p style="margin-left:18%;">Goes to the first file when
 using the file browser (reading or writing files).</p>
 
-<p style="margin-left:11%;"><b>lastfile</b></p>
+<p style="margin-left:15%;"><b>lastfile</b></p>
 
-<p style="margin-left:14%;">Goes to the last file when
+<p style="margin-left:18%;">Goes to the last file when
 using the file browser (reading or writing files).</p>
 
-<p style="margin-left:11%;"><b>nohelp</b></p>
+<p style="margin-left:15%;"><b>nohelp</b></p>
 
-<p style="margin-left:14%;">Toggles the presence of the
+<p style="margin-left:18%;">Toggles the presence of the
 two-line list of key bindings at the bottom of the
 screen.</p>
 
-<p style="margin-left:11%;"><b>constupdate</b></p>
+<p style="margin-left:15%;"><b>constupdate</b></p>
 
-<p style="margin-left:14%;">Toggles the constant display of
+<p style="margin-left:18%;">Toggles the constant display of
 the current line, column, and character positions.</p>
 
-<p style="margin-left:11%;"><b>morespace</b></p>
+<p style="margin-left:15%;"><b>morespace</b></p>
 
-<p style="margin-left:14%;">Toggles the presence of the
+<p style="margin-left:18%;">Toggles the presence of the
 blank line which &rsquo;separates&rsquo; the titlebar from
 the file text.</p>
 
-<p style="margin-left:11%;"><b>smoothscroll</b></p>
+<p style="margin-left:15%;"><b>smoothscroll</b></p>
 
-<p style="margin-left:14%;">Toggles smooth scrolling (when
+<p style="margin-left:18%;">Toggles smooth scrolling (when
 moving around with the arrow keys).</p>
 
-<p style="margin-left:11%;"><b>softwrap</b></p>
+<p style="margin-left:15%;"><b>softwrap</b></p>
 
-<p style="margin-left:14%;">Toggles the displaying of
+<p style="margin-left:18%;">Toggles the displaying of
 overlong lines on multiple screen lines.</p>
 
-<p style="margin-left:11%;"><b>whitespacedisplay</b></p>
+<p style="margin-left:15%;"><b>whitespacedisplay</b></p>
 
-<p style="margin-left:14%;">Toggles the showing of
+<p style="margin-left:18%;">Toggles the showing of
 whitespace.</p>
 
-<p style="margin-left:11%;"><b>nosyntax</b></p>
+<p style="margin-left:15%;"><b>nosyntax</b></p>
 
-<p style="margin-left:14%;">Toggles syntax
+<p style="margin-left:18%;">Toggles syntax
 highlighting.</p>
 
-<p style="margin-left:11%;"><b>smarthome</b></p>
+<p style="margin-left:15%;"><b>smarthome</b></p>
 
-<p style="margin-left:14%;">Toggles the smartness of the
+<p style="margin-left:18%;">Toggles the smartness of the
 Home key.</p>
 
-<p style="margin-left:11%;"><b>autoindent</b></p>
+<p style="margin-left:15%;"><b>autoindent</b></p>
 
-<p style="margin-left:14%;">Toggles whether new lines will
+<p style="margin-left:18%;">Toggles whether new lines will
 contain the same amount of whitespace as the preceding
 line.</p>
 
-<p style="margin-left:11%;"><b>cuttoend</b></p>
+<p style="margin-left:15%;"><b>cuttoend</b></p>
 
-<p style="margin-left:14%;">Toggles whether cutting text
+<p style="margin-left:18%;">Toggles whether cutting text
 will cut the whole line or just from the current cursor
 position to the end of the line.</p>
 
-<p style="margin-left:11%;"><b>nowrap</b></p>
+<p style="margin-left:15%;"><b>nowrap</b></p>
 
-<p style="margin-left:14%;">Toggles whether long lines will
+<p style="margin-left:18%;">Toggles whether long lines will
 be hard-wrapped to the next line.</p>
 
-<p style="margin-left:11%;"><b>tabstospaces</b></p>
+<p style="margin-left:15%;"><b>tabstospaces</b></p>
 
-<p style="margin-left:14%;">Toggles whether typed tabs will
+<p style="margin-left:18%;">Toggles whether typed tabs will
 be converted to spaces.</p>
 
-<p style="margin-left:11%;"><b>backupfile</b></p>
+<p style="margin-left:15%;"><b>backupfile</b></p>
 
-<p style="margin-left:14%;">Toggles whether a backup will
+<p style="margin-left:18%;">Toggles whether a backup will
 be made of the file to be edited.</p>
 
-<p style="margin-left:11%;"><b>multibuffer</b></p>
+<p style="margin-left:15%;"><b>multibuffer</b></p>
 
-<p style="margin-left:14%;">Toggles the use of multiple
+<p style="margin-left:18%;">Toggles the use of multiple
 file buffers (if support for them has been compiled in).</p>
 
-<p style="margin-left:11%;"><b>mouse</b></p>
+<p style="margin-left:15%;"><b>mouse</b></p>
 
-<p style="margin-left:14%;">Toggles mouse support.</p>
+<p style="margin-left:18%;">Toggles mouse support.</p>
 
-<p style="margin-left:11%;"><b>noconvert</b></p>
+<p style="margin-left:15%;"><b>noconvert</b></p>
 
-<p style="margin-left:14%;">Toggles automatic conversion of
+<p style="margin-left:18%;">Toggles automatic conversion of
 files from DOS/Mac format.</p>
 
-<p style="margin-left:11%;"><b>suspendenable</b></p>
+<p style="margin-left:15%;"><b>suspendenable</b></p>
 
-<p style="margin-left:14%;">Toggles whether the suspend
+<p style="margin-left:18%;">Toggles whether the suspend
 sequence (normally ^Z) will suspend the editor window.</p>
 
-<p style="margin-left:11%; margin-top: 1em">Valid
-<i>menu</i> sections are: <b><br>
-main</b></p>
+<p style="margin-left:11%;">Valid <i>menu</i> sections
+are:</p>
 
-<p style="margin-left:14%;">The main editor window where
+<p style="margin-left:15%;"><b>main</b></p>
+
+<p style="margin-left:18%;">The main editor window where
 text is entered and edited.</p>
 
-<p style="margin-left:11%;"><b>search</b></p>
+<p style="margin-left:15%;"><b>search</b></p>
 
-<p style="margin-left:14%;">The search menu (AKA
+<p style="margin-left:18%;">The search menu (AKA
 whereis).</p>
 
-<p style="margin-left:11%;"><b>replace</b></p>
+<p style="margin-left:15%;"><b>replace</b></p>
 
-<p style="margin-left:14%;">The &rsquo;search to
+<p style="margin-left:18%;">The &rsquo;search to
 replace&rsquo; menu.</p>
 
-<p style="margin-left:11%;"><b>replacewith</b></p>
+<p style="margin-left:15%;"><b>replacewith</b></p>
 
-<p style="margin-left:14%;">The &rsquo;replace with&rsquo;
+<p style="margin-left:18%;">The &rsquo;replace with&rsquo;
 menu, which comes up after &rsquo;search to
 replace&rsquo;.</p>
 
-<p style="margin-left:11%;"><b>gotoline</b></p>
+<p style="margin-left:15%;"><b>gotoline</b></p>
 
-<p style="margin-left:14%;">The &rsquo;goto line (and
+<p style="margin-left:18%;">The &rsquo;goto line (and
 column)&rsquo; menu.</p>
 
-<p style="margin-left:11%;"><b>writeout</b></p>
+<p style="margin-left:15%;"><b>writeout</b></p>
 
-<p style="margin-left:14%;">The &rsquo;write file&rsquo;
+<p style="margin-left:18%;">The &rsquo;write file&rsquo;
 menu.</p>
 
-<p style="margin-left:11%;"><b>insert</b></p>
+<p style="margin-left:15%;"><b>insert</b></p>
 
-<p style="margin-left:14%;">The &rsquo;insert file&rsquo;
+<p style="margin-left:18%;">The &rsquo;insert file&rsquo;
 menu.</p>
 
-<p style="margin-left:11%;"><b>extcmd</b></p>
+<p style="margin-left:15%;"><b>extcmd</b></p>
 
-<p style="margin-left:14%;">The menu for inserting output
+<p style="margin-left:18%;">The menu for inserting output
 from an external command, reached from the insert menu.</p>
 
-<p style="margin-left:11%;"><b>help</b></p>
+<p style="margin-left:15%;"><b>help</b></p>
 
-<p style="margin-left:14%;">The help-viewer menu.</p>
+<p style="margin-left:18%;">The help-viewer menu.</p>
 
-<p style="margin-left:11%;"><b>spell</b></p>
+<p style="margin-left:15%;"><b>spell</b></p>
 
-<p style="margin-left:14%;">The interactive spell checker
+<p style="margin-left:18%;">The interactive spell checker
 Yes/no menu.</p>
 
-<p style="margin-left:11%;"><b>linter</b></p>
+<p style="margin-left:15%;"><b>linter</b></p>
 
-<p style="margin-left:14%;">The linter menu.</p>
+<p style="margin-left:18%;">The linter menu.</p>
 
-<p style="margin-left:11%;"><b>browser</b></p>
+<p style="margin-left:15%;"><b>browser</b></p>
 
-<p style="margin-left:14%;">The file browser for inserting
+<p style="margin-left:18%;">The file browser for inserting
 or writing a file.</p>
 
-<p style="margin-left:11%;"><b>whereisfile</b></p>
+<p style="margin-left:15%;"><b>whereisfile</b></p>
 
-<p style="margin-left:14%;">The &rsquo;search for a
+<p style="margin-left:18%;">The &rsquo;search for a
 file&rsquo; menu in the file browser.</p>
 
-<p style="margin-left:11%;"><b>gotodir</b></p>
+<p style="margin-left:15%;"><b>gotodir</b></p>
 
-<p style="margin-left:14%;">The &rsquo;go to
+<p style="margin-left:18%;">The &rsquo;go to
 directory&rsquo; menu in the file browser.</p>
 
-<p style="margin-left:11%;"><b>all</b></p>
+<p style="margin-left:15%;"><b>all</b></p>
 
-<p style="margin-left:14%;">A special name that encompasses
+<p style="margin-left:18%;">A special name that encompasses
 all menus. For <b>bind</b> it means all menus where the
 specified <i>function</i> exists; for <b>unbind</b> it means
 all menus where the specified <i>key</i> exists.</p>

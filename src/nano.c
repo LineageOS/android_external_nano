@@ -1,4 +1,4 @@
-/* $Id: nano.c 5067 2014-07-16 08:46:42Z bens $ */
+/* $Id: nano.c 5141 2015-03-20 11:18:22Z bens $ */
 /**************************************************************************
  *   nano.c                                                               *
  *                                                                        *
@@ -178,7 +178,8 @@ void renumber(filestruct *fileptr)
 {
     ssize_t line;
 
-    assert(fileptr != NULL);
+    if (fileptr == NULL)
+	return;
 
     line = (fileptr->prev == NULL) ? 0 : fileptr->prev->lineno;
 
@@ -365,8 +366,7 @@ void move_to_filestruct(filestruct **file_top, filestruct **file_bot,
 
 	/* Renumber starting with the line after the original
 	 * file_bot. */
-	if (file_bot_save->next != NULL)
-	    renumber(file_bot_save->next);
+	renumber(file_bot_save->next);
     }
 
     /* Since the text has now been saved, remove it from the
@@ -960,9 +960,8 @@ void usage(void)
  * it was compiled with. */
 void version(void)
 {
-    printf(_(" GNU nano version %s (compiled %s, %s)\n"), VERSION,
-	__TIME__, __DATE__);
-    printf(" (C) 1999..2014 Free Software Foundation, Inc.\n");
+    printf(_(" GNU nano, version %s\n"), VERSION);
+    printf(" (C) 1999..2015 Free Software Foundation, Inc.\n");
     printf(
 	_(" Email: nano@nano-editor.org	Web: http://www.nano-editor.org/"));
     printf(_("\n Compiled options:"));
@@ -1152,7 +1151,7 @@ void do_exit(void)
 
 #ifndef DISABLE_MULTIBUFFER
 	/* Exit only if there are no more open file buffers. */
-	if (!close_buffer())
+	if (!close_buffer(FALSE))
 #endif
 	    finish();
     /* If the user canceled, we go on. */
@@ -1181,20 +1180,20 @@ void finish_stdin_pager(void)
 
     /* Read whatever we did get from stdin. */
     f = fopen("/dev/stdin", "rb");
-       if (f == NULL)
-        nperror("fopen");
+    if (f == NULL)
+	nperror("fopen");
 
     read_file(f, 0, "stdin", TRUE, FALSE);
     ttystdin = open("/dev/tty", O_RDONLY);
     if (!ttystdin)
-        die(_("Couldn't reopen stdin from keyboard, sorry\n"));
+	die(_("Couldn't reopen stdin from keyboard, sorry\n"));
 
     dup2(ttystdin,0);
     close(ttystdin);
     if (!pager_input_aborted)
 	tcgetattr(0, &oldterm);
     if (!pager_sig_failed && sigaction(SIGINT, &pager_oldaction, NULL) == -1)
-        nperror("sigaction");
+	nperror("sigaction");
     terminal_init();
     doupdate();
 }
@@ -1202,7 +1201,6 @@ void finish_stdin_pager(void)
 /* Cancel reading from stdin like a pager. */
 RETSIGTYPE cancel_stdin_pager(int signal)
 {
-    /* Currently do nothing, just handle the intr silently. */
     pager_input_aborted = TRUE;
 }
 
@@ -1214,13 +1212,13 @@ void stdin_pager(void)
 	tcsetattr(0, TCSANOW, &oldterm);
     fprintf(stderr, _("Reading from stdin, ^C to abort\n"));
 
-    /* Set things up so that Ctrl-C will cancel the new process. */
     /* Enable interpretation of the special control keys so that
      * we get SIGINT when Ctrl-C is pressed. */
 #ifndef NANO_TINY
     enable_signals();
 #endif
 
+    /* Set things up so that SIGINT will cancel the new process. */
     if (sigaction(SIGINT, NULL, &pager_newaction) == -1) {
 	pager_sig_failed = TRUE;
 	nperror("sigaction");
@@ -1482,13 +1480,13 @@ void do_toggle(int flag)
     desc = (char *) _(flagtostr(flag));
     statusbar("%s %s", desc, enabled ? _("enabled") : _("disabled"));
 }
+#endif /* !NANO_TINY */
 
 /* Bleh. */
 void do_toggle_void(void)
 {
     ;
 }
-#endif /* !NANO_TINY */
 
 /* Disable extended input and output processing in our terminal
  * settings. */

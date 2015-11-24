@@ -1,4 +1,4 @@
-/* $Id: text.c 5068 2014-07-16 08:53:16Z bens $ */
+/* $Id: text.c 5145 2015-03-21 21:13:03Z bens $ */
 /**************************************************************************
  *   text.c                                                               *
  *                                                                        *
@@ -442,7 +442,7 @@ void do_undo(void)
 
     filestruct *f = fsfromline(u->mark_begin_lineno);
     if (!f) {
-	statusbar(_("Internal error: can't match line %ld.  Please save your work."), (long)u->mark_begin_lineno);
+	statusbar(_("Internal error: can't match line %d.  Please save your work."), u->mark_begin_lineno);
 	return;
     }
 #ifdef DEBUG
@@ -1883,6 +1883,10 @@ void do_justify(bool full_justify)
     bool filebot_inpar = FALSE;
 	/* Whether the text at filebot is part of the current
 	 * paragraph. */
+    int kbinput;
+	/* The first keystroke after a justification. */
+    functionptrtype func;
+	/* The function associated with that keystroke. */
 
     /* We save these variables to be restored if the user
      * unjustifies. */
@@ -1896,9 +1900,6 @@ void do_justify(bool full_justify)
     size_t mark_begin_x_save = openfile->mark_begin_x;
 #endif
     bool modified_save = openfile->modified;
-
-    int kbinput;
-    const sc *s;
 
     /* Move to the beginning of the current line, so that justifying at
      * the end of the last line of the file, if that line isn't blank,
@@ -2218,9 +2219,9 @@ void do_justify(bool full_justify)
     /* Now get a keystroke and see if it's unjustify.  If not, put back
      * the keystroke and return. */
     kbinput = do_input(FALSE);
-    s = get_shortcut(&kbinput);
+    func = func_from_key(&kbinput);
 
-    if (s && s->scfunc == do_uncut_text) {
+    if (func == do_uncut_text) {
 	/* Splice the justify buffer back into the file, but only if we
 	 * actually justified something. */
 	if (first_par_line != NULL) {
@@ -2660,9 +2661,10 @@ const char *do_alt_speller(char *tempfile_name)
 {
     int alt_spell_status;
     size_t current_x_save = openfile->current_x;
-    size_t pww_save = openfile->placewewant;
     ssize_t current_y_save = openfile->current_y;
     ssize_t lineno_save = openfile->current->lineno;
+    struct stat spellfileinfo;
+    __time_t timestamp;
     pid_t pid_spell;
     char *ptr;
     static int arglen = 3;
@@ -2671,9 +2673,6 @@ const char *do_alt_speller(char *tempfile_name)
     bool old_mark_set = openfile->mark_set;
     bool added_magicline = FALSE;
 	/* Whether we added a magicline after filebot. */
-    bool right_side_up = FALSE;
-	/* TRUE if (mark_begin, mark_begin_x) is the top of the mark,
-	 * FALSE if (current, current_x) is. */
     filestruct *top, *bot;
     size_t top_x, bot_x;
     ssize_t mb_lineno_save = 0;
@@ -2697,6 +2696,10 @@ const char *do_alt_speller(char *tempfile_name)
 	statusbar(_("Finished checking spelling"));
 	return NULL;
     }
+
+    /* Get the timestamp of the temporary file. */
+    stat(tempfile_name, &spellfileinfo);
+    timestamp = spellfileinfo.st_mtime;
 
     endwin();
 
@@ -2775,7 +2778,7 @@ const char *do_alt_speller(char *tempfile_name)
 	 * added when we're done correcting misspelled words; and
 	 * turn the mark off. */
 	mark_order((const filestruct **)&top, &top_x,
-		(const filestruct **)&bot, &bot_x, &right_side_up);
+		(const filestruct **)&bot, &bot_x, NULL);
 	filepart = partition_filestruct(top, top_x, bot, bot_x);
 	if (!ISSET(NO_NEWLINES))
 	    added_magicline = (openfile->filebot->data[0] != '\0');
@@ -2799,18 +2802,6 @@ const char *do_alt_speller(char *tempfile_name)
 	if (!ISSET(NO_NEWLINES) && added_magicline)
 	    remove_magicline();
 
-	/* Put the beginning and the end of the mark at the beginning
-	 * and the end of the spell-checked text. */
-	if (openfile->fileage == openfile->filebot)
-	    bot_x += top_x;
-	if (right_side_up) {
-	    openfile->mark_begin_x = top_x;
-	    current_x_save = bot_x;
-	} else {
-	    current_x_save = top_x;
-	    openfile->mark_begin_x = bot_x;
-	}
-
 	/* Unpartition the filestruct so that it contains all the text
 	 * again.  Note that we've replaced the marked text originally
 	 * in the partition with the spell-checked marked text in the
@@ -2826,8 +2817,7 @@ const char *do_alt_speller(char *tempfile_name)
 	openfile->totsize = totsize_save;
 
 	/* Assign mark_begin to the line where the mark began before. */
-	do_gotopos(mb_lineno_save, openfile->mark_begin_x,
-		current_y_save, 0);
+	goto_line_posx(mb_lineno_save, openfile->mark_begin_x);
 	openfile->mark_begin = openfile->current;
 
 	/* Assign mark_begin_x to the location in mark_begin where the
@@ -2840,9 +2830,16 @@ const char *do_alt_speller(char *tempfile_name)
     }
 #endif
 
-    /* Go back to the old position, and mark the file as modified. */
-    do_gotopos(lineno_save, current_x_save, current_y_save, pww_save);
-    set_modified();
+    /* Go back to the old position. */
+    goto_line_posx(lineno_save, current_x_save);
+    openfile->current_y = current_y_save;
+    edit_update(NONE);
+
+    /* Stat the temporary file again, and mark the buffer as modified only
+     * if this file was changed since it was written. */
+    stat(tempfile_name, &spellfileinfo);
+    if (spellfileinfo.st_mtime != timestamp)
+	set_modified();
 
 #ifndef NANO_TINY
     /* Handle a pending SIGWINCH again. */
@@ -2934,7 +2931,6 @@ void do_linter(void)
     static char **lintargs = NULL;
     char *lintcopy;
     char *convendptr = NULL;
-    const sc *s;
     lintstruct *lints = NULL, *tmplint = NULL, *curlint = NULL;
 
     if (!openfile->syntax || !openfile->syntax->linter) {
@@ -3135,9 +3131,10 @@ void do_linter(void)
     bottombars(MLINTER);
     tmplint = NULL;
     curlint = lints;
-    while (1) {
+    while (TRUE) {
 	ssize_t tmpcol = 1;
 	int kbinput;
+	functionptrtype func;
 
 	if (curlint->colno > 0)
 	    tmpcol = curlint->colno;
@@ -3193,30 +3190,24 @@ void do_linter(void)
 	}
 
 	kbinput = get_kbinput(bottomwin);
-	s = get_shortcut(&kbinput);
+	func = func_from_key(&kbinput);
 	tmplint = curlint;
 
-	if (!s)
-	    continue;
-	else if (s->scfunc == do_cancel)
+	if (func == do_cancel)
 	    break;
-	else if (s->scfunc == do_help_void) {
+	else if (func == do_help_void) {
 	    tmplint = NULL;
 	    do_help_void();
-	} else if (s->scfunc == do_page_down) {
+	} else if (func == do_page_down) {
 	    if (curlint->next != NULL)
 		curlint = curlint->next;
-	    else {
+	    else
 		statusbar(_("At last message"));
-		continue;
-	    }
-	} else if (s->scfunc == do_page_up) {
+	} else if (func == do_page_up) {
 	    if (curlint->prev != NULL)
 		curlint = curlint->prev;
-	    else {
+	    else
 		statusbar(_("At first message"));
-		continue;
-	    }
 	}
     }
     blank_statusbar();
@@ -3230,6 +3221,157 @@ free_lints_and_return:
     }
     lint_cleanup();
 }
+
+/* Run a formatter for the given syntax.
+ * Expects the formatter to be non-interactive and
+ * operate on a file in-place, which we'll pass it
+ * on the command line.  Another mashup of the speller
+ * and alt_speller routines.
+ */
+void do_formatter(void)
+{
+    bool status;
+    FILE *temp_file;
+    char *temp = safe_tempfile(&temp_file);
+    int format_status;
+    size_t current_x_save = openfile->current_x;
+    size_t pww_save = openfile->placewewant;
+    ssize_t current_y_save = openfile->current_y;
+    ssize_t lineno_save = openfile->current->lineno;
+    pid_t pid_format;
+    char *ptr;
+    static int arglen = 3;
+    static char **formatargs = NULL;
+    char *finalstatus = NULL;
+
+   /* Check whether we're using syntax highlighting
+    * and the formatter option is set. */
+    if (openfile->syntax == NULL || openfile->syntax->formatter == NULL) {
+	statusbar(_("Error: no formatter defined"));
+	return;
+    }
+
+    if (ISSET(RESTRICTED)) {
+	nano_disabled_msg();
+	return;
+    }
+
+    if (temp == NULL) {
+	statusbar(_("Error writing temp file: %s"), strerror(errno));
+	return;
+    }
+
+    /* We're not supporting partial formatting, oi vey. */
+    openfile->mark_set = FALSE;
+    status = write_file(temp, temp_file, TRUE, OVERWRITE, FALSE);
+
+    if (!status) {
+	statusbar(_("Error writing temp file: %s"), strerror(errno));
+	free(temp);
+	return;
+    }
+
+    if (openfile->totsize == 0) {
+	statusbar(_("Finished"));
+	return;
+    }
+
+    blank_bottombars();
+    statusbar(_("Invoking formatter, please wait"));
+    doupdate();
+
+    endwin();
+
+    /* Set up an argument list to pass execvp(). */
+    if (formatargs == NULL) {
+	formatargs = (char **)nmalloc(arglen * sizeof(char *));
+
+	formatargs[0] = strtok(openfile->syntax->formatter, " ");
+	while ((ptr = strtok(NULL, " ")) != NULL) {
+	    arglen++;
+	    formatargs = (char **)nrealloc(formatargs, arglen *
+		sizeof(char *));
+	    formatargs[arglen - 3] = ptr;
+	}
+	formatargs[arglen - 1] = NULL;
+    }
+    formatargs[arglen - 2] = temp;
+
+    /* Start a new process for the formatter. */
+    if ((pid_format = fork()) == 0) {
+	/* Start the formatting program; we are using $PATH. */
+	execvp(formatargs[0], formatargs);
+
+	/* Should not be reached, if the formatter is found! */
+	exit(1);
+    }
+
+    /* If we couldn't fork, get out. */
+    if (pid_format < 0) {
+	statusbar(_("Could not fork"));
+	return;
+    }
+
+#ifndef NANO_TINY
+    /* Don't handle a pending SIGWINCH until the alternate format checker
+     * is finished and we've loaded the format-checked file back in. */
+    allow_pending_sigwinch(FALSE);
+#endif
+
+    /* Wait for the formatter to finish. */
+    wait(&format_status);
+
+    /* Reenter curses mode. */
+    doupdate();
+
+    /* Restore the terminal to its previous state. */
+    terminal_init();
+
+    /* Turn the cursor back on for sure. */
+    curs_set(1);
+
+    /* The screen might have been resized.  If it has, reinitialize all
+     * the windows based on the new screen dimensions. */
+    window_init();
+
+    if (!WIFEXITED(format_status) ||
+		WEXITSTATUS(format_status) != 0) {
+	char *format_error;
+	char *invoke_error = _("Error invoking \"%s\"");
+
+	format_error =
+		charalloc(strlen(invoke_error) +
+		strlen(openfile->syntax->formatter) + 1);
+	sprintf(format_error, invoke_error, openfile->syntax->formatter);
+	finalstatus = format_error;
+    } else {
+	/* Replace the text of the current buffer with the formatted text. */
+	replace_buffer(temp);
+
+	/* Go back to the old position, and mark the file as modified. */
+	do_gotopos(lineno_save, current_x_save, current_y_save, pww_save);
+	set_modified();
+
+#ifndef NANO_TINY
+	/* Handle a pending SIGWINCH again. */
+	allow_pending_sigwinch(TRUE);
+#endif
+
+	finalstatus = _("Finished formatting");
+    }
+
+    unlink(temp);
+    free(temp);
+
+    currmenu = MMAIN;
+
+    /* If the formatter printed any error messages onscreen, make
+     * sure that they're cleared off. */
+    total_refresh();
+
+    statusbar(finalstatus);
+}
+
 #endif /* !DISABLE_COLOR */
 
 #ifndef NANO_TINY

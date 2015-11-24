@@ -1,4 +1,4 @@
-/* $Id: proto.h 5052 2014-07-02 19:12:38Z bens $ */
+/* $Id: proto.h 5133 2015-03-08 12:10:52Z bens $ */
 /**************************************************************************
  *   proto.h                                                              *
  *                                                                        *
@@ -283,15 +283,15 @@ void replace_buffer(const char *filename);
 #endif
 void display_buffer(void);
 #ifndef DISABLE_MULTIBUFFER
-void switch_to_prevnext_buffer(bool next);
+void switch_to_prevnext_buffer(bool next, bool quiet);
 void switch_to_prev_buffer_void(void);
 void switch_to_next_buffer_void(void);
-bool close_buffer(void);
+bool close_buffer(bool quiet);
 #endif
 filestruct *read_line(char *buf, filestruct *prevnode, bool
 	*first_line_ins, size_t buf_len);
 void read_file(FILE *f, int fd, const char *filename, bool undoable, bool checkwritable);
-int open_file(const char *filename, bool newfie, FILE **f);
+int open_file(const char *filename, bool newfie, bool quiet, FILE **f);
 char *get_next_filename(const char *name, const char *suffix);
 void do_insertfile(
 #ifndef NANO_TINY
@@ -359,7 +359,7 @@ void assign_keyinfo(sc *s);
 void print_sclist(void);
 void shortcut_init(void);
 #ifndef DISABLE_COLOR
-void set_lint_shortcuts(void);
+void set_lint_or_format_shortcuts(void);
 void set_spell_shortcuts(void);
 #endif
 const subnfunc *sctofunc(sc *s);
@@ -480,8 +480,8 @@ RETSIGTYPE do_continue(int signal);
 RETSIGTYPE handle_sigwinch(int signal);
 void allow_pending_sigwinch(bool allow);
 void do_toggle(int flag);
-void do_toggle_void(void);
 #endif
+void do_toggle_void(void);
 void disable_extended_io(void);
 #ifdef USE_SLANG
 void disable_signals(void);
@@ -688,6 +688,7 @@ void do_spell(void);
 #endif
 #ifndef DISABLE_COLOR
 void do_linter(void);
+void do_formatter(void);
 #endif
 #ifndef NANO_TINY
 void do_wordlinechar_count(void);
@@ -780,7 +781,7 @@ void check_statusblank(void);
 char *display_string(const char *buf, size_t start_col, size_t len, bool
 	dollars);
 void titlebar(const char *path);
-void set_modified(void);
+extern void set_modified(void);
 void statusbar(const char *msg, ...);
 void bottombars(int menu);
 void onekey(const char *keystroke, const char *desc, size_t len);

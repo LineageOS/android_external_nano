@@ -1,4 +1,4 @@
-/* $Id: rcfile.c 5035 2014-06-29 09:33:51Z bens $ */
+/* $Id: rcfile.c 5134 2015-03-08 15:42:52Z bens $ */
 /**************************************************************************
  *   rcfile.c                                                             *
  *                                                                        *
@@ -328,6 +328,7 @@ void parse_syntax(char *ptr)
     endsyntax->next = NULL;
     endsyntax->nmultis = 0;
     endsyntax->linter = NULL;
+    endsyntax->formatter = NULL;
 
 #ifdef DEBUG
     fprintf(stderr, "Starting a new syntax type: \"%s\"\n", nameptr);
@@ -512,6 +513,10 @@ void parse_binding(char *ptr, bool dobind)
 	for (f = allfuncs; f != NULL; f = f->next)
 	    if (f->scfunc == newsc->scfunc)
 		mask = mask | f->menus;
+
+	/* Handle the special case of the toggles. */
+	if (newsc->scfunc == do_toggle_void)
+	    mask = MMAIN;
 
 	/* Now limit the given menu to those where the function exists. */
 	if (is_universal(newsc->scfunc))
@@ -995,6 +1000,31 @@ void parse_linter(char *ptr)
     else
 	endsyntax->linter = mallocstrcpy(syntaxes->linter, ptr);
 }
+
+void parse_formatter(char *ptr)
+{
+    assert(ptr != NULL);
+
+    if (syntaxes == NULL) {
+	rcfile_error(
+		N_("Cannot add formatter without a syntax command"));
+	return;
+    }
+
+    if (*ptr == '\0') {
+	rcfile_error(N_("Missing formatter command"));
+	return;
+    }
+
+    if (endsyntax->formatter != NULL)
+	free(endsyntax->formatter);
+
+    /* Let them unset the formatter by using "". */
+    if (!strcmp(ptr, "\"\""))
+	endsyntax->formatter = NULL;
+    else
+	endsyntax->formatter = mallocstrcpy(syntaxes->formatter, ptr);
+}
 #endif /* !DISABLE_COLOR */
 
 /* Check whether the user has unmapped every shortcut for a
@@ -1130,6 +1160,8 @@ void parse_rcfile(FILE *rcstream
 	    parse_colors(ptr, TRUE);
 	else if (strcasecmp(keyword, "linter") == 0)
 	    parse_linter(ptr);
+	else if (strcasecmp(keyword, "formatter") == 0)
+	    parse_formatter(ptr);
 #endif /* !DISABLE_COLOR */
 	else if (strcasecmp(keyword, "bind") == 0)
 	    parse_binding(ptr, TRUE);
