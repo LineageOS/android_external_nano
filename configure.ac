@@ -18,17 +18,13 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 #
-# $Id: configure.ac 5027 2014-06-27 20:35:37Z bens $
+# $Id: configure.ac 5065 2014-07-12 08:17:52Z bens $
 
-AC_INIT([GNU nano], [2.3.5], [nano-devel@gnu.org], [nano])
+AC_INIT([GNU nano], [2.3.6], [nano-devel@gnu.org], [nano])
 AC_CONFIG_SRCDIR([src/nano.c])
 AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
-
-dnl Silence a pointless warning from the gettext Makefile.
-
-AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
 dnl Make sure the ONCE macros are available.
 

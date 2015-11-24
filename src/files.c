@@ -1,4 +1,4 @@
-/* $Id: files.c 5059 2014-07-11 11:16:15Z astyanax $ */
+/* $Id: files.c 5063 2014-07-11 18:35:08Z bens $ */
 /**************************************************************************
  *   files.c                                                              *
  *                                                                        *
@@ -141,7 +141,7 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
     mypid = getpid();
 
     if (gethostname(myhostname, 31) < 0) {
-       statusbar(_("Couldn't determine hosttname for lock file: %s"), strerror(errno));
+       statusbar(_("Couldn't determine hostname for lock file: %s"), strerror(errno));
        return -1;
     }
 

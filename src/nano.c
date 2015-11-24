@@ -1,4 +1,4 @@
-/* $Id: nano.c 5054 2014-07-02 20:29:57Z bens $ */
+/* $Id: nano.c 5067 2014-07-16 08:46:42Z bens $ */
 /**************************************************************************
  *   nano.c                                                               *
  *                                                                        *
@@ -360,6 +360,9 @@ void move_to_filestruct(filestruct **file_top, filestruct **file_bot,
 	    *file_bot = openfile->filebot;
 	}
 
+	openfile->fileage->next = NULL;
+	free_filestruct(openfile->fileage);
+
 	/* Renumber starting with the line after the original
 	 * file_bot. */
 	if (file_bot_save->next != NULL)
@@ -447,6 +450,7 @@ void copy_from_filestruct(filestruct *somebuffer)
 
     /* Put the top and bottom of the current filestruct at the top and
      * bottom of a copy of the passed buffer. */
+    free_filestruct(openfile->fileage);
     openfile->fileage = copy_filestruct(somebuffer);
     openfile->filebot = openfile->fileage;
     while (openfile->filebot->next != NULL)
