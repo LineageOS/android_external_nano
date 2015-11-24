@@ -1,4 +1,4 @@
-/* $Id: text.c 4499 2010-04-14 03:14:40Z astyanax $ */ 
+/* $Id: text.c 4520 2010-11-12 06:23:14Z astyanax $ */ 
 /**************************************************************************
  *   text.c                                                               *
  *                                                                        *
@@ -2921,6 +2921,11 @@ void do_spell(void)
     FILE *temp_file;
     char *temp = safe_tempfile(&temp_file);
     const char *spell_msg;
+
+    if (ISSET(RESTRICTED)) {
+        nano_disabled_msg();
+	return;
+    }
 
     if (temp == NULL) {
 	statusbar(_("Error writing temp file: %s"), strerror(errno));

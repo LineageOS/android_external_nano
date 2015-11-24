@@ -1,4 +1,4 @@
-/* $Id: files.c 4509 2010-06-24 14:47:00Z astyanax $ */
+/* $Id: files.c 4520 2010-11-12 06:23:14Z astyanax $ */
 /**************************************************************************
  *   files.c                                                              *
  *                                                                        *
@@ -1066,6 +1066,12 @@ void do_insertfile(
  * allow inserting a file into a new buffer. */
 void do_insertfile_void(void)
 {
+
+    if (ISSET(RESTRICTED)) {
+        nano_disabled_msg();
+	return;
+    }
+
 #ifdef ENABLE_MULTIBUFFER
     if (ISSET(VIEW_MODE) && !ISSET(MULTIBUFFER))
 	statusbar(_("Key invalid in non-multibuffer mode"));

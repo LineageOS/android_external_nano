@@ -1,10 +1,20 @@
+2010.11.22 - GNU nano 2.2.6 "Pimp my BBS" wants you to go to 
+		www.desertbus.org and donate a few bucks for the great 
+		Child's Play Charity!  This is just a small release to 
+		update a bug where restricted mode was not particularly 
+		restricted since key bindings were introduced. It also 
+		signals the return of win32 builds which now feature 
+		nanorc support; please see the FAQ for details of how
+		to enable it, this feature is a bit of a kludge for now.   
+		Remember that when all else fails, USE SPACE JUMP.
+
 2010.08.05 - GNU nano 2.2.5 "Inactivity timeout" is now available.
 		This release includes slightly less restrictive checkng
 		when writing files in strange environments (e.g. 
 		when being used out of crontab).  For very strange situations
 		(such as where you cannot change the permissions on the
 		file you're writing, there is a new rc file option 
-		"allow_insecure_backup" to be even more permission and
+		"allow_insecure_backup" to be even more permissive and
 		allowing the write to proceed.  Also included are
 		some syntax highlighting updated, and that is about it.
 		Keep fighting the good fight children.
@@ -1305,4 +1315,4 @@
 		update your bookmarks, tell your friends, and all that
 		jazz.
 
-$Id: NEWS 4503 2010-04-15 07:40:41Z astyanax $
+$Id: NEWS 4516 2010-08-11 02:42:32Z astyanax $

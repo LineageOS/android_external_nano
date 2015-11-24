@@ -1,14 +1,25 @@
-<!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Fri Aug 14 22:53:58 2009 -->
+<!-- Creator     : groff version 1.20.1 -->
+<!-- CreationDate: Tue Aug 10 22:44:00 2010 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
 <title>RNANO</title>
+
 </head>
 <body>
 
-<h1 align=center>RNANO</h1>
+<h1 align="center">RNANO</h1>
+
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
@@ -18,243 +29,191 @@
 <a href="#AUTHOR">AUTHOR</a><br>
 
 <hr>
+
+
+<h2>NAME
 <a name="NAME"></a>
-<h2>NAME</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>rnano &minus; Restricted mode for Nano&rsquo;s ANOther
-editor, an enhanced free Pico clone</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">rnano &minus;
+Restricted mode for Nano&rsquo;s ANOther editor, an enhanced
+free Pico clone</p>
+
+<h2>SYNOPSIS
 <a name="SYNOPSIS"></a>
-<h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>rnano</b> <i>[OPTIONS] [[+LINE,COLUMN]
-FILE]...</i></p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>rnano</b>
+<i>[OPTIONS]&nbsp;[[+LINE,COLUMN]&nbsp;FILE]...</i></p>
+
+<h2>DESCRIPTION
 <a name="DESCRIPTION"></a>
-<h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>This manual page briefly documents the <b>rnano</b>
-command.</p>
-<!-- INDENTATION -->
-<p><b>nano</b> is a small, free and friendly editor which
-aims to replace Pico, the default editor included in the
-non-free Pine package. Rather than just copying Pico&rsquo;s
-look and feel, <b>nano</b> also implements some missing (or
-disabled by default) features in Pico, such as &quot;search
-and replace&quot; and &quot;go to line and column
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">This manual
+page briefly documents the <b>rnano</b> command.</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>nano</b> is
+a small, free and friendly editor which aims to replace
+Pico, the default editor included in the non-free Pine
+package. Rather than just copying Pico&rsquo;s look and
+feel, <b>nano</b> also implements some missing (or disabled
+by default) features in Pico, such as &quot;search and
+replace&quot; and &quot;go to line and column
 number&quot;.</p>
-<!-- INDENTATION -->
-<p><b>rnano</b> is a restricted version of <b>nano</b>,
-which only edits specific files and doesn&rsquo;t allow the
-user access to the filesystem or a command shell.</p>
-<!-- INDENTATION -->
-<p>In restricted mode, <b>nano</b> will <i>not</i>:</p>
-</td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="4" cellspacing="0" cellpadding="0">
+
+<p style="margin-left:11%; margin-top: 1em"><b>rnano</b> is
+a restricted version of <b>nano</b>, which only edits
+specific files and doesn&rsquo;t allow the user access to
+the filesystem or a command shell.</p>
+
+<p style="margin-left:11%; margin-top: 1em">In restricted
+mode, <b>nano</b> will <i>not</i>:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="1%">
 
-<p>&bull;</p>
-</td>
-<td width="1%"></td>
-<td width="85%">
+
+<p>&bull;</p></td>
+<td width="2%"></td>
+<td width="86%">
+
 
 <p>read or write to any file not specified on the command
-line;</p>
-</td>
+line;</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="1%">
 
-<p>&bull;</p>
-</td>
-<td width="1%"></td>
-<td width="85%">
 
-<p>read any nanorc files;</p>
-</td>
+<p>&bull;</p></td>
+<td width="2%"></td>
+<td width="86%">
+
+
+<p>read any nanorc files;</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="1%">
 
-<p>&bull;</p>
-</td>
-<td width="1%"></td>
-<td width="85%">
 
-<p>allow suspending;</p>
-</td>
+<p>&bull;</p></td>
+<td width="2%"></td>
+<td width="86%">
+
+
+<p>allow suspending;</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="1%">
 
-<p>&bull;</p>
-</td>
-<td width="1%"></td>
-<td width="85%">
+
+<p>&bull;</p></td>
+<td width="2%"></td>
+<td width="86%">
+
 
 <p>allow a file to be appended to, prepended to, or saved
-under a different name;</p>
-</td>
+under a different name;</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="1%">
 
-<p>&bull;</p>
-</td>
-<td width="1%"></td>
-<td width="85%">
 
-<p>use backup files or spell checking.</p>
-</td>
+<p>&bull;</p></td>
+<td width="2%"></td>
+<td width="86%">
+
+
+<p>use backup files or spell checking.</p></td></tr>
 </table>
+
+<h2>OPTIONS
 <a name="OPTIONS"></a>
-<h2>OPTIONS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>+</b><i>LINE</i><b>,</b><i>COLUMN</i></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>Places cursor at line number <i>LINE</i> and column
-number <i>COLUMN</i> (at least one of which must be
-specified) on startup, instead of the default of line 1,
-column 1.</p>
-</td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>+</b><i>LINE</i><b>,</b><i>COLUMN</i></p>
+
+<p style="margin-left:22%;">Places cursor at line number
+<i>LINE</i> and column number <i>COLUMN</i> (at least one of
+which must be specified) on startup, instead of the default
+of line 1, column 1.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>&minus;?</b></p>
-</td>
-<td width="13%"></td>
-<td width="29%">
 
-<p>Same as <b>-h (&minus;&minus;help)</b>.</p>
-</td>
-<td width="42%">
-</td>
+<p><b>&minus;?</b></p></td>
+<td width="8%"></td>
+<td width="30%">
+
+
+<p>Same as <b>-h (&minus;&minus;help)</b>.</p></td>
+<td width="48%">
+</td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>&minus;h (&minus;&minus;help)</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>Show a summary of command line options and exit.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>&minus;V (&minus;&minus;version)</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>Show the current version number and exit.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>See the <b>nano</b>(1) manpage for the complete
-documentation of <b>nano</b>.</p>
-</td>
-</table>
+
+<p style="margin-left:11%;"><b>&minus;h
+(&minus;&minus;help)</b></p>
+
+<p style="margin-left:22%;">Show a summary of command line
+options and exit.</p>
+
+<p style="margin-left:11%;"><b>&minus;V
+(&minus;&minus;version)</b></p>
+
+<p style="margin-left:22%;">Show the current version number
+and exit.</p>
+
+<p style="margin-left:11%; margin-top: 1em">See the
+<b>nano</b>(1) manpage for the complete documentation of
+<b>nano</b>.</p>
+
+<h2>BUGS
 <a name="BUGS"></a>
-<h2>BUGS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Please send any comments or bug reports to
-<b>nano@nano-editor.org</b>.</p>
-<!-- INDENTATION -->
-<p>The <b>nano</b> mailing list is available from
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Please send any
+comments or bug reports to <b>nano@nano-editor.org</b>.</p>
+
+<p style="margin-left:11%; margin-top: 1em">The <b>nano</b>
+mailing list is available from
 <b>nano-devel@gnu.org</b>.</p>
-<!-- INDENTATION -->
-<p>To subscribe, email to <b>nano-devel-request@gnu.org</b>
-with a subject of &quot;subscribe&quot;.</p>
-</td>
-</table>
+
+<p style="margin-left:11%; margin-top: 1em">To subscribe,
+email to <b>nano-devel-request@gnu.org</b> with a subject of
+&quot;subscribe&quot;.</p>
+
+<h2>HOMEPAGE
 <a name="HOMEPAGE"></a>
-<h2>HOMEPAGE</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>http://www.nano-editor.org/</p>
-</td>
-</table>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em">http://www.nano-editor.org/</p>
+
+<h2>AUTHOR
 <a name="AUTHOR"></a>
-<h2>AUTHOR</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Chris Allegretta &lt;chrisa@asty.org&gt;, et al (see
-AUTHORS for details). This manual page was originally
-written by Thijs Kinkhorst &lt;thijs@kinkhorst.com&gt;, for
-the Debian system (but may be used by others).</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Chris
+Allegretta &lt;chrisa@asty.org&gt;, et al (see AUTHORS for
+details). This manual page was originally written by Thijs
+Kinkhorst &lt;thijs@kinkhorst.com&gt;, for the Debian system
+(but may be used by others).</p>
 <hr>
 </body>
 </html>

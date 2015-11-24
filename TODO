@@ -96,4 +96,4 @@ For version 1.0:
 - Unjustify command (^U after ^J) [DONE =-].
 - Username completion (~user) [DONE =-].
 
-$Id: TODO 4402 2009-08-17 07:52:10Z astyanax $
+$Id: TODO 4516 2010-08-11 02:42:32Z astyanax $
