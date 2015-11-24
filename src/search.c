@@ -1,4 +1,4 @@
-/* $Id: search.c 5148 2015-03-22 11:42:29Z bens $ */
+/* $Id: search.c 5195 2015-04-13 10:59:12Z bens $ */
 /**************************************************************************
  *   search.c                                                             *
  *                                                                        *
@@ -106,6 +106,7 @@ void not_found_msg(const char *str)
 void search_replace_abort(void)
 {
     display_main_list();
+    focusing = FALSE;
 #ifndef NANO_TINY
     if (openfile->mark_set)
 	edit_refresh();
@@ -118,6 +119,7 @@ void search_replace_abort(void)
 /* Initialize the global search and replace strings. */
 void search_init_globals(void)
 {
+    focusing = TRUE;
     if (last_search == NULL)
 	last_search = mallocstrcpy(NULL, "");
     if (last_replace == NULL)
@@ -488,7 +490,7 @@ void do_search(void)
 	 * back at the same position if the string isn't found again, in
 	 * which case it's the only occurrence. */
 	if (ISSET(USE_REGEXP) && regexp_bol_or_eol(&search_regexp,
-		last_search)) {
+		answer)) {
 	    didfind = findnextstr(
 #ifndef DISABLE_SPELLER
 		FALSE,
@@ -554,7 +556,7 @@ void do_research(void)
 			FALSE,
 #endif
 			TRUE, openfile->current, openfile->current_x,
-			answer, NULL);
+			last_search, NULL);
 		if (fileptr == openfile->current && fileptr_x ==
 			openfile->current_x && !didfind)
 		    statusbar(_("This is the only occurrence"));
@@ -690,25 +692,26 @@ ssize_t do_replace_loop(
 #endif
 #ifndef NANO_TINY
     bool old_mark_set = openfile->mark_set;
-    filestruct *edittop_save = openfile->edittop, *top, *bot;
+    filestruct *top, *bot;
     size_t top_x, bot_x;
     bool right_side_up = FALSE;
 	/* TRUE if (mark_begin, mark_begin_x) is the top of the mark,
 	 * FALSE if (current, current_x) is. */
 
     if (old_mark_set) {
-	/* If the mark is on, partition the filestruct so that it
-	 * contains only the marked text, set edittop to the top of the
-	 * partition, turn the mark off, and refresh the screen. */
+	/* If the mark is on, frame the region, and turn the mark off. */
 	mark_order((const filestruct **)&top, &top_x,
 	    (const filestruct **)&bot, &bot_x, &right_side_up);
-	filepart = partition_filestruct(top, top_x, bot, bot_x);
-	openfile->edittop = openfile->fileage;
 	openfile->mark_set = FALSE;
-#ifndef DISABLE_COLOR
-	reset_multis(openfile->current, TRUE);
-#endif
-	edit_refresh();
+
+	/* Start either at the top or the bottom of the marked region. */
+	if (!ISSET(BACKWARDS_SEARCH)) {
+	    openfile->current = top;
+	    openfile->current_x = (top_x == 0 ? 0 : top_x - 1);
+	} else {
+	    openfile->current = bot;
+	    openfile->current_x = bot_x;
+	}
     }
 #endif /* !NANO_TINY */
 
@@ -732,6 +735,18 @@ ssize_t do_replace_loop(
 	, real_current, *real_current_x, needle, &match_len)) {
 	int i = 0;
 
+#ifndef NANO_TINY
+	if (old_mark_set) {
+	    /* When we've found an occurrence outside of the marked region,
+	     * stop the fanfare. */
+	    if (openfile->current->lineno > bot->lineno ||
+		openfile->current->lineno < top->lineno ||
+		(openfile->current == bot && openfile->current_x > bot_x) ||
+		(openfile->current == top && openfile->current_x < top_x))
+		break;
+	}
+#endif
+
 #ifdef HAVE_REGEX_H
 	/* If the bol_or_eol flag is set, we've found a match on the
 	 * beginning line already, and we're still on the beginning line
@@ -748,9 +763,6 @@ ssize_t do_replace_loop(
 	}
 #endif
 
-	if (!replaceall)
-	    edit_refresh();
-
 	/* Indicate that we found the search string. */
 	if (numreplaced == -1)
 	    numreplaced = 0;
@@ -760,6 +772,8 @@ ssize_t do_replace_loop(
 	    char *exp_word = display_string(openfile->current->data,
 		xpt, strnlenpt(openfile->current->data,
 		openfile->current_x + match_len) - xpt, FALSE);
+
+	    edit_refresh();
 
 	    curs_set(0);
 
@@ -784,8 +798,7 @@ ssize_t do_replace_loop(
 #ifdef HAVE_REGEX_H
 	/* Set the bol_or_eol flag if we're doing a bol and/or eol regex
 	 * replace ("^", "$", or "^$"). */
-	if (ISSET(USE_REGEXP) && regexp_bol_or_eol(&search_regexp,
-		needle))
+	if (ISSET(USE_REGEXP) && regexp_bol_or_eol(&search_regexp, needle))
 	    bol_or_eol = TRUE;
 #endif
 
@@ -794,15 +807,14 @@ ssize_t do_replace_loop(
 	    size_t length_change;
 
 #ifndef NANO_TINY
-	    update_undo(REPLACE);
+	    add_undo(REPLACE);
 #endif
 	    if (i == 2)
 		replaceall = TRUE;
 
 	    copy = replace_line(needle);
 
-	    length_change = strlen(copy) -
-		strlen(openfile->current->data);
+	    length_change = strlen(copy) - strlen(openfile->current->data);
 
 #ifndef NANO_TINY
 	    /* If the mark was on and (mark_begin, mark_begin_x) was the
@@ -816,6 +828,7 @@ ssize_t do_replace_loop(
 			openfile->mark_begin_x = openfile->current_x;
 		    else
 			openfile->mark_begin_x += length_change;
+		    bot_x = openfile->mark_begin_x;
 		}
 	    }
 
@@ -826,15 +839,14 @@ ssize_t do_replace_loop(
 		/* Keep real_current_x in sync with the text changes. */
 		if (openfile->current == real_current &&
 			openfile->current_x <= *real_current_x) {
-		    if (*real_current_x <
-			openfile->current_x + match_len)
-			*real_current_x = openfile->current_x +
-				match_len;
+		    if (*real_current_x < openfile->current_x + match_len)
+			*real_current_x = openfile->current_x + match_len;
 		    *real_current_x += length_change;
-		}
 #ifndef NANO_TINY
-	    }
+		    bot_x = *real_current_x;
+		}
 #endif
+	    }
 
 	    /* Set the cursor at the last character of the replacement
 	     * text, so searching will resume after the replacement
@@ -852,9 +864,12 @@ ssize_t do_replace_loop(
 	    openfile->current->data = copy;
 
 #ifndef DISABLE_COLOR
-	reset_multis(openfile->current, TRUE);
+	    /* Reset the precalculated multiline-regex hints only when
+	     * the first replacement has been made. */
+	    if (numreplaced == 0)
+		reset_multis(openfile->current, TRUE);
 #endif
-	edit_refresh();
+
 	    if (!replaceall) {
 #ifndef DISABLE_COLOR
 		/* If color syntaxes are available and turned on, we
@@ -872,16 +887,12 @@ ssize_t do_replace_loop(
 	}
     }
 
+    if (numreplaced == -1)
+	not_found_msg(needle);
+
 #ifndef NANO_TINY
-    if (old_mark_set) {
-	/* If the mark was on, unpartition the filestruct so that it
-	 * contains all the text again, set edittop back to what it was
-	 * before, turn the mark back on, and refresh the screen. */
-	unpartition_filestruct(&filepart);
-	openfile->edittop = edittop_save;
+    if (old_mark_set)
 	openfile->mark_set = TRUE;
-	edit_refresh();
-    }
 #endif
 
     /* If the NO_NEWLINES flag isn't set, and text has been added to the

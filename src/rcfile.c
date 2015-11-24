@@ -1,4 +1,4 @@
-/* $Id: rcfile.c 5134 2015-03-08 15:42:52Z bens $ */
+/* $Id: rcfile.c 5193 2015-04-12 11:15:57Z bens $ */
 /**************************************************************************
  *   rcfile.c                                                             *
  *                                                                        *
@@ -601,11 +601,7 @@ static void _parse_include(char *file)
     fprintf(stderr, "Parsing file \"%s\"\n", file);
 #endif
 
-    parse_rcfile(rcstream
-#ifndef DISABLE_COLOR
-	, TRUE
-#endif
-	);
+    parse_rcfile(rcstream, TRUE);
 }
 
 void parse_include(char *ptr)
@@ -907,11 +903,10 @@ void parse_header_exp(char *ptr)
     }
 }
 
-#ifndef DISABLE_COLOR
+#ifdef HAVE_LIBMAGIC
 /* Parse the magic regexes that may influence the choice of syntax. */
 void parse_magic_exp(char *ptr)
 {
-#ifdef HAVE_LIBMAGIC
     regexlisttype *endmagic = NULL;
 
     assert(ptr != NULL);
@@ -971,11 +966,10 @@ void parse_magic_exp(char *ptr)
 	} else
 	    free(newmagic);
     }
-#endif /* HAVE_LIBMAGIC */
 }
-#endif /* !DISABLE_COLOR */
+#endif /* HAVE_LIBMAGIC */
 
-/* Parse the linter requested for this syntax.  Simple? */
+/* Parse the linter requested for this syntax. */
 void parse_linter(char *ptr)
 {
     assert(ptr != NULL);
@@ -998,9 +992,11 @@ void parse_linter(char *ptr)
     if (!strcmp(ptr, "\"\""))
 	endsyntax->linter = NULL;
     else
-	endsyntax->linter = mallocstrcpy(syntaxes->linter, ptr);
+	endsyntax->linter = mallocstrcpy(NULL, ptr);
 }
 
+#ifndef DISABLE_SPELLER
+/* Parse the formatter requested for this syntax. */
 void parse_formatter(char *ptr)
 {
     assert(ptr != NULL);
@@ -1023,8 +1019,9 @@ void parse_formatter(char *ptr)
     if (!strcmp(ptr, "\"\""))
 	endsyntax->formatter = NULL;
     else
-	endsyntax->formatter = mallocstrcpy(syntaxes->formatter, ptr);
+	endsyntax->formatter = mallocstrcpy(NULL, ptr);
 }
+#endif /* !DISABLE_SPELLER */
 #endif /* !DISABLE_COLOR */
 
 /* Check whether the user has unmapped every shortcut for a
@@ -1151,7 +1148,11 @@ void parse_rcfile(FILE *rcstream
 	    parse_syntax(ptr);
 	}
 	else if (strcasecmp(keyword, "magic") == 0)
+#ifdef HAVE_LIBMAGIC
 	    parse_magic_exp(ptr);
+#else
+	    ;
+#endif
 	else if (strcasecmp(keyword, "header") == 0)
 	    parse_header_exp(ptr);
 	else if (strcasecmp(keyword, "color") == 0)
@@ -1161,7 +1162,11 @@ void parse_rcfile(FILE *rcstream
 	else if (strcasecmp(keyword, "linter") == 0)
 	    parse_linter(ptr);
 	else if (strcasecmp(keyword, "formatter") == 0)
+#ifndef DISABLE_SPELLER
 	    parse_formatter(ptr);
+#else
+	    ;
+#endif
 #endif /* !DISABLE_COLOR */
 	else if (strcasecmp(keyword, "bind") == 0)
 	    parse_binding(ptr, TRUE);

@@ -1,4 +1,4 @@
-/* $Id: files.c 5118 2015-02-15 16:28:08Z bens $ */
+/* $Id: files.c 5183 2015-04-07 14:16:07Z bens $ */
 /**************************************************************************
  *   files.c                                                              *
  *                                                                        *
@@ -1048,8 +1048,6 @@ void do_insertfile(
 #ifndef NANO_TINY
     bool right_side_up = FALSE, single_line = FALSE;
 #endif
-
-    currmenu = MINSERTFILE;
 
     while (TRUE) {
 #ifndef NANO_TINY
@@ -2251,8 +2249,6 @@ bool do_writeout(bool exiting)
     static bool did_credits = FALSE;
 #endif
     bool retval = FALSE;
-
-    currmenu = MWRITEFILE;
 
     if (exiting && openfile->filename[0] != '\0' && ISSET(TEMP_FILE)) {
 	retval = write_file(openfile->filename, NULL, FALSE, OVERWRITE,

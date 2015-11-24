@@ -68,7 +68,7 @@ editor.
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Editor-Basics" accesskey="2">Editor Basics</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Online-Help" accesskey="3">Online Help</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Built_002din-Help" accesskey="3">Built-in Help</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Feature-Toggles" accesskey="4">Feature Toggles</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -93,10 +93,10 @@ Next: <a href="#Editor-Basics" accesskey="n" rel="next">Editor Basics</a>, Previ
 <h2 class="chapter">1 Introduction</h2>
 
 <p>GNU <code>nano</code> is a small and friendly text editor.  Besides basic text
-editing, <code>nano</code> offers many extra features, like an interactive
-search-and-replace, go-to-line-and-column-number, auto-indentation,
-feature toggles, internationalization support, and filename tab
-completion.
+editing, <code>nano</code> offers many extra features, such as an interactive
+search-and-replace, undo/redo, syntax coloring, smooth scrolling,
+auto-indentation, go-to-line-and-column-number, feature toggles,
+file locking, backup files, and internationalization support.
 </p>
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Overview" accesskey="1">Overview</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
@@ -122,23 +122,26 @@ See <a href="#Pico-Compatibility">Pico Compatibility</a>, for more info.
 <p>The usual way to invoke <code>nano</code> is:
 </p>
 <blockquote>
-<p><code>nano [OPTION]&hellip; [FILE]</code>
+<p><code>nano [FILE]</code>
 </p></blockquote>
 
-<p>But it is also possible to edit several files in a row.  Additionally,
-the cursor can be put on a desired line number by adding this number
-with a plus sign before any filename, and even in a desired column by
-adding it with a comma.  So the complete synopsis is:
+<p>But it is also possible to specify one or more options, and to edit
+several files in a row.  Additionally, the cursor can be put on a
+specific line of a file by adding the line number
+with a plus sign before the filename, and even in a specific column by
+adding it with a comma.  So the complete command synopsis is:
 </p>
 <blockquote>
-<p><code>nano [OPTION]&hellip; [[+LINE] FILE]&hellip;</code>
-</p>
-<p><code>nano [OPTION]&hellip; [[+,COLUMN] FILE]&hellip;</code>
-</p>
-<p><code>nano [OPTION]&hellip; [[+LINE,COLUMN] FILE]&hellip;</code>
+<p><code>nano [OPTION]&hellip; [[+LINE[,COLUMN]|+,COLUMN] FILE]&hellip;</code>
 </p></blockquote>
 
-<p>Email bug reports to <a href="mailto:nano@nano-editor.org">nano@nano-editor.org</a>.
+<p>But normallly you would set your preferred options in your
+<samp>.nanorc</samp> file.  And when the <code>poslog</code> option is set
+(making <code>nano</code> remember the cursor position), you will rarely
+need to specify a line number.
+</p>
+<p>Please email any bug reports to <a href="mailto:nano@nano-editor.org">nano@nano-editor.org</a>.
+Or file them at <a href="https://savannah.gnu.org/bugs/?group=nano">https://savannah.gnu.org/bugs/?group=nano</a>.
 </p>
 <hr>
 <a name="Command-Line-Options"></a>
@@ -446,7 +449,7 @@ separately (e.g. <code>nano -wS -$</code>).
 <a name="Editor-Basics"></a>
 <div class="header">
 <p>
-Next: <a href="#Online-Help" accesskey="n" rel="next">Online Help</a>, Previous: <a href="#Introduction" accesskey="p" rel="prev">Introduction</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
+Next: <a href="#Built_002din-Help" accesskey="n" rel="next">Built-in Help</a>, Previous: <a href="#Introduction" accesskey="p" rel="prev">Introduction</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
 </div>
 <a name="Editor-Basics-1"></a>
 <h2 class="chapter">2 Editor Basics</h2>
@@ -619,17 +622,17 @@ is running.
 </p>
 
 <hr>
-<a name="Online-Help"></a>
+<a name="Built_002din-Help"></a>
 <div class="header">
 <p>
 Next: <a href="#Feature-Toggles" accesskey="n" rel="next">Feature Toggles</a>, Previous: <a href="#Editor-Basics" accesskey="p" rel="prev">Editor Basics</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
 </div>
-<a name="Online-Help-1"></a>
-<h2 class="chapter">3 Online Help</h2>
+<a name="Built_002din-Help-1"></a>
+<h2 class="chapter">3 Built-in Help</h2>
 
-<p>The online help system in <code>nano</code> is available by pressing ^G.
-It is fairly self-explanatory, documenting the various parts of the
-editor and available keystrokes.  Navigation is via the ^Y (Page Up)
+<p>The built-in help system in <code>nano</code> is available by pressing ^G.
+It is fairly self-explanatory.  It documents the various parts of the
+editor and the available keystrokes.  Navigation is via the ^Y (Page Up)
 and ^V (Page Down) keys.  ^X exits the help system.
 </p>
 
@@ -637,7 +640,7 @@ and ^V (Page Down) keys.  ^X exits the help system.
 <a name="Feature-Toggles"></a>
 <div class="header">
 <p>
-Next: <a href="#Nanorc-Files" accesskey="n" rel="next">Nanorc Files</a>, Previous: <a href="#Online-Help" accesskey="p" rel="prev">Online Help</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
+Next: <a href="#Nanorc-Files" accesskey="n" rel="next">Nanorc Files</a>, Previous: <a href="#Built_002din-Help" accesskey="p" rel="prev">Built-in Help</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
 </div>
 <a name="Feature-Toggles-1"></a>
 <h2 class="chapter">4 Feature Toggles</h2>
@@ -1841,7 +1844,7 @@ curses libraries.
     <li><a name="toc-Shortcut-Lists-1" href="#Shortcut-Lists">2.7 Shortcut Lists</a></li>
     <li><a name="toc-Using-the-Mouse-1" href="#Using-the-Mouse">2.8 Using the Mouse</a></li>
   </ul></li>
-  <li><a name="toc-Online-Help-1" href="#Online-Help">3 Online Help</a></li>
+  <li><a name="toc-Built_002din-Help-1" href="#Built_002din-Help">3 Built-in Help</a></li>
   <li><a name="toc-Feature-Toggles-1" href="#Feature-Toggles">4 Feature Toggles</a></li>
   <li><a name="toc-Nanorc-Files-1" href="#Nanorc-Files">5 Nanorc Files</a>
   <ul class="no-bullet">

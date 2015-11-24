@@ -1,4 +1,4 @@
-/* $Id: utils.c 4948 2014-06-09 14:23:53Z bens $ */
+/* $Id: utils.c 5166 2015-03-27 13:46:50Z bens $ */
 /**************************************************************************
  *   utils.c                                                              *
  *                                                                        *
@@ -643,7 +643,7 @@ filestruct *fsfromline(ssize_t lineno)
 	for (; f->lineno != lineno && f != openfile->fileage; f = f->prev)
 	   ;
     else
-        for (; f->lineno != lineno && f->next != NULL; f = f->next)
+	for (; f->lineno != lineno && f->next != NULL; f = f->next)
 	    ;
 
     if (f->lineno != lineno)

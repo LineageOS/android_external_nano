@@ -1,4 +1,4 @@
-/* $Id: proto.h 5133 2015-03-08 12:10:52Z bens $ */
+/* $Id: proto.h 5187 2015-04-08 18:40:40Z bens $ */
 /**************************************************************************
  *   proto.h                                                              *
  *                                                                        *
@@ -34,6 +34,7 @@ extern bool jump_buf_main;
 
 extern bool meta_key;
 extern bool func_key;
+extern bool focusing;
 
 #ifndef DISABLE_WRAPJUSTIFY
 extern ssize_t fill;
@@ -148,10 +149,9 @@ char *do_browse_from(const char *inpath);
 void browser_init(const char *path, DIR *dir);
 functionptrtype parse_browser_input(int *kbinput);
 void browser_refresh(void);
-bool browser_select_filename(const char *needle);
+void browser_select_dirname(const char *needle);
 int filesearch_init(void);
-bool findnextfile(bool no_sameline, size_t begin, const char *needle);
-void findnextfile_wrap_reset(void);
+void findnextfile(const char *needle);
 void filesearch_abort(void);
 void do_filesearch(void);
 void do_fileresearch(void);

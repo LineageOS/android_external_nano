@@ -1,4 +1,4 @@
-/* $Id: text.c 5145 2015-03-21 21:13:03Z bens $ */
+/* $Id: text.c 5188 2015-04-08 19:57:31Z bens $ */
 /**************************************************************************
  *   text.c                                                               *
  *                                                                        *
@@ -2213,7 +2213,6 @@ void do_justify(bool full_justify)
 
     /* Display the shortcut list with UnJustify. */
     uncutfunc->desc = unjust_tag;
-    currmenu = MMAIN;
     display_main_list();
 
     /* Now get a keystroke and see if it's unjustify.  If not, put back
@@ -2246,8 +2245,8 @@ void do_justify(bool full_justify)
 	     * replaced with the unjustified paragraph. */
 	    unpartition_filestruct(&filepart);
 
-	     /* Renumber starting with the beginning line of the old
-	      * partition. */
+	    /* Renumber, starting with the beginning line of the old
+	     * partition. */
 	    renumber(top_save);
 
 	    /* Restore the justify we just did (ungrateful user!). */
@@ -2523,7 +2522,7 @@ const char *do_int_speller(const char *tempfile_name)
 
     /* A new process to run sort in. */
     if ((pid_sort = fork()) == 0) {
-	/* Child continues (i.e. future spell process).  Replace the
+	/* Child continues (i.e. future sort process).  Replace the
 	 * standard input with the standard output of the old pipe. */
 	if (dup2(spell_fd[0], STDIN_FILENO) != STDIN_FILENO)
 	    goto close_pipes_and_exit;
@@ -2536,8 +2535,7 @@ const char *do_int_speller(const char *tempfile_name)
 
 	close(sort_fd[1]);
 
-	/* Start the sort program.  Use -f to remove mixed case.  If
-	 * this isn't portable, let me know. */
+	/* Start the sort program.  Use -f to ignore case. */
 	execlp("sort", "sort", "-f", NULL);
 
 	/* This should not be reached if sort is found. */
@@ -2626,7 +2624,7 @@ const char *do_int_speller(const char *tempfile_name)
     search_replace_abort();
     edit_refresh_needed = TRUE;
 
-    /* Process the end of the spell process. */
+    /* Process the end of the three processes. */
     waitpid(pid_spell, &spell_status, 0);
     waitpid(pid_sort, &sort_status, 0);
     waitpid(pid_uniq, &uniq_status, 0);
@@ -2664,7 +2662,7 @@ const char *do_alt_speller(char *tempfile_name)
     ssize_t current_y_save = openfile->current_y;
     ssize_t lineno_save = openfile->current->lineno;
     struct stat spellfileinfo;
-    __time_t timestamp;
+    time_t timestamp;
     pid_t pid_spell;
     char *ptr;
     static int arglen = 3;
@@ -2675,6 +2673,7 @@ const char *do_alt_speller(char *tempfile_name)
 	/* Whether we added a magicline after filebot. */
     filestruct *top, *bot;
     size_t top_x, bot_x;
+    bool right_side_up = FALSE;
     ssize_t mb_lineno_save = 0;
 	/* We're going to close the current file, and open the output of
 	 * the alternate spell command.  The line that mark_begin points
@@ -2683,7 +2682,17 @@ const char *do_alt_speller(char *tempfile_name)
     size_t totsize_save = openfile->totsize;
 	/* Our saved value of totsize, used when we spell-check a marked
 	 * selection. */
+#endif
 
+    /* Get the timestamp and the size of the temporary file. */
+    stat(tempfile_name, &spellfileinfo);
+    timestamp = spellfileinfo.st_mtime;
+
+    /* If the number of bytes to check is zero, get out. */
+    if (spellfileinfo.st_size == 0)
+	return NULL;
+
+#ifndef NANO_TINY
     if (old_mark_set) {
 	/* If the mark is on, save the number of the line it starts on,
 	 * and then turn the mark off. */
@@ -2692,18 +2701,9 @@ const char *do_alt_speller(char *tempfile_name)
     }
 #endif
 
-    if (openfile->totsize == 0) {
-	statusbar(_("Finished checking spelling"));
-	return NULL;
-    }
-
-    /* Get the timestamp of the temporary file. */
-    stat(tempfile_name, &spellfileinfo);
-    timestamp = spellfileinfo.st_mtime;
-
     endwin();
 
-    /* Set up an argument list to pass execvp(). */
+    /* Set up an argument list to pass to execvp(). */
     if (spellargs == NULL) {
 	spellargs = (char **)nmalloc(arglen * sizeof(char *));
 
@@ -2778,7 +2778,7 @@ const char *do_alt_speller(char *tempfile_name)
 	 * added when we're done correcting misspelled words; and
 	 * turn the mark off. */
 	mark_order((const filestruct **)&top, &top_x,
-		(const filestruct **)&bot, &bot_x, NULL);
+		(const filestruct **)&bot, &bot_x, &right_side_up);
 	filepart = partition_filestruct(top, top_x, bot, bot_x);
 	if (!ISSET(NO_NEWLINES))
 	    added_magicline = (openfile->filebot->data[0] != '\0');
@@ -2796,6 +2796,12 @@ const char *do_alt_speller(char *tempfile_name)
 #ifndef NANO_TINY
     if (old_mark_set) {
 	filestruct *top_save = openfile->fileage;
+	/* Adjust the end point of the marked region for any change in
+	   length of the region's last line. */
+	if (right_side_up)
+	    current_x_save = strlen(openfile->filebot->data);
+	else
+	    openfile->mark_begin_x = strlen(openfile->filebot->data);
 
 	/* If the mark was on, the NO_NEWLINES flag isn't set, and we
 	 * added a magicline, remove it now. */
@@ -2817,13 +2823,7 @@ const char *do_alt_speller(char *tempfile_name)
 	openfile->totsize = totsize_save;
 
 	/* Assign mark_begin to the line where the mark began before. */
-	goto_line_posx(mb_lineno_save, openfile->mark_begin_x);
-	openfile->mark_begin = openfile->current;
-
-	/* Assign mark_begin_x to the location in mark_begin where the
-	 * mark began before, adjusted for any shortening of the
-	 * line. */
-	openfile->mark_begin_x = openfile->current_x;
+	openfile->mark_begin = fsfromline(mb_lineno_save);
 
 	/* Turn the mark back on. */
 	openfile->mark_set = TRUE;
@@ -2912,7 +2912,6 @@ void do_spell(void)
 /* Cleanup things to do after leaving the linter. */
 void lint_cleanup(void)
 {
-    currmenu = MMAIN;
     display_main_list();
 }
 
@@ -2969,7 +2968,7 @@ void do_linter(void)
     statusbar(_("Invoking linter, please wait"));
     doupdate();
 
-    /* Set up an argument list to pass execvp(). */
+    /* Set up an argument list to pass to execvp(). */
     if (lintargs == NULL) {
 	lintargs = (char **)nmalloc(arglen * sizeof(char *));
 
@@ -2984,13 +2983,13 @@ void do_linter(void)
     }
     lintargs[arglen - 2] = openfile->filename;
 
-    /* A new process to run linter. */
+    /* A new process to run the linter in. */
     if ((pid_lint = fork()) == 0) {
 
-	/* Child continues (i.e. future spell process). */
+	/* Child continues (i.e. future linting process). */
 	close(lint_fd[0]);
 
-	/* Send spell's standard output/err to the pipe. */
+	/* Send the linter's standard output + err to the pipe. */
 	if (dup2(lint_fd[1], STDOUT_FILENO) != STDOUT_FILENO)
 	    exit(1);
 	if (dup2(lint_fd[1], STDERR_FILENO) != STDERR_FILENO)
@@ -3024,7 +3023,7 @@ void do_linter(void)
 	return;
     }
 
-    /* Read in the returned spelling errors. */
+    /* Read in the returned syntax errors. */
     read_buff_read = 0;
     read_buff_size = pipe_buff_size + 1;
     read_buff = read_buff_ptr = charalloc(read_buff_size);
@@ -3048,7 +3047,7 @@ void do_linter(void)
 		fprintf(stderr, "text.c:do_lint:Raw output: %s\n", read_buff);
 #endif
 
-    /* Process output. */
+    /* Process the output. */
     read_buff_word = read_buff_ptr = read_buff;
 
     while (*read_buff_ptr != '\0') {
@@ -3116,7 +3115,9 @@ void do_linter(void)
 	read_buff_ptr++;
     }
 
-    /* Process the end of the lint process. */
+    /* Process the end of the linting process.
+     * XXX: The return value should be checked.
+     * Will make an invocation-error routine. */
     waitpid(pid_lint, &lint_status, 0);
 
     free(read_buff);
@@ -3127,7 +3128,6 @@ void do_linter(void)
 	return;
     }
 
-    currmenu = MLINTER;
     bottombars(MLINTER);
     tmplint = NULL;
     curlint = lints;
@@ -3222,12 +3222,10 @@ free_lints_and_return:
     lint_cleanup();
 }
 
-/* Run a formatter for the given syntax.
- * Expects the formatter to be non-interactive and
- * operate on a file in-place, which we'll pass it
- * on the command line.  Another mashup of the speller
- * and alt_speller routines.
- */
+#ifndef DISABLE_SPELLER
+/* Run a formatter for the current syntax.  This expects the formatter
+ * to be non-interactive and operate on a file in-place, which we'll
+ * pass it on the command line. */
 void do_formatter(void)
 {
     bool status;
@@ -3282,7 +3280,7 @@ void do_formatter(void)
 
     endwin();
 
-    /* Set up an argument list to pass execvp(). */
+    /* Set up an argument list to pass to execvp(). */
     if (formatargs == NULL) {
 	formatargs = (char **)nmalloc(arglen * sizeof(char *));
 
@@ -3363,15 +3361,13 @@ void do_formatter(void)
     unlink(temp);
     free(temp);
 
-    currmenu = MMAIN;
-
     /* If the formatter printed any error messages onscreen, make
      * sure that they're cleared off. */
     total_refresh();
 
     statusbar(finalstatus);
 }
-
+#endif /* !DISABLE_SPELLER */
 #endif /* !DISABLE_COLOR */
 
 #ifndef NANO_TINY

@@ -1,9 +1,10 @@
-/* $Id: browser.c 5086 2014-07-31 20:49:32Z bens $ */
+/* $Id: browser.c 5192 2015-04-12 09:04:30Z bens $ */
 /**************************************************************************
  *   browser.c                                                            *
  *                                                                        *
  *   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,  *
- *   2010, 2011, 2013, 2014 Free Software Foundation, Inc.                *
+ *   2010, 2011, 2013, 2014, 2015 Free Software Foundation, Inc.          *
+ *                                                                        *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -39,10 +40,7 @@ static int width = 0;
 static int longest = 0;
 	/* The number of columns in the longest filename in the list. */
 static size_t selected = 0;
-	/* The currently selected filename in the list.  This variable
-	 * is zero-based. */
-static bool search_last_file = FALSE;
-	/* Have we gone past the last file while searching? */
+	/* The currently selected filename in the list; zero-based. */
 
 /* Our main file browser function.  path is the tilde-expanded path we
  * start browsing from. */
@@ -52,8 +50,7 @@ char *do_browser(char *path, DIR *dir)
     int kbinput;
     bool old_const_update = ISSET(CONST_UPDATE);
     char *prev_dir = NULL;
-	/* The directory we were in, if any, before backing up via
-	 * browsing to "..". */
+	/* The directory we were in before backing up to "..". */
     char *ans = NULL;
 	/* The last answer the user typed at the statusbar prompt. */
     size_t old_selected;
@@ -63,7 +60,6 @@ char *do_browser(char *path, DIR *dir)
 
     curs_set(0);
     blank_statusbar();
-    currmenu = MBROWSER;
     bottombars(MBROWSER);
     wnoutrefresh(bottomwin);
 
@@ -92,7 +88,7 @@ char *do_browser(char *path, DIR *dir)
     /* If prev_dir isn't NULL, select the directory saved in it, and
      * then blow it away. */
     if (prev_dir != NULL) {
-	browser_select_filename(prev_dir);
+	browser_select_dirname(prev_dir);
 
 	free(prev_dir);
 	prev_dir = NULL;
@@ -137,19 +133,16 @@ char *do_browser(char *path, DIR *dir)
 				width) + (mouse_x / (longest + 2));
 
 		/* If they clicked beyond the end of a row,
-		 * select the filename at the end of that
-		 * row. */
+		 * select the last filename in that row. */
 		if (mouse_x > width * (longest + 2))
 		    selected--;
 
-		/* If we're off the screen, select the last
-		 * filename. */
+		/* If we're off the screen, select the last filename. */
 		if (selected > filelist_len - 1)
 		    selected = filelist_len - 1;
 
-		/* If we selected the same filename as last
-		 * time, put back the Enter key so that it's
-		 * read in. */
+		/* If we selected the same filename as last time,
+		 * put back the Enter key so that it's read in. */
 		if (old_selected == selected)
 		    unget_kbinput(sc_seq_or(do_enter_void, 0), FALSE, FALSE);
 	    }
@@ -203,7 +196,6 @@ char *do_browser(char *path, DIR *dir)
 			browser_refresh, _("Go To Directory"));
 
 	    curs_set(0);
-	    currmenu = MBROWSER;
 	    bottombars(MBROWSER);
 
 	    /* If the directory begins with a newline (i.e. an
@@ -691,56 +683,37 @@ void browser_refresh(void)
     wnoutrefresh(edit);
 }
 
-/* Look for needle.  If we find it, set selected to its location.  Note
- * that needle must be an exact match for a file in the list.  The
- * return value specifies whether we found anything. */
-bool browser_select_filename(const char *needle)
+/* Look for needle.  If we find it, set selected to its location.
+ * Note that needle must be an exact match for a file in the list. */
+void browser_select_dirname(const char *needle)
 {
-    size_t currselected;
-    bool found = FALSE;
+    size_t looking_at = 0;
 
-    for (currselected = 0; currselected < filelist_len;
-	currselected++) {
-	if (strcmp(filelist[currselected], needle) == 0) {
-	    found = TRUE;
+    for (; looking_at < filelist_len; looking_at++) {
+	if (strcmp(filelist[looking_at], needle) == 0) {
+	    selected = looking_at;
 	    break;
 	}
     }
-
-    if (found)
-	selected = currselected;
-
-    return found;
 }
 
-/* Set up the system variables for a filename search.  Return -1 if the
- * search should be canceled (due to Cancel, a blank search string, or a
- * failed regcomp()), return 0 on success, and return 1 on rerun calling
- * program. */
+/* Set up the system variables for a filename search.  Return -1 or -2 if
+ * the search should be canceled (due to Cancel or a blank search string),
+ * return 0 when we have a string, and return a positive value when some
+ * function was run. */
 int filesearch_init(void)
 {
-    int i = 0;
+    int input;
     char *buf;
-    static char *backupstring = NULL;
-	/* The search string we'll be using. */
 
-    /* If backupstring doesn't exist, initialize it to "". */
-    if (backupstring == NULL)
-	backupstring = mallocstrcpy(NULL, "");
-
-    /* We display the search prompt below.  If the user types a partial
-     * search string and then Replace or a toggle, we will return to
-     * do_search() or do_replace() and be called again.  In that case,
-     * we should put the same search string back up. */
-
-    search_init_globals();
+    if (last_search == NULL)
+	last_search = mallocstrcpy(NULL, "");
 
     if (last_search[0] != '\0') {
 	char *disp = display_string(last_search, 0, COLS / 3, FALSE);
 
 	buf = charalloc(strlen(disp) + 7);
-	/* We use (COLS / 3) here because we need to see more on the
-	 * line. */
+	/* We use (COLS / 3) here because we need to see more on the line. */
 	sprintf(buf, " [%s%s]", disp,
 		(strlenpt(last_search) > COLS / 3) ? "..." : "");
 	free(disp);
@@ -748,11 +721,11 @@ int filesearch_init(void)
 	buf = mallocstrcpy(NULL, "");
 
     /* This is now one simple call.  It just does a lot. */
-    i = do_prompt(FALSE,
+    input = do_prompt(FALSE,
 #ifndef DISABLE_TABCOMP
 	TRUE,
 #endif
-	MWHEREISFILE, backupstring,
+	MWHEREISFILE, NULL,
 #ifndef DISABLE_HISTORIES
 	&search_history,
 #endif
@@ -761,100 +734,83 @@ int filesearch_init(void)
     /* Release buf now that we don't need it anymore. */
     free(buf);
 
-    free(backupstring);
-    backupstring = NULL;
+    /* If only Enter was pressed but we have a previous string, it's okay. */
+    if (input == -2 && *last_search != '\0')
+	return 0;
 
-    /* Cancel any search, or just return with no previous search. */
-    if (i == -1 || (i < 0 && *last_search == '\0') || (i == 0 &&
-	*answer == '\0')) {
+    /* Otherwise negative inputs are a bailout. */
+    if (input < 0)
 	statusbar(_("Cancelled"));
-	return -1;
-    }
 
-    return 0;
+    return input;
 }
 
-/* Look for needle.  If no_sameline is TRUE, skip over selected when
- * looking for needle.  begin is the location of the filename where we
- * first started searching.  The return value specifies whether we found
- * anything. */
-bool findnextfile(bool no_sameline, size_t begin, const char *needle)
+/* Look for the given needle in the list of files. */
+void findnextfile(const char *needle)
 {
-    size_t currselected = selected;
-	/* The location in the current file list of the match we
-	 * find. */
-    const char *filetail = tail(filelist[currselected]);
+    size_t looking_at = selected;
+	/* The location in the file list of the filename we're looking at. */
+    bool came_full_circle = FALSE;
+	/* Have we reached the starting file again? */
+    const char *filetail = tail(filelist[looking_at]);
 	/* The filename we display, minus the path. */
     const char *rev_start = filetail, *found = NULL;
 
-    /* Look for needle in the current filename we're searching. */
+    /* Step through each filename in the list until a match is found or
+     * we've come back to the point where we started. */
     while (TRUE) {
 	found = strstrwrapper(filetail, needle, rev_start);
 
-	/* We've found a potential match.  If we're not allowed to find
-	 * a match on the same filename we started on and this potential
-	 * match is on that line, continue searching. */
-	if (found != NULL && (!no_sameline || currselected != begin))
+	/* If we've found a match and it's not the same filename where
+	 * we started, then we're done. */
+	if (found != NULL && looking_at != selected)
 	    break;
 
-	/* We've finished processing the filenames, so get out. */
-	if (search_last_file) {
+	/* If we've found a match and we're back at the beginning, then
+	 * it's the only occurrence. */
+	if (found != NULL && came_full_circle) {
+	    statusbar(_("This is the only occurrence"));
+	    break;
+	}
+
+	if (came_full_circle) {
+	    /* We're back at the beginning and didn't find anything. */
 	    not_found_msg(needle);
-	    return FALSE;
+	    return;
 	}
 
 	/* Move to the next filename in the list.  If we've reached the
 	 * end of the list, wrap around. */
-	if (currselected < filelist_len - 1)
-	    currselected++;
+	if (looking_at < filelist_len - 1)
+	    looking_at++;
 	else {
-	    currselected = 0;
+	    looking_at = 0;
 	    statusbar(_("Search Wrapped"));
 	}
 
-	/* We've reached the original starting file. */
-	if (currselected == begin)
-	    search_last_file = TRUE;
+	if (looking_at == selected)
+	    /* We've reached the original starting file. */
+	    came_full_circle = TRUE;
 
-	filetail = tail(filelist[currselected]);
+	filetail = tail(filelist[looking_at]);
 
 	rev_start = filetail;
     }
 
-    /* We've definitely found something. */
-    selected = currselected;
-
-    return TRUE;
-}
-
-/* Clear the flag indicating that a search reached the last file in the
- * list.  We need to do this just before a new search. */
-void findnextfile_wrap_reset(void)
-{
-    search_last_file = FALSE;
-}
-
-/* Abort the current filename search.  Clean up by setting the current
- * shortcut list to the browser shortcut list, and displaying it. */
-void filesearch_abort(void)
-{
-    currmenu = MBROWSER;
-    bottombars(MBROWSER);
+    /* Select the one we've found. */
+    selected = looking_at;
 }
 
 /* Search for a filename. */
 void do_filesearch(void)
 {
-    size_t begin = selected;
-    bool didfind;
-
     UNSET(CASE_SENSITIVE);
     UNSET(USE_REGEXP);
     UNSET(BACKWARDS_SEARCH);
 
     if (filesearch_init() != 0) {
-	/* Cancelled or a blank search string. */
-	filesearch_abort();
+	/* Cancelled, or a blank search string, or done something. */
+	bottombars(MBROWSER);
 	return;
     }
 
@@ -871,50 +827,21 @@ void do_filesearch(void)
 	update_history(&search_history, answer);
 #endif
 
-    findnextfile_wrap_reset();
-    didfind = findnextfile(FALSE, begin, answer);
+    findnextfile(answer);
 
-    /* Check to see if there's only one occurrence of the string and
-     * we're on it now. */
-    if (selected == begin && didfind) {
-	/* Do the search again, skipping over the current line.  We
-	 * should only end up back at the same position if the string
-	 * isn't found again, in which case it's the only occurrence. */
-	didfind = findnextfile(TRUE, begin, answer);
-	if (selected == begin && !didfind)
-	    statusbar(_("This is the only occurrence"));
-    }
-
-    filesearch_abort();
+    bottombars(MBROWSER);
 }
 
-/* Search for the last filename without prompting. */
+/* Search for the last given filename again without prompting. */
 void do_fileresearch(void)
 {
-    size_t begin = selected;
-    bool didfind;
+    if (last_search == NULL)
+	last_search = mallocstrcpy(NULL, "");
 
-    search_init_globals();
-
-    if (last_search[0] != '\0') {
-	findnextfile_wrap_reset();
-	didfind = findnextfile(FALSE, begin, answer);
-
-	/* Check to see if there's only one occurrence of the string and
-	 * we're on it now. */
-	if (selected == begin && didfind) {
-	    /* Do the search again, skipping over the current line.  We
-	     * should only end up back at the same position if the
-	     * string isn't found again, in which case it's the only
-	     * occurrence. */
-	    didfind = findnextfile(TRUE, begin, answer);
-	    if (selected == begin && !didfind)
-		statusbar(_("This is the only occurrence"));
-	}
-    } else
-        statusbar(_("No current search pattern"));
-
-    filesearch_abort();
+    if (last_search[0] == '\0')
+	statusbar(_("No current search pattern"));
+    else
+	findnextfile(last_search);
 }
 
 /* Select the first file in the list. */

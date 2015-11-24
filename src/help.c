@@ -1,4 +1,4 @@
-/* $Id: help.c 5051 2014-07-02 09:29:05Z bens $ */
+/* $Id: help.c 5183 2015-04-07 14:16:07Z bens $ */
 /**************************************************************************
  *   help.c                                                               *
  *                                                                        *
@@ -61,10 +61,6 @@ void do_help(void (*refresh_func)(void))
     help_init();
 
     assert(help_text != NULL);
-
-    /* Set currmenu to allow clicking on the help screen's shortcut
-     * list, after help_init() is called. */
-    currmenu = MHELP;
 
     if (ISSET(NO_HELP)) {
 	/* Make sure that the help screen's shortcut list will actually
@@ -158,15 +154,14 @@ void do_help(void (*refresh_func)(void))
 	}
     }
 
-    currmenu = oldmenu;
-
     if (old_no_help) {
 	blank_bottombars();
 	wnoutrefresh(bottomwin);
+	currmenu = oldmenu;
 	SET(NO_HELP);
 	window_init();
     } else
-	bottombars(currmenu);
+	bottombars(oldmenu);
 
     curs_set(1);
     refresh_func();

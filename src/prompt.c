@@ -1,4 +1,4 @@
-/* $Id: prompt.c 5086 2014-07-31 20:49:32Z bens $ */
+/* $Id: prompt.c 5183 2015-04-07 14:16:07Z bens $ */
 /**************************************************************************
  *   prompt.c                                                             *
  *                                                                        *
@@ -974,7 +974,6 @@ int do_prompt(bool allow_tabs,
 
     prompt = charalloc(((COLS - 4) * mb_cur_max()) + 1);
 
-    currmenu = menu;
     bottombars(menu);
 
     va_start(ap, msg);

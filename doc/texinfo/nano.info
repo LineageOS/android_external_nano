@@ -17,7 +17,7 @@ This manual documents GNU 'nano', a small and friendly text editor.
 
 * Introduction::
 * Editor Basics::
-* Online Help::
+* Built-in Help::
 * Feature Toggles::
 * Nanorc Files::
 * The File Browser::
@@ -31,10 +31,10 @@ File: nano.info,  Node: Introduction,  Next: Editor Basics,  Prev: Top,  Up: Top
 **************
 
 GNU 'nano' is a small and friendly text editor.  Besides basic text
-editing, 'nano' offers many extra features, like an interactive
-search-and-replace, go-to-line-and-column-number, auto-indentation,
-feature toggles, internationalization support, and filename tab
-completion.
+editing, 'nano' offers many extra features, such as an interactive
+search-and-replace, undo/redo, syntax coloring, smooth scrolling,
+auto-indentation, go-to-line-and-column-number, feature toggles, file
+locking, backup files, and internationalization support.
 
 * Menu:
 
@@ -54,20 +54,22 @@ Pico Compatibility::, for more info.
 
    The usual way to invoke 'nano' is:
 
-     'nano [OPTION]... [FILE]'
+     'nano [FILE]'
 
-   But it is also possible to edit several files in a row.
-Additionally, the cursor can be put on a desired line number by adding
-this number with a plus sign before any filename, and even in a desired
-column by adding it with a comma.  So the complete synopsis is:
+   But it is also possible to specify one or more options, and to edit
+several files in a row.  Additionally, the cursor can be put on a
+specific line of a file by adding the line number with a plus sign
+before the filename, and even in a specific column by adding it with a
+comma.  So the complete command synopsis is:
 
-     'nano [OPTION]... [[+LINE] FILE]...'
+     'nano [OPTION]... [[+LINE[,COLUMN]|+,COLUMN] FILE]...'
 
-     'nano [OPTION]... [[+,COLUMN] FILE]...'
+   But normallly you would set your preferred options in your '.nanorc'
+file.  And when the 'poslog' option is set (making 'nano' remember the
+cursor position), you will rarely need to specify a line number.
 
-     'nano [OPTION]... [[+LINE,COLUMN] FILE]...'
-
-   Email bug reports to <nano@nano-editor.org>.
+   Please email any bug reports to <nano@nano-editor.org>.  Or file them
+at <https://savannah.gnu.org/bugs/?group=nano>.
 
 
 File: nano.info,  Node: Command Line Options,  Prev: Overview,  Up: Introduction
@@ -327,7 +329,7 @@ File: nano.info,  Node: Command Line Options,  Prev: Overview,  Up: Introduction
      Ignored, for compatibility with Pico.
 
 
-File: nano.info,  Node: Editor Basics,  Next: Online Help,  Prev: Introduction,  Up: Top
+File: nano.info,  Node: Editor Basics,  Next: Built-in Help,  Prev: Introduction,  Up: Top
 
 2 Editor Basics
 ***************
@@ -468,18 +470,18 @@ during those actions.
 gpm is running.
 
 
-File: nano.info,  Node: Online Help,  Next: Feature Toggles,  Prev: Editor Basics,  Up: Top
+File: nano.info,  Node: Built-in Help,  Next: Feature Toggles,  Prev: Editor Basics,  Up: Top
 
-3 Online Help
-*************
+3 Built-in Help
+***************
 
-The online help system in 'nano' is available by pressing ^G. It is
-fairly self-explanatory, documenting the various parts of the editor and
-available keystrokes.  Navigation is via the ^Y (Page Up) and ^V (Page
-Down) keys.  ^X exits the help system.
+The built-in help system in 'nano' is available by pressing ^G. It is
+fairly self-explanatory.  It documents the various parts of the editor
+and the available keystrokes.  Navigation is via the ^Y (Page Up) and ^V
+(Page Down) keys.  ^X exits the help system.
 
 
-File: nano.info,  Node: Feature Toggles,  Next: Nanorc Files,  Prev: Online Help,  Up: Top
+File: nano.info,  Node: Feature Toggles,  Next: Nanorc Files,  Prev: Built-in Help,  Up: Top
 
 4 Feature Toggles
 *****************
@@ -1431,28 +1433,28 @@ familiar with compiling programs with autoconf support:
 
 Tag Table:
 Node: Top199
-Node: Introduction550
-Node: Overview990
-Node: Command Line Options1874
-Ref: Expert Mode8793
-Node: Editor Basics9758
-Node: Entering Text10038
-Node: Special Functions10364
-Node: The Cutbuffer11404
-Node: The Mark12091
-Node: The Titlebar12828
-Node: The Statusbar13544
-Node: Shortcut Lists14117
-Node: Using the Mouse14397
-Node: Online Help14990
-Node: Feature Toggles15366
-Node: Nanorc Files17428
-Node: Settings18859
-Ref: Whitespace25479
-Node: Syntax Highlighting25831
-Node: Rebinding Keys29957
-Node: The File Browser38444
-Node: Pico Compatibility39266
-Node: Building and Configure Options41926
+Node: Introduction552
+Node: Overview1044
+Node: Command Line Options2174
+Ref: Expert Mode9093
+Node: Editor Basics10058
+Node: Entering Text10340
+Node: Special Functions10666
+Node: The Cutbuffer11706
+Node: The Mark12393
+Node: The Titlebar13130
+Node: The Statusbar13846
+Node: Shortcut Lists14419
+Node: Using the Mouse14699
+Node: Built-in Help15292
+Node: Feature Toggles15682
+Node: Nanorc Files17746
+Node: Settings19177
+Ref: Whitespace25797
+Node: Syntax Highlighting26149
+Node: Rebinding Keys30275
+Node: The File Browser38762
+Node: Pico Compatibility39584
+Node: Building and Configure Options42244
 
 End Tag Table

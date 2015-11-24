@@ -1,9 +1,125 @@
+2015-04-13  Benno Schulenberg  <bensberg@justemail.net>
+	* src/search.c (do_replace_loop): Fix compilation with --enable-tiny.
+	* README: Mention also the Savannah page for reporting bugs.
+
+2015-04-12  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c (filesearch_init): Stop M-\ and M-/ in WhereisFile
+	menu (reached via ^R ^T ^W) from doing also an unrequested search
+	after having performed their function.  Fixes Savannah bug #44790.
+	* src/global.c (shortcut_init): Rebind ^Y and ^V in the WhereisFile
+	menu from the pointless page_up() and page_down() to the effective
+	first_file() and last_file().  Also unbind some other useless keys.
+	* src/browser.c (filesearch_init): Remove an unused variable, and
+	adjust the introductory comment for the recently tweaked logic.
+	* src/rcfile.c (parse_linter, parse_formatter): Use mallocstrcpy()
+	in a correct manner; don't let it free an unrelated string.
+
+2015-04-11  Benno Schulenberg  <bensberg@justemail.net>
+	* src/search.c (do_replace_loop): Do not split off the marked region
+	into a separate partition, but do the replacings in the current one,
+	taking good care to stay within the boundaries of the region.  This
+	fixes an undo bug where the first part of a line would disappear if
+	the region started in the middle of a line.  Bug was reported here:
+	https://lists.gnu.org/archive/html/nano-devel/2015-03/msg00077.html.
+	Original idea and patch were by Mark Majeres.
+
+2015-04-08  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c (browser_select_dirname, findnextfile): Rename
+	'currselected' to 'looking_at', for more contrast with 'selected',
+	and rename browser_select_filename() to browser_select_dirname().
+	* src/text.c: Correct and adjust some comments.
+
+2015-04-07  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c (do_fileresearch): Don't search for the empty string
+	when nothing was sought yet (when historylog is set).
+	* src/browser.c (filesearch_init): Remove an unfitting comment
+	(there are no toggles here) and tweak some others.
+	* src/search.c (do_search, do_research): Use the same variable as
+	in the surrounding code, for consistency.
+	* src/browser.c (findnextfile_wrap_reset): Elide this function,
+	and rename 'search_last_file' to 'came_full_circle'.
+	* src/browser.c (filesearch_init, do_fileresearch): Avoid setting
+	'focusing' when searching only for filenames.
+	* src/browser.c (findnextfile, do_filesearch, do_fileresearch):
+	Greatly simplify the searching for the next matching filename.
+	* src/{browser,files,help,prompt,text,winio}.c: Let the function
+	bottombars() set the global variable 'currmenu' -- the displayed
+	menu must necessarily be the active one.
+	* src/browser.c (filesearch_abort): Elide this tiny function.
+	* THANKS: Add the names of recent translators, and sort the list.
+	* THANKS: A neater layout, plus two table headers.
+
+2015-04-05  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/texinfo/nano.texi: Expand on nano's features, condense the
+	synopsis, and "online" means something else to most people.
+
+2015-04-03  Benno Schulenberg  <bensberg@justemail.net>
+	* README: Update text to the fifth milestone, 2.4.x, plus tweaks.
+	* src/rcfile.c: Remove two superfluous (because nested) #ifndefs.
+	* src/rcfile.c (parse_rcfile): Ignore any magic when libmagic was
+	disabled, and ignore a formatter when spell checking was disabled.
+
+2015-03-28  Benno Schulenberg  <bensberg@justemail.net>
+	* src/search.c (search_init_globals, search_replace_abort),
+	src/winio.c (edit_redraw), src/proto.h, src/global.c: When finding
+	an off-screen string, put it on the center line of the screen and
+	not on the bottom or top line.  This restores the old behaviour
+	that was unintentionally changed in r5149 six days ago.
+	* src/winio.c (edit_refresh): When pasting lines on the bottom line,
+	only scroll the required number of lines and not half a screen --
+	that is, when smooth scrolling is enabled.
+	* doc/syntax/changelog.nanorc: Also colour a series of changed files
+	that spans more than one line.
+
+2015-03-27  Mark Majeres  <mark@engine12.com>
+	* src/text.c (do_alt_speller): Adjust the end point of the marked
+	region for any change in length of the region's last line.
+
+2015-03-27  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/syntax/patch.nanorc: Recognize also Debian package diffs.
+	Fixes https://bugs.launchpad.net/ubuntu/+source/nano/+bug/1300565
+	requested by Rolf Leggewie.
+	* src/search.c (do_replace_loop): Adjust some whitespace and wrapping.
+	* src/search.c (do_replace_loop): Place a call to edit_refresh better,
+	and remove two unneeded ones.  This greatly speeds up nano when doing
+	a Replace All with *lots* of occurrences.
+	* src/{color,global,nano,text,utils}.c: Normalize some whitespace.
+	* src/global.c (strtosc): The linter is only available when colour is.
+	* src/global.c, src/text.c: Treat the formatter like a speller,	to fix
+	compilation with --disable-speller.  Fixes Savannah bug #44607.
+
+2015-03-25  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/syntax/debian.nanorc: Slightly widen and relax the header regex.
+	* doc/syntax/python.nanorc: Hashes inside triple-quoted strings should
+	not cause comment colouring.  (Inside single-qouted strings neither,
+	but then quotes in comments will be coloured like strings.)  This
+	solves https://bugs.launchpad.net/ubuntu/+source/nano/+bug/481363.
+	* src/global.c (strtomenu): Remove mistaken menu name -- as the
+	formatter allows no interaction it needs no associated menu.
+	* src/text.c (do_formatter): Remove unneeded statement -- nothing
+	has changed the value of 'currmenu'.
+	* src/global.c (strtosc), doc/man/nanorc.5: Allow rebinding the
+	linter when nano was configured with --disable-speller.
+
+2015-03-23  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_alt_speller): Avoid the spell checker reporting
+	an error when the marked region is zero bytes long.  The message
+	is not needed -- it gets printed by the caller.  This generalizes
+	the fix for Savannah bug #29393.
+	* src/text.c (do_alt_speller): Do not unset the mark before the
+	possible bailout because of a zero-sized region.
+	* NEWS: Option --noread allows writing, not reading, to named pipes.
+
+2015-03-22  Chris Allegretta <chrisa@asty.org>
+	* src/text.c (do_alt_speller): timestamp can just be a time_t.
+	Fixes compilation on win32 and macOS.
+
 GNU nano 2.4.0  - 2015.03.22
 2015-03-22  Benno Schulenberg  <bensberg@justemail.net>
 	* src/chars.c (move_mbleft): Start looking for a multibyte char
 	not at the start of the string, but only as far back as such a
 	char can possibly be.  Change suggested by Mark Majeres.
-	*  src/search.c (findnextstr): Step backward or forward not simply
+	* src/search.c (findnextstr): Step backward or forward not simply
 	one byte but one character (possibly multibyte).  Fixes Savannah
 	bug #42175, reported by myself, and the finding of ghosts seen in
 	https://lists.gnu.org/archive/html/nano-devel/2015-03/msg00055.html.
@@ -61,7 +177,7 @@ GNU nano 2.4.0  - 2015.03.22
 	those arguments are not optional.  Also add "formatter" to the
 	texinfo document, and slightly improve its punctuation.
 
-GNU nano 2.3.99pre2 - 2015.02.27
+GNU nano 2.3.99pre3 - 2015.02.27
 2015-02-25  Chris Allegretta <chrisa@asty.org>
 	* src/rcfile.c (parse_binding): Add an exception for do_toggle() as
 	rebinding toggles broke with r5022.  (Fixed in r5134.)
@@ -109,7 +225,7 @@ GNU nano 2.3.99pre2 - 2015.02.06
 2015-01-13  Chris Allegretta <chrisa@asty.org>
 	* src/files.c (open_buffer): Check here for locking and properly
 	handle choosing to not open a file when locked instead of in
-	open_file().  Fixes Savannah bug 42373 reported by Benno Schulenberg.
+	open_file().  Fixes Savannah bug #42373 reported by Benno Schulenberg.
 
 GNU nano 2.3.99pre1 - 2015.01.06
 2015-01-03  Chris Allegretta <chrisa@asty.org>

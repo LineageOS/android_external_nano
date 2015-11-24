@@ -1,4 +1,4 @@
-/* $Id: winio.c 5149 2015-03-22 13:23:42Z bens $ */
+/* $Id: winio.c 5183 2015-04-07 14:16:07Z bens $ */
 /**************************************************************************
  *   winio.c                                                              *
  *                                                                        *
@@ -2344,6 +2344,9 @@ void bottombars(int menu)
     subnfunc *f;
     const sc *s;
 
+    /* Set the global variable to the given menu. */
+    currmenu = menu;
+
     if (ISSET(NO_HELP))
 	return;
 
@@ -3161,10 +3164,7 @@ void edit_redraw(filestruct *old_current, size_t pww_save)
 #endif /* !NANO_TINY */
 
 	/* Make sure the current line is on the screen. */
-	if (ISSET(SMOOTH_SCROLL))
-	    edit_update(NONE);
-	else
-	    edit_update(CENTER);
+	edit_update((ISSET(SMOOTH_SCROLL) && !focusing) ? NONE : CENTER);
 
 	/* Update old_current if we're not on the same page as
 	 * before. */
@@ -3231,7 +3231,7 @@ void edit_refresh(void)
 #endif
 
 	/* Make sure the current line is on the screen. */
-	edit_update(CENTER);
+	edit_update(ISSET(SMOOTH_SCROLL) ? NONE : CENTER);
     }
 
     foo = openfile->edittop;
