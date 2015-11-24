@@ -1,9 +1,9 @@
-/* $Id: cut.c 4453 2009-12-02 03:36:22Z astyanax $ */
+/* $Id: cut.c 5112 2015-02-03 22:49:57Z astyanax $ */
 /**************************************************************************
  *   cut.c                                                                *
  *                                                                        *
  *   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,  *
- *   2008, 2009 Free Software Foundation, Inc.                            *
+ *   2008, 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.    *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -37,6 +37,12 @@ void cutbuffer_reset(void)
     keep_cutbuffer = FALSE;
 }
 
+/* Return the status of cutbuffer preservation. */
+inline bool keeping_cutbuffer(void)
+{
+    return keep_cutbuffer;
+}
+
 /* If we aren't on the last line of the file, move all the text of the
  * current line, plus the newline at the end, into the cutbuffer.  If we
  * are, move all of the text of the current line into the cutbuffer.  In
@@ -44,6 +50,11 @@ void cutbuffer_reset(void)
  * current line. */
 void cut_line(void)
 {
+#ifndef NANO_TINY
+    if (!openfile->mark_begin)
+	openfile->mark_begin = openfile->current;
+#endif
+
     if (openfile->current != openfile->filebot)
 	move_to_filestruct(&cutbuffer, &cutbottom, openfile->current, 0,
 		openfile->current->next, 0);
@@ -109,11 +120,11 @@ void cut_to_eof(void)
 
 /* Move text from the current filestruct into the cutbuffer.  If
  * copy_text is TRUE, copy the text back into the filestruct afterward.
- * If cut_till_end is TRUE, move all text from the current cursor
+ * If cut_till_eof is TRUE, move all text from the current cursor
  * position to the end of the file into the cutbuffer. */
 void do_cut_text(
 #ifndef NANO_TINY
-	bool copy_text, bool cut_till_end, bool undoing
+	bool copy_text, bool cut_till_eof, bool undoing
 #else
 	void
 #endif
@@ -125,7 +136,7 @@ void do_cut_text(
 	 * it. */
     size_t cb_save_len = 0;
 	/* The length of the string at the current end of the cutbuffer,
-	 * before we add text to it.  */
+	 * before we add text to it. */
     bool old_no_newlines = ISSET(NO_NEWLINES);
 #endif
 
@@ -162,9 +173,8 @@ void do_cut_text(
     keep_cutbuffer = TRUE;
 
 #ifndef NANO_TINY
-
-    if (cut_till_end) {
-	/* If cut_till_end is TRUE, move all text up to the end of the
+    if (cut_till_eof) {
+	/* If cut_till_eof is TRUE, move all text up to the end of the
 	 * file into the cutbuffer. */
 	cut_to_eof();
     } else if (openfile->mark_set) {
@@ -190,10 +200,10 @@ void do_cut_text(
 	if (cutbuffer != NULL) {
 	    if (cb_save != NULL) {
 		cb_save->data += cb_save_len;
-		copy_from_filestruct(cb_save, cutbottom);
+		copy_from_filestruct(cb_save);
 		cb_save->data -= cb_save_len;
 	    } else
-		copy_from_filestruct(cutbuffer, cutbottom);
+		copy_from_filestruct(cutbuffer);
 
 	    /* Set the current place we want to where the text from the
 	     * cutbuffer ends. */
@@ -205,16 +215,18 @@ void do_cut_text(
 	if (!old_no_newlines)
 	    UNSET(NO_NEWLINES);
     } else if (!undoing)
-	update_undo(CUT);
-#endif
-	/* Leave the text in the cutbuffer, and mark the file as
-	 * modified. */
+	update_undo(cut_till_eof ? CUT_EOF : CUT);
+
+    /* Leave the text in the cutbuffer, and mark the file as
+     * modified. */
+    if (!copy_text)
+#endif /* !NANO_TINY */
 	set_modified();
 
     /* Update the screen. */
     edit_refresh_needed = TRUE;
 
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     reset_multis(openfile->current, FALSE);
 #endif
 
@@ -238,18 +250,26 @@ void do_cut_text_void(void)
 
 #ifndef NANO_TINY
 /* Move text from the current filestruct into the cutbuffer, and copy it
- * back into the filestruct afterward. */
+ * back into the filestruct afterward.  If the mark is set or the cursor
+ * was moved, blow away previous contents of the cutbuffer. */
 void do_copy_text(void)
 {
+    static struct filestruct *next_contiguous_line = NULL;
+    bool mark_set = openfile->mark_set;
+
+    if (mark_set || openfile->current != next_contiguous_line)
+	cutbuffer_reset();
+
     do_cut_text(TRUE, FALSE, FALSE);
+
+    /* If the mark was set, blow away the cutbuffer on the next copy. */
+    next_contiguous_line = (mark_set ? NULL : openfile->current);
 }
 
 /* Cut from the current cursor position to the end of the file. */
-void do_cut_till_end(void)
+void do_cut_till_eof(void)
 {
-#ifndef NANO_TINY
-    add_undo(CUT);
-#endif
+    add_undo(CUT_EOF);
     do_cut_text(FALSE, TRUE, FALSE);
 }
 #endif /* !NANO_TINY */
@@ -264,12 +284,16 @@ void do_uncut_text(void)
 	return;
 
 #ifndef NANO_TINY
-     update_undo(UNCUT);
+    add_undo(PASTE);
 #endif
 
     /* Add a copy of the text in the cutbuffer to the current filestruct
      * at the current cursor position. */
-    copy_from_filestruct(cutbuffer, cutbottom);
+    copy_from_filestruct(cutbuffer);
+
+#ifndef NANO_TINY
+    update_undo(PASTE);
+#endif
 
     /* Set the current place we want to where the text from the
      * cutbuffer ends. */
@@ -281,7 +305,7 @@ void do_uncut_text(void)
     /* Update the screen. */
     edit_refresh_needed = TRUE;
 
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     reset_multis(openfile->current, FALSE);
 #endif
 

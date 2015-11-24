@@ -1,9 +1,9 @@
-/* $Id: search.c 4472 2010-01-05 23:35:50Z astyanax $ */
+/* $Id: search.c 5416 2015-11-15 06:48:56Z astyanax $ */
 /**************************************************************************
  *   search.c                                                             *
  *                                                                        *
  *   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,  *
- *   2008, 2009 Free Software Foundation, Inc.                            *
+ *   2008, 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.    *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -32,7 +32,7 @@
 
 static bool search_last_line = FALSE;
 	/* Have we gone past the last line while searching? */
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+#ifndef DISABLE_HISTORIES
 static bool history_changed = FALSE;
 	/* Have any of the history lists changed? */
 #endif
@@ -106,6 +106,7 @@ void not_found_msg(const char *str)
 void search_replace_abort(void)
 {
     display_main_list();
+    focusing = FALSE;
 #ifndef NANO_TINY
     if (openfile->mark_set)
 	edit_refresh();
@@ -113,15 +114,6 @@ void search_replace_abort(void)
 #ifdef HAVE_REGEX_H
     regexp_cleanup();
 #endif
-}
-
-/* Initialize the global search and replace strings. */
-void search_init_globals(void)
-{
-    if (last_search == NULL)
-	last_search = mallocstrcpy(NULL, "");
-    if (last_replace == NULL)
-	last_replace = mallocstrcpy(NULL, "");
 }
 
 /* Set up the system variables for a search or replace.  If use_answer
@@ -137,9 +129,6 @@ int search_init(bool replacing, bool use_answer)
 {
     int i = 0;
     char *buf;
-    sc *s;
-    char func = 0;
-    bool meta_key = FALSE, func_key = FALSE;
     static char *backupstring = NULL;
 	/* The search string we'll be using. */
 
@@ -158,14 +147,13 @@ int search_init(bool replacing, bool use_answer)
      * do_search() or do_replace() and be called again.  In that case,
      * we should put the same search string back up. */
 
-    search_init_globals();
+    focusing = TRUE;
 
     if (last_search[0] != '\0') {
 	char *disp = display_string(last_search, 0, COLS / 3, FALSE);
 
 	buf = charalloc(strlen(disp) + 7);
-	/* We use (COLS / 3) here because we need to see more on the
-	 * line. */
+	/* We use (COLS / 3) here because we need to see more on the line. */
 	sprintf(buf, " [%s%s]", disp,
 		(strlenpt(last_search) > COLS / 3) ? "..." : "");
 	free(disp);
@@ -178,30 +166,26 @@ int search_init(bool replacing, bool use_answer)
 	TRUE,
 #endif
 	replacing ? MREPLACE : MWHEREIS, backupstring,
-	&meta_key, &func_key,
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 	&search_history,
 #endif
+	/* TRANSLATORS: This is the main search prompt. */
 	edit_refresh, "%s%s%s%s%s%s", _("Search"),
 #ifndef NANO_TINY
-	/* TRANSLATORS: This string is just a modifier for the search
-	 * prompt; no grammar is implied. */
+	/* TRANSLATORS: The next three strings are modifiers of the search prompt. */
 	ISSET(CASE_SENSITIVE) ? _(" [Case Sensitive]") :
 #endif
 	"",
 #ifdef HAVE_REGEX_H
-	/* TRANSLATORS: This string is just a modifier for the search
-	 * prompt; no grammar is implied. */
 	ISSET(USE_REGEXP) ? _(" [Regexp]") :
 #endif
 	"",
 #ifndef NANO_TINY
-	/* TRANSLATORS: This string is just a modifier for the search
-	 * prompt; no grammar is implied. */
 	ISSET(BACKWARDS_SEARCH) ? _(" [Backwards]") :
 #endif
 	"", replacing ?
 #ifndef NANO_TINY
+	/* TRANSLATORS: The next two strings are modifiers of the search prompt. */
 	openfile->mark_set ? _(" (to replace) in selection") :
 #endif
 	_(" (to replace)") : "", buf);
@@ -220,11 +204,7 @@ int search_init(bool replacing, bool use_answer)
 	statusbar(_("Cancelled"));
 	return -1;
     } else {
-	for  (s = sclist; s != NULL; s = s->next)
-	    if ((s->menu & currmenu) && i == s->seq) {
-	        func = s->scfunc;
-	  	break;
-	    }
+	functionptrtype func = func_from_key(&i);
 
 	if (i == -2 || i == 0 ) {
 #ifdef HAVE_REGEX_H
@@ -236,26 +216,25 @@ int search_init(bool replacing, bool use_answer)
 #endif
 		;
 #ifndef NANO_TINY
-	} else if (func == CASE_SENS_MSG) {
+	} else if (func == case_sens_void) {
 		TOGGLE(CASE_SENSITIVE);
 		backupstring = mallocstrcpy(backupstring, answer);
 		return 1;
-	} else if (func == BACKWARDS_MSG) {
+	} else if (func == backwards_void) {
 		TOGGLE(BACKWARDS_SEARCH);
 		backupstring = mallocstrcpy(backupstring, answer);
 		return 1;
 #endif
 #ifdef HAVE_REGEX_H
-	} else if (func == REGEXP_MSG) {
+	} else if (func == regexp_void) {
 		TOGGLE(USE_REGEXP);
 		backupstring = mallocstrcpy(backupstring, answer);
 		return 1;
 #endif
-	} else if (func == DO_REPLACE || 
-	  func == NO_REPLACE_MSG) {
+	} else if (func == do_replace || func == flip_replace_void) {
 		backupstring = mallocstrcpy(backupstring, answer);
 		return -2;	/* Call the opposite search function. */
-	} else if (func == DO_GOTOLINECOLUMN_VOID) {
+	} else if (func == do_gotolinecolumn_void) {
 		do_gotolinecolumn(openfile->current->lineno,
 			openfile->placewewant + 1, TRUE, TRUE, FALSE,
 			TRUE);
@@ -270,17 +249,16 @@ int search_init(bool replacing, bool use_answer)
     return 0;
 }
 
-/* Look for needle, starting at (current, current_x).  If no_sameline is
- * TRUE, skip over begin when looking for needle.  begin is the line
+/* Look for needle, starting at (current, current_x).  begin is the line
  * where we first started searching, at column begin_x.  The return
  * value specifies whether we found anything.  If we did, set needle_len
  * to the length of the string we found if it isn't NULL. */
 bool findnextstr(
 #ifndef DISABLE_SPELLER
-	bool whole_word,
+	bool whole_word_only,
 #endif
-	bool no_sameline, const filestruct *begin, size_t begin_x, const
-	char *needle, size_t *needle_len)
+	const filestruct *begin, size_t begin_x,
+	const char *needle, size_t *needle_len)
 {
     size_t found_len;
 	/* The length of the match we find. */
@@ -289,7 +267,6 @@ bool findnextstr(
     ssize_t current_y_find = openfile->current_y;
     filestruct *fileptr = openfile->current;
     const char *rev_start = fileptr->data, *found = NULL;
-    const subnfunc *f;
     time_t lastkbcheck = time(NULL);
 
     /* rev_start might end up 1 character before the start or after the
@@ -300,17 +277,19 @@ bool findnextstr(
     rev_start +=
 #ifndef NANO_TINY
 	ISSET(BACKWARDS_SEARCH) ?
-	openfile->current_x - 1 :
+	((openfile->current_x == 0) ? -1 : move_mbleft(fileptr->data, openfile->current_x)) :
 #endif
-	openfile->current_x + 1;
+	move_mbright(fileptr->data, openfile->current_x);
 
     /* Look for needle in the current line we're searching. */
     enable_nodelay();
     while (TRUE) {
-        if (time(NULL) - lastkbcheck > 1) {
-            lastkbcheck = time(NULL);
-	    f = getfuncfromkey(edit);
-            if (f && f->scfunc == CANCEL_MSG) {
+	if (time(NULL) - lastkbcheck > 1) {
+	    int input = parse_kbinput(edit);
+
+	    lastkbcheck = time(NULL);
+
+	    if (input && func_from_key(&input) == do_cancel) {
 		statusbar(_("Cancelled"));
 		return FALSE;
 	    }
@@ -336,7 +315,7 @@ bool findnextstr(
 #ifndef DISABLE_SPELLER
 	    /* If we're searching for whole words, see if this potential
 	     * match is a whole word. */
-	    if (whole_word) {
+	    if (whole_word_only) {
 		char *word = mallocstrncpy(NULL, found, found_len + 1);
 		word[found_len] = '\0';
 
@@ -344,24 +323,18 @@ bool findnextstr(
 			fileptr->data, word);
 		free(word);
 	    }
-#endif
 
 	    /* If we're searching for whole words and this potential
-	     * match isn't a whole word, or if we're not allowed to find
-	     * a match on the same line we started on and this potential
-	     * match is on that line, continue searching. */
-	    if (
-#ifndef DISABLE_SPELLER
-		(!whole_word || found_whole) &&
+	     * match isn't a whole word, continue searching. */
+	    if (!whole_word_only || found_whole)
 #endif
-		(!no_sameline || fileptr != openfile->current))
 		break;
 	}
 
-	/* We've finished processing the file, so get out. */
 	if (search_last_line) {
+	    /* We've finished processing the file, so get out. */
 	    not_found_msg(needle);
-            disable_nodelay();
+	    disable_nodelay();
 	    return FALSE;
 	}
 
@@ -378,9 +351,8 @@ bool findnextstr(
 	}
 #endif
 
-	/* We've reached the start or end of the buffer, so wrap
-	 * around. */
 	if (fileptr == NULL) {
+	    /* We've reached the start or end of the buffer, so wrap around. */
 #ifndef NANO_TINY
 	    if (ISSET(BACKWARDS_SEARCH)) {
 		fileptr = openfile->filebot;
@@ -395,8 +367,8 @@ bool findnextstr(
 	    statusbar(_("Search Wrapped"));
 	}
 
-	/* We've reached the original starting line. */
 	if (fileptr == begin)
+	    /* We've reached the original starting line. */
 	    search_last_line = TRUE;
 
 	rev_start = fileptr->data;
@@ -456,8 +428,7 @@ void do_search(void)
     i = search_init(FALSE, FALSE);
 
     if (i == -1)
-	/* Cancel, Go to Line, blank search string, or regcomp()
-	 * failed. */
+	/* Cancel, Go to Line, blank search string, or regcomp() failed. */
 	search_replace_abort();
     else if (i == -2)
 	/* Replace. */
@@ -477,7 +448,7 @@ void do_search(void)
     else
 	last_search = mallocstrcpy(last_search, answer);
 
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
     /* If answer is not "", add this search string to the search history
      * list. */
     if (answer[0] != '\0')
@@ -489,35 +460,13 @@ void do_search(void)
 #ifndef DISABLE_SPELLER
 	FALSE,
 #endif
-	FALSE, openfile->current, openfile->current_x, answer, NULL);
+	openfile->current, openfile->current_x, answer, NULL);
 
-    /* Check to see if there's only one occurrence of the string and
-     * we're on it now. */
+    /* If we found something, and we're back at the exact same spot where
+     * we started searching, then this is the only occurrence. */
     if (fileptr == openfile->current && fileptr_x ==
 	openfile->current_x && didfind) {
-#ifdef HAVE_REGEX_H
-	/* Do the search again, skipping over the current line, if we're
-	 * doing a bol and/or eol regex search ("^", "$", or "^$"), so
-	 * that we find one only once per line.  We should only end up
-	 * back at the same position if the string isn't found again, in
-	 * which case it's the only occurrence. */
-	if (ISSET(USE_REGEXP) && regexp_bol_or_eol(&search_regexp,
-		last_search)) {
-	    didfind = findnextstr(
-#ifndef DISABLE_SPELLER
-		FALSE,
-#endif
-		TRUE, openfile->current,
-		openfile->current_x, answer, NULL);
-	    if (fileptr == openfile->current && fileptr_x ==
-		openfile->current_x && !didfind)
-		statusbar(_("This is the only occurrence"));
-	} else {
-#endif
 	    statusbar(_("This is the only occurrence"));
-#ifdef HAVE_REGEX_H
-	}
-#endif
     }
 
     openfile->placewewant = xplustabs();
@@ -525,7 +474,7 @@ void do_search(void)
     search_replace_abort();
 }
 
-#ifndef NANO_TINY
+#if !defined(NANO_TINY) || !defined(DISABLE_BROWSER)
 /* Search for the last string without prompting. */
 void do_research(void)
 {
@@ -534,7 +483,14 @@ void do_research(void)
     size_t pww_save = openfile->placewewant;
     bool didfind;
 
-    search_init_globals();
+    focusing = TRUE;
+
+#ifndef DISABLE_HISTORIES
+    /* If nothing was searched for yet during this run of nano, but
+     * there is a search history, take the most recent item. */
+    if (last_search[0] == '\0' && searchbot->prev != NULL)
+	last_search = mallocstrcpy(last_search, searchbot->prev->data);
+#endif
 
     if (last_search[0] != '\0') {
 #ifdef HAVE_REGEX_H
@@ -548,45 +504,22 @@ void do_research(void)
 #ifndef DISABLE_SPELLER
 		FALSE,
 #endif
-		FALSE, openfile->current, openfile->current_x,
-		last_search, NULL);
+		openfile->current, openfile->current_x, last_search, NULL);
 
-	/* Check to see if there's only one occurrence of the string and
-	 * we're on it now. */
+	/* If we found something, and we're back at the exact same spot
+	 * where we started searching, then this is the only occurrence. */
 	if (fileptr == openfile->current && fileptr_x ==
 		openfile->current_x && didfind) {
-#ifdef HAVE_REGEX_H
-	    /* Do the search again, skipping over the current line, if
-	     * we're doing a bol and/or eol regex search ("^", "$", or
-	     * "^$"), so that we find one only once per line.  We should
-	     * only end up back at the same position if the string isn't
-	     * found again, in which case it's the only occurrence. */
-	    if (ISSET(USE_REGEXP) && regexp_bol_or_eol(&search_regexp,
-		last_search)) {
-		didfind = findnextstr(
-#ifndef DISABLE_SPELLER
-			FALSE,
-#endif
-			TRUE, openfile->current, openfile->current_x,
-			answer, NULL);
-		if (fileptr == openfile->current && fileptr_x ==
-			openfile->current_x && !didfind)
-		    statusbar(_("This is the only occurrence"));
-	    } else {
-#endif
 		statusbar(_("This is the only occurrence"));
-#ifdef HAVE_REGEX_H
-	    }
-#endif
 	}
     } else
-        statusbar(_("No current search pattern"));
+	statusbar(_("No current search pattern"));
 
     openfile->placewewant = xplustabs();
     edit_redraw(fileptr, pww_save);
     search_replace_abort();
 }
-#endif
+#endif /* !NANO_TINY */
 
 #ifdef HAVE_REGEX_H
 int replace_regexp(char *string, bool create)
@@ -636,7 +569,7 @@ int replace_regexp(char *string, bool create)
 
     return new_line_size;
 }
-#endif
+#endif /* HAVE_REGEX_H */
 
 char *replace_line(const char *needle)
 {
@@ -690,7 +623,7 @@ char *replace_line(const char *needle)
  * canceled isn't NULL, set it to TRUE if we canceled. */
 ssize_t do_replace_loop(
 #ifndef DISABLE_SPELLER
-	bool whole_word,
+	bool whole_word_only,
 #endif
 	bool *canceled, const filestruct *real_current, size_t
 	*real_current_x, const char *needle)
@@ -698,33 +631,30 @@ ssize_t do_replace_loop(
     ssize_t numreplaced = -1;
     size_t match_len;
     bool replaceall = FALSE;
-#ifdef HAVE_REGEX_H
-    /* The starting-line match and bol/eol regex flags. */
-    bool begin_line = FALSE, bol_or_eol = FALSE;
-#endif
 #ifndef NANO_TINY
     bool old_mark_set = openfile->mark_set;
-    filestruct *edittop_save = openfile->edittop, *top, *bot;
+    filestruct *top, *bot;
     size_t top_x, bot_x;
     bool right_side_up = FALSE;
 	/* TRUE if (mark_begin, mark_begin_x) is the top of the mark,
 	 * FALSE if (current, current_x) is. */
 
     if (old_mark_set) {
-	/* If the mark is on, partition the filestruct so that it
-	 * contains only the marked text, set edittop to the top of the
-	 * partition, turn the mark off, and refresh the screen. */
+	/* If the mark is on, frame the region, and turn the mark off. */
 	mark_order((const filestruct **)&top, &top_x,
 	    (const filestruct **)&bot, &bot_x, &right_side_up);
-	filepart = partition_filestruct(top, top_x, bot, bot_x);
-	openfile->edittop = openfile->fileage;
 	openfile->mark_set = FALSE;
-#ifdef ENABLE_COLOR
-	reset_multis(openfile->current, TRUE);
-#endif
-	edit_refresh();
+
+	/* Start either at the top or the bottom of the marked region. */
+	if (!ISSET(BACKWARDS_SEARCH)) {
+	    openfile->current = top;
+	    openfile->current_x = (top_x == 0 ? 0 : top_x - 1);
+	} else {
+	    openfile->current = bot;
+	    openfile->current_x = bot_x;
+	}
     }
-#endif
+#endif /* !NANO_TINY */
 
     if (canceled != NULL)
 	*canceled = FALSE;
@@ -732,40 +662,22 @@ ssize_t do_replace_loop(
     findnextstr_wrap_reset();
     while (findnextstr(
 #ifndef DISABLE_SPELLER
-	whole_word,
+	whole_word_only,
 #endif
-#ifdef HAVE_REGEX_H
-	/* We should find a bol and/or eol regex only once per line.  If
-	 * the bol_or_eol flag is set, it means that the last search
-	 * found one on the beginning line, so we should skip over the
-	 * beginning line when doing this search. */
-	bol_or_eol
-#else
-	FALSE
-#endif
-	, real_current, *real_current_x, needle, &match_len)) {
+	real_current, *real_current_x, needle, &match_len)) {
 	int i = 0;
 
-#ifdef HAVE_REGEX_H
-	/* If the bol_or_eol flag is set, we've found a match on the
-	 * beginning line already, and we're still on the beginning line
-	 * after the search, it means that we've wrapped around, so
-	 * we're done. */
-	if (bol_or_eol && begin_line && openfile->current ==
-		real_current)
-	    break;
-	/* Otherwise, set the begin_line flag if we've found a match on
-	 * the beginning line, reset the bol_or_eol flag, and
-	 * continue. */
-	else {
-	    if (openfile->current == real_current)
-		begin_line = TRUE;
-	    bol_or_eol = FALSE;
+#ifndef NANO_TINY
+	if (old_mark_set) {
+	    /* When we've found an occurrence outside of the marked region,
+	     * stop the fanfare. */
+	    if (openfile->current->lineno > bot->lineno ||
+		openfile->current->lineno < top->lineno ||
+		(openfile->current == bot && openfile->current_x > bot_x) ||
+		(openfile->current == top && openfile->current_x < top_x))
+		break;
 	}
 #endif
-
-	if (!replaceall)
-	    edit_refresh();
 
 	/* Indicate that we found the search string. */
 	if (numreplaced == -1)
@@ -777,10 +689,13 @@ ssize_t do_replace_loop(
 		xpt, strnlenpt(openfile->current->data,
 		openfile->current_x + match_len) - xpt, FALSE);
 
+	    edit_refresh();
+
 	    curs_set(0);
 
 	    do_replace_highlight(TRUE, exp_word);
 
+	    /* TRANSLATORS: This is a prompt. */
 	    i = do_yesno_prompt(TRUE, _("Replace this instance?"));
 
 	    do_replace_highlight(FALSE, exp_word);
@@ -796,28 +711,19 @@ ssize_t do_replace_loop(
 	    }
 	}
 
-#ifdef HAVE_REGEX_H
-	/* Set the bol_or_eol flag if we're doing a bol and/or eol regex
-	 * replace ("^", "$", or "^$"). */
-	if (ISSET(USE_REGEXP) && regexp_bol_or_eol(&search_regexp,
-		needle))
-	    bol_or_eol = TRUE;
-#endif
-
 	if (i > 0 || replaceall) {	/* Yes, replace it!!!! */
 	    char *copy;
 	    size_t length_change;
 
 #ifndef NANO_TINY
-	    update_undo(REPLACE);
+	    add_undo(REPLACE);
 #endif
 	    if (i == 2)
 		replaceall = TRUE;
 
 	    copy = replace_line(needle);
 
-	    length_change = strlen(copy) -
-		strlen(openfile->current->data);
+	    length_change = strlen(copy) - strlen(openfile->current->data);
 
 #ifndef NANO_TINY
 	    /* If the mark was on and (mark_begin, mark_begin_x) was the
@@ -831,6 +737,7 @@ ssize_t do_replace_loop(
 			openfile->mark_begin_x = openfile->current_x;
 		    else
 			openfile->mark_begin_x += length_change;
+		    bot_x = openfile->mark_begin_x;
 		}
 	    }
 
@@ -841,14 +748,19 @@ ssize_t do_replace_loop(
 		/* Keep real_current_x in sync with the text changes. */
 		if (openfile->current == real_current &&
 			openfile->current_x <= *real_current_x) {
-		    if (*real_current_x <
-			openfile->current_x + match_len)
-			*real_current_x = openfile->current_x +
-				match_len;
+		    if (*real_current_x < openfile->current_x + match_len)
+			*real_current_x = openfile->current_x + match_len;
 		    *real_current_x += length_change;
-		}
 #ifndef NANO_TINY
+		    bot_x = *real_current_x;
+		}
+#endif
 	    }
+
+#ifdef HAVE_REGEX_H
+	    /* Don't find the same zero-length match again. */
+	    if (match_len == 0)
+		match_len++;
 #endif
 
 	    /* Set the cursor at the last character of the replacement
@@ -860,18 +772,21 @@ ssize_t do_replace_loop(
 #endif
 		openfile->current_x += match_len + length_change - 1;
 
-	    /* Cleanup. */
+	    /* Clean up. */
 	    openfile->totsize += mbstrlen(copy) -
 		mbstrlen(openfile->current->data);
 	    free(openfile->current->data);
 	    openfile->current->data = copy;
 
-#ifdef ENABLE_COLOR
-	reset_multis(openfile->current, TRUE);
+#ifndef DISABLE_COLOR
+	    /* Reset the precalculated multiline-regex hints only when
+	     * the first replacement has been made. */
+	    if (numreplaced == 0)
+		reset_multis(openfile->current, TRUE);
 #endif
-	edit_refresh();
+
 	    if (!replaceall) {
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 		/* If color syntaxes are available and turned on, we
 		 * need to call edit_refresh(). */
 		if (openfile->colorstrings != NULL &&
@@ -887,16 +802,12 @@ ssize_t do_replace_loop(
 	}
     }
 
+    if (numreplaced == -1)
+	not_found_msg(needle);
+
 #ifndef NANO_TINY
-    if (old_mark_set) {
-	/* If the mark was on, unpartition the filestruct so that it
-	 * contains all the text again, set edittop back to what it was
-	 * before, turn the mark back on, and refresh the screen. */
-	unpartition_filestruct(&filepart);
-	openfile->edittop = edittop_save;
+    if (old_mark_set)
 	openfile->mark_set = TRUE;
-	edit_refresh();
-    }
 #endif
 
     /* If the NO_NEWLINES flag isn't set, and text has been added to the
@@ -912,7 +823,6 @@ void do_replace(void)
 {
     filestruct *edittop_save, *begin;
     size_t begin_x, pww_save;
-    bool meta_key = FALSE, func_key = FALSE;
     ssize_t numreplaced;
     int i;
 
@@ -924,8 +834,7 @@ void do_replace(void)
 
     i = search_init(TRUE, FALSE);
     if (i == -1) {
-	/* Cancel, Go to Line, blank search string, or regcomp()
-	 * failed. */
+	/* Cancel, Go to Line, blank search string, or regcomp() failed. */
 	search_replace_abort();
 	return;
     } else if (i == -2) {
@@ -942,7 +851,7 @@ void do_replace(void)
     /* If answer is not "", add answer to the search history list and
      * copy answer into last_search. */
     if (answer[0] != '\0') {
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 	update_history(&search_history, answer);
 #endif
 	last_search = mallocstrcpy(last_search, answer);
@@ -954,16 +863,15 @@ void do_replace(void)
 #ifndef DISABLE_TABCOMP
 	TRUE,
 #endif
-	MREPLACE2, last_replace,
-	&meta_key, &func_key,
-#ifndef NANO_TINY
+	MREPLACEWITH, last_replace,
+#ifndef DISABLE_HISTORIES
 	&replace_history,
 #endif
+	/* TRANSLATORS: This is a prompt. */
 	edit_refresh, _("Replace with"));
 
-#ifndef NANO_TINY
-    /* Add this replace string to the replace history list.  i == 0
-     * means that the string is not "". */
+#ifndef DISABLE_HISTORIES
+    /* If the replace string is not "", add it to the replace history list. */
     if (i == 0)
 	update_history(&replace_history, answer);
 #endif
@@ -1008,6 +916,19 @@ void do_replace(void)
     search_replace_abort();
 }
 
+/* Go to the specified line and x position. */
+void goto_line_posx(ssize_t line, size_t pos_x)
+{
+    for (openfile->current = openfile->fileage; openfile->current != openfile->filebot &&
+					openfile->current->next != NULL && line > 1; line--)
+	openfile->current = openfile->current->next;
+
+    openfile->current_x = pos_x;
+    openfile->placewewant = xplustabs();
+
+    edit_refresh_needed = TRUE;
+}
+
 /* Go to the specified line and column, or ask for them if interactive
  * is TRUE.  Save the x-coordinate and y-coordinate if save_pos is TRUE.
  * Update the screen afterwards if allow_update is TRUE.  Note that both
@@ -1015,11 +936,9 @@ void do_replace(void)
 void do_gotolinecolumn(ssize_t line, ssize_t column, bool use_answer,
 	bool interactive, bool save_pos, bool allow_update)
 {
-    bool meta_key = FALSE, func_key = FALSE;
-    const sc *s;
-
     if (interactive) {
 	char *ans = mallocstrcpy(NULL, answer);
+	functionptrtype func;
 
 	/* Ask for the line and column. */
 	int i = do_prompt(FALSE,
@@ -1027,10 +946,10 @@ void do_gotolinecolumn(ssize_t line, ssize_t column, bool use_answer,
 		TRUE,
 #endif
 		MGOTOLINE, use_answer ? ans : "",
-		&meta_key, &func_key,
-#ifndef NANO_TINY
+#ifndef DISABLE_HISTORIES
 		NULL,
 #endif
+		/* TRANSLATORS: This is a prompt. */
 		edit_refresh, _("Enter line number, column number"));
 
 	free(ans);
@@ -1042,9 +961,9 @@ void do_gotolinecolumn(ssize_t line, ssize_t column, bool use_answer,
 	    return;
 	}
 
+	func = func_from_key(&i);
 
-	s = get_shortcut(currmenu, &i, &meta_key, &func_key);
-	if (s && s->scfunc ==  GOTOTEXT_MSG) {
+	if (func == gototext_void) {
 	    /* Keep answer up on the statusbar. */
 	    search_init(TRUE, TRUE);
 
@@ -1083,10 +1002,10 @@ void do_gotolinecolumn(ssize_t line, ssize_t column, bool use_answer,
     edit_update(save_pos ? NONE : CENTER);
 
     /* If allow_update is TRUE, update the screen. */
-    if (allow_update)
+    if (allow_update) {
 	edit_refresh();
-
-    display_main_list();
+	display_main_list();
+    }
 }
 
 /* Go to the specified line and column, asking for them beforehand. */
@@ -1143,8 +1062,8 @@ bool find_bracket_match(bool reverse, const char *bracket_set)
 		mbrevstrpbrk(fileptr->data, bracket_set, rev_start) :
 		mbstrpbrk(rev_start, bracket_set));
 
-	/* We've found a potential match. */
 	if (found != NULL)
+	    /* We've found a potential match. */
 	    break;
 
 	if (reverse) {
@@ -1155,8 +1074,8 @@ bool find_bracket_match(bool reverse, const char *bracket_set)
 	    current_y_find++;
 	}
 
-	/* We've reached the start or end of the buffer, so get out. */
 	if (fileptr == NULL)
+	    /* We've reached the start or end of the buffer, so get out. */
 	    return FALSE;
 
 	rev_start = fileptr->data;
@@ -1210,7 +1129,7 @@ void do_find_bracket(void)
 
     ch = openfile->current->data + openfile->current_x;
 
-    if (ch == '\0' || (ch = mbstrchr(matchbrackets, ch)) == NULL) {
+    if ((ch = mbstrchr(matchbrackets, ch)) == NULL) {
 	statusbar(_("Not a bracket"));
 	return;
     }
@@ -1290,14 +1209,14 @@ void do_find_bracket(void)
     free(bracket_set);
     free(found_ch);
 }
+#endif /* !NANO_TINY */
 
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_HISTORIES
 /* Indicate whether any of the history lists have changed. */
 bool history_has_changed(void)
 {
     return history_changed;
 }
-#endif
 
 /* Initialize the search and replace history lists. */
 void history_init(void)
@@ -1372,8 +1291,7 @@ void update_history(filestruct **h, const char *s)
 	bar = p->next;
 	unlink_node(foo);
 	delete_node(foo);
-	if (bar != NULL)
-	    renumber(bar);
+	renumber(bar);
     }
 
     /* If the history is full, delete the beginning entry to make room
@@ -1394,10 +1312,8 @@ void update_history(filestruct **h, const char *s)
     *hbot = (*hbot)->next;
     (*hbot)->data = mallocstrcpy(NULL, "");
 
-#ifdef ENABLE_NANORC
     /* Indicate that the history's been changed. */
     history_changed = TRUE;
-#endif
 
     /* Set the current position in the list to the bottom. */
     *h = *hbot;
@@ -1429,6 +1345,16 @@ char *get_history_newer(filestruct **h)
     *h = (*h)->next;
 
     return (*h)->data;
+}
+
+/* More placeholders. */
+void get_history_newer_void(void)
+{
+    ;
+}
+void get_history_older_void(void)
+{
+    ;
 }
 
 #ifndef DISABLE_TABCOMP
@@ -1486,4 +1412,4 @@ char *get_history_completion(filestruct **h, const char *s, size_t len)
     return (char *)s;
 }
 #endif /* !DISABLE_TABCOMP */
-#endif /* !NANO_TINY */
+#endif /* !DISABLE_HISTORIES */

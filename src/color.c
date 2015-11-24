@@ -1,9 +1,9 @@
-/* $Id: color.c 4453 2009-12-02 03:36:22Z astyanax $ */
+/* $Id: color.c 5249 2015-06-14 19:14:41Z bens $ */
 /**************************************************************************
  *   color.c                                                              *
  *                                                                        *
- *   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009   *
- *   Free Software Foundation, Inc.                                       *
+ *   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,  *
+ *   2010, 2011, 2013, 2014, 2015 Free Software Foundation, Inc.          *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -25,18 +25,58 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
+#include <unistd.h>
 
-#ifdef ENABLE_COLOR
+#ifdef HAVE_MAGIC_H
+#include <magic.h>
+#endif
+
+#ifndef DISABLE_COLOR
 
 /* For each syntax list entry, go through the list of colors and assign
  * the color pairs. */
 void set_colorpairs(void)
 {
     const syntaxtype *this_syntax = syntaxes;
+    bool defok = FALSE;
+    short fg, bg;
+    size_t i;
+
+    start_color();
+
+#ifdef HAVE_USE_DEFAULT_COLORS
+    /* Use the default colors, if available. */
+    defok = (use_default_colors() != ERR);
+#endif
+
+    for (i = 0; i < NUMBER_OF_ELEMENTS; i++) {
+	bool bright = FALSE;
+
+	if (parse_color_names(specified_color_combo[i], &fg, &bg, &bright)) {
+	    if (fg == -1 && !defok)
+		fg = COLOR_WHITE;
+	    if (bg == -1 && !defok)
+		bg = COLOR_BLACK;
+	    init_pair(i + 1, fg, bg);
+	    interface_color_pair[i].bright = bright;
+	    interface_color_pair[i].pairnum = COLOR_PAIR(i + 1);
+	}
+	else {
+	    interface_color_pair[i].bright = FALSE;
+	    if (i != FUNCTION_TAG)
+		interface_color_pair[i].pairnum = hilite_attribute;
+	    else
+		interface_color_pair[i].pairnum = A_NORMAL;
+	}
+
+	free(specified_color_combo[i]);
+	specified_color_combo[i] = NULL;
+    }
 
     for (; this_syntax != NULL; this_syntax = this_syntax->next) {
 	colortype *this_color = this_syntax->color;
-	int color_pair = 1;
+	int clr_pair = NUMBER_OF_ELEMENTS + 1;
 
 	for (; this_color != NULL; this_color = this_color->next) {
 	    const colortype *beforenow = this_syntax->color;
@@ -51,8 +91,8 @@ void set_colorpairs(void)
 	    if (beforenow != this_color)
 		this_color->pairnum = beforenow->pairnum;
 	    else {
-		this_color->pairnum = color_pair;
-		color_pair++;
+		this_color->pairnum = clr_pair;
+		clr_pair++;
 	    }
 	}
     }
@@ -66,14 +106,8 @@ void color_init(void)
     if (has_colors()) {
 	const colortype *tmpcolor;
 #ifdef HAVE_USE_DEFAULT_COLORS
-	bool defok;
-#endif
-
-	start_color();
-
-#ifdef HAVE_USE_DEFAULT_COLORS
 	/* Use the default colors, if available. */
-	defok = (use_default_colors() != ERR);
+	bool defok = (use_default_colors() != ERR);
 #endif
 
 	for (tmpcolor = openfile->colorstrings; tmpcolor != NULL;
@@ -102,17 +136,32 @@ void color_init(void)
     }
 }
 
+/* Clean up a regex we previously compiled. */
+void nfreeregex(regex_t **r)
+{
+    assert(r != NULL);
+
+    regfree(*r);
+    free(*r);
+    *r = NULL;
+}
+
 /* Update the color information based on the current filename. */
 void color_update(void)
 {
     syntaxtype *tmpsyntax;
     syntaxtype *defsyntax = NULL;
     colortype *tmpcolor, *defcolor = NULL;
+    regexlisttype *e;
 
     assert(openfile != NULL);
 
     openfile->syntax = NULL;
     openfile->colorstrings = NULL;
+
+    /* If the rcfiles were not read, or contained no syntaxes, get out. */
+    if (syntaxes == NULL)
+	return;
 
     /* If we specified a syntax override string, use it. */
     if (syntaxstr != NULL) {
@@ -135,11 +184,25 @@ void color_update(void)
 
     /* If we didn't specify a syntax override string, or if we did and
      * there was no syntax by that name, get the syntax based on the
-     * file extension, and then look in the header. */
+     * file extension, then try the headerline, and then try magic. */
     if (openfile->colorstrings == NULL) {
+	char *currentdir = getcwd(NULL, PATH_MAX + 1);
+	char *joinednames = charalloc(PATH_MAX + 1);
+	char *fullname = NULL;
+
+	if (currentdir != NULL) {
+	    /* Concatenate the current working directory with the
+	     * specified filename, and canonicalize the result. */
+	    sprintf(joinednames, "%s/%s", currentdir, openfile->filename);
+	    fullname = realpath(joinednames, NULL);
+	    free(currentdir);
+	}
+
+	if (fullname == NULL)
+	    fullname = mallocstrcpy(fullname, openfile->filename);
+
 	for (tmpsyntax = syntaxes; tmpsyntax != NULL;
 		tmpsyntax = tmpsyntax->next) {
-	    exttype *e;
 
 	    /* If this is the default syntax, it has no associated
 	     * extensions, which we've checked for elsewhere.  Skip over
@@ -161,75 +224,120 @@ void color_update(void)
 		    regcomp(e->ext, fixbounds(e->ext_regex), REG_EXTENDED);
 		}
 
-		/* Set colorstrings if we matched the extension
-		 * regex. */
-		if (regexec(e->ext, openfile->filename, 0, NULL,
-			0) == 0) {
+		/* Set colorstrings if we match the extension regex. */
+		if (regexec(e->ext, fullname, 0, NULL, 0) == 0) {
 		    openfile->syntax = tmpsyntax;
 		    openfile->colorstrings = tmpsyntax->color;
-		}
-
-		if (openfile->colorstrings != NULL)
 		    break;
+		}
 
 		/* Decompile e->ext_regex's specified regex if we aren't
 		 * going to use it. */
-		if (not_compiled) {
-		    regfree(e->ext);
-		    free(e->ext);
-		    e->ext = NULL;
-		}
+		if (not_compiled)
+		    nfreeregex(&e->ext);
 	    }
 	}
 
-	/* If we haven't matched anything yet, try the headers */
+	free(joinednames);
+	free(fullname);
+
+	/* Check the headerline if the extension didn't match anything. */
 	if (openfile->colorstrings == NULL) {
 #ifdef DEBUG
-	    fprintf(stderr, "No match for file extensions, looking at headers...\n");
+	    fprintf(stderr, "No result from file extension, trying headerline...\n");
 #endif
 	    for (tmpsyntax = syntaxes; tmpsyntax != NULL;
 		tmpsyntax = tmpsyntax->next) {
-		exttype *e;
 
 		for (e = tmpsyntax->headers; e != NULL; e = e->next) {
 		    bool not_compiled = (e->ext == NULL);
 
-		    /* e->ext_regex has already been checked for validity
-		     * elsewhere.  Compile its specified regex if we haven't
-		     * already. */
 		    if (not_compiled) {
 			e->ext = (regex_t *)nmalloc(sizeof(regex_t));
 			regcomp(e->ext, fixbounds(e->ext_regex), REG_EXTENDED);
 		    }
-
-		    /* Set colorstrings if we matched the extension
-		     * regex. */
 #ifdef DEBUG
-		fprintf(stderr, "Comparing header regex \"%s\" to fileage \"%s\"...\n", e->ext_regex, openfile->fileage->data);
+		    fprintf(stderr, "Comparing header regex \"%s\" to fileage \"%s\"...\n",
+				    e->ext_regex, openfile->fileage->data);
 #endif
+		    /* Set colorstrings if we match the header-line regex. */
 		    if (regexec(e->ext, openfile->fileage->data, 0, NULL, 0) == 0) {
 			openfile->syntax = tmpsyntax;
 			openfile->colorstrings = tmpsyntax->color;
-		    }
-
-		    if (openfile->colorstrings != NULL)
 			break;
-
-		    /* Decompile e->ext_regex's specified regex if we aren't
-		     * going to use it. */
-		    if (not_compiled) {
-			regfree(e->ext);
-			free(e->ext);
-			e->ext = NULL;
 		    }
+
+		    if (not_compiled)
+			nfreeregex(&e->ext);
 		}
 	    }
 	}
+
+#ifdef HAVE_LIBMAGIC
+	/* Check magic if we don't have an answer yet. */
+	if (openfile->colorstrings == NULL) {
+	    struct stat fileinfo;
+	    magic_t cookie = NULL;
+	    const char *magicstring = NULL;
+#ifdef DEBUG
+	    fprintf(stderr, "No result from headerline either, trying libmagic...\n");
+#endif
+	    if (stat(openfile->filename, &fileinfo) == 0) {
+		/* Open the magic database and get a diagnosis of the file. */
+		cookie = magic_open(MAGIC_SYMLINK |
+#ifdef DEBUG
+				    MAGIC_DEBUG | MAGIC_CHECK |
+#endif
+				    MAGIC_ERROR);
+		if (cookie == NULL || magic_load(cookie, NULL) < 0)
+		    statusbar(_("magic_load() failed: %s"), strerror(errno));
+		else {
+		    magicstring = magic_file(cookie, openfile->filename);
+		    if (magicstring == NULL) {
+			statusbar(_("magic_file(%s) failed: %s"),
+					openfile->filename, magic_error(cookie));
+		    }
+#ifdef DEBUG
+		    fprintf(stderr, "Returned magic string is: %s\n", magicstring);
+#endif
+		}
+	    }
+
+	    /* Now try and find a syntax that matches the magicstring. */
+	    for (tmpsyntax = syntaxes; tmpsyntax != NULL;
+		tmpsyntax = tmpsyntax->next) {
+
+		for (e = tmpsyntax->magics; e != NULL; e = e->next) {
+		    bool not_compiled = (e->ext == NULL);
+
+		    if (not_compiled) {
+			e->ext = (regex_t *)nmalloc(sizeof(regex_t));
+			regcomp(e->ext, fixbounds(e->ext_regex), REG_EXTENDED);
+		    }
+#ifdef DEBUG
+		    fprintf(stderr, "Matching regex \"%s\" against \"%s\"\n", e->ext_regex, magicstring);
+#endif
+		    /* Set colorstrings if we match the magic-string regex. */
+		    if (magicstring && regexec(e->ext, magicstring, 0, NULL, 0) == 0) {
+			openfile->syntax = tmpsyntax;
+			openfile->colorstrings = tmpsyntax->color;
+			break;
+		    }
+
+		    if (not_compiled)
+			nfreeregex(&e->ext);
+		}
+		if (openfile->syntax != NULL)
+		    break;
+	    }
+	    if (stat(openfile->filename, &fileinfo) == 0)
+		magic_close(cookie);
+	}
+#endif /* HAVE_LIBMAGIC */
     }
 
-
-    /* If we didn't get a syntax based on the file extension, and we
-     * have a default syntax, use it. */
+    /* If we didn't find any syntax yet, and we do have a default one,
+     * use it. */
     if (openfile->colorstrings == NULL && defcolor != NULL) {
 	openfile->syntax = defsyntax;
 	openfile->colorstrings = defcolor;
@@ -255,7 +363,7 @@ void color_update(void)
 }
 
 /* Reset the multicolor info cache for records for any lines which need
-   to be recalculated */
+ * to be recalculated. */
 void reset_multis_after(filestruct *fileptr, int mindex)
 {
     filestruct *oof;
@@ -301,11 +409,10 @@ void reset_multis_before(filestruct *fileptr, int mindex)
 	else
 	    break;
     }
-
     edit_refresh_needed = TRUE;
 }
 
-/* Reset one multiline regex info */
+/* Reset one multiline regex info. */
 void reset_multis_for_id(filestruct *fileptr, int num)
 {
     reset_multis_before(fileptr, num);
@@ -313,9 +420,9 @@ void reset_multis_for_id(filestruct *fileptr, int num)
     fileptr->multidata[num] = -1;
 }
 
-/* Reset multi line strings around a filestruct ptr, trying to be smart about stopping
-   force = reset everything regardless, useful when we don't know how much screen state
-           has changed  */
+/* Reset multi-line strings around a filestruct ptr, trying to be smart
+ * about stopping.  Bool force means: reset everything regardless, useful
+ * when we don't know how much screen state has changed. */
 void reset_multis(filestruct *fileptr, bool force)
 {
     int nobegin, noend;
@@ -327,7 +434,7 @@ void reset_multis(filestruct *fileptr, bool force)
 
     for (; tmpcolor != NULL; tmpcolor = tmpcolor->next) {
 
-	/* If it's not a multi-line regex, amscray */
+	/* If it's not a multi-line regex, amscray. */
 	if (tmpcolor->end == NULL)
 	    continue;
 
@@ -338,10 +445,10 @@ void reset_multis(filestruct *fileptr, bool force)
 	}
 
 	/* Figure out where the first begin and end are to determine if
-	   things changed drastically for the precalculated multi values */
-        nobegin = regexec(tmpcolor->start, fileptr->data, 1, &startmatch, 0);
-        noend = regexec(tmpcolor->end, fileptr->data, 1, &endmatch, 0);
-	if (fileptr->multidata[tmpcolor->id] ==  CWHOLELINE) {
+	 * things changed drastically for the precalculated multi values. */
+	nobegin = regexec(tmpcolor->start, fileptr->data, 1, &startmatch, 0);
+	noend = regexec(tmpcolor->end, fileptr->data, 1, &endmatch, 0);
+	if (fileptr->multidata[tmpcolor->id] == CWHOLELINE) {
 	    if (nobegin && noend)
 		continue;
 	} else if (fileptr->multidata[tmpcolor->id] == CNONE) {
@@ -353,8 +460,9 @@ void reset_multis(filestruct *fileptr, bool force)
 	    continue;
 	}
 
-	/* If we got here assume the worst */
+	/* If we got here, assume the worst. */
 	reset_multis_for_id(fileptr, tmpcolor->id);
     }
 }
-#endif /* ENABLE_COLOR */
+
+#endif /* !DISABLE_COLOR */
