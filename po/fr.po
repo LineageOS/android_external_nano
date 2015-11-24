@@ -6,19 +6,21 @@
 # Pierre Tane <tanep@bigfoot.com>, 2000.
 # Clement Laforet <sheep.killer@free.fr>, 2000.
 # Michel Robitaille <robitail@IRO.UMontreal.CA>, 2001.
-# Jean-Philippe Guérard <jean-philippe.guerard@corbeaunoir.org>, 2001-2010.
+# Jean-Philippe Guérard <jean-philippe.guerard@corbeaunoir.org>, 2001-2010, 2011.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: nano 2.2.4pre2\n"
+"Project-Id-Version: nano 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-02-26 09:24-0500\n"
-"PO-Revision-Date: 2010-10-30 15:43+0200\n"
+"PO-Revision-Date: 2011-03-07 21:19+0100\n"
 "Last-Translator: Jean-Philippe Guérard <jean-philippe.guerard@corbeaunoir."
 "org>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
 "Plural-Forms:  nplurals=2; plural=(n > 1);\n"
 
 #
@@ -418,6 +420,8 @@ msgstr "Touche illégale hors du mode multi-espace"
 #: src/files.c:1384
 msgid "Failed to write backup file, continue saving? (Say N if unsure) "
 msgstr ""
+"Impossible d'écrire la copie de sécurité, sauvegarder quand même ? (Dites N "
+"en cas de doute) "
 
 #
 # File: src/files.c, line: 1286
@@ -609,13 +613,13 @@ msgstr "(suite)"
 # File: src/files.c, line: 2379
 # File: src/rcfile.c, line: 848
 #: src/files.c:2737
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Press Enter to continue\n"
 msgstr ""
 "\n"
-"Appuyez sur « Entrée » pour poursuivre le démarrage de nano.\n"
+"Appuyez sur « Entrée » pour continuer\n"
 
 #: src/files.c:2754
 #, c-format
@@ -623,6 +627,9 @@ msgid ""
 "Unable to create directory %s: %s\n"
 "It is required for saving/loading search history or cursor position\n"
 msgstr ""
+"Impossible de créer le répertoire %s : %s\n"
+"Il permet de conserver l'historique des recherches\n"
+"et la position du curseur\n"
 
 #: src/files.c:2759
 #, c-format
@@ -630,6 +637,9 @@ msgid ""
 "Path %s is not a directory and needs to be.\n"
 "Nano will be unable to load or save search or cursor position history\n"
 msgstr ""
+"Le chemin %s n'est pas un répertoire et devrait l'être.\n"
+"Nano ne pourra pas conserver l'historique des recherches\n"
+"et la position du curseur\n"
 
 #: src/files.c:2775
 #, c-format
@@ -637,6 +647,9 @@ msgid ""
 "Detected a legacy nano history file (%s) which I tried to move\n"
 "to the preferred location (%s) but encountered an error: %s"
 msgstr ""
+"Un ancien fichier d'historique (%s) a été détecté, mais une\n"
+"tentative de déplacement vers le nouvel emplacement (%s)\n"
+"a rencontré une erreur : %s"
 
 #: src/files.c:2778
 #, c-format
@@ -645,6 +658,9 @@ msgid ""
 "to the preferred location (%s)\n"
 "(see the nano FAQ about this change)"
 msgstr ""
+"Un ancien fichier d'historique (%s) a été détecté, et déplacé\n"
+"vers le nouvel emplacement (%s)\n"
+"(consultez la FAQ nano pour plus d'information)"
 
 #
 # File: src/global.c, line: 264
@@ -2319,9 +2335,8 @@ msgstr "Utiliser 1 ligne de plus pour l'édition"
 # File: src/global.c, line: 389
 # File: src/global.c, line: 389
 #: src/nano.c:865
-#, fuzzy
 msgid "Log & read location of cursor position"
-msgstr "Insérer une tabulation à la position du curseur"
+msgstr "Mémoriser la position du curseur"
 
 #
 # File: src/nano.c, line: 771
@@ -2353,7 +2368,7 @@ msgstr "Mode restreint"
 
 #: src/nano.c:874
 msgid "Scroll by line instead of half-screen"
-msgstr "Défilement ligne par ligne*"
+msgstr "Défilement ligne par ligne"
 
 #
 # File: src/nano.c, line: 778
@@ -2820,18 +2835,15 @@ msgstr "la syntaxe « default » ne doit être associée à aucune extension"
 # File: src/rcfile.c, line: 460
 # File: src/rcfile.c, line: 460
 #: src/rcfile.c:379
-#, fuzzy
 msgid "Cannot add a magic string regex without a syntax command"
-msgstr ""
-"impossible d'ajouter un motif d'en-tête non précédé d'une commande « syntax »"
+msgstr "impossible d'ajouter un motif Magic sans commande « syntax »"
 
 #
 # File: src/rcfile.c, line: 503
 # File: src/rcfile.c, line: 503
 #: src/rcfile.c:384
-#, fuzzy
 msgid "Missing magic string name"
-msgstr "chaîne d'expr. rationnelle manquante"
+msgstr "chaîne de motif Magic manquante"
 
 #
 # File: src/rcfile.c, line: 247

@@ -1,20 +1,21 @@
 # Simplified Chinese Messages for the nano editor
-# Copyright (C) 2004, 2005, 2009 Free Software Foundation, Inc.
+# Copyright (C) 2004, 2005, 2009, 2010, 2011 Free Software Foundation, Inc.
 # This file is distributed under the same license as the nano package.
 # LI Daobing <lidaobing@gmail.com>, 2007, 2008, 2009.
-# Aron Xu <happyaron.xu@gmail.com>, 2009, 2010.
+# Aron Xu <happyaron.xu@gmail.com>, 2009, 2010, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: nano 2.2.4pre2\n"
+"Project-Id-Version: nano 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-02-26 09:24-0500\n"
-"PO-Revision-Date: 2010-04-07 17:10+0800\n"
+"PO-Revision-Date: 2011-03-08 03:15+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: src/browser.c:220
@@ -214,7 +215,7 @@ msgstr "非多重缓冲区模式中此按键无效"
 
 #: src/files.c:1384
 msgid "Failed to write backup file, continue saving? (Say N if unsure) "
-msgstr ""
+msgstr "写入备份文件失败，继续保存吗？(如果不确定请输入N)"
 
 #: src/files.c:1507
 #, c-format
@@ -307,13 +308,13 @@ msgid "(more)"
 msgstr "(更多)"
 
 #: src/files.c:2737
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Press Enter to continue\n"
 msgstr ""
 "\n"
-"按下回车键继续启动 nano\n"
+"按下回车键继续\n"
 
 #: src/files.c:2754
 #, c-format
@@ -321,6 +322,8 @@ msgid ""
 "Unable to create directory %s: %s\n"
 "It is required for saving/loading search history or cursor position\n"
 msgstr ""
+"无法创建目录 %s：%s\n"
+"然而保存和载入搜索历史或光标位置需要它。\n"
 
 #: src/files.c:2759
 #, c-format
@@ -328,6 +331,8 @@ msgid ""
 "Path %s is not a directory and needs to be.\n"
 "Nano will be unable to load or save search or cursor position history\n"
 msgstr ""
+"路径%s 应为一个目录，但现在不是。\n"
+"Nano 将无法载入或保存搜索历史或光标位置\n"
 
 #: src/files.c:2775
 #, c-format
@@ -335,6 +340,8 @@ msgid ""
 "Detected a legacy nano history file (%s) which I tried to move\n"
 "to the preferred location (%s) but encountered an error: %s"
 msgstr ""
+"检测到了旧版的Nano 历史文件(%s)并试图移动到默认位置(%s)。\n"
+"此操作出现错误：%s"
 
 #: src/files.c:2778
 #, c-format
@@ -343,6 +350,8 @@ msgid ""
 "to the preferred location (%s)\n"
 "(see the nano FAQ about this change)"
 msgstr ""
+"检测到了旧版的Nano 历史文件(%s)并已移动到默认位置(%s)。\n"
+"(关于这个变更请参阅Nano 常见问题解答)"
 
 #. TRANSLATORS: Try to keep the next five strings at most 10 characters.
 #: src/global.c:461 src/prompt.c:1288
@@ -1383,9 +1392,8 @@ msgid "Use one more line for editing"
 msgstr "编辑时多使用一行"
 
 #: src/nano.c:865
-#, fuzzy
 msgid "Log & read location of cursor position"
-msgstr "插入制表符于游标位置"
+msgstr "记录并读取光标位置"
 
 #: src/nano.c:868
 msgid "-Q <str>"
@@ -1678,14 +1686,12 @@ msgid "The \"default\" syntax must take no extensions"
 msgstr "\"default\" 语法必须不含任何副文件名"
 
 #: src/rcfile.c:379
-#, fuzzy
 msgid "Cannot add a magic string regex without a syntax command"
-msgstr "无法直接增加头部正则表达式而没有语法行"
+msgstr "无法在没有语法命令的情况下添加魔字符串"
 
 #: src/rcfile.c:384
-#, fuzzy
 msgid "Missing magic string name"
-msgstr "缺少正则表示式字符串"
+msgstr "缺少魔字符串名称"
 
 #: src/rcfile.c:458 src/rcfile.c:555
 msgid "Missing key name"

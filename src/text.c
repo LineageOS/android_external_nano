@@ -1,4 +1,4 @@
-/* $Id: text.c 4527 2011-02-07 14:45:56Z astyanax $ */ 
+/* $Id: text.c 4544 2011-05-10 05:43:08Z astyanax $ */ 
 /**************************************************************************
  *   text.c                                                               *
  *                                                                        *
@@ -711,7 +711,7 @@ void do_enter(bool undoing)
 #ifndef NANO_TINY
     if (ISSET(AUTOINDENT)) {
 	strncpy(newnode->data, openfile->current->data, extra);
-	openfile->totsize += mbstrlen(newnode->data);
+	openfile->totsize += extra;
     }
 #endif
     null_at(&openfile->current->data, openfile->current_x);

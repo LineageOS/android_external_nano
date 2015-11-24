@@ -18,9 +18,9 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 #
-# $Id: configure.ac 4536 2011-02-26 14:28:42Z astyanax $
+# $Id: configure.ac 4538 2011-02-26 14:41:55Z astyanax $
 
-AC_INIT([GNU nano], [2.3.0], [nano-devel@gnu.org], [nano])
+AC_INIT([GNU nano], [2.3.1], [nano-devel@gnu.org], [nano])
 AC_CONFIG_SRCDIR([src/nano.c])
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE

@@ -1,4 +1,4 @@
-/* $Id: color.c 4532 2011-02-23 03:09:23Z astyanax $ */
+/* $Id: color.c 4540 2011-03-05 05:01:13Z astyanax $ */
 /**************************************************************************
  *   color.c                                                              *
  *                                                                        *
@@ -131,6 +131,7 @@ void color_update(void)
     const char *magicstring = NULL;
     const char *magicerr = NULL;
     magic_t m;
+    struct stat fileinfo;
 #endif /* HAVE_LIBMAGIC */
 
 
@@ -160,7 +161,7 @@ void color_update(void)
 
 #ifdef HAVE_LIBMAGIC
 
-    if (strcmp(openfile->filename,"")) {
+    if (strcmp(openfile->filename,"") && stat(openfile->filename, &fileinfo) == 0) {
 	m = magic_open(MAGIC_SYMLINK |
 #ifdef DEBUG
                        MAGIC_DEBUG | MAGIC_CHECK |
@@ -244,7 +245,6 @@ void color_update(void)
 #endif /* DEBUG */
 
 		    if (magicstring && regexec(e->ext, magicstring, 0, NULL, 0) == 0) {
-			fprintf(stderr,"We matched!\n");
 			openfile->syntax = tmpsyntax;
 			openfile->colorstrings = tmpsyntax->color;
 			break;
