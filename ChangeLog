@@ -1,3 +1,108 @@
+GNU nano 2.4.3 - 2015.11.18
+2015-11-11  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_redo, update_undo):  Redo an Enter from the stored
+	undo data, instead of running do_enter() again, because the latter
+	will behave differently depending on the setting of autoindent.
+	This addresses Debian bug #793053 reported by Clancy.
+
+2015-11-10  Benno Schulenberg  <bensberg@justemail.net>
+	* src/winio.c (edit_draw): Skip a zero-length match only when there
+	/is/ a match.  Found with valgrind.  This fixes Savannah bug #41908.
+
+2015-11-06  Benno Schulenberg  <bensberg@justemail.net>
+	* src/files.c (write_lockfile): Don't bail out when the hostname is
+	overlong, but instead truncate it properly and continue.  This fixes
+	Ubuntu bug #1509081 reported by Sam Reed.
+
+2015-10-31  Benno Schulenberg  <bensberg@justemail.net>
+	* src/nano.c (copy_from_filestruct): When pasting while the mark is
+	on, the mark's pointer needs to be refreshed only when it is on the
+	same line as the cursor, and the mark's x coordinate only when the
+	mark is located after the cursor.  This fixes Savannah bug #46347.
+
+2015-10-29  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (add_undo): Only skip adding an undo when the current
+	action equals the last action.  This condition is needed for when
+	typing text is broken by an undo+redo.  Fixes Savannah bug #46323.
+
+2015-09-05  Benno Schulenberg  <bensberg@justemail.net>
+	* src/winio.c (display_string, edit_draw): Force a redraw of a line
+	only when it contains a multicolumn character, to spare all regular
+	text this significant slowdown.  This fixes Savannah bug #45684
+	reported by Wyatt Ward.
+
+2015-08-14  Benno Schulenberg  <bensberg@justemail.net>
+	* src/help.c (help_line_len): The wrap location can be beyond the EOL,
+	so for determining the length of the current line, don't start at that
+	location but at the beginning.  This fixes Savannah bug #45770.
+
+2015-08-13  Benno Schulenberg  <bensberg@justemail.net>
+	* src/search.c (do_find_bracket): Remove mistaken comparison between
+	pointer and literal character.  Found with cppcheck.
+
+2015-08-11  Benno Schulenberg  <bensberg@justemail.net>
+	* src/files.c (write_file): Avoid calling copy_file() with a null
+	pointer.  Found with cppcheck.
+	* src/files.c (write_file): A failure to delete the temporary file
+	does not mean that it wasn't copied properly.
+
+2015-08-08  Benno Schulenberg  <bensberg@justemail.net>
+	* src/winio.c (display_string): For some reason the reallocation done
+	by null_at() messes things up.  So put in the null byte "manually".
+	This is a fix -- or workaround -- for Savannah bug #45718.
+
+2015-08-03  Benno Schulenberg  <bensberg@justemail.net>
+	* src/rcfile.c (parse_binding): Check the value of shortcut->toggle
+	only if it actually is a toggle.  Found with valgrind.
+	* src/files.c (write_lockfile): Plug a leak.  Found with valgrind.
+
+2015-08-02  Benno Schulenberg  <bensberg@justemail.net>
+	* src/files.c (initialize_buffer): Initialize also openfile->syntax.
+	This addresses Debian bug #787914 reported by Paul Wise.
+
+2015-08-01  Benno Schulenberg  <bensberg@justemail.net>
+	* src/nano.c (precalc_multicolorinfo): Set each multiline-color
+	value instead of OR-ing it.  This fixes Savannah bug #45640.
+
+2015-07-29  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_linter): When the linter is called in restricted mode
+	(possible when nano was built with --disable-speller), it is better to
+	say that this function is disabled than that no linter was defined.
+
+2015-07-26  Benno Schulenberg  <bensberg@justemail.net>
+	* src/search.c (do_replace_loop): When doing regex replacements, find
+	 each zero-length match only once.  This fixes Savannah bug #45626.
+
+2015-07-23  Benno Schulenberg  <bensberg@justemail.net>
+	* src/chars.c (mbstrcasestr, mbrevstrcasestr): When searching, find
+	only valid UTF-8 byte sequences.  This fixes Savannah bug #45579.
+
+2015-07-18  Benno Schulenberg  <bensberg@justemail.net>
+	* src/winio.c (edit_draw): When looking for multiline-regex matches,
+	look for a new start only after an end, instead of right after the
+	last start.  This fixes bug #45525 and bug #41313 on Savannah.
+	* doc/faq.html: Fix a few typos and make some updates for 2.4.*.
+
+2015-07-17  Benno Schulenberg  <bensberg@justemail.net>
+	* src/files.c (open_buffer): Verify that a named and existing file
+	is a normal file, to avoid opening an empty buffer when the name of
+	a directory is specified.  This fixes Savannah bug #45383 reported
+	by Mike Frysinger, and also Savannah bug #27839 (which is an echo
+	from Debian bug #551717 reported by Paul Wise).
+
+2015-07-13  Benno Schulenberg  <bensberg@justemail.net>
+	* src/files.c (replace_buffer): Prevent a segfault when spellchecking
+	a marked region and nonewlines isn't set.
+
+2015-07-10  Benno Schulenberg  <bensberg@justemail.net>
+	* src/nano.c (delete_opennode): Plug a small memory leak.
+
+2015-06-28  Benno Schulenberg  <bensberg@justemail.net>
+	* src/global.c (add_to_sclist), src/help.c (help_init), src/nano.h,
+	src/rcfile.c (parse_binding): When defining the toggles, give each
+	of them a sequence number, so that, when they are rebound, they can
+	still be listed in the original order in the help text.
+
 GNU nano 2.4.2 - 2015.07.05
 2015-06-28  Benno Schulenberg  <bensberg@justemail.net>
 	* src/browser.c (browser_refresh): Limit the selected file to the

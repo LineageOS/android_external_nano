@@ -1,4 +1,4 @@
-/* $Id: nano.c 5265 2015-06-20 18:48:43Z bens $ */
+/* $Id: nano.c 5420 2015-11-15 07:02:26Z astyanax $ */
 /**************************************************************************
  *   nano.c                                                               *
  *                                                                        *
@@ -458,7 +458,7 @@ void copy_from_filestruct(filestruct *somebuffer)
     openfile->current_x = strlen(openfile->filebot->data);
     if (openfile->fileage == openfile->filebot) {
 #ifndef NANO_TINY
-	if (openfile->mark_set) {
+	if (openfile->mark_set && single_line) {
 	    openfile->mark_begin = openfile->current;
 	    if (!right_side_up)
 		openfile->mark_begin_x += openfile->current_x;
@@ -476,9 +476,8 @@ void copy_from_filestruct(filestruct *somebuffer)
 	} else {
 	    if (single_line) {
 		openfile->mark_begin = openfile->current;
-		openfile->mark_begin_x -= current_x_save;
-	    } else
-		openfile->mark_begin_x -= openfile->current_x;
+		openfile->mark_begin_x += openfile->current_x - current_x_save;
+	    }
 	}
     }
 #endif
@@ -569,6 +568,7 @@ void delete_opennode(openfilestruct *fileptr)
     free_filestruct(fileptr->fileage);
 #ifndef NANO_TINY
     free(fileptr->current_stat);
+    free(fileptr->lock_filename);
 #endif
     free(fileptr);
 }
@@ -1898,7 +1898,7 @@ void precalc_multicolorinfo(void)
 		    if (regexec(tmpcolor->end, &fileptr->data[startx], 1, &endmatch,
 				(startx == 0) ? 0 : REG_NOTBOL) == 0) {
 			startx += endmatch.rm_eo;
-			fileptr->multidata[tmpcolor->id] |= CSTARTENDHERE;
+			fileptr->multidata[tmpcolor->id] = CSTARTENDHERE;
 #ifdef DEBUG
 			fprintf(stderr, "end found on this line\n");
 #endif
@@ -1932,7 +1932,7 @@ void precalc_multicolorinfo(void)
 #endif
 		    /* We found it, we found it, la la la la la.  Mark all
 		     * the lines in between and the end properly. */
-		    fileptr->multidata[tmpcolor->id] |= CENDAFTER;
+		    fileptr->multidata[tmpcolor->id] = CENDAFTER;
 #ifdef DEBUG
 		    fprintf(stderr, "marking line %ld as CENDAFTER\n", (long)fileptr->lineno);
 #endif
@@ -1944,7 +1944,7 @@ void precalc_multicolorinfo(void)
 #endif
 		    }
 		    alloc_multidata_if_needed(endptr);
-		    fileptr->multidata[tmpcolor->id] |= CBEGINBEFORE;
+		    fileptr->multidata[tmpcolor->id] = CBEGINBEFORE;
 #ifdef DEBUG
 		    fprintf(stderr, "marking line %ld as CBEGINBEFORE\n", (long)fileptr->lineno);
 #endif

@@ -1,4 +1,4 @@
-/* $Id: text.c 5275 2015-06-28 14:12:25Z bens $ */
+/* $Id: text.c 5423 2015-11-15 07:09:13Z astyanax $ */
 /**************************************************************************
  *   text.c                                                               *
  *                                                                        *
@@ -628,8 +628,17 @@ void do_redo(void)
 	break;
     case ENTER:
 	redidmsg = _("line break");
-	goto_line_posx(u->lineno, u->begin);
-	do_enter(TRUE);
+	filestruct *shoveline = make_new_node(f);
+	shoveline->data = mallocstrcpy(NULL, u->strdata);
+	data = mallocstrncpy(NULL, f->data, u->begin + 1);
+	data[u->begin] = '\0';
+	free(f->data);
+	f->data = data;
+	splice_node(f, shoveline, f->next);
+	if (f == openfile->filebot)
+	    openfile->filebot = shoveline;
+	renumber(shoveline);
+	goto_line_posx(u->lineno + 1, u->mark_begin_x);
 	break;
 #ifndef DISABLE_WRAPPING
     case SPLIT_BEGIN:
@@ -867,7 +876,7 @@ void add_undo(undo_type action)
 
     /* When doing contiguous adds or contiguous cuts -- which means: with
      * no cursor movement in between -- don't add a new undo item. */
-    if (u && u->mark_begin_lineno == fs->current->lineno &&
+    if (u && u->mark_begin_lineno == fs->current->lineno && action == fs->last_action &&
 	((action == ADD && u->type == ADD && u->mark_begin_x == fs->current_x) ||
 	(action == CUT && u->type == CUT && !u->mark_set && keeping_cutbuffer())))
 	return;
@@ -1116,6 +1125,7 @@ fprintf(stderr, "  >> Updating... action = %d, fs->last_action = %d, openfile->c
 	u->mark_begin_lineno = openfile->current->lineno;
 	break;
     case ENTER:
+	u->strdata = mallocstrcpy(NULL, fs->current->data);
 	u->mark_begin_x = fs->current_x;
 	break;
 #ifndef DISABLE_WRAPPING
@@ -2908,6 +2918,11 @@ void do_linter(void)
     char *lintcopy;
     char *convendptr = NULL;
     lintstruct *lints = NULL, *tmplint = NULL, *curlint = NULL;
+
+    if (ISSET(RESTRICTED)) {
+        nano_disabled_msg();
+        return;
+    }
 
     if (!openfile->syntax || !openfile->syntax->linter) {
 	statusbar(_("No linter defined for this type of file!"));

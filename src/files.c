@@ -1,4 +1,4 @@
-/* $Id: files.c 5270 2015-06-27 15:10:58Z bens $ */
+/* $Id: files.c 5421 2015-11-15 07:06:08Z astyanax $ */
 /**************************************************************************
  *   files.c                                                              *
  *                                                                        *
@@ -83,6 +83,7 @@ void initialize_buffer(void)
     openfile->lock_filename = NULL;
 #endif
 #ifndef DISABLE_COLOR
+    openfile->syntax = NULL;
     openfile->colorstrings = NULL;
 #endif
 }
@@ -137,19 +138,23 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
     myuid = geteuid();
     if ((mypwuid = getpwuid(myuid)) == NULL) {
 	statusbar(_("Couldn't determine my identity for lock file (getpwuid() failed)"));
-	return -1;
+	goto free_and_fail;
     }
     mypid = getpid();
 
     if (gethostname(myhostname, 31) < 0) {
-	statusbar(_("Couldn't determine hostname for lock file: %s"), strerror(errno));
-	return -1;
+	if (errno == ENAMETOOLONG)
+	    myhostname[31] = '\0';
+	else {
+	    statusbar(_("Couldn't determine hostname for lock file: %s"), strerror(errno));
+	    goto free_and_fail;
+	}
     }
 
     /* Check if the lock exists before we try to delete it...*/
     if (stat(lockfilename, &fileinfo) != -1)
 	if (delete_lockfile(lockfilename) < 0)
-	    return -1;
+	    goto free_and_fail;
 
     if (ISSET(INSECURE_BACKUP))
 	cflags = O_WRONLY | O_CREAT | O_APPEND;
@@ -164,6 +169,7 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
     if (fd < 0) {
 	statusbar(_("Error writing lock file %s: %s"), lockfilename,
 		    strerror(errno));
+	free(lockdata);
 	return 0;
     }
 
@@ -174,7 +180,7 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
     if (fd < 0 || filestream == NULL) {
 	statusbar(_("Error writing lock file %s: %s"), lockfilename,
 		    strerror(errno));
-	return -1;
+	goto free_and_fail;
     }
 
     /* Okay, so at the moment we're following this state for how to
@@ -211,7 +217,7 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
     if (wroteamt < lockdatalen) {
 	statusbar(_("Error writing lock file %s: %s"),
 		lockfilename, ferror(filestream));
-	return -1;
+	goto free_and_fail;
     }
 
 #ifdef DEBUG
@@ -221,12 +227,17 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
     if (fclose(filestream) == EOF) {
 	statusbar(_("Error writing lock file %s: %s"),
 		lockfilename, strerror(errno));
-	return -1;
+	goto free_and_fail;
     }
 
-    openfile->lock_filename = lockfilename;
+    openfile->lock_filename = (char *) lockfilename;
 
+    free(lockdata);
     return 1;
+
+  free_and_fail:
+    free(lockdata);
+    return -1;
 }
 
 /* Less exciting, delete the lockfile.  Return -1 if unsuccessful and
@@ -339,6 +350,21 @@ void open_buffer(const char *filename, bool undoable)
     }
 #endif
 
+    /* When the specified filename is not empty, and the thing exists,
+     * verify that it is a normal file. */
+    if (strcmp(filename, "") != 0) {
+	struct stat fileinfo;
+
+	if (stat(filename, &fileinfo) == 0 && !S_ISREG(fileinfo.st_mode)) {
+	    if (S_ISDIR(fileinfo.st_mode))
+		statusbar(_("\"%s\" is a directory"), filename);
+	    else
+	 	statusbar(_("\"%s\" is not a normal file"), filename);
+	    beep();
+	    return;
+	}
+    }
+
     /* If we're loading into a new buffer, add a new entry to
      * openfile. */
     if (new_buffer) {
@@ -420,6 +446,9 @@ void replace_buffer(const char *filename)
     /* If opening the file succeeded, read it in. */
     if (descriptor > 0)
 	read_file(f, descriptor, filename, FALSE, TRUE);
+
+    /* Put current at a place that is certain to exist. */
+    openfile->current = openfile->fileage;
 }
 #endif /* !DISABLE_SPELLER */
 
@@ -1703,7 +1732,7 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
     FILE *f = NULL;
 	/* The actual file, realname, we are writing to. */
     char *tempname = NULL;
-	/* The temp file name we write to on prepend. */
+	/* The name of the temporary file we write to on prepend. */
 
     assert(name != NULL);
 
@@ -1991,7 +2020,7 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 	    }
 	}
 
-	if (copy_file(f_source, f) != 0) {
+	if (f_source == NULL || copy_file(f_source, f) != 0) {
 	    statusbar(_("Error writing %s: %s"), tempname,
 		strerror(errno));
 	    unlink(tempname);
@@ -2110,11 +2139,13 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 	    goto cleanup_and_exit;
 	}
 
-	if (copy_file(f_source, f) == -1 || unlink(tempname) == -1) {
+	if (copy_file(f_source, f) == -1) {
 	    statusbar(_("Error writing %s: %s"), realname,
 		strerror(errno));
 	    goto cleanup_and_exit;
 	}
+
+	unlink(tempname);
     } else if (fclose(f) != 0) {
 	    statusbar(_("Error writing %s: %s"), realname,
 		strerror(errno));

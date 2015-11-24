@@ -1,4 +1,4 @@
-/* $Id: search.c 5258 2015-06-20 08:10:25Z bens $ */
+/* $Id: search.c 5416 2015-11-15 06:48:56Z astyanax $ */
 /**************************************************************************
  *   search.c                                                             *
  *                                                                        *
@@ -757,6 +757,12 @@ ssize_t do_replace_loop(
 #endif
 	    }
 
+#ifdef HAVE_REGEX_H
+	    /* Don't find the same zero-length match again. */
+	    if (match_len == 0)
+		match_len++;
+#endif
+
 	    /* Set the cursor at the last character of the replacement
 	     * text, so searching will resume after the replacement
 	     * text.  Note that current_x might be set to (size_t)-1
@@ -1123,7 +1129,7 @@ void do_find_bracket(void)
 
     ch = openfile->current->data + openfile->current_x;
 
-    if (ch == '\0' || (ch = mbstrchr(matchbrackets, ch)) == NULL) {
+    if ((ch = mbstrchr(matchbrackets, ch)) == NULL) {
 	statusbar(_("Not a bracket"));
 	return;
     }

@@ -1,4 +1,4 @@
-/* $Id: help.c 5249 2015-06-14 19:14:41Z bens $ */
+/* $Id: help.c 5417 2015-11-15 06:52:33Z astyanax $ */
 /**************************************************************************
  *   help.c                                                               *
  *                                                                        *
@@ -444,14 +444,28 @@ void help_init(void)
 
 #ifndef NANO_TINY
     /* And the toggles... */
-    if (currmenu == MMAIN)
+    if (currmenu == MMAIN) {
+	int maximum = 0, counter = 0;
+
+	/* First see how many toggles there are. */
 	for (s = sclist; s != NULL; s = s->next) {
-	    if (s->scfunc == do_toggle_void)
+	   maximum = (s->toggle && s->ordinal > maximum) ? s->ordinal : maximum;
+	}
+
+	/* Now show them in the original order. */
+	while (counter < maximum) {
+	    counter++;
+	    for (s = sclist; s != NULL; s = s->next) {
+		if (s->toggle && s->ordinal == counter) {
 		ptr += sprintf(ptr, "%s\t\t%s %s\n", (s->menu == MMAIN ? s->keystr : ""),
 				 _(flagtostr(s->toggle)), _("enable/disable"));
 	    if (s->toggle == NO_COLOR_SYNTAX || s->toggle == TABS_TO_SPACES)
 		ptr += sprintf(ptr, "\n");
+		    break;
 	}
+	    }
+	}
+    }
 
 #ifndef DISABLE_NANORC
     if (old_whitespace)
@@ -492,6 +506,8 @@ size_t help_line_len(const char *ptr)
     ssize_t wrap_loc = break_line(ptr, help_cols, TRUE);
     size_t retval = (wrap_loc < 0) ? 0 : wrap_loc;
     size_t retval_save = retval;
+
+    retval = 0;
 
     /* Get the length of the entire line up to a null or a newline. */
     while (*(ptr + retval) != '\0' && *(ptr + retval) != '\n')

@@ -1,4 +1,4 @@
-/* $Id: rcfile.c 5265 2015-06-20 18:48:43Z bens $ */
+/* $Id: rcfile.c 5412 2015-11-15 06:43:54Z astyanax $ */
 /**************************************************************************
  *   rcfile.c                                                             *
  *                                                                        *
@@ -559,6 +559,13 @@ void parse_binding(char *ptr, bool dobind)
     }
 
     if (dobind) {
+	/* If this is a toggle, copy its sequence number. */
+	if (newsc->scfunc == do_toggle_void) {
+	    for (s = sclist; s != NULL; s = s->next)
+		if (s->scfunc == do_toggle_void && s->toggle == newsc->toggle)
+		    newsc->ordinal = s->ordinal;
+	} else
+	    newsc->ordinal = 0;
 	/* Add the new shortcut at the start of the list. */
 	newsc->next = sclist;
 	sclist = newsc;

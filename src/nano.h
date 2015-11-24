@@ -1,4 +1,4 @@
-/* $Id: nano.h 5271 2015-06-27 15:47:39Z bens $ */
+/* $Id: nano.h 5407 2015-11-15 06:10:04Z astyanax $ */
 /**************************************************************************
  *   nano.h                                                               *
  *                                                                        *
@@ -398,7 +398,7 @@ typedef struct openfilestruct {
     undo *current_undo;
 	/* The current (i.e. next) level of undo. */
     undo_type last_action;
-    const char *lock_filename;
+    char *lock_filename;
 	/* The path of the lockfile, if we created one. */
 #endif
 #ifndef DISABLE_COLOR
@@ -453,6 +453,9 @@ typedef struct sc {
 	/* The function we're going to run. */
     int toggle;
 	/* If a toggle, what we're toggling. */
+    int ordinal;
+	/* The how-manieth toggle this is, in order to be able to
+	 * keep them in sequence. */
     struct sc *next;
 	/* Next in the list. */
 } sc;

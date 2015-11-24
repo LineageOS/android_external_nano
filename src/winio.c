@@ -1,4 +1,4 @@
-/* $Id: winio.c 5266 2015-06-23 18:06:30Z bens $ */
+/* $Id: winio.c 5422 2015-11-15 07:08:16Z astyanax $ */
 /**************************************************************************
  *   winio.c                                                              *
  *                                                                        *
@@ -40,6 +40,8 @@ static int statusblank = 0;
 static bool disable_cursorpos = FALSE;
 	/* Should we temporarily disable constant cursor position
 	 * display? */
+static bool seen_wide = FALSE;
+	/* Whether we've seen a multicolumn character in the current line. */
 
 static sig_atomic_t sigwinch_counter_save = 0;
 
@@ -1896,6 +1898,7 @@ char *display_string(const char *buf, size_t start_col, size_t len, bool
     converted = charalloc(alloc_len);
 
     index = 0;
+    seen_wide = FALSE;
 
     if (buf[start_index] != '\0' && buf[start_index] != '\t' &&
 	(column < start_col || (dollars && column > 0))) {
@@ -1938,6 +1941,9 @@ char *display_string(const char *buf, size_t start_col, size_t len, bool
 
     while (buf[start_index] != '\0') {
 	buf_mb_len = parse_mbchar(buf + start_index, buf_mb, NULL);
+
+	if (mbwidth(buf + start_index) > 1)
+	    seen_wide = TRUE;
 
 	/* Make sure there's enough room for the next character, whether
 	 * it's a multibyte control character, a non-control multibyte
@@ -1999,10 +2005,13 @@ char *display_string(const char *buf, size_t start_col, size_t len, bool
 	    char *nctrl_buf_mb = charalloc(mb_cur_max());
 	    int nctrl_buf_mb_len, i;
 
+#ifdef ENABLE_UTF8
 	    /* Make sure an invalid sequence-starter byte is properly
 	     * terminated, so that it doesn't pick up lingering bytes
 	     * of any previous content. */
-	    null_at(&buf_mb, buf_mb_len);
+	    if (using_utf8() && buf_mb_len == 1)
+		buf_mb[1] = '\0';
+#endif
 
 	    nctrl_buf_mb = mbrep(buf_mb, nctrl_buf_mb,
 		&nctrl_buf_mb_len);
@@ -2470,7 +2479,8 @@ void edit_draw(filestruct *fileptr, const char *converted, int
     /* Tell ncurses to really redraw the line without trying to optimize
      * for what it thinks is already there, because it gets it wrong in
      * the case of a wide character in column zero.  See bug #31743. */
-    wredrawln(edit, line, 1);
+    if (seen_wide)
+	wredrawln(edit, line, 1);
 #endif
 
 #ifndef DISABLE_COLOR
@@ -2603,11 +2613,12 @@ void edit_draw(filestruct *fileptr, const char *converted, int
 		/* If the found start has been qualified as an end earlier,
 		 * believe it and skip to the next step. */
 		if (start_line != NULL && start_line->multidata != NULL &&
-			start_line->multidata[tmpcolor->id] == CBEGINBEFORE)
+			(start_line->multidata[tmpcolor->id] == CBEGINBEFORE ||
+			start_line->multidata[tmpcolor->id] == CSTARTENDHERE))
 		    goto step_two;
 
 		/* Skip over a zero-length regex match. */
-		if (startmatch.rm_so == startmatch.rm_eo)
+		if (start_line != NULL && startmatch.rm_so == startmatch.rm_eo)
 		    startmatch.rm_eo++;
 		else {
 		    /* No start found, so skip to the next step. */
@@ -2678,8 +2689,9 @@ void edit_draw(filestruct *fileptr, const char *converted, int
 		    if (paintlen < 0)
 			goto end_of_loop;
   step_two:
-		    /* Second step, we look for starts on this line. */
-		    start_col = 0;
+		    /* Second step: look for starts on this line, but start
+		     * looking only after an end match, if there is one. */
+		    start_col = (paintlen == 0) ? 0 : endmatch.rm_eo;
 
 		    while (start_col < endpos) {
 			if (regexec(tmpcolor->start, fileptr->data +
@@ -2728,6 +2740,7 @@ void edit_draw(filestruct *fileptr, const char *converted, int
 #endif
 				}
 			    }
+			    start_col = endmatch.rm_eo;
 			} else {
 			    /* There is no end on this line.  But we
 			     * haven't yet looked for one on later
@@ -2753,8 +2766,8 @@ void edit_draw(filestruct *fileptr, const char *converted, int
 				fileptr->multidata[tmpcolor->id] = CENDAFTER;
 				break;
 			    }
+			    start_col = startmatch.rm_so + 1;
 			}
-			start_col = startmatch.rm_so + 1;
 		    }
 		}
 	    }
