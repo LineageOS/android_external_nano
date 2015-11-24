@@ -557,6 +557,7 @@ enum
 /* Control key sequences.  Changing these would be very, very bad. */
 #define NANO_CONTROL_SPACE 0
 #define NANO_CONTROL_I 9
+#define NANO_CONTROL_M 13
 #define NANO_CONTROL_3 27
 #define NANO_CONTROL_7 31
 #define NANO_CONTROL_8 127

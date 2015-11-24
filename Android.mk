@@ -23,13 +23,15 @@ LOCAL_SRC_FILES:= \
 	src/winio.c
 LOCAL_C_INCLUDES += \
 	$(LOCAL_PATH) \
-	external/libncurses/include
+	external/libncurses/include \
+	external/openssh/openbsd-compat
 LOCAL_CFLAGS += \
 	-DHAVE_CONFIG_H \
 	-DLOCALEDIR=\"/data/locale\" \
 	-DSYSCONFDIR=\"/system/etc/nano\"
 LOCAL_SHARED_LIBRARIES += \
-	libncurses
+	libncurses \
+	libssh
 LOCAL_MODULE := nano
 LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
 LOCAL_MODULE_TAGS := debug
