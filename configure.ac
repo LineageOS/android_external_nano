@@ -18,9 +18,9 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 #
-# $Id: configure.ac 4516 2010-08-11 02:42:32Z astyanax $
+# $Id: configure.ac 4536 2011-02-26 14:28:42Z astyanax $
 
-AC_INIT([GNU nano], [2.2.6], [nano-devel@gnu.org], [nano])
+AC_INIT([GNU nano], [2.3.0], [nano-devel@gnu.org], [nano])
 AC_CONFIG_SRCDIR([src/nano.c])
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE
@@ -50,7 +50,7 @@ AC_DEFINE_DIR([PKGDATADIR], [pkgdatadir], [Where data are placed to.])
 dnl Checks for header files.
 
 AC_HEADER_STDC
-AC_CHECK_HEADERS(getopt.h libintl.h limits.h regex.h sys/param.h wchar.h wctype.h stdarg.h)
+AC_CHECK_HEADERS(getopt.h libintl.h limits.h regex.h sys/param.h wchar.h wctype.h stdarg.h magic.h)
 
 dnl Checks for options.
 
@@ -583,6 +583,7 @@ AC_MSG_RESULT(yes),
 AC_MSG_RESULT(no),
 AC_MSG_WARN([*** Can't check for macro redefinability when cross-compiling]))
 
+AC_CHECK_LIB(magic, magic_open)
 
 # Check for groff html support
 AC_MSG_CHECKING([for HTML support in groff])

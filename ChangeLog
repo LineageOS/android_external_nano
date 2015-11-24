@@ -1,3 +1,43 @@
+2011-02-26 Chris Allegretta <chrisa@asty.org>
+	* Change RAW in function_type enum to RAWINPUT, to fix compilation on AIX, 
+	  reported by Richard G  Daniel <skunk@iskunk.org>.
+
+2011-02-23 Chris Allegretta <chrisa@asty.org>
+	* Fix some more severe warnings from 'g++ -pedantic', from patch originally 
+	  by Eitan Adler <lists@eitanadler.com>
+
+2011-02-23 Kamil Dudka <kdudka@redhat.com>
+	* doc/man/nanorc.5: Fix small typo
+
+2011-02-22 Chris Allegretta <chrisa@asty.org>
+	* color.c (nfreeregex): Fix that we were trying to set the pointer passed by value
+	  to NULL.  Fixes crashes on file save reported by Ken Tyler and Matthieu Lejeune.
+
+2011-02-18 Chris Allegretta <chrisa@asty.org>
+	* New saved cursor position history option.  Command line option -P or --poslog, rc file
+	  entry "poslog".  Search history changes to ~/.nano/search_history, cursor position log
+	  is ~/.nano/filepos_history.  Added checks to move the legacy .nano_history file to the new
+	  location.  Several new functions to files.c: load_poshistory(), save_poshistory(), 
+	  check_poshistory(), update_poshistory(), and reworking of histfilename().  New FAQ entry
+	  4.15 discussing the change and offering an interoperability workaround.
+	* files.c (load_history): Set last_search to the last search value we loaded from history,
+	  so do_research will succeed without needing to manually load the last seach in.  Fixes
+	  bug reported by Matthieu Lejeune.
+
+2011-02-12 Chris Allegretta <chrisa@asty.org>
+	* Initial libmagic implementation, adapted from Eitan Adler <eitanadlerlist@gmail.com>.
+	  New nanorc entry "magic" to enable this functionality, nanorc file and man page updates.
+
+2011-02-06 Chris Allegretta <chrisa@asty.org>
+        * src/*: Retire iso_me_harder_funcmap based on suggestion by <bernd.spaeth@gmx.net>
+	  This does add 20KB to nano's executable size but it gets rid of a lot of indirection
+	  that makes people stomach turn.  There are several new stub functions and need of more
+	  tidying as a result of this.
+	* files.c (write_file): Fix problems with writing the backup file (albeit interactively)
+	  with new function prompt_failed_backupwrite(), allows more secure handling of problems
+	  with failing to write the backup file compared to 'allow_insecure_backup'.
+	* winio.c (edit_redraw): Removed unused variable
+
 2010-11-15 Chris Allegretta <chrisa@asty.org>
 	* Add a section to the FAQ about using nanorc on Win32 systems.
 
@@ -6,8 +46,6 @@
 	  routines, since adding key bindings broke the fact that they should be
 	  disabled in restricted mode.  Fixes Savannah bug 31625 reported by
 	  Charlie Somerville.
-
-2010-08-10 - nano 2.2 branch cut here
 
 GNU nano 2.2.5 - 2010.08.05
 2010-08-04 Lauri Kasanen <curaga@operamail.comcuraga@operamail.com>

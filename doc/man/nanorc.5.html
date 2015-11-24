@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.20.1 -->
-<!-- CreationDate: Tue Aug 10 22:44:00 2010 -->
+<!-- CreationDate: Wed Feb 23 21:42:44 2011 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -223,7 +223,7 @@ all.</p>
 <p style="margin-left:15%;"><b>nano</b> will only read and
 write files inside <i>directory</i> and its subdirectories.
 Also, the current directory is changed to here, so files are
-inserted from this diractory. By default, the operating
+inserted from this directory. By default, the operating
 directory feature is turned off.</p>
 
 <p style="margin-left:11%;"><b>set/unset preserve</b></p>
@@ -286,6 +286,11 @@ won&rsquo;t work properly with this option enabled.</p>
 
 <p style="margin-left:15%;">Do extended regular expression
 searches by default.</p>
+
+<p style="margin-left:11%;"><b>set/unset poslog</b></p>
+
+<p style="margin-left:15%;">Save the cursor position of
+files between editing sessions.</p>
 
 <p style="margin-left:11%;"><b>set/unset smarthome</b></p>
 
@@ -379,6 +384,17 @@ same as not having a syntax at all. The <i>default</i>
 syntax is special: it takes no <i>fileregex</i>, and applies
 to files that don&rsquo;t match any other syntax&rsquo;s
 <i>fileregex</i>.</p>
+
+<p style="margin-left:11%;"><b>magic
+[&quot;</b><i>regex</i><b>&quot; ... ]</b></p>
+
+<p style="margin-left:15%;">For the currently defined
+syntax, add one or more regexes which will be compared
+against the <b>magic</b> database when attempting to
+determine which highlighting rules to use for a given file.
+This functionality only works when <b>libmagic</b> is
+installed on the system and will be silently ignored
+otherwise.</p>
 
 <p style="margin-left:11%;"><b>color</b>
 <i>fgcolor</i><b>,</b><i>bgcolor regex</i> <b>...</b></p>

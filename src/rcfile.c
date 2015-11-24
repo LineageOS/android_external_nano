@@ -1,4 +1,4 @@
-/* $Id: rcfile.c 4508 2010-06-21 03:10:10Z astyanax $ */
+/* $Id: rcfile.c 4530 2011-02-18 07:30:57Z astyanax $ */
 /**************************************************************************
  *   rcfile.c                                                             *
  *                                                                        *
@@ -85,6 +85,7 @@ static const rcoption rcopts[] = {
     {"historylog", HISTORYLOG},
     {"matchbrackets", 0},
     {"noconvert", NO_CONVERT},
+    {"poslog", POS_HISTORY},
     {"quiet", QUIET},
     {"quickblank", QUICK_BLANK},
     {"smarthome", SMART_HOME},
@@ -303,6 +304,7 @@ void parse_syntax(char *ptr)
     endheader = NULL;
     endsyntax->extensions = NULL;
     endsyntax->headers = NULL;
+    endsyntax->magics = NULL;
     endsyntax->next = NULL;
     endsyntax->nmultis = 0;
 
@@ -358,6 +360,76 @@ void parse_syntax(char *ptr)
 	} else
 	    free(newext);
     }
+
+}
+
+
+/* Parse the next syntax string from the line at ptr, and add it to the
+ * global list of color syntaxes. */
+void parse_magictype(char *ptr)
+{
+#ifdef HAVE_LIBMAGIC
+    const char *fileregptr = NULL;
+    exttype *endext = NULL;
+
+    assert(ptr != NULL);
+
+    if (syntaxes == NULL) {
+	rcfile_error(
+		N_("Cannot add a magic string regex without a syntax command"));
+	return;
+    }
+
+    if (*ptr == '\0') {
+	rcfile_error(N_("Missing magic string name"));
+	return;
+    }
+
+    if (*ptr != '"') {
+	rcfile_error(
+		N_("Regex strings must begin and end with a \" character"));
+	return;
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "Starting a magic type: \"%s\"\n", ptr);
+#endif
+
+    /* Now load the extensions into their part of the struct. */
+    while (*ptr != '\0') {
+	exttype *newext;
+	    /* The new extension structure. */
+
+	while (*ptr != '"' && *ptr != '\0')
+	    ptr++;
+
+	if (*ptr == '\0')
+	    return;
+
+	ptr++;
+
+	fileregptr = ptr;
+	ptr = parse_next_regex(ptr);
+	if (ptr == NULL)
+	    break;
+
+	newext = (exttype *)nmalloc(sizeof(exttype));
+
+	/* Save the regex if it's valid. */
+	if (nregcomp(fileregptr, REG_NOSUB)) {
+	    newext->ext_regex = mallocstrcpy(NULL, fileregptr);
+	    newext->ext = NULL;
+
+	    if (endext == NULL)
+		endsyntax->magics = newext;
+	    else
+		endext->next = newext;
+	    endext = newext;
+	    endext->next = NULL;
+	} else
+	    free(newext);
+    }
+#endif /* HAVE_LIBMAGIC */
 }
 
 int check_bad_binding(sc *s)
@@ -863,7 +935,7 @@ static void check_vitals_mapped(void)
     subnfunc *f;
     int v;
 #define VITALS 5
-    short vitals[VITALS] = { DO_EXIT, DO_EXIT, CANCEL_MSG, CANCEL_MSG, CANCEL_MSG };
+    void (*vitals[VITALS])(void) = { do_exit, do_exit, do_cancel, do_cancel, do_cancel };
     int inmenus[VITALS] = { MMAIN, MHELP, MWHEREIS, MREPLACE, MGOTOLINE };
 
     for  (v = 0; v < VITALS; v++) {
@@ -951,6 +1023,9 @@ void parse_rcfile(FILE *rcstream
 		rcfile_error(N_("Syntax \"%s\" has no color commands"),
 			endsyntax->desc);
 	    parse_syntax(ptr);
+	}
+	else if (strcasecmp(keyword, "magic") == 0) {
+ 	    parse_magictype(ptr);
 	} else if (strcasecmp(keyword, "header") == 0)
 	    parse_headers(ptr);
 	else if (strcasecmp(keyword, "color") == 0)

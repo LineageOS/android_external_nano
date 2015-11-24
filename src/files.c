@@ -1,4 +1,4 @@
-/* $Id: files.c 4520 2010-11-12 06:23:14Z astyanax $ */
+/* $Id: files.c 4534 2011-02-24 02:47:25Z astyanax $ */
 /**************************************************************************
  *   files.c                                                              *
  *                                                                        *
@@ -278,6 +278,10 @@ bool close_buffer(void)
     /* If only one file buffer is open, get out. */
     if (openfile == openfile->next)
 	return FALSE;
+
+#ifndef NANO_TINY
+        update_poshistory(openfile->filename, openfile->current->lineno, xplustabs()+1);
+#endif /* NANO_TINY */
 
     /* Switch to the next file buffer. */
     switch_to_next_buffer_void();
@@ -869,14 +873,14 @@ void do_insertfile(
 #ifndef NANO_TINY
 #ifdef ENABLE_MULTIBUFFER
 
-	    if (s && s->scfunc == NEW_BUFFER_MSG) {
+	    if (s && s->scfunc == new_buffer_void) {
 		/* Don't allow toggling if we're in view mode. */
 		if (!ISSET(VIEW_MODE))
 		    TOGGLE(MULTIBUFFER);
 		continue;
 	    } else
 #endif
-	    if (s && s->scfunc == EXT_CMD_MSG) {
+	    if (s && s->scfunc == ext_cmd_void) {
 		execute = !execute;
 		continue;
 	    }
@@ -886,7 +890,7 @@ void do_insertfile(
 #endif /* !NANO_TINY */
 
 #ifndef DISABLE_BROWSER
-	    if (s && s->scfunc == TO_FILES_MSG) {
+	    if (s && s->scfunc == to_files_void) {
 		char *tmp = do_browse_from(answer);
 
 		if (tmp == NULL)
@@ -1366,6 +1370,23 @@ bool check_operating_dir(const char *currpath, bool allow_tabcomp)
 #endif
 
 #ifndef NANO_TINY
+/* Although this sucks, it sucks less than having a single 'my system is messed up
+ * and I'm blanket allowing insecure file writing operations.
+ */
+
+int prompt_failed_backupwrite(const char *filename)
+{
+    static int i;
+    static char *prevfile = NULL; /* What was the laast file we were paased so we don't keep asking this?
+                                     though maybe we should.... */
+    if (prevfile == NULL || strcmp(filename, prevfile)) {
+	i = do_yesno_prompt(FALSE,
+                         _("Failed to write backup file, continue saving? (Say N if unsure) "));
+	prevfile = mallocstrcpy(prevfile, filename);
+    }
+    return i;
+}
+
 void init_backup_dir(void)
 {
     char *full_backup_dir;
@@ -1600,6 +1621,8 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 	   file with O_CREAT and O_EXCL.  If it succeeds, we
 	   have a file descriptor to a new backup file. */
 	if (unlink(backupname) < 0 && errno != ENOENT && !ISSET(INSECURE_BACKUP)) {
+	    if (prompt_failed_backupwrite(backupname))
+		goto skip_backup;
 	    statusbar(_("Error writing backup file %s: %s"), backupname,
 			strerror(errno));
 	    free(backupname);
@@ -1628,7 +1651,9 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 	   root, since it's likely to fail! */
 	if (geteuid() == NANO_ROOT_UID && fchown(backup_fd,
 		openfile->current_stat->st_uid, openfile->current_stat->st_gid) == -1
-                && !ISSET(INSECURE_BACKUP)) {
+		&& !ISSET(INSECURE_BACKUP)) {
+	    if (prompt_failed_backupwrite(backupname))
+		goto skip_backup;
 	    statusbar(_("Error writing backup file %s: %s"), backupname,
 		strerror(errno));
 	    free(backupname);
@@ -1636,7 +1661,10 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 	    goto cleanup_and_exit;
 	}
 
-	if (fchmod(backup_fd, openfile->current_stat->st_mode) == -1 && !ISSET(INSECURE_BACKUP)) {
+	if (fchmod(backup_fd, openfile->current_stat->st_mode) == -1
+		&& !ISSET(INSECURE_BACKUP)) {
+	    if (prompt_failed_backupwrite(backupname))
+		goto skip_backup;
 	    statusbar(_("Error writing backup file %s: %s"), backupname,
 		strerror(errno));
 	    free(backupname);
@@ -1664,6 +1692,8 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 
 	/* And set its metadata. */
 	if (utime(backupname, &filetime) == -1 && !ISSET(INSECURE_BACKUP)) {
+	    if (prompt_failed_backupwrite(backupname))
+		goto skip_backup;
 	    statusbar(_("Error writing backup file %s: %s"), backupname,
 			strerror(errno));
 	    /* If we can't write to the backup, DONT go on, since
@@ -2053,7 +2083,7 @@ bool do_writeout(bool exiting)
             s = get_shortcut(currmenu, &i, &meta_key, &func_key);
 
 #ifndef DISABLE_BROWSER
-	    if (s && s->scfunc == TO_FILES_MSG) {
+	    if (s && s->scfunc == to_files_void) {
 		char *tmp = do_browse_from(answer);
 
 		if (tmp == NULL)
@@ -2065,26 +2095,26 @@ bool do_writeout(bool exiting)
 	    } else
 #endif /* !DISABLE_BROWSER */
 #ifndef NANO_TINY
-	    if (s && s->scfunc ==  DOS_FORMAT_MSG) {
+	    if (s && s->scfunc == dos_format_void) {
 		openfile->fmt = (openfile->fmt == DOS_FILE) ? NIX_FILE :
 			DOS_FILE;
 		continue;
-	    } else if (s && s->scfunc ==  MAC_FORMAT_MSG) {
+	    } else if (s && s->scfunc == mac_format_void) {
 		openfile->fmt = (openfile->fmt == MAC_FILE) ? NIX_FILE :
 			MAC_FILE;
 		continue;
-	    } else if (s && s->scfunc ==  BACKUP_FILE_MSG) {
+	    } else if (s && s->scfunc == backup_file_void) {
 		TOGGLE(BACKUP_FILE);
 		continue;
 	    } else
 #endif /* !NANO_TINY */
-	    if (s && s->scfunc ==  PREPEND_MSG) {
+	    if (s && s->scfunc == prepend_void) {
 		append = (append == PREPEND) ? OVERWRITE : PREPEND;
 		continue;
-	    } else if (s && s->scfunc ==  APPEND_MSG) {
+	    } else if (s && s->scfunc == append_void) {
 		append = (append == APPEND) ? OVERWRITE : APPEND;
 		continue;
-	    } else if (s && s->scfunc == DO_HELP_VOID) {
+	    } else if (s && s->scfunc == do_help_void) {
 		continue;
 	    }
 
@@ -2662,28 +2692,99 @@ const char *tail(const char *foo)
 }
 
 #if !defined(NANO_TINY) && defined(ENABLE_NANORC)
-/* Return $HOME/.nano_history, or NULL if we can't find the home
+/* Return the constructed dorfile path, or NULL if we can't find the home
  * directory.  The string is dynamically allocated, and should be
  * freed. */
-char *histfilename(void)
+char *construct_filename(const char *str)
 {
-    char *nanohist = NULL;
+    char *newstr = NULL;
 
     if (homedir != NULL) {
 	size_t homelen = strlen(homedir);
 
-	nanohist = charalloc(homelen + 15);
-	strcpy(nanohist, homedir);
-	strcpy(nanohist + homelen, "/.nano_history");
+	newstr = charalloc(homelen + strlen(str) + 1);
+	strcpy(newstr, homedir);
+	strcpy(newstr + homelen, str);
     }
 
-    return nanohist;
+    return newstr;
+
+}
+
+char *histfilename(void)
+{
+    return construct_filename("/.nano/search_history");
+}
+
+/* Construct the legacy history filename
+ * (Deprecate in 2.5, delete later
+ */
+char *legacyhistfilename(void)
+{
+    return construct_filename("/.nano_history");
+}
+
+char *poshistfilename(void)
+{
+    return construct_filename("/.nano/filepos_history");
+}
+
+
+
+void history_error(const char *msg, ...)
+{
+   va_list ap;
+
+    va_start(ap, msg);
+    vfprintf(stderr, _(msg), ap);
+    va_end(ap);
+
+    fprintf(stderr, _("\nPress Enter to continue\n"));
+    while (getchar() != '\n')
+	;
+
+}
+
+/* Now that we have more than one history file, let's just rely
+   on a .nano dir for this stuff.  Return 1 if the dir exists
+   or was successfully created, and return 0 otherwise.
+ */
+int check_dotnano(void)
+{
+    struct stat dirstat;
+    char *nanodir = construct_filename("/.nano");
+
+    if (stat(nanodir, &dirstat) == -1) {
+	if (mkdir(nanodir, S_IRWXU | S_IRWXG | S_IRWXO) == -1) {
+	    history_error(N_("Unable to create directory %s: %s\nIt is required for saving/loading search history or cursor position\n"),
+		nanodir, strerror(errno));
+	    return 0;
+	}
+    } else if (!S_ISDIR(dirstat.st_mode)) {
+	history_error(N_("Path %s is not a directory and needs to be.\nNano will be unable to load or save search or cursor position history\n"));
+	return 0;
+    }
+    return 1;
 }
 
 /* Load histories from ~/.nano_history. */
 void load_history(void)
 {
     char *nanohist = histfilename();
+    char *legacyhist = legacyhistfilename();
+    struct stat hstat;
+
+
+    if (stat(legacyhist, &hstat) != -1 && stat(nanohist, &hstat) == -1) {
+	if (rename(legacyhist, nanohist)  == -1)
+	    history_error(N_("Detected a legacy nano history file (%s) which I tried to move\nto the preferred location (%s) but encountered an error: %s"),
+		legacyhist, nanohist, strerror(errno));
+	else
+	    history_error(N_("Detected a legacy nano history file (%s) which I moved\nto the preferred location (%s)\n(see the nano FAQ about this change)"),
+		legacyhist, nanohist);
+    }
+
+
 
     /* Assume do_rcfile() has reported a missing home directory. */
     if (nanohist != NULL) {
@@ -2693,12 +2794,8 @@ void load_history(void)
 	    if (errno != ENOENT) {
 		/* Don't save history when we quit. */
 		UNSET(HISTORYLOG);
-		rcfile_error(N_("Error reading %s: %s"), nanohist,
+		history_error(N_("Error reading %s: %s"), nanohist,
 			strerror(errno));
-		fprintf(stderr,
-			_("\nPress Enter to continue starting nano.\n"));
-		while (getchar() != '\n')
-		    ;
 	    }
 	} else {
 	    /* Load a history list (first the search history, then the
@@ -2723,8 +2820,11 @@ void load_history(void)
 
 	    fclose(hist);
 	    free(line);
+	    if (search_history->prev != NULL)
+		last_search = mallocstrcpy(NULL, search_history->prev->data);
 	}
 	free(nanohist);
+	free(legacyhist);
     }
 }
 
@@ -2750,7 +2850,7 @@ bool writehist(FILE *hist, filestruct *h)
     return TRUE;
 }
 
-/* Save histories to ~/.nano_history. */
+/* Save histories to ~/.nano/search_history. */
 void save_history(void)
 {
     char *nanohist;
@@ -2766,7 +2866,7 @@ void save_history(void)
 	FILE *hist = fopen(nanohist, "wb");
 
 	if (hist == NULL)
-	    rcfile_error(N_("Error writing %s: %s"), nanohist,
+	    history_error(N_("Error writing %s: %s"), nanohist,
 		strerror(errno));
 	else {
 	    /* Make sure no one else can read from or write to the
@@ -2775,7 +2875,7 @@ void save_history(void)
 
 	    if (!writehist(hist, searchage) || !writehist(hist,
 		replaceage))
-		rcfile_error(N_("Error writing %s: %s"), nanohist,
+		history_error(N_("Error writing %s: %s"), nanohist,
 			strerror(errno));
 
 	    fclose(hist);
@@ -2784,4 +2884,163 @@ void save_history(void)
 	free(nanohist);
     }
 }
+
+
+/* Analogs for the POS history */
+void save_poshistory(void)
+{
+    char *poshist;
+    char *statusstr = NULL;
+    poshiststruct *posptr;
+
+    poshist = poshistfilename();
+
+    if (poshist != NULL) {
+	FILE *hist = fopen(poshist, "wb");
+
+	if (hist == NULL)
+	    history_error(N_("Error writing %s: %s"), poshist,
+		strerror(errno));
+	else {
+	    /* Make sure no one else can read from or write to the
+	     * history file. */
+	    chmod(poshist, S_IRUSR | S_IWUSR);
+
+            for (posptr = poshistory; posptr != NULL; posptr = posptr->next) {
+		statusstr = charalloc(strlen(posptr->filename) + 2 * sizeof(ssize_t) + 4);
+		sprintf(statusstr, "%s %d %d\n", posptr->filename, (int) posptr->lineno,
+			(int) posptr->xno);
+		if (fwrite(statusstr, sizeof(char), strlen(statusstr), hist) < strlen(statusstr))
+		    history_error(N_("Error writing %s: %s"), poshist,
+			strerror(errno));
+		free(statusstr);
+	    }
+	    fclose(hist);
+	}
+	free(poshist);
+    }
+}
+
+/* Update the POS history, given a filename line and column.
+ * If no entry is found, add a new entry on the end
+ */
+void update_poshistory(char *filename, ssize_t lineno, ssize_t xpos)
+{
+   poshiststruct *posptr, *posprev = NULL;
+   char *fullpath = get_full_path(filename);
+
+    if (fullpath == NULL)
+        return;
+
+    for (posptr = poshistory; posptr != NULL; posptr = posptr->next) {
+        if (!strcmp(posptr->filename, fullpath)) {
+	    posptr->lineno = lineno;
+	    posptr->xno = xpos;
+            return;
+        }
+	posprev = posptr;
+    }
+
+    /* Didn't find it, make a new node yo! */
+
+    posptr = (poshiststruct *) nmalloc(sizeof(poshiststruct));
+    posptr->filename = mallocstrcpy(NULL, fullpath);
+    posptr->lineno = lineno;
+    posptr->xno = xpos;
+    posptr->next = NULL;
+
+    if (!poshistory)
+	poshistory = posptr;
+    else
+	posprev->next = posptr;
+
+    free(fullpath);
+}
+
+
+/* Check the POS history to see if file matches
+ * an existing entry.  If so return 1 and set line and column
+ * to the right values  Otherwise return 0
+ */
+int check_poshistory(const char *file, ssize_t *line, ssize_t *column)
+{
+    poshiststruct *posptr;
+    char *fullpath = get_full_path(file);
+
+    if (fullpath == NULL)
+    	return 0;
+
+    for (posptr = poshistory; posptr != NULL; posptr = posptr->next) {
+	if (!strcmp(posptr->filename, fullpath)) {
+	    *line = posptr->lineno;
+	    *column = posptr->xno;
+	    free(fullpath);
+	    return 1;
+	}
+    }
+    free(fullpath);
+    return 0;
+}
+
+
+/* Load histories from ~/.nano_history. */
+void load_poshistory(void)
+{
+    char *nanohist = poshistfilename();
+
+    /* Assume do_rcfile() has reported a missing home directory. */
+    if (nanohist != NULL) {
+	FILE *hist = fopen(nanohist, "rb");
+
+	if (hist == NULL) {
+	    if (errno != ENOENT) {
+		/* Don't save history when we quit. */
+		UNSET(HISTORYLOG);
+		history_error(N_("Error reading %s: %s"), nanohist,
+			strerror(errno));
+	    }
+	} else {
+	    char *line = NULL, *lineptr, *xptr;
+	    size_t buf_len = 0;
+	    ssize_t read, lineno, xno;
+	    poshiststruct *posptr;
+
+	    /* See if we can find the file we're currently editing */
+	    while ((read = getline(&line, &buf_len, hist)) >= 0) {
+		if (read > 0 && line[read - 1] == '\n') {
+		    read--;
+		    line[read] = '\0';
+		}
+		if (read > 0) {
+		    unsunder(line, read);
+		}
+		lineptr = parse_next_word(line);
+		xptr = parse_next_word(lineptr);
+		lineno = atoi(lineptr);
+		xno = atoi(xptr);
+		if (poshistory == NULL) {
+		    poshistory = (poshiststruct *) nmalloc(sizeof(poshiststruct));
+		    poshistory->filename = mallocstrcpy(NULL, line);
+		    poshistory->lineno = lineno;
+		    poshistory->xno = xno;
+		    poshistory->next = NULL;
+		} else {
+		    for (posptr = poshistory; posptr->next != NULL; posptr = posptr->next)
+			;
+		    posptr->next = (poshiststruct *) nmalloc(sizeof(poshiststruct));
+		    posptr->next->filename = mallocstrcpy(NULL, line);
+		    posptr->next->lineno = lineno;
+		    posptr->next->xno = xno;
+		    posptr->next->next = NULL;
+		}
+
+	    }
+
+	    fclose(hist);
+	    free(line);
+	}
+	free(nanohist);
+    }
+}
+
 #endif /* !NANO_TINY && ENABLE_NANORC */
