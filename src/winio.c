@@ -1,4 +1,4 @@
-/* $Id: winio.c 4527 2011-02-07 14:45:56Z astyanax $ */
+/* $Id: winio.c 4569 2013-03-17 22:09:38Z astyanax $ */
 /**************************************************************************
  *   winio.c                                                              *
  *                                                                        *
@@ -1800,7 +1800,7 @@ const sc *get_shortcut(int menu, int *kbinput, bool
 
 
 /* Try to get a function back from a window.  Just a wrapper so
-   functions to need to create function_key meta_key blah blah 
+   functions to need to create function_key meta_key blah blah
     mmenu - what menu name to look through for valid funcs */
 const subnfunc *getfuncfromkey(WINDOW *win)
 {
@@ -2258,6 +2258,17 @@ void set_modified(void)
     if (!openfile->modified) {
 	openfile->modified = TRUE;
 	titlebar(NULL);
+#ifndef NANO_TINY
+	if (ISSET(LOCKING)) {
+	    if (openfile->lock_filename == NULL) {
+                /* Translators: Try to keep this at most 80 characters. */
+                statusbar(_("Warning: Modifying a file which is not locked, check directory permission?"));
+	    } else {
+		write_lockfile(openfile->lock_filename,
+                               get_full_path(openfile->filename), TRUE);
+            }
+	}
+#endif
     }
 }
 
@@ -3124,7 +3135,6 @@ void edit_redraw(filestruct *old_current, size_t pww_save)
     fprintf(stderr, "edit_redraw(): line %lu was offscreen, oldcurrent = %lu edittop = %lu", openfile->current->lineno,
                     old_current->lineno, openfile->edittop->lineno);
 #endif
-	filestruct *old_edittop = openfile->edittop;
 
 #ifndef NANO_TINY
 	/* If the mark is on, update all the lines between old_current
@@ -3132,6 +3142,7 @@ void edit_redraw(filestruct *old_current, size_t pww_save)
 	 * whether we've scrolled up or down) of the edit window. */
 	if (openfile->mark_set) {
 	    ssize_t old_lineno;
+	    filestruct *old_edittop = openfile->edittop;
 
 	    if (old_edittop->lineno < openfile->edittop->lineno)
 		old_lineno = old_edittop->lineno;

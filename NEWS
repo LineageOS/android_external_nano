@@ -1,3 +1,13 @@
+2013.03.22 - GNU nano 2.3.2 "Annoy your coworkers for fun and profit" is
+                released.  This release introduces vim-style file locking
+		(though not backup/restore), useful when using nano
+		in a multi-editor environment.  Feedback is welcome if
+		you run into any issues with this new code.  Other new
+		features include additional support for word boundary 
+		checking when cross compiling, fixes for trying to go to
+		an invalid line number, and the usual documentation
+                tweaks.  
+
 2011.05.10 - GNU nano 2.3.1 "I'm in space" is released.  This 
 		release includes some fixes for the new libmagic code, as
 		well as a fix for improper character counts when using
@@ -745,10 +755,10 @@
 		new option to ignore rc files (-I,--ignorercfiles),
 		compatibility with -pedantic, handling null characters
 		before EOF, a slightly sportier nanorc.sample and more.
-			Fixes are included included for justification,
+		Fixes are included for justification,
 		the reading and writing file routines, resizing and fill
 		length, millions of memory leaks, the usage screen was
-		updated, and the the --quotestr and --regexp really work
+		updated, and the --quotestr and --regexp really work
 		now ;-)  Enjoy :)
 
 05/12/2002 - GNU nano 1.1.9 is released, happy Mother's Day!  This
@@ -1073,7 +1083,7 @@
 
 08/03/2000 - Nano 0.9.15 is the "I can't think of a release description"
 		release.  There are the usual gala of display bugfixes,
-		a fix for the the nasty bug in -k mode that could create
+		a fix for the nasty bug in -k mode that could create
 		a loop in the file being edited, and some other code
 		cleanup.  Also, the -T option should now work regardless
 		of the curses library used.  Yay.
@@ -1325,4 +1335,4 @@
 		update your bookmarks, tell your friends, and all that
 		jazz.
 
-$Id: NEWS 4536 2011-02-26 14:28:42Z astyanax $
+$Id: NEWS 4570 2013-03-22 14:06:58Z astyanax $

@@ -1,4 +1,4 @@
-/* $Id: proto.h 4530 2011-02-18 07:30:57Z astyanax $ */
+/* $Id: proto.h 4569 2013-03-17 22:09:38Z astyanax $ */
 /**************************************************************************
  *   proto.h                                                              *
  *                                                                        *
@@ -85,6 +85,8 @@ extern ssize_t tabsize;
 
 #ifndef NANO_TINY
 extern char *backup_dir;
+extern const char *locking_prefix;
+extern const char *locking_suffix;
 #endif
 #ifndef DISABLE_OPERATINGDIR
 extern char *operating_dir;
@@ -253,6 +255,7 @@ void do_cut_text_void(void);
 #ifndef NANO_TINY
 void do_copy_text(void);
 void do_cut_till_end(void);
+
 #endif
 void do_uncut_text(void);
 
@@ -293,6 +296,8 @@ bool check_operating_dir(const char *currpath, bool allow_tabcomp);
 #endif
 #ifndef NANO_TINY
 void init_backup_dir(void);
+int delete_lockfile(const char *lockfilename);
+int write_lockfile(const char *lockfilename, const char *origfilename, bool modified);
 #endif
 int copy_file(FILE *inn, FILE *out);
 bool write_file(const char *name, FILE *f_open, bool tmp, append_type

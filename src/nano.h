@@ -1,4 +1,4 @@
-/* $Id: nano.h 4535 2011-02-26 14:22:37Z astyanax $ */
+/* $Id: nano.h 4569 2013-03-17 22:09:38Z astyanax $ */
 /**************************************************************************
  *   nano.h                                                               *
  *                                                                        *
@@ -85,6 +85,8 @@
 #define KEY_DC SL_KEY_DELETE
 #define KEY_IC SL_KEY_IC
 /* Ncurses support. */
+#elif defined(HAVE_NCURSESW_NCURSES_H)
+#include <ncursesw/ncurses.h>
 #elif defined(HAVE_NCURSES_H)
 #include <ncurses.h>
 #else
@@ -373,6 +375,8 @@ typedef struct openfilestruct {
     undo *current_undo;
 	/* The current (i.e. n ext) level of undo */
     undo_type last_action;
+    const char *lock_filename;
+        /* The path of the lockfile, if we created one */
 #endif
 #ifdef ENABLE_COLOR
     syntaxtype *syntax;
@@ -431,7 +435,7 @@ typedef struct sc {
     function_type type;
         /* What kind of function key is it for convenience later */
     int seq;
-        /* The actual sequence to check on the the type is determined */
+        /* The actual sequence to check on the type is determined */
     int menu;
         /* What list does this apply to */
     void (*scfunc)(void);
@@ -468,7 +472,7 @@ typedef struct subnfunc {
 } subnfunc;
 
 
-/* Enumeration to be used in flags table. See FLAGBIT and FLAGOFF 
+/* Enumeration to be used in flags table. See FLAGBIT and FLAGOFF
  * definitions. */
 enum
 {
@@ -508,7 +512,8 @@ enum
     QUIET,
     UNDOABLE,
     SOFTWRAP,
-    POS_HISTORY
+    POS_HISTORY,
+    LOCKING
 };
 
 /* Flags for which menus in which a given function should be present */

@@ -1,4 +1,4 @@
-/* $Id: search.c 4527 2011-02-07 14:45:56Z astyanax $ */
+/* $Id: search.c 4559 2013-01-03 05:00:34Z astyanax $ */
 /**************************************************************************
  *   search.c                                                             *
  *                                                                        *
@@ -138,7 +138,6 @@ int search_init(bool replacing, bool use_answer)
     int i = 0;
     char *buf;
     sc *s;
-    void (*func)(void);
     bool meta_key = FALSE, func_key = FALSE;
     static char *backupstring = NULL;
 	/* The search string we'll be using. */
@@ -220,6 +219,8 @@ int search_init(bool replacing, bool use_answer)
 	statusbar(_("Cancelled"));
 	return -1;
     } else {
+	void (*func)(void);
+
 	for  (s = sclist; s != NULL; s = s->next)
 	    if ((s->menu & currmenu) && i == s->seq) {
 	        func = s->scfunc;

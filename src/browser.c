@@ -1,4 +1,4 @@
-/* $Id: browser.c 4527 2011-02-07 14:45:56Z astyanax $ */
+/* $Id: browser.c 4548 2012-12-30 19:20:10Z astyanax $ */
 /**************************************************************************
  *   browser.c                                                            *
  *                                                                        *
@@ -794,7 +794,7 @@ int filesearch_init(void)
 	TRUE,
 #endif
 	MWHEREISFILE, backupstring,
-	&meta_key, &func_key, 
+	&meta_key, &func_key,
 #ifndef NANO_TINY
 	&search_history,
 #endif

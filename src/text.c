@@ -1,4 +1,4 @@
-/* $Id: text.c 4544 2011-05-10 05:43:08Z astyanax $ */ 
+/* $Id: text.c 4565 2013-01-20 07:51:34Z astyanax $ */
 /**************************************************************************
  *   text.c                                                               *
  *                                                                        *
@@ -855,7 +855,7 @@ void add_undo(undo_type current_action)
     /* Ugh, if we were called while cutting not-to-end, non-marked and on the same lineno,
        we need to  abort here */
     u = fs->current_undo;
-    if (current_action == CUT && u && u->type == CUT 
+    if (current_action == CUT && u && u->type == CUT
 	&& !u->mark_set && u->lineno == fs->current->lineno)
 	return;
 
@@ -1981,6 +1981,8 @@ void do_justify(bool full_justify)
     if (full_justify)
 	openfile->current = openfile->fileage;
 
+    allow_pending_sigwinch(FALSE);
+
     while (TRUE) {
 	size_t i;
 	    /* Generic loop variable. */
@@ -2351,6 +2353,9 @@ void do_justify(bool full_justify)
     /* Display the shortcut list with UnCut. */
     shortcut_init(FALSE);
     display_main_list();
+
+    allow_pending_sigwinch(TRUE);
+
 }
 
 /* Justify the current paragraph. */
