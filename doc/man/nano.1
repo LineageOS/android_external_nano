@@ -1,5 +1,5 @@
 .\" Hey, EMACS: -*- nroff -*-
-.\" $Id: nano.1 5135 2015-03-08 15:59:15Z bens $
+.\" $Id: nano.1 5244 2015-06-07 20:14:41Z bens $
 .\"
 .\" Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,
 .\" 2009, 2010, 2013, 2014 Free Software Foundation, Inc.
@@ -20,7 +20,7 @@
 .\"   Documentation License along with this program.  If not, see
 .\"   <http://www.gnu.org/licenses/>.
 .\"
-.TH NANO 1 "version 2.4.0" "March 2015"
+.TH NANO 1 "version 2.4.2" "June 2015"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 
@@ -38,6 +38,27 @@ top of copying Pico's look and feel, \fBnano\fP also implements some
 missing (or disabled by default) features in Pico, such as "search and
 replace" and "go to line and column number".
 
+.SH EDITING
+Entering text and moving around in a file is straightforward: typing the
+letters and using the normal cursor movement keys.  Commands are entered
+by using the Control (^) and the Alt or Meta (M-) keys.
+Typing \fB^K\fR deletes the current line and puts it in the cutbuffer.
+Consecutive \fB^K\fRs will put all deleted lines together in the cutbuffer.
+Any cursor movement or executing any other command will cause the next
+\fB^K\fR to overwrite the cutbuffer.  A \fB^U\fR will paste the current
+contents of the cutbuffer at the current cursor position.
+.PP
+When a more precise piece of text needs to be cut or copied, one can mark
+its start with \fB^6\fR, move the cursor to its end (the marked text will be
+highlighted), and then use \fB^K\fR to cut it, or \fBM-6\fR to copy it to the
+cutbuffer. One can also save the marked text to a file with \fB^O\fR, or
+spell check it with \fB^T\fR.
+.PP
+The two lines at the bottom of the screen show the most important commands;
+the built-in help (\fB^G\fR) lists all the available ones.
+The default key bindings can be changed via the .nanorc file -- see
+.BR nanorc (5).
+
 .SH OPTIONS
 .TP
 .B +\fIline\fP,\fIcolumn\fP
@@ -53,12 +74,13 @@ already at that position, it will jump to the true beginning of the
 line.
 .TP
 .BR \-B ", " \-\-backup
-When saving a file, back up the previous version of it to the current
+When saving a file, back up the previous version of it, using the current
 filename suffixed with a tilde (\fB~\fP).
 .TP
 .BR \-C\ \fIdirectory\fR ", " \-\-backupdir= \fIdirectory
-Set the directory where \fBnano\fP puts unique backup files, if file
-backups are enabled.
+Make and keep not just one backup file, but make and keep a uniquely
+numbered one every time a file is saved -- when backups are enabled.
+The uniquely numbered files are stored in the specified \fIdirectory\fR.
 .TP
 .BR \-D ", " \-\-boldtext
 Use bold text instead of reverse video text.

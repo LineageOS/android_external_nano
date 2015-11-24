@@ -1,4 +1,4 @@
-/* $Id: browser.c 5192 2015-04-12 09:04:30Z bens $ */
+/* $Id: browser.c 5273 2015-06-28 06:32:56Z bens $ */
 /**************************************************************************
  *   browser.c                                                            *
  *                                                                        *
@@ -41,6 +41,8 @@ static int longest = 0;
 	/* The number of columns in the longest filename in the list. */
 static size_t selected = 0;
 	/* The currently selected filename in the list; zero-based. */
+static char *path_save = NULL;
+	/* A copy of the current path. */
 
 /* Our main file browser function.  path is the tilde-expanded path we
  * start browsing from. */
@@ -74,6 +76,9 @@ char *do_browser(char *path, DIR *dir)
     kbinput = ERR;
 
     path = mallocstrassn(path, get_full_path(path));
+
+    /* Save the current path in order to be used later. */
+    path_save = path;
 
     assert(path != NULL && path[strlen(path) - 1] == '/');
 
@@ -118,6 +123,14 @@ char *do_browser(char *path, DIR *dir)
 
 	kbinput = get_kbinput(edit);
 
+#ifndef NANO_TINY
+	if (kbinput == KEY_WINCH) {
+	    kbinput = ERR;
+	    curs_set(0);
+	    continue;
+	}
+#endif
+
 #ifndef DISABLE_MOUSE
 	if (kbinput == KEY_MOUSE) {
 	    int mouse_x, mouse_y;
@@ -156,6 +169,8 @@ char *do_browser(char *path, DIR *dir)
 	} else if (func == do_help_void) {
 #ifndef DISABLE_HELP
 	    do_help_void();
+	    /* Perhaps the window dimensions have changed. */
+	    browser_refresh();
 	    curs_set(0);
 #else
 	    nano_disabled_msg();
@@ -390,8 +405,7 @@ char *do_browse_from(const char *inpath)
 
     /* If we can't open the path, get out. */
     if (dir == NULL) {
-	if (path != NULL)
-	    free(path);
+	free(path);
 	beep();
 	return NULL;
     }
@@ -541,20 +555,21 @@ functionptrtype parse_browser_input(int *kbinput)
  * necessary, and display the list of files. */
 void browser_refresh(void)
 {
-    static int uimax_digits = -1;
     size_t i;
-    int col = 0;
-	/* The maximum number of columns that the filenames will take
-	 * up. */
-    int line = 0;
-	/* The maximum number of lines that the filenames will take
-	 * up. */
+    int line = 0, col = 0;
+	/* The current line and column while the list is getting displayed. */
     char *foo;
-	/* The file information that we'll display. */
+	/* The additional information that we'll display about a file. */
 
-    if (uimax_digits == -1)
-	uimax_digits = digits(UINT_MAX);
+    /* Perhaps window dimensions have changed; reinitialize the browser. */
+    browser_init(path_save, opendir(path_save));
+    qsort(filelist, filelist_len, sizeof(char *), diralphasort);
 
+    /* Make sure the selected file is within range. */
+    if (selected >= filelist_len)
+	selected = filelist_len - 1;
+
+    titlebar(path_save);
     blank_edit();
 
     wmove(edit, 0, 0);
@@ -573,7 +588,7 @@ void browser_refresh(void)
 		/* The maximum length of the file information in
 		 * columns: seven for "--", "(dir)", or the file size,
 		 * and 12 for "(parent dir)". */
-	bool dots = (COLS >= 15 && filetaillen >= longest - foomaxlen - 1);
+	bool dots = (COLS >= 15 && filetaillen >= longest - foomaxlen);
 		/* Do we put an ellipsis before the filename?  Don't set
 		 * this to TRUE if we have fewer than 15 columns (i.e.
 		 * one column for padding, plus seven columns for a
@@ -585,15 +600,13 @@ void browser_refresh(void)
 		 * "(dir)", or the file size, plus three columns for the
 		 * ellipsis. */
 
-	/* Start highlighting the currently selected file or
-	 * directory. */
+	/* Start highlighting the currently selected file or directory. */
 	if (i == selected)
 	    wattron(edit, hilite_attribute);
 
 	blank_line(edit, line, col, longest);
 
-	/* If dots is TRUE, we will display something like
-	 * "...ename". */
+	/* If dots is TRUE, we will display something like "...ename". */
 	if (dots)
 	    mvwaddstr(edit, line, col, "...");
 	mvwaddstr(edit, line, dots ? col + 3 : col, disp);
@@ -613,14 +626,12 @@ void browser_refresh(void)
 	    /* If the file is a symlink that points to a directory,
 	     * display it as a directory. */
 	    else
-		/* TRANSLATORS: Try to keep this at most 7
-		 * characters. */
+		/* TRANSLATORS: Try to keep this at most 7 characters. */
 		foo = mallocstrcpy(NULL, _("(dir)"));
 	} else if (S_ISDIR(st.st_mode)) {
 	    /* If the file is a directory, display it as such. */
 	    if (strcmp(filetail, "..") == 0) {
-		/* TRANSLATORS: Try to keep this at most 12
-		 * characters. */
+		/* TRANSLATORS: Try to keep this at most 12 characters. */
 		foo = mallocstrcpy(NULL, _("(parent dir)"));
 		foomaxlen = 12;
 	    } else
@@ -629,26 +640,29 @@ void browser_refresh(void)
 	    unsigned long result = st.st_size;
 	    char modifier;
 
-	    foo = charalloc(uimax_digits + 4);
+	    foo = charalloc(foomaxlen + 1);
 
-	    /* Bytes. */
 	    if (st.st_size < (1 << 10))
-		modifier = ' ';
-	    /* Kilobytes. */
+		modifier = ' ';  /* bytes */
 	    else if (st.st_size < (1 << 20)) {
 		result >>= 10;
-		modifier = 'K';
-	    /* Megabytes. */
+		modifier = 'K';  /* kilobytes */
 	    } else if (st.st_size < (1 << 30)) {
 		result >>= 20;
-		modifier = 'M';
-	    /* Gigabytes. */
+		modifier = 'M';  /* megabytes */
 	    } else {
 		result >>= 30;
-		modifier = 'G';
+		modifier = 'G';  /* gigabytes */
 	    }
 
-	    sprintf(foo, "%4lu %cB", result, modifier);
+	    /* If less than a terabyte, or if numbers can't even go
+	     * that high, show the size, otherwise show "(huge)". */
+	    if (st.st_size < (1 << 40) || (1 << 40) == 0)
+		sprintf(foo, "%4lu %cB", result, modifier);
+	    else
+		/* TRANSLATORS: Try to keep this at most 7 characters.
+		 * If necessary, you can leave out the parentheses. */
+		foo = mallocstrcpy(foo, _("(huge)"));
 	}
 
 	/* Make sure foo takes up no more than foomaxlen columns. */
@@ -660,8 +674,7 @@ void browser_refresh(void)
 
 	mvwaddstr(edit, line, col - foolen, foo);
 
-	/* Finish highlighting the currently selected file or
-	 * directory. */
+	/* Finish highlighting the currently selected file or directory. */
 	if (i == selected)
 	    wattroff(edit, hilite_attribute);
 
@@ -705,9 +718,6 @@ int filesearch_init(void)
 {
     int input;
     char *buf;
-
-    if (last_search == NULL)
-	last_search = mallocstrcpy(NULL, "");
 
     if (last_search[0] != '\0') {
 	char *disp = display_string(last_search, 0, COLS / 3, FALSE);
@@ -755,6 +765,16 @@ void findnextfile(const char *needle)
     const char *filetail = tail(filelist[looking_at]);
 	/* The filename we display, minus the path. */
     const char *rev_start = filetail, *found = NULL;
+    unsigned stash[sizeof(flags) / sizeof(flags[0])];
+	/* A storage place for the current flag settings. */
+
+    /* Save the settings of all flags. */
+    memcpy(stash, flags, sizeof(flags));
+
+    /* Search forward, case insensitive and without regexes. */
+    UNSET(BACKWARDS_SEARCH);
+    UNSET(CASE_SENSITIVE);
+    UNSET(USE_REGEXP);
 
     /* Step through each filename in the list until a match is found or
      * we've come back to the point where we started. */
@@ -797,6 +817,9 @@ void findnextfile(const char *needle)
 	rev_start = filetail;
     }
 
+    /* Restore the settings of all flags. */
+    memcpy(flags, stash, sizeof(flags));
+
     /* Select the one we've found. */
     selected = looking_at;
 }
@@ -804,10 +827,6 @@ void findnextfile(const char *needle)
 /* Search for a filename. */
 void do_filesearch(void)
 {
-    UNSET(CASE_SENSITIVE);
-    UNSET(USE_REGEXP);
-    UNSET(BACKWARDS_SEARCH);
-
     if (filesearch_init() != 0) {
 	/* Cancelled, or a blank search string, or done something. */
 	bottombars(MBROWSER);
@@ -835,9 +854,6 @@ void do_filesearch(void)
 /* Search for the last given filename again without prompting. */
 void do_fileresearch(void)
 {
-    if (last_search == NULL)
-	last_search = mallocstrcpy(NULL, "");
-
     if (last_search[0] == '\0')
 	statusbar(_("No current search pattern"));
     else

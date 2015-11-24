@@ -1,4 +1,4 @@
-/* $Id: global.c 5191 2015-04-12 08:44:37Z bens $ */
+/* $Id: global.c 5272 2015-06-27 15:58:20Z bens $ */
 /**************************************************************************
  *   global.c                                                             *
  *                                                                        *
@@ -30,12 +30,8 @@
 
 /* Global variables. */
 #ifndef NANO_TINY
-sigjmp_buf jump_buf;
-	/* Used to return to either main() or the unjustify routine in
-	 * do_justify() after a SIGWINCH. */
-bool jump_buf_main = FALSE;
-	/* Have we set jump_buf so that we return to main() after a
-	 * SIGWINCH? */
+volatile sig_atomic_t sigwinch_counter = 0;
+	/* Is incremented by the handler whenever a SIGWINCH occurs. */
 #endif
 
 bool meta_key;
@@ -490,12 +486,14 @@ const char *whereis_next_tag = N_("WhereIs Next");
 /* Initialize the list of functions and the list of shortcuts. */
 void shortcut_init(void)
 {
-    /* TRANSLATORS: Try to keep the next eight strings at most 10 characters. */
+    /* TRANSLATORS: Try to keep the next ten strings at most 10 characters. */
     const char *whereis_tag = N_("Where Is");
     const char *replace_tag = N_("Replace");
     const char *gotoline_tag = N_("Go To Line");
     const char *prev_line_tag = N_("Prev Line");
     const char *next_line_tag = N_("Next Line");
+    const char *prev_page_tag = N_("Prev Page");
+    const char *next_page_tag = N_("Next Page");
     const char *read_file_tag = N_("Read File");
 #ifndef DISABLE_JUSTIFY
     const char *fulljustify_tag = N_("FullJstify");
@@ -782,10 +780,10 @@ void shortcut_init(void)
 	gotoline_tag, IFSCHELP(nano_gotoline_msg), BLANKAFTER, VIEW);
 #endif
 
-    add_to_funcs(do_page_up, MMAIN|MHELP|MBROWSER,
-	N_("Prev Page"), IFSCHELP(nano_prevpage_msg), TOGETHER, VIEW);
-    add_to_funcs(do_page_down, MMAIN|MHELP|MBROWSER,
-	N_("Next Page"), IFSCHELP(nano_nextpage_msg), TOGETHER, VIEW);
+    add_to_funcs(do_page_up, MMAIN|MHELP,
+	prev_page_tag, IFSCHELP(nano_prevpage_msg), TOGETHER, VIEW);
+    add_to_funcs(do_page_down, MMAIN|MHELP,
+	next_page_tag, IFSCHELP(nano_nextpage_msg), TOGETHER, VIEW);
 
     add_to_funcs(do_first_line, MMAIN|MHELP|MWHEREIS|MREPLACE|MREPLACEWITH|MGOTOLINE,
 	N_("First Line"), IFSCHELP(nano_firstline_msg), TOGETHER, VIEW);
@@ -966,10 +964,15 @@ void shortcut_init(void)
 	add_to_funcs(to_files_void, MWRITEFILE|MINSERTFILE,
 	    N_("To Files"), IFSCHELP(nano_tofiles_msg), TOGETHER, VIEW);
 
+    add_to_funcs(do_page_up, MBROWSER,
+	prev_page_tag, IFSCHELP(nano_prevpage_msg), TOGETHER, VIEW);
+    add_to_funcs(do_page_down, MBROWSER,
+	next_page_tag, IFSCHELP(nano_nextpage_msg), TOGETHER, VIEW);
+
     add_to_funcs(do_first_file, (MBROWSER|MWHEREISFILE),
 	N_("First File"), IFSCHELP(nano_firstfile_msg), TOGETHER, VIEW);
     add_to_funcs(do_last_file, (MBROWSER|MWHEREISFILE),
-	N_("Last File"), IFSCHELP(nano_lastfile_msg), TOGETHER, VIEW);
+	N_("Last File"), IFSCHELP(nano_lastfile_msg), BLANKAFTER, VIEW);
 #endif
 
 #if !defined(NANO_TINY) && !defined(DISABLE_BROWSER)
@@ -1012,10 +1015,6 @@ void shortcut_init(void)
 #ifndef DISABLE_SPELLER
     add_to_sclist(MMAIN, "^T", do_spell, 0);
     add_to_sclist(MMAIN, "F12", do_spell, 0);
-#ifndef DISABLE_COLOR
-    add_to_sclist(MMAIN, "^T", do_formatter, 0);
-    add_to_sclist(MMAIN, "F12", do_formatter, 0);
-#endif
 #else
 #ifndef DISABLE_COLOR
     add_to_sclist(MMAIN, "^T", do_linter, 0);
@@ -1059,10 +1058,10 @@ void shortcut_init(void)
     add_to_sclist(MMOST, "M-Space", do_prev_word_void, 0);
     add_to_sclist(MMOST, "^Space", do_next_word_void, 0);
 #endif
-    add_to_sclist(MMOST, "^A", do_home, 0);
-    add_to_sclist(MMOST, "Home", do_home, 0);
-    add_to_sclist(MMOST, "^E", do_end, 0);
-    add_to_sclist(MMOST, "End", do_end, 0);
+    add_to_sclist((MMOST & ~MBROWSER), "^A", do_home, 0);
+    add_to_sclist((MMOST & ~MBROWSER), "Home", do_home, 0);
+    add_to_sclist((MMOST & ~MBROWSER), "^E", do_end, 0);
+    add_to_sclist((MMOST & ~MBROWSER), "End", do_end, 0);
     add_to_sclist(MMAIN|MHELP|MBROWSER, "^P", do_up_void, 0);
     add_to_sclist(MMAIN|MHELP|MBROWSER, "Up", do_up_void, 0);
     add_to_sclist(MMAIN|MHELP|MBROWSER, "^N", do_down_void, 0);
@@ -1155,12 +1154,14 @@ void shortcut_init(void)
     add_to_sclist(MWHEREIS|MREPLACE|MREPLACEWITH|MWHEREISFILE, "Down", get_history_newer_void, 0);
 #endif
 #ifndef DISABLE_BROWSER
+    add_to_sclist(MWHEREISFILE, "^Y", do_first_file, 0);
+    add_to_sclist(MWHEREISFILE, "^V", do_last_file, 0);
     add_to_sclist(MBROWSER|MWHEREISFILE, "M-\\", do_first_file, 0);
     add_to_sclist(MBROWSER|MWHEREISFILE, "M-|", do_first_file, 0);
-    add_to_sclist(MWHEREISFILE, "^Y", do_first_file, 0);
     add_to_sclist(MBROWSER|MWHEREISFILE, "M-/", do_last_file, 0);
     add_to_sclist(MBROWSER|MWHEREISFILE, "M-?", do_last_file, 0);
-    add_to_sclist(MWHEREISFILE, "^V", do_last_file, 0);
+    add_to_sclist(MBROWSER, "Home", do_first_file, 0);
+    add_to_sclist(MBROWSER, "End", do_last_file, 0);
     add_to_sclist(MBROWSER, "^_", goto_dir_void, 0);
     add_to_sclist(MBROWSER, "M-G", goto_dir_void, 0);
     add_to_sclist(MBROWSER, "F13", goto_dir_void, 0);
@@ -1178,6 +1179,8 @@ void shortcut_init(void)
     add_to_sclist(MHELP|MBROWSER, "^C", do_exit, 0);
 #ifndef DISABLE_HELP
     add_to_sclist(MHELP, "^G", do_exit, 0);
+    add_to_sclist(MHELP, "Home", do_first_line, 0);
+    add_to_sclist(MHELP, "End", do_last_line, 0);
 #endif
     add_to_sclist(MMOST, "^I", do_tab, 0);
     add_to_sclist(MMOST, "^M", do_enter_void, 0);
@@ -1260,7 +1263,7 @@ const char *flagtostr(int flag)
 	case BACKUP_FILE:
 	    return N_("Backup files");
 	case MULTIBUFFER:
-	    return N_("Multiple file buffers");
+	    return N_("Reading file into separate buffer");
 	case USE_MOUSE:
 	    return N_("Mouse support");
 	case NO_CONVERT:
@@ -1573,34 +1576,25 @@ void thanks_for_all_the_fish(void)
     delwin(bottomwin);
 
 #ifndef DISABLE_JUSTIFY
-    if (quotestr != NULL)
-	free(quotestr);
+    free(quotestr);
 #ifdef HAVE_REGEX_H
     regfree(&quotereg);
-    if (quoteerr != NULL)
-	free(quoteerr);
+    free(quoteerr);
 #endif
 #endif
 #ifndef NANO_TINY
-    if (backup_dir != NULL)
-	free(backup_dir);
+    free(backup_dir);
 #endif
 #ifndef DISABLE_OPERATINGDIR
-    if (operating_dir != NULL)
-	free(operating_dir);
-    if (full_operating_dir != NULL)
-	free(full_operating_dir);
+    free(operating_dir);
+    free(full_operating_dir);
 #endif
-    if (last_search != NULL)
-	free(last_search);
-    if (last_replace != NULL)
-	free(last_replace);
+    free(answer);
+    free(last_search);
+    free(last_replace);
 #ifndef DISABLE_SPELLER
-    if (alt_speller != NULL)
-	free(alt_speller);
+    free(alt_speller);
 #endif
-    if (answer != NULL)
-	free(answer);
     if (cutbuffer != NULL)
 	free_filestruct(cutbuffer);
 #ifndef DISABLE_JUSTIFY
@@ -1611,8 +1605,7 @@ void thanks_for_all_the_fish(void)
     if (openfile != NULL)
 	free_openfilestruct(openfile);
 #ifndef DISABLE_COLOR
-    if (syntaxstr != NULL)
-	free(syntaxstr);
+    free(syntaxstr);
     while (syntaxes != NULL) {
 	syntaxtype *bill = syntaxes;
 
@@ -1687,8 +1680,7 @@ void thanks_for_all_the_fish(void)
 	free(s);
     }
 #ifndef DISABLE_NANORC
-    if (homedir != NULL)
-	free(homedir);
+    free(homedir);
 #endif
 }
 

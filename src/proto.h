@@ -1,4 +1,4 @@
-/* $Id: proto.h 5187 2015-04-08 18:40:40Z bens $ */
+/* $Id: proto.h 5254 2015-06-17 11:18:20Z bens $ */
 /**************************************************************************
  *   proto.h                                                              *
  *                                                                        *
@@ -28,8 +28,7 @@
 
 /* All external variables.  See global.c for their descriptions. */
 #ifndef NANO_TINY
-extern sigjmp_buf jump_buf;
-extern bool jump_buf_main;
+extern volatile sig_atomic_t sigwinch_counter;
 #endif
 
 extern bool meta_key;
@@ -478,6 +477,7 @@ RETSIGTYPE do_suspend(int signal);
 RETSIGTYPE do_continue(int signal);
 #ifndef NANO_TINY
 RETSIGTYPE handle_sigwinch(int signal);
+void regenerate_screen(void);
 void allow_pending_sigwinch(bool allow);
 void do_toggle(int flag);
 #endif
@@ -522,7 +522,7 @@ size_t statusbar_xplustabs(void);
 size_t get_statusbar_page_start(size_t start_col, size_t column);
 void reset_statusbar_cursor(void);
 void update_statusbar_line(const char *curranswer, size_t index);
-bool need_statusbar_horizontal_update(size_t pww_save);
+bool need_statusbar_update(size_t pww_save);
 void total_statusbar_refresh(void (*refresh_func)(void));
 functionptrtype get_prompt_string(int *value, bool allow_tabs,
 #ifndef DISABLE_TABCOMP
@@ -579,14 +579,13 @@ void regexp_cleanup(void);
 #endif
 void not_found_msg(const char *str);
 void search_replace_abort(void);
-void search_init_globals(void);
 int search_init(bool replacing, bool use_answer);
 bool findnextstr(
 #ifndef DISABLE_SPELLER
-	bool whole_word,
+	bool whole_word_only,
 #endif
-	bool no_sameline, const filestruct *begin, size_t begin_x, const
-	char *needle, size_t *needle_len);
+	const filestruct *begin, size_t begin_x,
+	const char *needle, size_t *needle_len);
 void findnextstr_wrap_reset(void);
 void do_search(void);
 #if !defined(NANO_TINY) || !defined(DISABLE_BROWSER)
@@ -598,7 +597,7 @@ int replace_regexp(char *string, bool create);
 char *replace_line(const char *needle);
 ssize_t do_replace_loop(
 #ifndef DISABLE_SPELLER
-	bool whole_word,
+	bool whole_word_only,
 #endif
 	bool *canceled, const filestruct *real_current, size_t
 	*real_current_x, const char *needle);
@@ -696,7 +695,6 @@ void do_wordlinechar_count(void);
 void do_verbatim_input(void);
 
 /* All functions in utils.c. */
-int digits(size_t n);
 void get_homedir(void);
 bool parse_num(const char *str, ssize_t *val);
 bool parse_line_column(const char *str, ssize_t *line, ssize_t *column);
@@ -713,7 +711,6 @@ ssize_t ngetdelim(char **lineptr, size_t *n, int delim, FILE *stream);
 #endif
 #endif
 #ifdef HAVE_REGEX_H
-bool regexp_bol_or_eol(const regex_t *preg, const char *string);
 const char *fixbounds(const char *r);
 #endif
 #ifndef DISABLE_SPELLER
@@ -737,7 +734,7 @@ void new_magicline(void);
 void remove_magicline(void);
 void mark_order(const filestruct **top, size_t *top_x, const filestruct
 	**bot, size_t *bot_x, bool *right_side_up);
-void add_undo(undo_type current_action);
+void add_undo(undo_type action);
 void update_undo(undo_type action);
 #endif
 size_t get_totsize(const filestruct *begin, const filestruct *end);
@@ -789,8 +786,7 @@ void reset_cursor(void);
 void edit_draw(filestruct *fileptr, const char *converted, int
 	line, size_t start);
 int update_line(filestruct *fileptr, size_t index);
-bool need_horizontal_update(size_t pww_save);
-bool need_vertical_update(size_t pww_save);
+bool need_screen_update(size_t pww_save);
 void edit_scroll(scroll_dir direction, ssize_t nlines);
 void edit_redraw(filestruct *old_current, size_t pww_save);
 void edit_refresh(void);

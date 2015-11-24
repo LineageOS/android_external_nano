@@ -1,4 +1,4 @@
-/* $Id: nano.c 5166 2015-03-27 13:46:50Z bens $ */
+/* $Id: nano.c 5265 2015-06-20 18:48:43Z bens $ */
 /**************************************************************************
  *   nano.c                                                               *
  *                                                                        *
@@ -25,7 +25,6 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <signal.h>
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
@@ -124,14 +123,10 @@ void delete_node(filestruct *fileptr)
 {
     assert(fileptr != NULL && fileptr->data != NULL);
 
-    if (fileptr->data != NULL)
-	free(fileptr->data);
-
+    free(fileptr->data);
 #ifndef DISABLE_COLOR
-    if (fileptr->multidata)
-	free(fileptr->multidata);
+    free(fileptr->multidata);
 #endif
-
     free(fileptr);
 }
 
@@ -556,7 +551,8 @@ void splice_opennode(openfilestruct *begin, openfilestruct *newnode,
 /* Unlink a node from the rest of the openfilestruct, and delete it. */
 void unlink_opennode(openfilestruct *fileptr)
 {
-    assert(fileptr != NULL && fileptr->prev != NULL && fileptr->next != NULL && fileptr != fileptr->prev && fileptr != fileptr->next);
+    assert(fileptr != NULL && fileptr->prev != NULL && fileptr->next != NULL &&
+		 fileptr != fileptr->prev && fileptr != fileptr->next);
 
     fileptr->prev->next = fileptr->next;
     fileptr->next->prev = fileptr->prev;
@@ -572,10 +568,8 @@ void delete_opennode(openfilestruct *fileptr)
     free(fileptr->filename);
     free_filestruct(fileptr->fileage);
 #ifndef NANO_TINY
-    if (fileptr->current_stat != NULL)
-	free(fileptr->current_stat);
+    free(fileptr->current_stat);
 #endif
-
     free(fileptr);
 }
 
@@ -851,26 +845,23 @@ void usage(void)
     print_opt(_("-C <dir>"), _("--backupdir=<dir>"),
 	N_("Directory for saving unique backup files"));
 #endif
-    print_opt("-D", "--boldtext",
-	N_("Use bold instead of reverse video text"));
+    print_opt("-D", "--boldtext", N_("Use bold instead of reverse video text"));
 #ifndef NANO_TINY
-    print_opt("-E", "--tabstospaces",
-	N_("Convert typed tabs to spaces"));
+    print_opt("-E", "--tabstospaces", N_("Convert typed tabs to spaces"));
 #endif
 #ifndef DISABLE_MULTIBUFFER
-    print_opt("-F", "--multibuffer", N_("Enable multiple file buffers"));
+    print_opt("-F", "--multibuffer",
+	N_("Read a file into a new buffer by default"));
 #endif
 #ifndef NANO_TINY
-    print_opt("-G", "--locking",
-	N_("Use (vim-style) lock files"));
+    print_opt("-G", "--locking", N_("Use (vim-style) lock files"));
 #endif
 #ifndef DISABLE_HISTORIES
     print_opt("-H", "--historylog",
 	N_("Log & read search/replace string history"));
 #endif
 #ifndef DISABLE_NANORC
-    print_opt("-I", "--ignorercfiles",
-	N_("Don't look at nanorc files"));
+    print_opt("-I", "--ignorercfiles", N_("Don't look at nanorc files"));
 #endif
     print_opt("-K", "--rebindkeypad",
 	N_("Fix numeric keypad key confusion problem"));
@@ -882,25 +873,21 @@ void usage(void)
 #endif
     print_opt("-O", "--morespace", N_("Use one more line for editing"));
 #ifndef DISABLE_HISTORIES
-    print_opt("-P", "--poslog",
-	N_("Log & read location of cursor position"));
+    print_opt("-P", "--poslog", N_("Log & read location of cursor position"));
 #endif
 #ifndef DISABLE_JUSTIFY
-    print_opt(_("-Q <str>"), _("--quotestr=<str>"),
-	N_("Quoting string"));
+    print_opt(_("-Q <str>"), _("--quotestr=<str>"), N_("Quoting string"));
 #endif
     print_opt("-R", "--restricted", N_("Restricted mode"));
 #ifndef NANO_TINY
-    print_opt("-S", "--smooth",
-	N_("Scroll by line instead of half-screen"));
+    print_opt("-S", "--smooth", N_("Scroll by line instead of half-screen"));
 #endif
     print_opt(_("-T <#cols>"), _("--tabsize=<#cols>"),
 	N_("Set width of a tab to #cols columns"));
 #ifndef NANO_TINY
     print_opt("-U", "--quickblank", N_("Do quick statusbar blanking"));
 #endif
-    print_opt("-V", "--version",
-	N_("Print version information and exit"));
+    print_opt("-V", "--version", N_("Print version information and exit"));
 #ifndef NANO_TINY
     print_opt("-W", "--wordbounds",
 	N_("Detect word boundaries more accurately"));
@@ -914,12 +901,10 @@ void usage(void)
 	N_("Fix Backspace/Delete confusion problem"));
     print_opt("-h", "--help", N_("Show this help text"));
 #ifndef NANO_TINY
-    print_opt("-i", "--autoindent",
-	N_("Automatically indent new lines"));
+    print_opt("-i", "--autoindent", N_("Automatically indent new lines"));
     print_opt("-k", "--cut", N_("Cut from cursor to end of line"));
 #endif
-    print_opt("-l", "--nofollow",
-	N_("Don't follow symbolic links, overwrite"));
+    print_opt("-l", "--nofollow", N_("Don't follow symbolic links, overwrite"));
 #ifndef DISABLE_MOUSE
     print_opt("-m", "--mouse", N_("Enable the use of the mouse"));
 #endif
@@ -928,8 +913,7 @@ void usage(void)
     print_opt(_("-o <dir>"), _("--operatingdir=<dir>"),
 	N_("Set operating directory"));
 #endif
-    print_opt("-p", "--preserve",
-	N_("Preserve XON (^Q) and XOFF (^S) keys"));
+    print_opt("-p", "--preserve", N_("Preserve XON (^Q) and XOFF (^S) keys"));
 #ifndef DISABLE_NANORC
     print_opt("-q", "--quiet",
 	N_("Silently ignore startup issues like rc file errors"));
@@ -942,8 +926,7 @@ void usage(void)
     print_opt(_("-s <prog>"), _("--speller=<prog>"),
 	N_("Enable alternate speller"));
 #endif
-    print_opt("-t", "--tempfile",
-	N_("Auto save on exit, don't prompt"));
+    print_opt("-t", "--tempfile", N_("Auto save on exit, don't prompt"));
     print_opt("-v", "--view", N_("View mode (read-only)"));
 #ifndef DISABLE_WRAPPING
     print_opt("-w", "--nowrap", N_("Don't hard-wrap long lines"));
@@ -1167,9 +1150,12 @@ void do_cancel(void)
     ;
 }
 
-static struct sigaction pager_oldaction, pager_newaction;  /* Original and temporary handlers for SIGINT. */
-static bool pager_sig_failed = FALSE; /* Did sigaction() fail without changing the signal handlers? */
-static bool pager_input_aborted = FALSE; /* Did someone invoke the pager and abort it via ^C? */
+static struct sigaction pager_oldaction, pager_newaction;
+	/* Original and temporary handlers for SIGINT. */
+static bool pager_sig_failed = FALSE;
+	/* Did sigaction() fail without changing the signal handlers? */
+static bool pager_input_aborted = FALSE;
+	/* Did someone invoke the pager and abort it via ^C? */
 
 /* Things which need to be run regardless of whether
  * we finished the stdin pipe correctly or not. */
@@ -1237,8 +1223,7 @@ void stdin_pager(void)
 /* Initialize the signal handlers. */
 void signal_init(void)
 {
-    /* Trap SIGINT and SIGQUIT because we want them to do useful
-     * things. */
+    /* Trap SIGINT and SIGQUIT because we want them to do useful things. */
     memset(&act, 0, sizeof(struct sigaction));
     act.sa_handler = SIG_IGN;
     sigaction(SIGINT, &act, NULL);
@@ -1253,7 +1238,6 @@ void signal_init(void)
     /* Trap SIGWINCH because we want to handle window resizes. */
     act.sa_handler = handle_sigwinch;
     sigaction(SIGWINCH, &act, NULL);
-    allow_pending_sigwinch(FALSE);
 #endif
 
     /* Trap normal suspend (^Z) so we can handle it ourselves. */
@@ -1313,7 +1297,7 @@ RETSIGTYPE do_suspend(int signal)
     kill(0, SIGSTOP);
 }
 
-/* the subnfunc version */
+/* The version of above function that is bound to a key. */
 void do_suspend_void(void)
 {
     if (ISSET(SUSPEND))
@@ -1352,6 +1336,13 @@ RETSIGTYPE do_continue(int signal)
 /* Handler for SIGWINCH (window size change). */
 RETSIGTYPE handle_sigwinch(int signal)
 {
+    /* Let the input routine know that a SIGWINCH has occurred. */
+    sigwinch_counter++;
+}
+
+/* Reinitialize and redraw the screen completely. */
+void regenerate_screen(void)
+{
     const char *tty = ttyname(0);
     int fd, result = 0;
     struct winsize win;
@@ -1374,10 +1365,6 @@ RETSIGTYPE handle_sigwinch(int signal)
     COLS = win.ws_col;
     LINES = win.ws_row;
 #endif
-
-    /* If we've partitioned the filestruct, unpartition it now. */
-    if (filepart != NULL)
-	unpartition_filestruct(&filepart);
 
 #ifdef USE_SLANG
     /* Slang curses emulation brain damage, part 1: If we just do what
@@ -1405,14 +1392,7 @@ RETSIGTYPE handle_sigwinch(int signal)
     window_init();
 
     /* Redraw the contents of the windows that need it. */
-    blank_statusbar();
-    wnoutrefresh(bottomwin);
-    currmenu = MMAIN;
     total_refresh();
-
-    /* Jump back to either main() or the unjustify routine in
-     * do_justify(). */
-    siglongjmp(jump_buf, 1);
 }
 
 /* If allow is TRUE, block any SIGWINCH signals that we get, so that we
@@ -1606,6 +1586,11 @@ int do_input(bool allow_funcs)
 
     /* Read in a character. */
     input = get_kbinput(edit);
+
+#ifndef NANO_TINY
+    if (input == KEY_WINCH)
+	return KEY_WINCH;
+#endif
 
 #ifndef DISABLE_MOUSE
     if (func_key && input == KEY_MOUSE) {
@@ -2123,7 +2108,6 @@ int main(int argc, char **argv)
 #endif
 #ifdef HAVE_GETOPT_LONG
     const struct option long_options[] = {
-	{"help", 0, NULL, 'h'},
 	{"boldtext", 0, NULL, 'D'},
 #ifndef DISABLE_MULTIBUFFER
 	{"multibuffer", 0, NULL, 'F'},
@@ -2145,6 +2129,7 @@ int main(int argc, char **argv)
 #endif
 	{"const", 0, NULL, 'c'},
 	{"rebinddelete", 0, NULL, 'd'},
+	{"help", 0, NULL, 'h'},
 	{"nofollow", 0, NULL, 'l'},
 #ifndef DISABLE_MOUSE
 	{"mouse", 0, NULL, 'm'},
@@ -2179,7 +2164,6 @@ int main(int argc, char **argv)
 	{"poslog", 0, NULL, 'P'},
 	{"smooth", 0, NULL, 'S'},
 	{"quickblank", 0, NULL, 'U'},
-	{"undo", 0, NULL, 'u'},
 	{"wordbounds", 0, NULL, 'W'},
 	{"autoindent", 0, NULL, 'i'},
 	{"cut", 0, NULL, 'k'},
@@ -2652,6 +2636,10 @@ int main(int argc, char **argv)
 #endif /* !DISABLE_NANORC */
 #endif /* !NANO_TINY */
 
+    /* Initialize the search and replace strings. */
+    last_search = mallocstrcpy(NULL, "");
+    last_replace = mallocstrcpy(NULL, "");
+
     /* If tabsize wasn't specified, set its default value. */
     if (tabsize == -1)
 	tabsize = WIDTH_OF_TAB;
@@ -2806,17 +2794,6 @@ int main(int argc, char **argv)
 	/* Make sure the cursor is in the edit window. */
 	reset_cursor();
 	wnoutrefresh(edit);
-
-#ifndef NANO_TINY
-	if (!jump_buf_main) {
-	    /* If we haven't already, we're going to set jump_buf so
-	     * that we return here after a SIGWINCH.  Indicate this. */
-	    jump_buf_main = TRUE;
-
-	    /* Return here after a SIGWINCH. */
-	    sigsetjmp(jump_buf, 1);
-	}
-#endif
 
 	/* Just in case we were at the statusbar prompt, make sure the
 	 * statusbar cursor position is reset. */

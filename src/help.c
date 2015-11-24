@@ -1,4 +1,4 @@
-/* $Id: help.c 5183 2015-04-07 14:16:07Z bens $ */
+/* $Id: help.c 5249 2015-06-14 19:14:41Z bens $ */
 /**************************************************************************
  *   help.c                                                               *
  *                                                                        *
@@ -72,19 +72,20 @@ void do_help(void (*refresh_func)(void))
     bottombars(MHELP);
     wnoutrefresh(bottomwin);
 
-    /* Get the last line of the help text. */
-    ptr = help_text;
-
-    for (; *ptr != '\0'; last_line++) {
-	ptr += help_line_len(ptr);
-	if (*ptr == '\n')
-	    ptr++;
-    }
-    if (last_line > 0)
-	last_line--;
-
     while (TRUE) {
 	size_t i;
+
+	/* Get the last line of the help text. */
+	ptr = help_text;
+
+	for (last_line = 0; *ptr != '\0'; last_line++) {
+	    ptr += help_line_len(ptr);
+	    if (*ptr == '\n')
+		ptr++;
+	}
+
+	if (last_line > 0)
+	    last_line--;
 
 	/* Display the help text if we don't have a key, or if the help
 	 * text has moved. */
@@ -116,6 +117,14 @@ void do_help(void (*refresh_func)(void))
 	old_line = line;
 
 	kbinput = get_kbinput(edit);
+
+#ifndef NANO_TINY
+	if (kbinput == KEY_WINCH) {
+	    kbinput = ERR;
+	    curs_set(0);
+	    continue;
+	}
+#endif
 
 #ifndef DISABLE_MOUSE
 	if (kbinput == KEY_MOUSE) {
@@ -378,8 +387,7 @@ void help_init(void)
 
     /* help_text has been freed and set to NULL unless the user resized
      * while in the help screen. */
-    if (help_text != NULL)
-	free(help_text);
+    free(help_text);
 
     /* Allocate space for the help text. */
     help_text = charalloc(allocsize + 1);

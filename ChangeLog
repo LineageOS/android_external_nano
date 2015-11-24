@@ -1,3 +1,222 @@
+GNU nano 2.4.2 - 2015.07.05
+2015-06-28  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c (browser_refresh): Limit the selected file to the
+	available ones in the list -- after a refresh the number may have
+	decreased.  This fixes Savannah bug #45424.
+	* src/text.c (do_deletion): There is no need to check again for the
+	line ending -- it was done already in the encompassing 'if'.
+	* src/text.c: Unwrap some lines, rewrap some others more logically,
+	plus several other esthetic tweaks.
+	* doc/syntax/xml.nanorc: Recognize many more kinds of XML files.
+	This addresses Debian bug #790017 reported by Emmanuel Bourg.
+	Also colour the strings in tags differently, and add some comments.
+
+2015-06-27  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_undo, add_undo): Skip undoing a backspace *only* when
+	it really tried to delete the final, magic newline.
+	* src/nano.h, src/text.c: Rename three flags for clarity.
+	* src/files.c (replace_buffer): This function is only ever called with
+	a temporary file as parameter, so forget the case of an empty filename.
+	Also, don't bother putting the pointer at the top of the buffer, as the
+	first action after this function is to restore the cursor position.
+	* src/files.c: Normalize whitespace and comments.
+	* src/nano.h: Remove obsolete execute flag from the shortcut struct.
+	* src/global.c (shortcut_init): Remove a duplicate binding of ^T, to
+	prevent it being shown twice in the ^G help text.  It will be rebound
+	dynamically when for the current syntax another function is available.
+
+2015-06-23  Benno Schulenberg  <bensberg@justemail.net>
+	* src/winio.c (edit_draw): Verify that there exists multidata for the
+	found starting line before trying to use it.  When a file is inserted
+	(^R), it will not have any precalculated multidata associated with it.
+	This fixes Savannah bug #45377 reported by Cody A. Taylor.
+
+2015-06-20  Benno Schulenberg  <bensberg@justemail.net>
+	* src/search.c (do_research): If nothing was searched for yet during
+	this run of nano, take the most recent item from the search history.
+	This makes M-W work also right after startup, like <n> in vim/less.
+	* src/utils.c (get_homedir): Keep homedir NULL when no home directory
+	could be determined, so that nano will show a message about it.  This
+	is a fix for Savannah bug #45343.
+	* doc/syntax/nanorc.nanorc: Colour key-binding lines affirmatively
+	only when the specified menu name is an existing one.
+	* doc/syntax/changelog.nanorc: Stop the changed-files colour from
+	spilling beyond a blank line.  Also highlight releases.
+	* src/nano.c (main), src/rcfile.c: Remove the obsolete long option
+	--undo.  And sort --help and the softwrap option more consistently.
+
+2015-06-18  Benno Schulenberg  <bensberg@justemail.net>
+	* src/rcfile.c: Allow a tiny nano's ~/.nanorc to enable search and
+	position histories.  Also sort the options more strictly.
+	* src/nano.h: Delete two unused things, and add two comments.
+
+2015-06-17  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_undo, add_undo): When undoing a Backspace at the tail
+	of the file and nonewlines is not set, then don't add another newline
+	but just reposition the cursor.  Also, when doing a Delete at the tail
+	of the file, don't add a superfluous undo structure.  This prevents
+	the appearance of an extra newline when undoing the Backspace/Delete.
+	Patch partially by Mark Majeres.  The problem was first reported in
+	https://lists.gnu.org/archive/html/nano-devel/2015-06/msg00003.html.
+	* src/text.c (do_undo): Adjust whitespace after the previous change.
+	* src/text.c (add_undo): Elide an unneeded variable and correct two
+	comments.  And try to put the more frequent condition first.
+	* src/text.c (add_undo): Rename the parameter 'current_action' to
+	'action', to match the other functions.
+	* src/text.c (do_undo, add_undo, update_undo): Improve the visibility
+	of the undo-related debugging messages.
+
+2015-06-14  Benno Schulenberg  <bensberg@justemail.net>
+	* src/winio.c (edit_draw): Add some debugging code to track which
+	multidata codes (for multiline regexes) get assigned to which lines.
+	* src/winio.c (edit_draw): Start and end regexes can be very similar;
+	so if a found start has been qualified as an end earlier, believe it
+	and skip to the next step.  This helps with Python's docstrings.
+	* src/winio.c (edit_draw): When the whole line has been coloured,
+	don't bother looking for any more starts.  This prevents some lines
+	from being erroneously marked as CENDAFTER instead of CWHOLELINE.
+	* src/*.c: Don't check for non-NULL before freeing; it's unneeded.
+
+2015-06-11  Benno Schulenberg  <bensberg@justemail.net>
+	* src/winio.c (get_key_buffer): Add some debugging code to make it
+	easy to see what codes a key stroke produces.
+
+2015-06-07  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/texinfo/nano.texi: Show the node with the command-line options
+	in the main menu, to make it easy to find.
+	* doc/texinfo/nano.texi: Improve some formatting, hyphenation, wording
+	and dashes.  And remove some confusing, historical things.
+	* doc/man/nano.1, doc/man/nanorc.5, doc/texinfo/nano.texi: Clarify the
+	meaning of --backupdir: it doesn't just specify a directory for saving
+	backup files, it mainly causes uniquely numbered backups to be made.
+	* doc/man/nano.1: Add a section on the non-obvious functioning of the
+	cutbuffer and the mark.
+
+2015-06-04  Benno Schulenberg  <bensberg@justemail.net>
+	* src/nano.h: Fix compilation with --enable-tiny.
+	* nano.spec.in: Add the post-install and pre-uninstall rules for the
+	Info document, plus some tweaks.  (Patch was tested by Kamil Dudka.)
+
+2015-06-02  Benno Schulenberg  <bensberg@justemail.net>
+	* doc/man/nanorc.5, doc/texinfo/nano.texi: Tweak some wordings, and
+	add some missing formatting to the Info document, and fix an mdash.
+	* doc/syntax/debian.nanorc: Colour also an optional option.
+	This addresses Debian bug #664456 reported by Shawn Landden.
+	Also shorten the name of the syntax to "sources.list".
+	* doc/syntax/python.nanorc: Require again that the triple quote	that
+	starts a docstring is followed by some character -- it is better to
+	*not* colour some strings than far too often colour far too much.
+	This addresses Debian bug #785508 reported by Alexandre Detiste.
+
+2015-05-31  Mahyar Abbaspour  <mahyar.abaspour@gmail.com>
+	* src/prompt.c (get_statusbar_page_start): Prevent a floating-point
+	exception when the available length for an answer becomes zero.
+
+2015-05-28  Benno Schulenberg  <bensberg@justemail.net>
+	* src/help.c (do_help), src/prompt.c (do_yesno_prompt): Normalize
+	the whitespace after the recent changes in logic.
+	* src/prompt.c (do_yesno_prompt): Use 'width' instead of hardcoded
+	16.  Also always first set the string and then position the cursor.
+	* TODO: Mark window resizes and better file-type detection as done.
+	* doc/syntax/debian.nanorc: Allow a CD name to contain any character.
+	This addresses Debian bug #688892 reported by Dani Möller Montull.
+
+2015-05-28  Mahyar Abbaspour  <mahyar.abaspour@gmail.com>
+	* src/nano.c (handle_sigwinch, regenerate_screen), src/global.c,
+	src/prompt.c (do_statusbar_input, get_prompt_string, do_yesno_prompt),
+	src/browser.c (do_browser, browser_refresh), src/help.c (do_help),
+	src/winio.c (get_key_buffer, unget_input, get_input, parse_kbinput),
+	src/text.c (do_justify, do_linter), src/nano.h, src/proto.h:
+	Handle a SIGWINCH (signalling a change in window size) not when it
+	happens but only when checking for input.  Report the SIGWINCH via
+	a special key value to the calling routine, to allow not only the
+	main editor but also the help viewer and the file browser to adapt
+	their display to the new size.  (Patch edited by Benno.)
+
+2015-05-20  Devrim Gündüz  <devrim@gunduz.org>
+	* doc/syntax/postgresql.nanorc: New file -- syntax highlighting for
+	PostgreSQL, first posted as Savannah patch #8601.  Trimmed by Benno.
+
+2015-05-08  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c (browser_refresh): Take the distant possibility of
+	terabyte files into account, and in the bargain get rid of the need
+	to calculate the number of digits in UINT_MAX.
+	* src/files.c (get_next_filename): Limit the number of backup files
+	to one hundred thousand -- which should be far more than enough --
+	before finding an unused filename takes an annoying amount of time.
+	* src/utils.c (digits): Delete this now unneeded function.
+
+2015-05-03  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c (browser_refresh): Display an ellipsis only when the
+	filename is longer than the available space, not when it still fits.
+	* src/browser.c, src/nano.c: Adjust a few comments and line wrappings.
+	* doc/syntax/groff.nanorc: Use character classes correctly.
+
+2015-04-28  Benno Schulenberg  <bensberg@justemail.net>
+	* src/color.c (color_update): Match the file regex of a syntax against
+	the absolute, canonical path instead of against the path the user gave.
+	This fixes Savannah bug #44288, reported by Mike Frysinger.
+	* doc/syntax/po.nanorc: Improve the colouring of message tags.
+	* src/winio.c (get_escape_seq_kbinput): Unwrap a bunch of comments.
+
+2015-04-25  Benno Schulenberg  <bensberg@justemail.net>
+	* src/search.c (do_replace_loop): Remove the unintended special
+	case for replacing multiple occurrences of a literal ^ or $; see
+	https://lists.gnu.org/archive/html/nano-devel/2015-04/msg00065.html.
+	* src/search.c (findnextstr): Delete an always-FALSE parameter.
+	* src/search.c (findnextstr): Rename the parameter 'whole_word'
+	to 'whole_word_only', for clarity.
+
+2015-04-21  Benno Schulenberg  <bensberg@justemail.net>
+	* src/browser.c (findnextfile): Save the settings of the global
+	case-sens, direction, and regexp flags, and restore them on exit.
+	And do this not in do_filesearch() but in findnextfile(), so that
+	it will also work for do_fileresearch().
+	* src/text.c (do_int_spell_fix): Save and restore the global flags
+	in the same short and quick way as above.
+	* src/nano.c (main): Initialize the search and replace strings in
+	a central place, to get rid of a bunch of ifs.
+	* src/search.c (search_init_globals): Elide this tiny function.
+
+2015-04-20  Benno Schulenberg  <bensberg@justemail.net>
+	* src/winio.c (need_horizontal_update, need_vertical_update): Fuse
+	two identical functions into one: need_screen_update().
+	* src/prompt.c (need_statusbar_horizontal_update): Rename function
+	to need_statusbar_update() as there is no vertical counterpart.
+	* src/search.c (do_search, do_research): Delete redundant reprises
+	of a regex search: finding an occurrence only at the very starting
+	point of the search necessarily means it is the only occurrence.
+
+2015-04-18  Benno Schulenberg  <bensberg@justemail.net>
+	* src/global.c, src/nano.c, doc/man/nanorc.5, doc/texinfo/nano.texi:
+	Make the descriptions of the multibuffer feature more accurate.
+	* src/winio.c (display_string): Make sure an invalid starting byte
+	of a multibyte sequence is properly terminated, so that it doesn't
+	pick up lingering bytes of any previous content.  This prevents the
+	displaying of ghosts -- characters that aren't really there -- when a
+	file contains valid ánd invalid UTF-8 sequences.  For an example see:
+	https://lists.gnu.org/archive/html/nano-devel/2015-04/msg00052.html.
+	Also make two comments more accurate: an invalid multibyte sequence
+	will never be categorized as a control character or anything else.
+
+2015-04-18  Mark Oteiza  <mvoteiza@udel.edu>
+	* doc/syntax/{python,ruby,sh,tex}.nanorc: Add a linter definition.
+	* doc/syntax/elisp.nanorc: New file; syntax highlighting for Elisp.
+	* doc/syntax/guile.nanorc: New file; syntax highlighting for Guile.
+
+2015-04-17  Benno Schulenberg  <bensberg@justemail.net>
+	* src/text.c (do_alt_speller, do_linter, do_formatter): Distinguish
+	a failure to launch the linter from receiving zero parsable lines;
+	add a new function to glue together the invocation-error string.
+	* src/global.c (shortcut_init): In the Help Viewer and File Browswer,
+	bind the unbound Home and End keys to goto_top and goto_bottom, to
+	mimic the behaviour of these keys in file viewers and web browsers.
+	Also show ^Y and ^V in the WhereisFile menu instead of M-\ and M-/,
+	for similarity with the WhereIs menu.
+	* src/global.c (shortcut_init): Arrange the movement keys in the File
+	Browser in the order of ascending stride, as in the Help Viewer.
+
+GNU nano 2.4.1 - 2015.04.14
 2015-04-13  Benno Schulenberg  <bensberg@justemail.net>
 	* src/search.c (do_replace_loop): Fix compilation with --enable-tiny.
 	* README: Mention also the Savannah page for reporting bugs.
@@ -114,7 +333,7 @@
 	* src/text.c (do_alt_speller): timestamp can just be a time_t.
 	Fixes compilation on win32 and macOS.
 
-GNU nano 2.4.0  - 2015.03.22
+GNU nano 2.4.0 - 2015.03.22
 2015-03-22  Benno Schulenberg  <bensberg@justemail.net>
 	* src/chars.c (move_mbleft): Start looking for a multibyte char
 	not at the start of the string, but only as far back as such a

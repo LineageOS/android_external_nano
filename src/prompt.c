@@ -1,4 +1,4 @@
-/* $Id: prompt.c 5183 2015-04-07 14:16:07Z bens $ */
+/* $Id: prompt.c 5249 2015-06-14 19:14:41Z bens $ */
 /**************************************************************************
  *   prompt.c                                                             *
  *                                                                        *
@@ -65,6 +65,11 @@ int do_statusbar_input(bool *ran_func, bool *finished,
 
     /* Read in a character. */
     input = get_kbinput(bottomwin);
+
+#ifndef NANO_TINY
+    if (input == KEY_WINCH)
+	return KEY_WINCH;
+#endif
 
 #ifndef DISABLE_MOUSE
     /* If we got a mouse click and it was on a shortcut, read in the
@@ -250,7 +255,7 @@ int do_statusbar_mouse(void)
 			statusbar_xplustabs()) + mouse_x - start_col);
 	    statusbar_pww = statusbar_xplustabs();
 
-	    if (need_statusbar_horizontal_update(pww_save))
+	    if (need_statusbar_update(pww_save))
 		update_statusbar_line(answer, statusbar_x);
 	}
     }
@@ -352,7 +357,7 @@ void do_statusbar_home(void)
 	statusbar_pww = statusbar_xplustabs();
     }
 
-    if (need_statusbar_horizontal_update(pww_save))
+    if (need_statusbar_update(pww_save))
 	update_statusbar_line(answer, statusbar_x);
 }
 
@@ -364,7 +369,7 @@ void do_statusbar_end(void)
     statusbar_x = strlen(answer);
     statusbar_pww = statusbar_xplustabs();
 
-    if (need_statusbar_horizontal_update(pww_save))
+    if (need_statusbar_update(pww_save))
 	update_statusbar_line(answer, statusbar_x);
 }
 
@@ -377,7 +382,7 @@ void do_statusbar_left(void)
 	statusbar_x = move_mbleft(answer, statusbar_x);
 	statusbar_pww = statusbar_xplustabs();
 
-	if (need_statusbar_horizontal_update(pww_save))
+	if (need_statusbar_update(pww_save))
 	    update_statusbar_line(answer, statusbar_x);
     }
 }
@@ -391,7 +396,7 @@ void do_statusbar_right(void)
 	statusbar_x = move_mbright(answer, statusbar_x);
 	statusbar_pww = statusbar_xplustabs();
 
-	if (need_statusbar_horizontal_update(pww_save))
+	if (need_statusbar_update(pww_save))
 	    update_statusbar_line(answer, statusbar_x);
     }
 }
@@ -505,7 +510,7 @@ bool do_statusbar_next_word(bool allow_punct)
 
     statusbar_pww = statusbar_xplustabs();
 
-    if (need_statusbar_horizontal_update(pww_save))
+    if (need_statusbar_update(pww_save))
 	update_statusbar_line(answer, statusbar_x);
 
     /* Return whether we started on a word. */
@@ -600,7 +605,7 @@ bool do_statusbar_prev_word(bool allow_punct)
 
     statusbar_pww = statusbar_xplustabs();
 
-    if (need_statusbar_horizontal_update(pww_save))
+    if (need_statusbar_update(pww_save))
 	update_statusbar_line(answer, statusbar_x);
 
     /* Return whether we started on a word. */
@@ -650,7 +655,7 @@ size_t statusbar_xplustabs(void)
  * get_statusbar_page_start(column) < COLS). */
 size_t get_statusbar_page_start(size_t start_col, size_t column)
 {
-    if (column == start_col || column < COLS - 1)
+    if (column == start_col || column < COLS - 1 || COLS == start_col + 1)
 	return 0;
     else
 	return column - start_col - (column - start_col) % (COLS -
@@ -703,10 +708,10 @@ void update_statusbar_line(const char *curranswer, size_t index)
     wnoutrefresh(bottomwin);
 }
 
-/* Return TRUE if we need an update after moving horizontally, and FALSE
- * otherwise.  We need one if pww_save and statusbar_pww are on
+/* Return TRUE if we need an update after moving the cursor, and FALSE
+ * otherwise.  We need an update if pww_save and statusbar_pww are on
  * different pages. */
-bool need_statusbar_horizontal_update(size_t pww_save)
+bool need_statusbar_update(size_t pww_save)
 {
     size_t start_col = strlenpt(prompt) + 2;
 
@@ -798,6 +803,14 @@ functionptrtype get_prompt_string(int *actual, bool allow_tabs,
     while (TRUE) {
 	kbinput = do_statusbar_input(&ran_func, &finished, refresh_func);
 	assert(statusbar_x <= strlen(answer));
+
+#ifndef NANO_TINY
+    if (kbinput == KEY_WINCH) {
+	refresh_func();
+	update_statusbar_line(answer, statusbar_x);
+	continue;
+    }
+#endif
 
 	func = func_from_key(&kbinput);
 
@@ -910,8 +923,7 @@ functionptrtype get_prompt_string(int *actual, bool allow_tabs,
     if (history_list != NULL) {
 	history_reset(*history_list);
 
-	if (magichistory != NULL)
-	    free(magichistory);
+	free(magichistory);
     }
 #endif
 
@@ -969,8 +981,7 @@ int do_prompt(bool allow_tabs,
 
     /* prompt has been freed and set to NULL unless the user resized
      * while at the statusbar prompt. */
-    if (prompt != NULL)
-	free(prompt);
+    free(prompt);
 
     prompt = charalloc(((COLS - 4) * mb_cur_max()) + 1);
 
@@ -1060,49 +1071,6 @@ int do_yesno_prompt(bool all, const char *msg)
     nostr = _("Nn");
     allstr = _("Aa");
 
-    if (!ISSET(NO_HELP)) {
-	char shortstr[3];
-		/* Temp string for Yes, No, All. */
-
-	if (COLS < 32)
-	    width = COLS / 2;
-
-	/* Clear the shortcut list from the bottom of the screen. */
-	blank_bottombars();
-
-	sprintf(shortstr, " %c", yesstr[0]);
-	wmove(bottomwin, 1, 0);
-	onekey(shortstr, _("Yes"), width);
-
-	if (all) {
-	    wmove(bottomwin, 1, width);
-	    shortstr[1] = allstr[0];
-	    onekey(shortstr, _("All"), width);
-	}
-
-	wmove(bottomwin, 2, 0);
-	shortstr[1] = nostr[0];
-	onekey(shortstr, _("No"), width);
-
-	wmove(bottomwin, 2, 16);
-	onekey("^C", _("Cancel"), width);
-    }
-
-    if (interface_color_pair[TITLE_BAR].bright)
-	wattron(bottomwin, A_BOLD);
-    wattron(bottomwin, interface_color_pair[TITLE_BAR].pairnum);
-
-    blank_statusbar();
-    mvwaddnstr(bottomwin, 0, 0, msg, actual_x(msg, COLS - 1));
-
-    wattroff(bottomwin, A_BOLD);
-    wattroff(bottomwin, interface_color_pair[TITLE_BAR].pairnum);
-
-    /* Refresh the edit window and the statusbar before getting
-     * input. */
-    wnoutrefresh(edit);
-    wnoutrefresh(bottomwin);
-
     do {
 	int kbinput;
 	functionptrtype func;
@@ -1110,8 +1078,57 @@ int do_yesno_prompt(bool all, const char *msg)
 	int mouse_x, mouse_y;
 #endif
 
+	if (!ISSET(NO_HELP)) {
+	    char shortstr[3];
+		/* Temporary string for (translated) " Y", " N" and " A". */
+
+	    if (COLS < 32)
+		width = COLS / 2;
+
+	    /* Clear the shortcut list from the bottom of the screen. */
+	    blank_bottombars();
+
+	    /* Now show the ones for "Yes", "No", "Cancel" and maybe "All". */
+	    sprintf(shortstr, " %c", yesstr[0]);
+	    wmove(bottomwin, 1, 0);
+	    onekey(shortstr, _("Yes"), width);
+
+	    if (all) {
+		shortstr[1] = allstr[0];
+		wmove(bottomwin, 1, width);
+		onekey(shortstr, _("All"), width);
+	    }
+
+	    shortstr[1] = nostr[0];
+	    wmove(bottomwin, 2, 0);
+	    onekey(shortstr, _("No"), width);
+
+	    wmove(bottomwin, 2, width);
+	    onekey("^C", _("Cancel"), width);
+	}
+
+	if (interface_color_pair[TITLE_BAR].bright)
+	    wattron(bottomwin, A_BOLD);
+	wattron(bottomwin, interface_color_pair[TITLE_BAR].pairnum);
+
+	blank_statusbar();
+	mvwaddnstr(bottomwin, 0, 0, msg, actual_x(msg, COLS - 1));
+
+	wattroff(bottomwin, A_BOLD);
+	wattroff(bottomwin, interface_color_pair[TITLE_BAR].pairnum);
+
+	/* Refresh edit window and statusbar before getting input. */
+	wnoutrefresh(edit);
+	wnoutrefresh(bottomwin);
+
 	currmenu = MYESNO;
 	kbinput = get_kbinput(bottomwin);
+
+#ifndef NANO_TINY
+	if (kbinput == KEY_WINCH)
+	    continue;
+#endif
+
 	func = func_from_key(&kbinput);
 
 	if (func == do_cancel)

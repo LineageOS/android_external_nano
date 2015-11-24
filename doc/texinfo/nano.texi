@@ -1,15 +1,13 @@
 \input texinfo  @c -*-texinfo-*-
 @c %**start of header
 @setfilename nano.info
-@settitle nano Command Manual
+@settitle nano
 @c %**end of header
 
-@c This file has the new style title page commands.
-@c Run 'makeinfo' rather than 'texinfo-format-buffer'.
 @smallbook
 @set EDITION 0.3
-@set VERSION 2.4.1
-@set UPDATED April 2015
+@set VERSION 2.4.2
+@set UPDATED June 2015
 
 @dircategory Editors
 @direntry
@@ -23,7 +21,7 @@
 @titlepage
 @title GNU @code{nano}
 @subtitle a small and friendly text editor.
-@subtitle version 2.4.1
+@subtitle version 2.4.2
 
 @author Chris Allegretta
 @page
@@ -63,6 +61,8 @@ editor.
 
 @menu
 * Introduction::
+* Invoking::
+* Command-line Options::
 * Editor Basics::
 * Built-in Help::
 * Feature Toggles::
@@ -82,18 +82,15 @@ search-and-replace, undo/redo, syntax coloring, smooth scrolling,
 auto-indentation, go-to-line-and-column-number, feature toggles,
 file locking, backup files, and internationalization support.
 
-@menu
-* Overview::
-* Command Line Options::
-@end menu
-
-@node Overview
-@section Overview
-
-The original goal for @code{nano} was a complete bug-for-bug compatible
-emulation of Pico, but @code{nano}'s current goal is to be as compatible
+The original goal for @code{nano} was to be a complete bug-for-bug
+emulation of Pico.  But currently the goal is to be as compatible
 as possible while offering a superset of Pico's functionality.  See
 @xref{Pico Compatibility}, for more info.
+
+Please report bugs via @url{https://savannah.gnu.org/bugs/?group=nano}.
+
+@node Invoking
+@chapter Invoking
 
 The usual way to invoke @code{nano} is:
 
@@ -116,15 +113,13 @@ But normallly you would set your preferred options in your
 (making @code{nano} remember the cursor position), you will rarely
 need to specify a line number.
 
-Please email any bug reports to @email{nano@@nano-editor.org}.
-Or file them at @url{https://savannah.gnu.org/bugs/?group=nano}.
-
-@node Command Line Options
-@section Command Line Options
+@node Command-line Options
+@chapter Command-line Options
 
 @command{nano} takes the following options from the command line:
 
 @table @option
+
 @item +@var{line},@var{column}
 Start at line number @var{line} and column number @var{column} (at least one of
 which must be specified) instead of the default of line 1, column 1.
@@ -139,13 +134,14 @@ line.
 
 @item -B
 @itemx --backup
-When saving a file, back up the previous version of it to the current
-filename suffixed with a @samp{~}.
+When saving a file, back up the previous version of it, using the current
+filename suffixed with a tilde (@samp{~}).
 
 @item -C @var{directory}
 @itemx --backupdir=@var{directory}
-Set the directory where @command{nano} puts unique backup files if file
-backups are enabled.
+Make and keep not just one backup file, but make and keep a uniquely
+numbered one every time a file is saved --- when backups are enabled.
+The uniquely numbered files are stored in the specified directory.
 
 @item -D
 @itemx --boldtext
@@ -157,7 +153,7 @@ Convert typed tabs to spaces.
 
 @item -F
 @itemx --multibuffer
-Enable multiple file buffers (if support for them has been compiled in).
+Read a file into a new buffer by default.
 
 @item -G
 @itemx --locking
@@ -337,7 +333,7 @@ implement a read-only file.
 @item -w
 @itemx --nowrap
 Don't hard-wrap long lines at any length.  This option conflicts with
-@option{-r} -- the last one given takes effect.
+@option{-r} --- the last one given takes effect.
 
 @anchor{Expert Mode}
 @item -x
@@ -370,6 +366,7 @@ separately (e.g. @code{nano -wS -$}).
 @itemx -g
 @itemx -j
 Ignored, for compatibility with Pico.
+
 @end table
 
 
@@ -502,65 +499,65 @@ and ^V (Page Down) keys.  ^X exits the help system.
 @node Feature Toggles
 @chapter Feature Toggles
 
-Toggles allow you to change certain aspects of the editor that would
-normally be done via command-line options.  They are invoked via Meta
-key sequences.  See @xref{Special Functions}, for more info.  The
-following global toggles are available:
+Toggles allow you to change on-the-fly certain aspects of the editor
+which would normally be specified via command-line options.  They are
+invoked via Meta-key sequences.  See @xref{Special Functions}, for more info.
+The following global toggles are available:
 
 @table @code
 
 @item Backup Files Toggle (Meta-B)
-toggles the -B (@code{--backup}) command line option.
+toggles the -B (@code{--backup}) command-line option.
 
 @item Constant Cursor Position Display Toggle (Meta-C)
-toggles the -c (@code{--const}) command line option.
+toggles the -c (@code{--const}) command-line option.
 
 @item Multiple File Buffers Toggle (Meta-F)
-toggles the -F (@code{--multibuffer}) command line option.
+toggles the -F (@code{--multibuffer}) command-line option.
 
 @item Smart Home Key Toggle (Meta-H)
-toggles the -A (@code{--smarthome}) command line option.
+toggles the -A (@code{--smarthome}) command-line option.
 
 @item Auto Indent Toggle (Meta-I)
-toggles the -i (@code{--autoindent}) command line option.
+toggles the -i (@code{--autoindent}) command-line option.
 
 @item Cut To End Toggle (Meta-K)
-toggles the -k (@code{--cut}) command line option.
+toggles the -k (@code{--cut}) command-line option.
 
 @item Long Line Wrapping Toggle (Meta-L)
-toggles the -w (@code{--nowrap}) command line option.
+toggles the -w (@code{--nowrap}) command-line option.
 
 @item Mouse Support Toggle (Meta-M)
-toggles the -m (@code{--mouse}) command line option.
+toggles the -m (@code{--mouse}) command-line option.
 
 @item No Conversion From DOS/Mac Format Toggle (Meta-N)
-toggles the -N (@code{--noconvert}) command line option.
+toggles the -N (@code{--noconvert}) command-line option.
 
 @item More Space For Editing Toggle (Meta-O)
-toggles the -O (@code{--morespace}) command line option.
+toggles the -O (@code{--morespace}) command-line option.
 
 @item Whitespace Display Toggle (Meta-P)
-toggles whitespace-display mode.
+toggles the whitespace-display mode.
 See @xref{Whitespace}, for more info.
 
 @item Tabs to Spaces Toggle (Meta-Q)
-toggles the -E (@code{--tabstospaces}) command line option.
+toggles the -E (@code{--tabstospaces}) command-line option.
 
 @item Smooth Scrolling Toggle (Meta-S)
-toggles the -S (@code{--smooth}) command line option.
+toggles the -S (@code{--smooth}) command-line option.
 
 @item Expert/No Help Toggle (Meta-X)
-toggles the -x (@code{--nohelp}) command line option.
+toggles the -x (@code{--nohelp}) command-line option.
 
 @item Color Syntax Highlighting Toggle (Meta-Y)
 toggles color syntax highlighting if you have color syntaxes in your
 nanorc.  See @xref{Syntax Highlighting}, for more info.
 
 @item Suspend Toggle (Meta-Z)
-toggles the -z (@code{--suspend}) command line option.
+toggles the -z (@code{--suspend}) command-line option.
 
 @item Soft Wrapping Toggle (Meta-$)
-toggles the -$ (@code{--softwrap}) command line option.
+toggles the -$ (@code{--softwrap}) command-line option.
 
 @end table
 
@@ -577,7 +574,7 @@ from ~/.nanorc.
 A nanorc file accepts a series of "set" and "unset" commands, which can
 be used to configure @code{nano} on startup without using command-line
 options.  Additionally, there are some commands to define syntax highlighting
-and to rebind keys -- @xref{Syntax Highlighting}, and @xref{Rebinding Keys}.
+and to rebind keys --- @xref{Syntax Highlighting}, and @xref{Rebinding Keys}.
 @code{nano} will read one command per line.
 
 Options in nanorc files take precedence over @code{nano}'s defaults, and
@@ -614,12 +611,14 @@ You should NOT enable this option unless you are sure you need it.
 Use auto-indentation.
 
 @item set backup
-When saving a file, back up the previous version of it to the current
+When saving a file, back up the previous version of it, using the current
 filename suffixed with a tilde (@code{~}).
 
 @item set backupdir "directory"
-Set the directory where @code{nano} puts unique backup files, if file
-backups are enabled.
+Make and keep not just one backup file, but make and keep a uniquely
+numbered one every time a file is saved --- when backups are enabled
+with @code{set backup} or @code{--backup} or @code{-B}.
+The uniquely numbered files are stored in the specified directory.
 
 @item set backwards
 Do backwards searches by default.
@@ -688,7 +687,7 @@ Enable mouse support, so that mouse clicks can be used to place the
 cursor, set the mark (with a double click), or execute shortcuts.
 
 @item set multibuffer
-Allow inserting files into their own buffers.
+When reading in a file with ^R, insert it into a new buffer by default.
 
 @item set noconvert
 Don't convert files from DOS/Mac format.
@@ -828,39 +827,40 @@ via the following commands in a nanorc file:
 @table @code
 
 @item syntax "str" ["fileregex" @dots{}]
-Defines a syntax named "str" which can be activated via the -Y/--syntax
+Defines a syntax named "str" which can be activated via the @code{-Y/--syntax}
 command-line option, or will be automatically activated if the current
 filename matches the extended regular expression "fileregex".  All
-following "color" and "icolor" statements will apply to this "str"
-syntax until a new syntax is defined.
+subsequent @code{color}, @code{icolor}, @code{header} and other such
+statements will apply to this "str" syntax until a new @code{syntax}
+command is encountered.
 
 The "none" syntax is reserved; specifying it on the command line is the
 same as not having a syntax at all.  The "default" syntax is special: it
-takes no "fileregex", and applies to files that don't match any other
+takes no "fileregex", and applies to files that don't match any
 syntax's "fileregex".
 
 @item linter program [arg @dots{}]
-For the currently defined syntax, use the given program to invoke the
-linter (this overrides the speller function when defined).
+Use the given program to do a syntax check on the current file
+(this overrides the speller function when defined).
 
 @item formatter program [arg @dots{}]
-For the currently defined syntax, use the given program to automatically
-reformat text.  Useful in certain programming languages (e.g. go).
+Use the given program to automatically reformat text.
+Useful in certain programming languages (e.g. Go).
 
 @item header "regex" @dots{}
-For the currently defined syntax, add one or more regexes which will
+Add one or more regexes which will
 be compared against the very first line of the file to be edited,
 to determine whether this syntax should be used for that file.
 
 @item magic "regex" @dots{}
-For the currently defined syntax, add one or more regexes which will be
+Add one or more regexes which will be
 compared against the result of querying the magic database about the file
 to be edited, to determine whether this syntax should be used for that
 file.  This functionality only works when libmagic is installed on the
 system and will be silently ignored otherwise.
 
 @item color fgcolor,bgcolor "regex" @dots{}
-For the currently defined syntax, display all expressions matching the
+Display all pieces of text that match the
 extended regular expression "regex" with foreground color "fgcolor" and
 background color "bgcolor", at least one of which must be specified.
 Valid colors for foreground and background are: white, black, red,
@@ -870,29 +870,30 @@ terminal supports transparency, not specifying a "bgcolor" tells @code{nano}
 to attempt to use a transparent background.
 
 @item icolor fgcolor,bgcolor "regex" @dots{}
-Same as above, except that the expression matching is case insensitive.
+Same as above, except that the text matching is case insensitive.
 
 @item color fgcolor,bgcolor start="sr" end="er"
-Display expressions which start with the extended regular expression
-"sr" and end with the extended regular expression "er" with foreground
+Display all pieces of text whose start matches extended regular expression
+"sr" and whose end matches extended regular expression "er" with foreground
 color "fgcolor" and background color "bgcolor", at least one of which
-must be specified.  This allows syntax highlighting to span multiple
-lines.  Note that all subsequent instances of "sr" after an initial "sr"
-is found will be highlighted until the first instance of "er".
+must be specified.  This means that, after an initial instance of "sr",
+all text will be highlighted until the first instance of "er".
+This allows syntax highlighting to span multiple lines.
 
 @item icolor fgcolor,bgcolor start="sr" end="er"
-Same as above, except that the expression matching is case insensitive.
+Same as above, except that the text matching is case insensitive.
 
 @item include "syntaxfile"
 Read in self-contained color syntaxes from "syntaxfile".  Note that
-"syntaxfile" can only contain the above commands, from "syntax" to
-"icolor".
+"syntaxfile" may contain only the above commands, from @code{syntax}
+to @code{icolor}.
 
 @item extendsyntax str directive [arg @dots{}]
 Extend the syntax previously defined as str to include new information.
-Allows you to add a new color, icolor, magic, header, or linter directive
-to an already defined syntax.  Useful when you want to add to definitions
-from the system-installed syntax definitions (which are normally not writable).
+This allows you to add a new @code{color}, @code{icolor}, @code{header},
+@code{magic}, @code{linter}, or @code{formatter} directive to an already
+defined syntax --- useful when you want to slightly improve a syntax defined
+in one of the system-installed files (which are normally not writable).
 
 @end table
 
@@ -949,11 +950,11 @@ Exits from the program (or from the help viewer or the file browser).
 Writes the current buffer to disk.
 
 @item insert
-Inserts a file into the current buffer (or into a new buffer when multibuffer
-is enabled).
+Inserts a file into the current buffer (at the current cursor position),
+or into a new buffer when option @code{multibuffer} is set.
 
 @item whereis
-Searches for text in the current buffer -- or for filenames matching
+Searches for text in the current buffer --- or for filenames matching
 a string in the current list in the file browser
 
 @item searchagain
@@ -1059,10 +1060,10 @@ Moves the cursor to the bracket (brace, parenthesis, etc.) that matches
 (pairs) with the one under the cursor.
 
 @item prevbuf
-Switches to editing/viewing the previous buffer when using multibuffer mode.
+Switches to editing/viewing the previous buffer when multiple buffers are open.
 
 @item nextbuf
-Switches to editing/viewing the next buffer when using multibuffer mode.
+Switches to editing/viewing the next buffer when multiple buffers are open.
 
 @item verbatim
 Inserts the next character verbatim into the file.
@@ -1186,7 +1187,8 @@ Toggles whether typed tabs will be converted to spaces.
 Toggles whether a backup will be made of the file to be edited.
 
 @item multibuffer
-Toggles the use of multiple file buffers (if available).
+Toggles whether a file is inserted into the current buffer
+or read into a new buffer.
 
 @item mouse
 Toggles mouse support.
@@ -1249,6 +1251,7 @@ The 'go to directory' menu in the file browser.
 A special name that encompasses all menus.  For @code{bind} it means
 all menus where the specified @code{function} exists; for @code{unbind}
 it means all menus where the specified @code{key} exists.
+
 @end table
 
 
@@ -1276,20 +1279,19 @@ browser exits.
 are certain differences between the editors:
 
 @table @code
-@item Search and Replace History
-As of version 1.1.99pre1 of @code{nano}, text entered as search or
-replace strings will be stored and can be accessed with the up/down
-arrow keys.  Previously, @code{nano} offered a more consistent, but
-incompatible with Pico, method for entering search and replace strings.
-In the old method, previous entries would be displayed by default as
-editable text in front of the cursor, as opposed to being bracketed and
-uneditable as it is in Pico.  The old behavior could be made compatible
-with Pico via the @code{-p} option, but recent versions of Pico use the
-@code{-p} option to preserve the XON and XOFF sequences within the
-editor.  Since, with the new method, search and replace strings can
-still be edited by simply hitting the up arrow key once, the old method
-was removed completely.
 
+@item Interactive Replace
+Instead of allowing you to replace either just one occurrence of a search
+string or all of them, @code{nano}'s replace function is interactive: it
+will pause at each found search string and query whether to replace this
+instance.  You can then choose Yes, or No (skip this one), or All (don't
+ask any more), or Cancel (stop with replacing).
+
+@item Search and Replace History
+When the option @code{-H} or @code{--historylog} is given (or set in
+the .nanorc file), text entered as search or replace strings is stored.
+These strings can be accessed with the up/down arrow keys.  A retrieved
+string can subsequently be edited.
 
 @item Writing, Appending, or Prepending Selected Text to Files
 Text selected using the marking key (^^) can be written out, appended,
@@ -1298,26 +1300,20 @@ or prepended to a new or existing file using the WriteOut key (^O).
 @item Toggles
 Many options which alter the functionality of the program can be
 "toggled" on or off using Meta key sequences, meaning the program does
-not have to be restarted to turn a particular feature of the editor on
-or off.  Please see the internal help function (^G) for a list of what
-functions can be toggled for a particular version of @code{nano}.  See
-@xref{Feature Toggles}, for more info.
+not have to be restarted to turn a particular feature on or off.
+See the internal help function (^G) for a list of features that
+can be toggled.  Or see @xref{Feature Toggles} instead.
 
-@item Cursor Position Display
-The output of the "Display Cursor Position" in @code{nano} displays
-the current line position of the cursor, as well as the column and
-total character position.
+@item Current Cursor Position
+The output of the "Display Cursor Position" command (^C) displays
+not only the current line and character position of the cursor,
+but also (between the two) the current column position.
 
-@item Interactive Replace and Spell Checker
-It is worth noting that @code{nano}'s replace function is interactive,
-i.e. it does not stop after one search string was found and automatically
-replaced.  The @code{nano} implementation will pause at each found
-search string and query whether to replace this instance or not.  The
-internal spell checker operates similarly.  Note that there is no way to
-force these functions to behave in the Pico fashion.  As of version
-1.1.99pre1, misspelled words are sorted and trimmed for uniqueness in
-the internal spell checker such that the words 'apple' and 'Apple' will
+@item Spell Checking
+In the internal spell checker misspelled words are sorted alphabetically
+and trimmed for uniqueness, such that the words 'apple' and 'Apple' will
 be prompted for correction separately.
+
 @end table
 
 
@@ -1345,7 +1341,7 @@ Disable the mini file browser when reading or writing files.
 
 @item --disable-color
 Disable support for the syntax coloring of files.  This also eliminates
-the -Y command-line option, which chooses a specific syntax.
+the @code{-Y} command-line option, which chooses a specific syntax.
 
 @item --disable-extra
 Disable extra features.  At the moment, this is just easter-egg-type
@@ -1359,57 +1355,57 @@ things about using the editor.
 @item --disable-histories
 Disable the code for the handling of the history files: the search and
 replace strings that were used, and the cursor position at which each
-file was closed.  This also eliminates the -H and -P command-line
-options, which switch on the logging of search/replace strings and
-cursor positions.
+file was closed.  This also eliminates the @code{-H} and @code{-P}
+command-line options, which switch on the logging of search/replace
+strings and cursor positions.
 
 @item --disable-justify
 Disable the justify and unjustify functions.
 
 @item --disable-libmagic
 Disable the use of the library of magic-number tests (for determining
-the file type and thus which syntax to use for colouring -- often the
+the file type and thus which syntax to use for colouring --- often the
 tests on filename extension and header line will be enough).
 
 @item --disable-mouse
-Disable all mouse functionality.  This also eliminates the -m
+Disable all mouse functionality.  This also eliminates the @code{-m}
 command-line option, which enables the mouse functionality.
 
 @item --disable-multibuffer
 Disable support for opening multiple files at a time and switching
-between them on the fly.  This also eliminates the -F command-line
-option, which switches the use of multiple file buffers on.
+between them on the fly.  This also eliminates the @code{-F} command-line
+option, which causes a file to be read into a separate buffer by default.
 
 @item --disable-nanorc
 Disable support for reading the nanorc files at startup.  With such
 support, you can store custom settings in a system-wide and a per-user
 nanorc file rather than having to pass command-line options to get
 the desired behavior.  See @xref{Nanorc Files}, for more info.
-Disabling this also eliminates the -I and -q command-line options;
-the first inhibits the reading of nanorcfiles, and the second
+Disabling this also eliminates the @code{-I} and @code{-q} command-line
+options; the first inhibits the reading of nanorcfiles, and the second
 suppresses warnings about errors in those files.
 
 @item --disable-operatingdir
-Disable setting the operating directory.  This also eliminates the -o
+Disable setting the operating directory.  This also eliminates the @code{-o}
 command-line option, which sets the operating directory.
 
 @item --disable-speller
-Disable use of the spell checker.  This also eliminates the -s
+Disable use of the spell checker.  This also eliminates the @code{-s}
 command-line option, which allows specifying an alternate spell checker.
 
 @item --disable-tabcomp
 Disable the tab completion code when reading or writing files.
 
 @item --disable-wrapping
-Disable hard-wrapping of overlong lines.  This also eliminates the -w
+Disable hard-wrapping of overlong lines.  This also eliminates the @code{-w}
 command-line option, which enables long-line wrapping.
 
 @item --enable-tiny
 This option disables all the above.  It also disables some of the larger
 internals of the editor, like the marking code and the cut-to-end-of-line
 code.  It also disables the function toggles.  By using the enabling
-counterpart of the above options together with --enable-tiny, specific
-features can be switched back on.
+counterpart of the above options together with @code{--enable-tiny},
+specific features can be switched back on.
 
 @item --enable-debug
 Enable support for runtime debug output.  This can get pretty messy, so

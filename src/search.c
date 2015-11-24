@@ -1,4 +1,4 @@
-/* $Id: search.c 5195 2015-04-13 10:59:12Z bens $ */
+/* $Id: search.c 5258 2015-06-20 08:10:25Z bens $ */
 /**************************************************************************
  *   search.c                                                             *
  *                                                                        *
@@ -116,16 +116,6 @@ void search_replace_abort(void)
 #endif
 }
 
-/* Initialize the global search and replace strings. */
-void search_init_globals(void)
-{
-    focusing = TRUE;
-    if (last_search == NULL)
-	last_search = mallocstrcpy(NULL, "");
-    if (last_replace == NULL)
-	last_replace = mallocstrcpy(NULL, "");
-}
-
 /* Set up the system variables for a search or replace.  If use_answer
  * is TRUE, only set backupstring to answer.  Return -2 to run the
  * opposite program (search -> replace, replace -> search), return -1 if
@@ -157,7 +147,7 @@ int search_init(bool replacing, bool use_answer)
      * do_search() or do_replace() and be called again.  In that case,
      * we should put the same search string back up. */
 
-    search_init_globals();
+    focusing = TRUE;
 
     if (last_search[0] != '\0') {
 	char *disp = display_string(last_search, 0, COLS / 3, FALSE);
@@ -259,17 +249,16 @@ int search_init(bool replacing, bool use_answer)
     return 0;
 }
 
-/* Look for needle, starting at (current, current_x).  If no_sameline is
- * TRUE, skip over begin when looking for needle.  begin is the line
+/* Look for needle, starting at (current, current_x).  begin is the line
  * where we first started searching, at column begin_x.  The return
  * value specifies whether we found anything.  If we did, set needle_len
  * to the length of the string we found if it isn't NULL. */
 bool findnextstr(
 #ifndef DISABLE_SPELLER
-	bool whole_word,
+	bool whole_word_only,
 #endif
-	bool no_sameline, const filestruct *begin, size_t begin_x, const
-	char *needle, size_t *needle_len)
+	const filestruct *begin, size_t begin_x,
+	const char *needle, size_t *needle_len)
 {
     size_t found_len;
 	/* The length of the match we find. */
@@ -326,7 +315,7 @@ bool findnextstr(
 #ifndef DISABLE_SPELLER
 	    /* If we're searching for whole words, see if this potential
 	     * match is a whole word. */
-	    if (whole_word) {
+	    if (whole_word_only) {
 		char *word = mallocstrncpy(NULL, found, found_len + 1);
 		word[found_len] = '\0';
 
@@ -334,17 +323,11 @@ bool findnextstr(
 			fileptr->data, word);
 		free(word);
 	    }
-#endif
 
 	    /* If we're searching for whole words and this potential
-	     * match isn't a whole word, or if we're not allowed to find
-	     * a match on the same line we started on and this potential
-	     * match is on that line, continue searching. */
-	    if (
-#ifndef DISABLE_SPELLER
-		(!whole_word || found_whole) &&
+	     * match isn't a whole word, continue searching. */
+	    if (!whole_word_only || found_whole)
 #endif
-		(!no_sameline || fileptr != openfile->current))
 		break;
 	}
 
@@ -477,35 +460,13 @@ void do_search(void)
 #ifndef DISABLE_SPELLER
 	FALSE,
 #endif
-	FALSE, openfile->current, openfile->current_x, answer, NULL);
+	openfile->current, openfile->current_x, answer, NULL);
 
-    /* Check to see if there's only one occurrence of the string and
-     * we're on it now. */
+    /* If we found something, and we're back at the exact same spot where
+     * we started searching, then this is the only occurrence. */
     if (fileptr == openfile->current && fileptr_x ==
 	openfile->current_x && didfind) {
-#ifdef HAVE_REGEX_H
-	/* Do the search again, skipping over the current line, if we're
-	 * doing a bol and/or eol regex search ("^", "$", or "^$"), so
-	 * that we find one only once per line.  We should only end up
-	 * back at the same position if the string isn't found again, in
-	 * which case it's the only occurrence. */
-	if (ISSET(USE_REGEXP) && regexp_bol_or_eol(&search_regexp,
-		answer)) {
-	    didfind = findnextstr(
-#ifndef DISABLE_SPELLER
-		FALSE,
-#endif
-		TRUE, openfile->current,
-		openfile->current_x, answer, NULL);
-	    if (fileptr == openfile->current && fileptr_x ==
-		openfile->current_x && !didfind)
-		statusbar(_("This is the only occurrence"));
-	} else {
-#endif
 	    statusbar(_("This is the only occurrence"));
-#ifdef HAVE_REGEX_H
-	}
-#endif
     }
 
     openfile->placewewant = xplustabs();
@@ -522,7 +483,14 @@ void do_research(void)
     size_t pww_save = openfile->placewewant;
     bool didfind;
 
-    search_init_globals();
+    focusing = TRUE;
+
+#ifndef DISABLE_HISTORIES
+    /* If nothing was searched for yet during this run of nano, but
+     * there is a search history, take the most recent item. */
+    if (last_search[0] == '\0' && searchbot->prev != NULL)
+	last_search = mallocstrcpy(last_search, searchbot->prev->data);
+#endif
 
     if (last_search[0] != '\0') {
 #ifdef HAVE_REGEX_H
@@ -536,36 +504,13 @@ void do_research(void)
 #ifndef DISABLE_SPELLER
 		FALSE,
 #endif
-		FALSE, openfile->current, openfile->current_x,
-		last_search, NULL);
+		openfile->current, openfile->current_x, last_search, NULL);
 
-	/* Check to see if there's only one occurrence of the string and
-	 * we're on it now. */
+	/* If we found something, and we're back at the exact same spot
+	 * where we started searching, then this is the only occurrence. */
 	if (fileptr == openfile->current && fileptr_x ==
 		openfile->current_x && didfind) {
-#ifdef HAVE_REGEX_H
-	    /* Do the search again, skipping over the current line, if
-	     * we're doing a bol and/or eol regex search ("^", "$", or
-	     * "^$"), so that we find one only once per line.  We should
-	     * only end up back at the same position if the string isn't
-	     * found again, in which case it's the only occurrence. */
-	    if (ISSET(USE_REGEXP) && regexp_bol_or_eol(&search_regexp,
-		last_search)) {
-		didfind = findnextstr(
-#ifndef DISABLE_SPELLER
-			FALSE,
-#endif
-			TRUE, openfile->current, openfile->current_x,
-			last_search, NULL);
-		if (fileptr == openfile->current && fileptr_x ==
-			openfile->current_x && !didfind)
-		    statusbar(_("This is the only occurrence"));
-	    } else {
-#endif /* HAVE_REGEX_H */
 		statusbar(_("This is the only occurrence"));
-#ifdef HAVE_REGEX_H
-	    }
-#endif
 	}
     } else
 	statusbar(_("No current search pattern"));
@@ -678,7 +623,7 @@ char *replace_line(const char *needle)
  * canceled isn't NULL, set it to TRUE if we canceled. */
 ssize_t do_replace_loop(
 #ifndef DISABLE_SPELLER
-	bool whole_word,
+	bool whole_word_only,
 #endif
 	bool *canceled, const filestruct *real_current, size_t
 	*real_current_x, const char *needle)
@@ -686,10 +631,6 @@ ssize_t do_replace_loop(
     ssize_t numreplaced = -1;
     size_t match_len;
     bool replaceall = FALSE;
-#ifdef HAVE_REGEX_H
-    /* The starting-line match and bol/eol regex flags. */
-    bool begin_line = FALSE, bol_or_eol = FALSE;
-#endif
 #ifndef NANO_TINY
     bool old_mark_set = openfile->mark_set;
     filestruct *top, *bot;
@@ -721,18 +662,9 @@ ssize_t do_replace_loop(
     findnextstr_wrap_reset();
     while (findnextstr(
 #ifndef DISABLE_SPELLER
-	whole_word,
+	whole_word_only,
 #endif
-#ifdef HAVE_REGEX_H
-	/* We should find a bol and/or eol regex only once per line.  If
-	 * the bol_or_eol flag is set, it means that the last search
-	 * found one on the beginning line, so we should skip over the
-	 * beginning line when doing this search. */
-	bol_or_eol
-#else
-	FALSE
-#endif
-	, real_current, *real_current_x, needle, &match_len)) {
+	real_current, *real_current_x, needle, &match_len)) {
 	int i = 0;
 
 #ifndef NANO_TINY
@@ -744,22 +676,6 @@ ssize_t do_replace_loop(
 		(openfile->current == bot && openfile->current_x > bot_x) ||
 		(openfile->current == top && openfile->current_x < top_x))
 		break;
-	}
-#endif
-
-#ifdef HAVE_REGEX_H
-	/* If the bol_or_eol flag is set, we've found a match on the
-	 * beginning line already, and we're still on the beginning line
-	 * after the search, it means that we've wrapped around, so
-	 * we're done. */
-	if (bol_or_eol && begin_line && openfile->current == real_current)
-	    break;
-	/* Otherwise, set the begin_line flag if we've found a match on
-	 * the beginning line, reset the bol_or_eol flag, and continue. */
-	else {
-	    if (openfile->current == real_current)
-		begin_line = TRUE;
-	    bol_or_eol = FALSE;
 	}
 #endif
 
@@ -794,13 +710,6 @@ ssize_t do_replace_loop(
 		break;
 	    }
 	}
-
-#ifdef HAVE_REGEX_H
-	/* Set the bol_or_eol flag if we're doing a bol and/or eol regex
-	 * replace ("^", "$", or "^$"). */
-	if (ISSET(USE_REGEXP) && regexp_bol_or_eol(&search_regexp, needle))
-	    bol_or_eol = TRUE;
-#endif
 
 	if (i > 0 || replaceall) {	/* Yes, replace it!!!! */
 	    char *copy;

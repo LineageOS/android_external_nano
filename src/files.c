@@ -1,4 +1,4 @@
-/* $Id: files.c 5183 2015-04-07 14:16:07Z bens $ */
+/* $Id: files.c 5270 2015-06-27 15:10:58Z bens $ */
 /**************************************************************************
  *   files.c                                                              *
  *                                                                        *
@@ -136,14 +136,14 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
      * old state. */
     myuid = geteuid();
     if ((mypwuid = getpwuid(myuid)) == NULL) {
-        statusbar(_("Couldn't determine my identity for lock file (getpwuid() failed)"));
-        return -1;
+	statusbar(_("Couldn't determine my identity for lock file (getpwuid() failed)"));
+	return -1;
     }
     mypid = getpid();
 
     if (gethostname(myhostname, 31) < 0) {
-       statusbar(_("Couldn't determine hostname for lock file: %s"), strerror(errno));
-       return -1;
+	statusbar(_("Couldn't determine hostname for lock file: %s"), strerror(errno));
+	return -1;
     }
 
     /* Check if the lock exists before we try to delete it...*/
@@ -152,19 +152,19 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
 	    return -1;
 
     if (ISSET(INSECURE_BACKUP))
-        cflags = O_WRONLY | O_CREAT | O_APPEND;
+	cflags = O_WRONLY | O_CREAT | O_APPEND;
     else
-        cflags = O_WRONLY | O_CREAT | O_EXCL | O_APPEND;
+	cflags = O_WRONLY | O_CREAT | O_EXCL | O_APPEND;
 
     fd = open(lockfilename, cflags,
-	    S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+		S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 
     /* Maybe we just don't have write access.  Print an error message
-       and continue. */
+     * and continue. */
     if (fd < 0) {
-        statusbar(_("Error writing lock file %s: %s"), lockfilename,
+	statusbar(_("Error writing lock file %s: %s"), lockfilename,
 		    strerror(errno));
-        return 0;
+	return 0;
     }
 
     /* Now we've got a safe file stream.  If the previous open() call
@@ -172,9 +172,9 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
     filestream = fdopen(fd, "wb");
 
     if (fd < 0 || filestream == NULL) {
-        statusbar(_("Error writing lock file %s: %s"), lockfilename,
+	statusbar(_("Error writing lock file %s: %s"), lockfilename,
 		    strerror(errno));
-        return -1;
+	return -1;
     }
 
     /* Okay, so at the moment we're following this state for how to
@@ -205,13 +205,13 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
     strncpy(&lockdata[68], myhostname, 31);
     strncpy(&lockdata[108], origfilename, 768);
     if (modified == TRUE)
-        lockdata[1007] = 0x55;
+	lockdata[1007] = 0x55;
 
     wroteamt = fwrite(lockdata, sizeof(char), lockdatalen, filestream);
     if (wroteamt < lockdatalen) {
-        statusbar(_("Error writing lock file %s: %s"),
-                  lockfilename, ferror(filestream));
-        return -1;
+	statusbar(_("Error writing lock file %s: %s"),
+		lockfilename, ferror(filestream));
+	return -1;
     }
 
 #ifdef DEBUG
@@ -219,9 +219,9 @@ int write_lockfile(const char *lockfilename, const char *origfilename, bool modi
 #endif
 
     if (fclose(filestream) == EOF) {
-        statusbar(_("Error writing lock file %s: %s"),
-                  lockfilename, strerror(errno));
-        return -1;
+	statusbar(_("Error writing lock file %s: %s"),
+		lockfilename, strerror(errno));
+	return -1;
     }
 
     openfile->lock_filename = lockfilename;
@@ -236,7 +236,7 @@ int delete_lockfile(const char *lockfilename)
     if (unlink(lockfilename) < 0 && errno != ENOENT) {
 	statusbar(_("Error deleting lock file %s: %s"), lockfilename,
 		  strerror(errno));
-        return -1;
+	return -1;
     }
     return 1;
 }
@@ -258,49 +258,47 @@ int do_lockfile(const char *filename)
     int lockfd, lockpid;
 
     snprintf(lockfilename, lockfilesize, "%s/%s%s%s", lockdir,
-             locking_prefix, lockbase, locking_suffix);
+		locking_prefix, lockbase, locking_suffix);
 #ifdef DEBUG
     fprintf(stderr, "lock file name is %s\n", lockfilename);
 #endif
     if (stat(lockfilename, &fileinfo) != -1) {
-        ssize_t readtot = 0;
-        ssize_t readamt = 0;
-        char *lockbuf = charalloc(8192);
-        char *promptstr = charalloc(128);
-        int ans;
-        if ((lockfd = open(lockfilename, O_RDONLY)) < 0) {
-            statusbar(_("Error opening lock file %s: %s"),
-                      lockfilename, strerror(errno));
-            return -1;
-        }
-        do {
-            readamt = read(lockfd, &lockbuf[readtot], BUFSIZ);
-            readtot += readamt;
-        } while (readtot < 8192 && readamt > 0);
+	ssize_t readtot = 0;
+	ssize_t readamt = 0;
+	char *lockbuf = charalloc(8192);
+	char *promptstr = charalloc(128);
+	int ans;
+	if ((lockfd = open(lockfilename, O_RDONLY)) < 0) {
+	    statusbar(_("Error opening lock file %s: %s"),
+			lockfilename, strerror(errno));
+	    return -1;
+	}
+	do {
+	    readamt = read(lockfd, &lockbuf[readtot], BUFSIZ);
+	    readtot += readamt;
+	} while (readtot < 8192 && readamt > 0);
 
-        if (readtot < 48) {
-            statusbar(_("Error reading lock file %s: Not enough data read"),
-                      lockfilename);
-            return -1;
-        }
-        strncpy(lockprog, &lockbuf[2], 10);
-        lockpid = (unsigned char)lockbuf[25] * 256 + (unsigned char)lockbuf[24];
-        strncpy(lockuser, &lockbuf[28], 16);
+	if (readtot < 48) {
+	    statusbar(_("Error reading lock file %s: Not enough data read"),
+			lockfilename);
+	    return -1;
+	}
+	strncpy(lockprog, &lockbuf[2], 10);
+	lockpid = (unsigned char)lockbuf[25] * 256 + (unsigned char)lockbuf[24];
+	strncpy(lockuser, &lockbuf[28], 16);
 #ifdef DEBUG
-        fprintf(stderr, "lockpid = %d\n", lockpid);
-        fprintf(stderr, "program name which created this lock file should be %s\n",
-                lockprog);
-        fprintf(stderr, "user which created this lock file should be %s\n",
-                lockuser);
+	fprintf(stderr, "lockpid = %d\n", lockpid);
+	fprintf(stderr, "program name which created this lock file should be %s\n", lockprog);
+	fprintf(stderr, "user which created this lock file should be %s\n", lockuser);
 #endif
 	/* TRANSLATORS: The second %s is the name of the user, the third that of the editor. */
 	sprintf(promptstr, _("File %s is being edited (by %s with %s, PID %d); continue?"),
-			   filename, lockuser, lockprog, lockpid);
-        ans = do_yesno_prompt(FALSE, promptstr);
-        if (ans < 1) {
-            blank_statusbar();
-            return -1;
-        }
+			filename, lockuser, lockprog, lockpid);
+	ans = do_yesno_prompt(FALSE, promptstr);
+	if (ans < 1) {
+	    blank_statusbar();
+	    return -1;
+	}
     } else {
 	lockfiledir = mallocstrcpy(NULL, lockfilename);
 	lockfiledir = dirname(lockfiledir);
@@ -310,7 +308,6 @@ int do_lockfile(const char *filename)
 	    return 0;
 	}
     }
-
 
     return write_lockfile(lockfilename, filename, FALSE);
 }
@@ -360,10 +357,9 @@ void open_buffer(const char *filename, bool undoable)
 	    } else if (lockstatus == 0) {
 		quiet = TRUE;
 	    }
- 	}
+	}
 #endif
     }
-
 
     /* If the filename isn't blank, and we are not in NOREAD_MODE,
      * open the file.  Otherwise, treat it as a new file. */
@@ -405,35 +401,25 @@ void open_buffer(const char *filename, bool undoable)
 }
 
 #ifndef DISABLE_SPELLER
-/* If it's not "", filename is a file to open.  We blow away the text of
- * the current buffer, and then open and read the file, if
- * applicable.  Note that we skip the operating directory test when
- * doing this. */
+/* Blow away the text of the current buffer, and then open and read
+ * the specified file into its place. */
 void replace_buffer(const char *filename)
 {
     FILE *f;
-    int rc;
-	/* rc == -2 means that we have a new file.  -1 means that the
-	 * open() failed.  0 means that the open() succeeded. */
+    int descriptor;
 
-    assert(filename != NULL);
+    assert(filename != NULL && filename[0] != '\0');
 
-    /* If the filename isn't blank, open the file.  Otherwise, treat it
-     * as a new file. */
-    rc = (filename[0] != '\0') ? open_file(filename, TRUE, FALSE, &f) : -2;
+    /* Open the file quietly. */
+    descriptor = open_file(filename, TRUE, FALSE, &f);
 
     /* Reinitialize the text of the current buffer. */
     free_filestruct(openfile->fileage);
     initialize_buffer_text();
 
-    /* If we have a non-new file, read it in. */
-    if (rc > 0)
-	read_file(f, rc, filename, FALSE, TRUE);
-
-    /* Move back to the beginning of the first line of the buffer. */
-    openfile->current = openfile->fileage;
-    openfile->current_x = 0;
-    openfile->placewewant = 0;
+    /* If opening the file succeeded, read it in. */
+    if (descriptor > 0)
+	read_file(f, descriptor, filename, FALSE, TRUE);
 }
 #endif /* !DISABLE_SPELLER */
 
@@ -482,8 +468,8 @@ void switch_to_prevnext_buffer(bool next_buf, bool quiet)
     /* Indicate the switch on the statusbar. */
     if (quiet == FALSE)
 	statusbar(_("Switched to %s"),
-	    ((openfile->filename[0] == '\0') ? _("New Buffer") :
-	      openfile->filename));
+		((openfile->filename[0] == '\0') ?
+		_("New Buffer") : openfile->filename));
 
 #ifdef DEBUG
     dump_filestruct(openfile->current);
@@ -521,7 +507,7 @@ bool close_buffer(bool quiet)
 #endif
 
     /* Switch to the next file buffer. */
-     switch_to_prevnext_buffer(TRUE, quiet);
+    switch_to_prevnext_buffer(TRUE, quiet);
 
     /* Close the file buffer we had open before. */
     unlink_opennode(openfile->prev);
@@ -556,17 +542,17 @@ int is_file_writable(const char *filename)
     full_filename = get_full_path(filename);
 
     /* Okay, if we can't stat the path due to a component's
-       permissions, just try the relative one. */
-    if (full_filename == NULL
-        || (stat(full_filename, &fileinfo) == -1 && stat(filename, &fileinfo2) != -1))
-        full_filename = mallocstrcpy(NULL, filename);
+     *permissions, just try the relative one. */
+    if (full_filename == NULL ||
+		(stat(full_filename, &fileinfo) == -1 && stat(filename, &fileinfo2) != -1))
+	full_filename = mallocstrcpy(NULL, filename);
 
     if ((fd = open(full_filename, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR |
-                S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)) == -1
-	|| (f = fdopen(fd, "a")) == NULL)
+		S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)) == -1 ||
+		(f = fdopen(fd, "a")) == NULL)
 	ans = FALSE;
     else
-        fclose(f);
+	fclose(f);
     close(fd);
 
     free(full_filename);
@@ -830,10 +816,8 @@ void read_file(FILE *f, int fd, const char *filename, bool undoable, bool checkw
 	    /* Move fileptr back one line and blow away the old fileptr,
 	     * since its text has been saved. */
 	    fileptr = fileptr->prev;
-	    if (fileptr != NULL) {
-		if (fileptr->next != NULL)
-		    free(fileptr->next);
-	    }
+	    if (fileptr != NULL)
+		free(fileptr->next);
 	}
 
 	/* Attach the line at current after the line at fileptr. */
@@ -929,7 +913,7 @@ int open_file(const char *filename, bool newfie, bool quiet, FILE **f)
     full_filename = get_full_path(filename);
 
     /* Okay, if we can't stat the path due to a component's
-       permissions, just try the relative one. */
+     * permissions, just try the relative one. */
     if (full_filename == NULL
 	|| (stat(full_filename, &fileinfo) == -1 && stat(filename, &fileinfo2) != -1))
 	full_filename = mallocstrcpy(NULL, filename);
@@ -938,7 +922,7 @@ int open_file(const char *filename, bool newfie, bool quiet, FILE **f)
     if (stat(full_filename, &fileinfo) == -1) {
 	/* Well, maybe we can open the file even if the OS says it's
 	 * not there. */
-        if ((fd = open(filename, O_RDONLY)) != -1) {
+	if ((fd = open(filename, O_RDONLY)) != -1) {
 	    if (!quiet)
 		statusbar(_("Reading File"));
 	    free(full_filename);
@@ -967,7 +951,7 @@ int open_file(const char *filename, bool newfie, bool quiet, FILE **f)
 		strerror(errno));
 	beep();
 	return -1;
-     } else {
+    } else {
 	/* The file is A-OK.  Open it. */
 	*f = fdopen(fd, "rb");
 
@@ -991,20 +975,17 @@ int open_file(const char *filename, bool newfie, bool quiet, FILE **f)
  * extension exists, we return "". */
 char *get_next_filename(const char *name, const char *suffix)
 {
-    static int ulmax_digits = -1;
     unsigned long i = 0;
     char *buf;
-    size_t namelen, suffixlen;
+    size_t wholenamelen;
 
     assert(name != NULL && suffix != NULL);
 
-    if (ulmax_digits == -1)
-	ulmax_digits = digits(ULONG_MAX);
+    wholenamelen = strlen(name) + strlen(suffix);
 
-    namelen = strlen(name);
-    suffixlen = strlen(suffix);
-
-    buf = charalloc(namelen + suffixlen + ulmax_digits + 2);
+    /* Reserve space for: the name plus the suffix plus a dot plus
+     * possibly five digits plus a null byte. */
+    buf = charalloc(wholenamelen + 7);
     sprintf(buf, "%s%s", name, suffix);
 
     while (TRUE) {
@@ -1012,11 +993,12 @@ char *get_next_filename(const char *name, const char *suffix)
 
 	if (stat(buf, &fs) == -1)
 	    return buf;
-	if (i == ULONG_MAX)
+
+	/* Limit the number of backup files to a hundred thousand. */
+	if (++i == 100000)
 	    break;
 
-	i++;
-	sprintf(buf + namelen + suffixlen, ".%lu", i);
+	sprintf(buf + wholenamelen, ".%lu", i);
     }
 
     /* We get here only if there is no possible save file.  Blank out
@@ -1456,8 +1438,7 @@ char *get_full_path(const char *origpath)
     }
 
     /* Free d_there_file, since we're done using it. */
-    if (d_there_file != NULL)
-	free(d_there_file);
+    free(d_there_file);
 
     return d_there;
 }
@@ -1613,11 +1594,11 @@ int prompt_failed_backupwrite(const char *filename)
 {
     static int i;
     static char *prevfile = NULL; /* What was the last file we were
-                                   * passed so we don't keep asking
-                                   * this?  Though maybe we should... */
+				   * passed so we don't keep asking
+				   * this?  Though maybe we should... */
     if (prevfile == NULL || strcmp(filename, prevfile)) {
 	i = do_yesno_prompt(FALSE,
-                         _("Failed to write backup file, continue saving? (Say N if unsure) "));
+		_("Failed to write backup file, continue saving? (Say N if unsure) "));
 	prevfile = mallocstrcpy(prevfile, filename);
     }
     return i;
@@ -1910,9 +1891,9 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 	    free(backupname);
 	    fclose(backup_file);
 	    /* If we can't write to the backup, DONT go on, since
-	       whatever caused the backup file to fail (e.g. disk
-	       full may well cause the real file write to fail, which
-	       means we could lose both the backup and the original! */
+	     * whatever caused the backup file to fail (e.g. disk
+	     * full may well cause the real file write to fail, which
+	     * means we could lose both the backup and the original! */
 	    goto cleanup_and_exit;
 	}
 
@@ -2179,8 +2160,7 @@ bool write_file(const char *name, FILE *f_open, bool tmp, append_type
 
   cleanup_and_exit:
     free(realname);
-    if (tempname != NULL)
-	free(tempname);
+    free(tempname);
 
     return retval;
 }
@@ -2403,10 +2383,8 @@ bool do_writeout(bool exiting)
 		 * string's real length. */
 		unsunder(answer, answer_len);
 
-		if (full_filename != NULL)
-		    free(full_filename);
-		if (full_answer != NULL)
-		    free(full_answer);
+		free(full_filename);
+		free(full_answer);
 
 		if (do_warning) {
 		    /* If we're using restricted mode, we aren't allowed

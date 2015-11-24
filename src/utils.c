@@ -1,4 +1,4 @@
-/* $Id: utils.c 5166 2015-03-27 13:46:50Z bens $ */
+/* $Id: utils.c 5259 2015-06-20 08:21:35Z bens $ */
 /**************************************************************************
  *   utils.c                                                              *
  *                                                                        *
@@ -30,21 +30,6 @@
 #include <ctype.h>
 #include <errno.h>
 
-/* Return the number of decimal digits in n. */
-int digits(size_t n)
-{
-    int i;
-
-    if (n == 0)
-	i = 1;
-    else {
-	for (i = 0; n != 0; n /= 10, i++)
-	    ;
-    }
-
-    return i;
-}
-
 /* Return the user's home directory.  We use $HOME, and if that fails,
  * we fall back on the home directory of the effective user ID. */
 void get_homedir(void)
@@ -58,7 +43,11 @@ void get_homedir(void)
 	    if (userage != NULL)
 		homenv = userage->pw_dir;
 	}
-	homedir = mallocstrcpy(NULL, homenv);
+
+	/* Only set homedir if some home directory could be determined,
+	 * otherwise keep homedir NULL. */
+	if (homenv != NULL && strcmp(homenv, "") != 0)
+	    homedir = mallocstrcpy(NULL, homenv);
     }
 }
 
@@ -250,15 +239,6 @@ ssize_t ngetline(char **lineptr, size_t *n, FILE *stream)
 #endif /* !DISABLE_NANORC */
 
 #ifdef HAVE_REGEX_H
-/* Do the compiled regex in preg and the regex in string match the
- * beginning or end of a line? */
-bool regexp_bol_or_eol(const regex_t *preg, const char *string)
-{
-    return (regexec(preg, string, 0, NULL, 0) == 0 &&
-	regexec(preg, string, 0, NULL, REG_NOTBOL | REG_NOTEOL) ==
-	REG_NOMATCH);
-}
-
 /* Fix the regex if we're on platforms which require an adjustment
  * from GNU-style to BSD-style word boundaries. */
 const char *fixbounds(const char *r)
@@ -290,12 +270,11 @@ const char *fixbounds(const char *r)
     fprintf(stderr, "fixbounds(): Ending string = \"%s\"\n", r3);
 #endif
     return (const char *) r3;
-#endif
+#endif /* !GNU_WORDBOUNDS */
 
     return r;
 }
-
-#endif
+#endif /* HAVE_REGEX_H */
 
 #ifndef DISABLE_SPELLER
 /* Is the word starting at position pos in buf a whole word? */

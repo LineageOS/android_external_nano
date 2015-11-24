@@ -1,4 +1,4 @@
-/* $Id: nano.h 5100 2015-01-03 07:24:17Z astyanax $ */
+/* $Id: nano.h 5271 2015-06-27 15:47:39Z bens $ */
 /**************************************************************************
  *   nano.h                                                               *
  *                                                                        *
@@ -117,9 +117,7 @@
 #ifdef HAVE_REGEX_H
 #include <regex.h>
 #endif
-#ifndef NANO_TINY
-#include <setjmp.h>
-#endif
+#include <signal.h>
 #include <assert.h>
 
 /* If no vsnprintf(), use the version from glib 2.x. */
@@ -195,6 +193,7 @@ typedef enum {
     JOIN, PASTE, INSERT, ENTER, OTHER
 } undo_type;
 
+/* Structure types. */
 typedef struct color_pair {
     int pairnum;
 	/* The color pair number used for this foreground color and
@@ -275,7 +274,7 @@ typedef struct lintstruct {
 	/* Previous error. */
 } lintstruct;
 
-
+/* Flags that indicate how a multiline regex applies to a line. */
 #define CNONE		(1<<1)
 	/* Yay, regex doesn't apply to this line at all! */
 #define CBEGINBEFORE	(1<<2)
@@ -286,13 +285,9 @@ typedef struct lintstruct {
 	/* Whole line engulfed by the regex, start < me, end > me. */
 #define CSTARTENDHERE	(1<<5)
 	/* Regex starts and ends within this line. */
-#define CWTF		(1<<6)
-	/* Something else. */
-
 #endif /* !DISABLE_COLOR */
 
-
-/* Structure types. */
+/* More structure types. */
 typedef struct filestruct {
     char *data;
 	/* The text of this line. */
@@ -458,9 +453,6 @@ typedef struct sc {
 	/* The function we're going to run. */
     int toggle;
 	/* If a toggle, what we're toggling. */
-    bool execute;
-	/* Whether to execute the function in question or just return
-	 * so the sequence can be caught by the calling code. */
     struct sc *next;
 	/* Next in the list. */
 } sc;
@@ -572,11 +564,13 @@ enum
 #define CONTROL_RIGHT 554
 
 #ifndef NANO_TINY
-/* Extra bits for the undo function. */
-#define UNdel_del		(1<<0)
-#define UNdel_backspace		(1<<1)
-#define UNcut_marked_forward	(1<<2)
-#define UNcut_cutline		(1<<3)
+/* An imaginary key for when we get a SIGWINCH (window resize). */
+#define KEY_WINCH -2
+
+/* Some extra flags for the undo function. */
+#define WAS_FINAL_BACKSPACE	(1<<1)
+#define WAS_MARKED_FORWARD	(1<<2)
+#define WAS_WHOLE_LINE		(1<<3)
 #endif /* !NANO_TINY */
 
 /* The maximum number of entries displayed in the main shortcut list. */
