@@ -1,5 +1,5 @@
-<!-- Creator     : groff version 1.20.1 -->
-<!-- CreationDate: Fri Mar 22 10:06:07 2013 -->
+<!-- Creator     : groff version 1.22.2 -->
+<!-- CreationDate: Sat May 10 22:54:14 2014 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -48,22 +48,20 @@ Nano&rsquo;s ANOther editor, an enhanced free Pico clone</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>nano</b>
-<i>[OPTIONS]&nbsp;[[+LINE,COLUMN]&nbsp;FILE]...</i></p>
+[<i>options</i>]
+[[+<i>line</i>,<i>column</i>]&nbsp;<i>file</i>]...</p>
 
 <h2>DESCRIPTION
 <a name="DESCRIPTION"></a>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">This manual
-page briefly documents the <b>nano</b> command.</p>
-
 <p style="margin-left:11%; margin-top: 1em"><b>nano</b> is
 a small, free and friendly editor which aims to replace
 Pico, the default editor included in the non-free Pine
-package. Rather than just copying Pico&rsquo;s look and
-feel, <b>nano</b> also implements some missing (or disabled
-by default) features in Pico, such as &quot;search and
+package. On top of copying Pico&rsquo;s look and feel,
+<b>nano</b> also implements some missing (or disabled by
+default) features in Pico, such as &quot;search and
 replace&quot; and &quot;go to line and column
 number&quot;.</p>
 
@@ -73,29 +71,12 @@ number&quot;.</p>
 
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>+</b><i>LINE</i><b>,</b><i>COLUMN</i></p>
+<p style="margin-left:11%; margin-top: 1em"><b>+</b><i>line</i><b>,</b><i>column</i></p>
 
-<p style="margin-left:22%;">Places cursor at line number
-<i>LINE</i> and column number <i>COLUMN</i> (at least one of
-which must be specified) on startup, instead of the default
-of line 1, column 1.</p>
-
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="3%">
-
-
-<p><b>&minus;?</b></p></td>
-<td width="8%"></td>
-<td width="30%">
-
-
-<p>Same as <b>-h (&minus;&minus;help)</b>.</p></td>
-<td width="48%">
-</td></tr>
-</table>
+<p style="margin-left:22%;">Places the cursor on line
+number <i>line</i> and at column number <i>column</i> (at
+least one of which must be specified) on startup, instead of
+the default line 1, column 1.</p>
 
 <p style="margin-left:11%;"><b>&minus;A
 (&minus;&minus;smarthome)</b></p>
@@ -112,13 +93,13 @@ beginning of the line.</p>
 
 <p style="margin-left:22%;">When saving a file, back up the
 previous version of it to the current filename suffixed with
-a ~.</p>
+a tilde (<b>~</b>).</p>
 
 <p style="margin-left:11%;"><b>&minus;C</b> <i>dir</i>
 <b>(&minus;&minus;backupdir=</b><i>dir</i><b>)</b></p>
 
 <p style="margin-left:22%;">Set the directory where
-<b>nano</b> puts unique backup files if file backups are
+<b>nano</b> puts unique backup files, if file backups are
 enabled.</p>
 
 <p style="margin-left:11%;"><b>&minus;D
@@ -185,6 +166,12 @@ files from DOS/Mac format.</p>
 <p style="margin-left:22%;">Use the blank line below the
 titlebar as extra editing space.</p>
 
+<p style="margin-left:11%;"><b>&minus;P
+(&minus;&minus;poslog)</b></p>
+
+<p style="margin-left:22%;">Log and later read back the
+location of the cursor and place it there again.</p>
+
 <p style="margin-left:11%;"><b>&minus;Q</b> <i>str</i>
 <b>(&minus;&minus;quotestr=</b><i>str</i><b>)</b></p>
 
@@ -200,12 +187,13 @@ stands for a Tab.</p>
 
 <p style="margin-left:22%;">Restricted mode: don&rsquo;t
 read or write to any file not specified on the command line;
-read any <i>nanorc</i> files; allow suspending; allow a file
-to be appended to, prepended to, or saved under a different
-name if it already has one; or use backup files or spell
-checking. Also accessible by invoking <b>nano</b> with any
-name beginning with &rsquo;r&rsquo; (e.g.
-&quot;rnano&quot;).</p>
+don&rsquo;t read any <i>nanorc</i> files; don&rsquo;t allow
+suspending; don&rsquo;t allow a file to be appended to,
+prepended to, or saved under a different name if it already
+has one; don&rsquo;t use backup files nor spell checking.
+This restricted mode is also accessible by invoking
+<b>nano</b> with any name beginning with &rsquo;r&rsquo;
+(e.g. &quot;rnano&quot;).</p>
 
 <p style="margin-left:11%;"><b>&minus;S
 (&minus;&minus;smooth)</b></p>
@@ -214,11 +202,11 @@ name beginning with &rsquo;r&rsquo; (e.g.
 will scroll line-by-line, instead of the usual
 chunk-by-chunk behavior.</p>
 
-<p style="margin-left:11%;"><b>&minus;T</b> <i>cols</i>
-<b>(&minus;&minus;tabsize=</b><i>cols</i><b>)</b></p>
+<p style="margin-left:11%;"><b>&minus;T</b> <i>number</i>
+<b>(&minus;&minus;tabsize=</b><i>number</i><b>)</b></p>
 
 <p style="margin-left:22%;">Set the size (width) of a tab
-to <i>cols</i> columns. The value of <i>cols</i> must be
+to <i>number</i> columns. The value of <i>number</i> must be
 greater than 0. The default value is 8.</p>
 
 <p style="margin-left:11%;"><b>&minus;U
@@ -226,7 +214,7 @@ greater than 0. The default value is 8.</p>
 
 <p style="margin-left:22%;">Do quick statusbar blanking.
 Statusbar messages will disappear after 1 keystroke instead
-of 25. Note that <b>-c</b> overrides this.</p>
+of 25. Note that <b>&minus;c</b> overrides this.</p>
 
 <p style="margin-left:11%;"><b>&minus;V
 (&minus;&minus;version)</b></p>
@@ -252,7 +240,7 @@ available.</p>
 (&minus;&minus;const)</b></p>
 
 <p style="margin-left:22%;">Constantly show the cursor
-position. Note that this overrides <b>-U</b>.</p>
+position. Note that this overrides <b>&minus;U</b>.</p>
 
 <p style="margin-left:11%;"><b>&minus;d
 (&minus;&minus;rebinddelete)</b></p>
@@ -265,8 +253,8 @@ like Delete on your system.</p>
 <p style="margin-left:11%;"><b>&minus;h
 (&minus;&minus;help)</b></p>
 
-<p style="margin-left:22%;">Show a summary of command line
-options and exit.</p>
+<p style="margin-left:22%;">Show a summary of the available
+command-line options and exit.</p>
 
 <p style="margin-left:11%;"><b>&minus;i
 (&minus;&minus;autoindent)</b></p>
@@ -278,8 +266,10 @@ source code.</p>
 <p style="margin-left:11%;"><b>&minus;k
 (&minus;&minus;cut)</b></p>
 
-<p style="margin-left:22%;">Enable cut from cursor to end
-of line.</p>
+<p style="margin-left:22%;">Make the &rsquo;Cut Text&rsquo;
+command (normally ^K) cut from the current cursor position
+to the end of the line, instead of cutting the entire
+line.</p>
 
 <p style="margin-left:11%;"><b>&minus;l
 (&minus;&minus;nofollow)</b></p>
@@ -296,7 +286,20 @@ perhaps?</p>
 available for your system. When enabled, mouse clicks can be
 used to place the cursor, set the mark (with a double
 click), and execute shortcuts. The mouse will work in the X
-Window System, and on the console when gpm is running.</p>
+Window System, and on the console when gpm is running. Text
+can still be selected through dragging by holding down the
+Shift key.</p>
+
+<p style="margin-left:11%;"><b>&minus;n
+(&minus;&minus;noread)</b></p>
+
+<p style="margin-left:22%;">Treat any name given on the
+command line as a new file. This allows <b>nano</b> to write
+to named pipes: it will start with a blank buffer, and will
+write to the pipe when the user saves the &quot;file&quot;.
+This way <b>nano</b> can be used as an editor in combination
+with for instance <b>gpg</b> without having to write
+sensitive data to disk first.</p>
 
 <p style="margin-left:11%;"><b>&minus;o</b> <i>dir</i>
 <b>(&minus;&minus;operatingdir=</b><i>dir</i><b>)</b></p>
@@ -315,21 +318,22 @@ terminal.</p>
 (&minus;&minus;quiet)</b></p>
 
 <p style="margin-left:22%;">Do not report errors in the
-<i>nanorc</i> file and ask them to be acknowledged by
+<i>nanorc</i> file nor ask them to be acknowledged by
 pressing Enter at startup.</p>
 
-<p style="margin-left:11%;"><b>&minus;r</b> <i>cols</i>
-<b>(&minus;&minus;fill=</b><i>cols</i><b>)</b></p>
+<p style="margin-left:11%;"><b>&minus;r</b> <i>number</i>
+<b>(&minus;&minus;fill=</b><i>number</i><b>)</b></p>
 
-<p style="margin-left:22%;">Wrap lines at column
-<i>cols</i>. If this value is 0 or less, wrapping will occur
-at the width of the screen less <i>cols</i> columns,
+<p style="margin-left:22%;">Hard-wrap lines at column
+<i>number</i>. If this value is 0 or less, wrapping will
+occur at the width of the screen less <i>number</i> columns,
 allowing the wrap point to vary along with the width of the
 screen if the screen is resized. The default value is
-&minus;8.</p>
+&minus;8. This option conflicts with <b>&minus;w</b> -- the
+last one given takes effect.</p>
 
-<p style="margin-left:11%;"><b>&minus;s</b> <i>prog</i>
-<b>(&minus;&minus;speller=</b><i>prog</i><b>)</b></p>
+<p style="margin-left:11%;"><b>&minus;s</b> <i>program</i>
+<b>(&minus;&minus;speller=</b><i>program</i><b>)</b></p>
 
 <p style="margin-left:22%;">Enable alternative spell
 checker command.</p>
@@ -338,45 +342,47 @@ checker command.</p>
 (&minus;&minus;tempfile)</b></p>
 
 <p style="margin-left:22%;">Always save changed buffer
-without prompting. Same as Pico&rsquo;s <b>-t</b>
+without prompting. Same as Pico&rsquo;s <b>&minus;t</b>
 option.</p>
 
 <p style="margin-left:11%;"><b>&minus;u
 (&minus;&minus;undo)</b></p>
 
-<p style="margin-left:22%;">Enable experimental
-generic-purpose undo code. By default, the undo and redo
+<p style="margin-left:22%;">Enable the experimental
+generic-purpose undo/redo code. The default undo and redo
 shortcuts are Meta-U and Meta-E, respectively.</p>
 
 <p style="margin-left:11%;"><b>&minus;v
 (&minus;&minus;view)</b></p>
 
-<p style="margin-left:22%;">View file (read only) mode.</p>
+<p style="margin-left:22%;">View-file (read-only) mode.</p>
 
 <p style="margin-left:11%;"><b>&minus;w
 (&minus;&minus;nowrap)</b></p>
 
-<p style="margin-left:22%;">Disable wrapping of long
-lines.</p>
+<p style="margin-left:22%;">Disable the hard-wrapping of
+long lines. This option conflicts with <b>&minus;r</b> --
+the last one given takes effect.</p>
 
 <p style="margin-left:11%;"><b>&minus;x
 (&minus;&minus;nohelp)</b></p>
 
-<p style="margin-left:22%;">Disable help screen at bottom
-of editor.</p>
+<p style="margin-left:22%;">Don&rsquo;t show the two help
+lines at the bottom of the screen.</p>
 
 <p style="margin-left:11%;"><b>&minus;z
 (&minus;&minus;suspend)</b></p>
 
-<p style="margin-left:22%;">Enable suspend ability.</p>
+<p style="margin-left:22%;">Enable the suspend ability.</p>
 
 <p style="margin-left:11%;"><b>&minus;$
 (&minus;&minus;softwrap)</b></p>
 
 <p style="margin-left:22%;">Enable &rsquo;soft
-wrapping&rsquo;. <b>nano</b> will attempt to display the
-entire contents of a line, even if it is longer than the
-screen width. Since &rsquo;$&rsquo; normally refers to a
+wrapping&rsquo;. This will make <b>nano</b> attempt to
+display the entire contents of any line, even if it is
+longer than the screen width, by continuing it over multiple
+screen lines. Since &rsquo;$&rsquo; normally refers to a
 variable in the Unix shell, you should specify this option
 last when using other options (e.g. &rsquo;nano
 &minus;wS$&rsquo;) or pass it separately (e.g. &rsquo;nano

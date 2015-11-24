@@ -1,9 +1,9 @@
-/* $Id: winio.c 4569 2013-03-17 22:09:38Z astyanax $ */
+/* $Id: winio.c 4918 2014-05-28 01:35:51Z astyanax $ */
 /**************************************************************************
  *   winio.c                                                              *
  *                                                                        *
  *   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,  *
- *   2008, 2009 Free Software Foundation, Inc.                            *
+ *   2008, 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.    *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -112,7 +112,6 @@ void get_key_buffer(WINDOW *win)
     if (key_buffer != NULL)
 	return;
 
-    /* Read in the first character using blocking input. */
 #ifndef NANO_TINY
     allow_pending_sigwinch(TRUE);
 #endif
@@ -121,9 +120,10 @@ void get_key_buffer(WINDOW *win)
      * screen updates. */
     doupdate();
 
+    /* Read in the first character using whatever mode we're in. */
     errcount = 0;
     if (nodelay_mode) {
-	if ((input =  wgetch(win)) == ERR)
+	if ((input = wgetch(win)) == ERR)
            return;
     } else
 	while ((input = wgetch(win)) == ERR) {
@@ -174,7 +174,7 @@ void get_key_buffer(WINDOW *win)
 #endif
     }
 
-    /* Switch back to non-blocking input. */
+    /* Switch back to waiting mode for input. */
     nodelay(win, FALSE);
 
 #ifdef DEBUG
@@ -304,14 +304,15 @@ int *get_input(WINDOW *win, size_t input_len)
  * [arrow key], Ctrl-[arrow key], Shift-[arrow key], Enter, Backspace,
  * the editing keypad (Insert, Delete, Home, End, PageUp, and PageDown),
  * the function keypad (F1-F16), and the numeric keypad with NumLock
- * off.  Assume nodelay(win) is FALSE. */
+ * off. */
 int get_kbinput(WINDOW *win, bool *meta_key, bool *func_key)
 {
     int kbinput;
 
     /* Read in a character and interpret it.  Continue doing this until
      * we get a recognized value or sequence. */
-    while ((kbinput = parse_kbinput(win, meta_key, func_key)) == ERR);
+    while ((kbinput = parse_kbinput(win, meta_key, func_key)) == ERR)
+	;
 
     /* If we read from the edit window, blank the statusbar if we need
      * to. */
@@ -324,7 +325,7 @@ int get_kbinput(WINDOW *win, bool *meta_key, bool *func_key)
 /* Translate ASCII characters, extended keypad values, and escape
  * sequences into their corresponding key values.  Set meta_key to TRUE
  * when we get a meta key sequence, and set func_key to TRUE when we get
- * a function key.  Assume nodelay(win) is FALSE. */
+ * a function key. */
 int parse_kbinput(WINDOW *win, bool *meta_key, bool *func_key)
 {
     static int escapes = 0, byte_digits = 0;
@@ -339,7 +340,8 @@ int parse_kbinput(WINDOW *win, bool *meta_key, bool *func_key)
 	if (kbinput == 0)
 	    return 0;
     } else
-	while ((kbinput = get_input(win, 1)) == NULL);
+	while ((kbinput = get_input(win, 1)) == NULL)
+	    ;
 
     switch (*kbinput) {
 	case ERR:
@@ -610,7 +612,7 @@ int parse_kbinput(WINDOW *win, bool *meta_key, bool *func_key)
 #ifdef KEY_SUSPEND
 	    /* Slang doesn't support KEY_SUSPEND. */
 	    case KEY_SUSPEND:
-		retval =  sc_seq_or(do_suspend_void, 0);
+		retval = sc_seq_or(do_suspend_void, 0);
 		break;
 #endif
 #ifdef PDCURSES
@@ -761,12 +763,12 @@ int get_escape_seq_kbinput(const int *seq, size_t seq_len)
 			retval = sc_seq_or(do_end, 0);
 			break;
 		    case 'H': /* Esc O H == Home on xterm/Terminal. */
-			retval = sc_seq_or(do_home, 0);;
+			retval = sc_seq_or(do_home, 0);
 			break;
 		    case 'M': /* Esc O M == Enter on numeric keypad with
 			       * NumLock off on VT100/VT220/VT320/xterm/
 			       * rxvt/Eterm. */
-			retval = sc_seq_or(do_home, 0);;
+			retval = sc_seq_or(do_home, 0);
 			break;
 		    case 'P': /* Esc O P == F1 on VT100/VT220/VT320/Mach
 			       * console. */
@@ -831,7 +833,7 @@ int get_escape_seq_kbinput(const int *seq, size_t seq_len)
 		    case 'n': /* Esc O n == Delete (.) on numeric keypad
 			       * with NumLock off on VT100/VT220/VT320/
 			       * xterm/rxvt/Eterm/Terminal. */
-			retval = sc_seq_or(do_delete, 0);;
+			retval = sc_seq_or(do_delete, 0);
 			break;
 		    case 'o': /* Esc O o == '/' on numeric keypad with
 			       * NumLock off on VT100/VT220/VT320/xterm/
@@ -841,27 +843,27 @@ int get_escape_seq_kbinput(const int *seq, size_t seq_len)
 		    case 'p': /* Esc O p == Insert (0) on numeric keypad
 			       * with NumLock off on VT100/VT220/VT320/
 			       * rxvt/Eterm/Terminal. */
-			retval = sc_seq_or(do_insertfile_void, 0);;
+			retval = sc_seq_or(do_insertfile_void, 0);
 			break;
 		    case 'q': /* Esc O q == End (1) on numeric keypad
 			       * with NumLock off on VT100/VT220/VT320/
 			       * rxvt/Eterm/Terminal. */
-			retval = sc_seq_or(do_end, 0);;
+			retval = sc_seq_or(do_end, 0);
 			break;
 		    case 'r': /* Esc O r == Down (2) on numeric keypad
 			       * with NumLock off on VT100/VT220/VT320/
 			       * rxvt/Eterm/Terminal. */
-			retval = sc_seq_or(do_down_void, 0);;
+			retval = sc_seq_or(do_down_void, 0);
 			break;
 		    case 's': /* Esc O s == PageDown (3) on numeric
 			       * keypad with NumLock off on VT100/VT220/
 			       * VT320/rxvt/Eterm/Terminal. */
-			retval = sc_seq_or(do_page_down, 0);;
+			retval = sc_seq_or(do_page_down, 0);
 			break;
 		    case 't': /* Esc O t == Left (4) on numeric keypad
 			       * with NumLock off on VT100/VT220/VT320/
 			       * rxvt/Eterm/Terminal. */
-			retval = sc_seq_or(do_left, 0);;
+			retval = sc_seq_or(do_left, 0);
 			break;
 		    case 'u': /* Esc O u == Center (5) on numeric keypad
 			       * with NumLock off on VT100/VT220/VT320/
@@ -980,7 +982,7 @@ int get_escape_seq_kbinput(const int *seq, size_t seq_len)
 				    break;
 				default: /* Esc [ 1 ~ == Home on
 					  * VT320/Linux console. */
-				    retval = sc_seq_or(do_home, 0);;
+				    retval = sc_seq_or(do_home, 0);
 				    break;
 			    }
 			}
@@ -1031,28 +1033,28 @@ int get_escape_seq_kbinput(const int *seq, size_t seq_len)
 				default: /* Esc [ 2 ~ == Insert on
 					  * VT220/VT320/Linux console/
 					  * xterm/Terminal. */
-				    retval = sc_seq_or(do_insertfile_void, 0);;
+				    retval = sc_seq_or(do_insertfile_void, 0);
 				    break;
 			    }
 			}
 			break;
 		    case '3': /* Esc [ 3 ~ == Delete on VT220/VT320/
 			       * Linux console/xterm/Terminal. */
-			retval = sc_seq_or(do_delete, 0);;
+			retval = sc_seq_or(do_delete, 0);
 			break;
 		    case '4': /* Esc [ 4 ~ == End on VT220/VT320/Linux
 			       * console/xterm. */
-			retval = sc_seq_or(do_end, 0);;
+			retval = sc_seq_or(do_end, 0);
 			break;
 		    case '5': /* Esc [ 5 ~ == PageUp on VT220/VT320/
 			       * Linux console/xterm/Terminal;
 			       * Esc [ 5 ^ == PageUp on Eterm. */
-			retval = sc_seq_or(do_page_up, 0);;
+			retval = sc_seq_or(do_page_up, 0);
 			break;
 		    case '6': /* Esc [ 6 ~ == PageDown on VT220/VT320/
 			       * Linux console/xterm/Terminal;
 			        * Esc [ 6 ^ == PageDown on Eterm. */
-			retval = sc_seq_or(do_page_down, 0);;
+			retval = sc_seq_or(do_page_down, 0);
 			break;
 		    case '7': /* Esc [ 7 ~ == Home on rxvt. */
 			retval = sc_seq_or(do_home, 0);
@@ -1061,10 +1063,10 @@ int get_escape_seq_kbinput(const int *seq, size_t seq_len)
 			retval = sc_seq_or(do_end, 0);
 			break;
 		    case '9': /* Esc [ 9 == Delete on Mach console. */
-			retval = sc_seq_or(do_delete, 0);;
+			retval = sc_seq_or(do_delete, 0);
 			break;
 		    case '@': /* Esc [ @ == Insert on Mach console. */
-			retval = sc_seq_or(do_insertfile_void, 0);;
+			retval = sc_seq_or(do_insertfile_void, 0);
 			break;
 		    case 'A': /* Esc [ A == Up on ANSI/VT220/Linux
 			       * console/FreeBSD console/Mach console/
@@ -1220,13 +1222,13 @@ int get_escape_seq_abcd(int kbinput)
 {
     switch (tolower(kbinput)) {
 	case 'a':
-	    return sc_seq_or(do_up_void, 0);;
+	    return sc_seq_or(do_up_void, 0);
 	case 'b':
-	    return sc_seq_or(do_down_void, 0);;
+	    return sc_seq_or(do_down_void, 0);
 	case 'c':
-	    return sc_seq_or(do_right, 0);;
+	    return sc_seq_or(do_right, 0);
 	case 'd':
-	    return sc_seq_or(do_left, 0);;
+	    return sc_seq_or(do_left, 0);
 	default:
 	    return ERR;
     }
@@ -1301,15 +1303,13 @@ int get_byte_kbinput(int kbinput)
 	    break;
 	case 3:
 	    /* Third digit: This must be from zero to five if the first
-	     * was two and the second was between zero and five, and may
-	     * be any decimal value if the first was zero or one and the
-	     * second was between six and nine.  Put it in the 1's
-	     * position of the byte sequence holder. */
+	     * was two and the second was five, and may be any decimal
+	     * value otherwise.  Put it in the 1's position of the byte
+	     * sequence holder. */
 	    if (('0' <= kbinput && kbinput <= '5') || (byte < 250 &&
 		'6' <= kbinput && kbinput <= '9')) {
 		byte += kbinput - '0';
-		/* If this character is a valid decimal value, then the
-		 * byte sequence is complete. */
+		/* The byte sequence is complete. */
 		retval = byte;
 	    } else
 		/* This isn't the third digit of a byte sequence.
@@ -1531,7 +1531,8 @@ int *parse_verbatim_kbinput(WINDOW *win, size_t *kbinput_len)
     int *kbinput, *retval;
 
     /* Read in the first keystroke. */
-    while ((kbinput = get_input(win, 1)) == NULL);
+    while ((kbinput = get_input(win, 1)) == NULL)
+	;
 
 #ifdef ENABLE_UTF8
     if (using_utf8()) {
@@ -1557,8 +1558,8 @@ int *parse_verbatim_kbinput(WINDOW *win, size_t *kbinput_len)
 		statusbar(_("Unicode Input"));
 
 	    while (uni == ERR) {
-		while ((kbinput = get_input(win, 1)) == NULL);
-
+		while ((kbinput = get_input(win, 1)) == NULL)
+		    ;
 		uni = get_unicode_kbinput(*kbinput);
 	    }
 
@@ -1638,8 +1639,7 @@ int get_mouseinput(int *mouse_x, int *mouse_y, bool allow_shortcuts)
 		/* The width of all the shortcuts, except for the last
 		 * two, in the shortcut list in bottomwin. */
 	    int j;
-		/* The y-coordinate relative to the beginning of the
-		 * shortcut list in bottomwin. */
+		/* The calculated index number of the clicked item. */
 	    size_t currslen;
 		/* The number of shortcuts in the current shortcut
 		 * list. */
@@ -1658,10 +1658,6 @@ int get_mouseinput(int *mouse_x, int *mouse_y, bool allow_shortcuts)
 
 		return 0;
 	    }
-
-	    /* Calculate the y-coordinate relative to the beginning of
-	     * the shortcut list in bottomwin. */
-	    j = *mouse_y - 1;
 
 	    /* Get the shortcut lists' length. */
 	    if (currmenu == MMAIN)
@@ -1683,43 +1679,44 @@ int get_mouseinput(int *mouse_x, int *mouse_y, bool allow_shortcuts)
 	    else
 		i = COLS / ((currslen / 2) + (currslen % 2));
 
-	    /* Calculate the x-coordinate relative to the beginning of
-	     * the shortcut list in bottomwin, and add it to j.  j
-	     * should now be the index in the shortcut list of the
-	     * shortcut we released/clicked on. */
-	    j = (*mouse_x / i) * 2 + j;
+	    /* Calculate the one-based index in the shortcut list. */
+	    j = (*mouse_x / i) * 2 + *mouse_y;
 
-	    /* Adjust j if we released on the last two shortcuts. */
-	    if ((j >= currslen) && (*mouse_x % i < COLS % i))
+	    /* Adjust the index if we hit the last two wider ones. */
+	    if ((j > currslen) && (*mouse_x % i < COLS % i))
 		j -= 2;
-
+#ifdef DEBUG
+	    fprintf(stderr, "Calculated %i as index in shortcut list, currmenu = %x.\n", j, currmenu);
+#endif
 	    /* Ignore releases/clicks of the first mouse button beyond
 	     * the last shortcut. */
-	    if (j >= currslen)
+	    if (j > currslen)
 		return 2;
 
-	    /* Go through the shortcut list to determine which shortcut
-	     * we released/clicked on. */
-	    f = allfuncs;
-
-	    for (; j > 0; j--) {
-		if (f->next != NULL)
-		    f = f->next;
-
-                while (f->next != NULL && ((f->menus & currmenu) == 0
+	    /* Go through the list of functions to determine which
+	     * shortcut in the current menu we released/clicked on. */
+	    for (f = allfuncs; f != NULL; f = f->next) {
+	        if ((f->menus & currmenu) == 0)
+		    continue;
 #ifndef DISABLE_HELP
-                       || strlen(f->help) == 0
+		if (!f->help || strlen(f->help) == 0)
+		    continue;
 #endif
-		))
-		     f = f->next;
+		if (first_sc_for(currmenu, f->scfunc) == NULL)
+	            continue;
+		/* Tick off an actually shown shortcut. */
+		j -= 1;
+		if (j == 0)
+		    break;
 	    }
+#ifdef DEBUG
+	    fprintf(stderr, "Stopped on func %ld present in menus %x\n", (long)f->scfunc, f->menus);
+#endif
 
-
-	    /* And put back the equivalent key. */
+	    /* And put the corresponding key into the keyboard buffer. */
 	    if (f != NULL) {
                 const sc *s = first_sc_for(currmenu, f->scfunc);
-		if (s != NULL)
-		    unget_kbinput(s->seq, s->type == META, FALSE);
+		unget_kbinput(s->seq, s->type == META, FALSE);
 	    }
 	} else
 	    /* Handle releases/clicks of the first mouse button that
@@ -1746,8 +1743,8 @@ int get_mouseinput(int *mouse_x, int *mouse_y, bool allow_shortcuts)
 	     * wheel is equivalent to moving down three lines. */
 	    for (i = 0; i < 3; i++)
 		unget_kbinput((mevent.bstate & BUTTON4_PRESSED) ?
-			 sc_seq_or(up_void, 0) : sc_seq_or(DO_DOWN_VOID, 0), FALSE,
-			FALSE);
+			 sc_seq_or(do_up_void, 0) : sc_seq_or(do_down_void, 0),
+			FALSE, FALSE);
 
 	    return 1;
 	} else
@@ -1763,21 +1760,16 @@ int get_mouseinput(int *mouse_x, int *mouse_y, bool allow_shortcuts)
 }
 #endif /* !DISABLE_MOUSE */
 
-/* Return the shortcut corresponding to the values of kbinput (the key
- * itself), meta_key (whether the key is a meta sequence), and func_key
- * (whether the key is a function key), if any.  The shortcut will be
- * the first one in the list (control key, meta key sequence, function
- * key, other meta key sequence) for the corresponding function.  For
- * example, passing in a meta key sequence that corresponds to a
- * function with a control key, a function key, and a meta key sequence
- * will return the control key corresponding to that function. */
-const sc *get_shortcut(int menu, int *kbinput, bool
-	*meta_key, bool *func_key)
+/* Return the shortcut that corresponds to the values of kbinput (the
+ * key itself) and meta_key (whether the key is a meta sequence).  The
+ * returned shortcut will be the first in the list that corresponds to
+ * the given sequence. */
+const sc *get_shortcut(int menu, int *kbinput, bool *meta_key)
 {
     sc *s;
 
 #ifdef DEBUG
-    fprintf(stderr, "get_shortcut(): kbinput = %d, meta_key = %s, func_key = %s\n", *kbinput, *meta_key ? "TRUE" : "FALSE", *func_key ? "TRUE" : "FALSE");
+    fprintf(stderr, "get_shortcut(): kbinput = %d, meta_key = %s -- ", *kbinput, *meta_key ? "TRUE" : "FALSE");
 #endif
 
     /* Check for shortcuts. */
@@ -1786,43 +1778,36 @@ const sc *get_shortcut(int menu, int *kbinput, bool
 		&& ((s->type == META && *meta_key == TRUE && *kbinput == s->seq)
 		|| (s->type != META && *kbinput == s->seq))) {
 #ifdef DEBUG
-	    fprintf (stderr, "matched seq \"%s\" and btw meta was %d (menus %d = %d)\n", s->keystr, *meta_key, menu, s->menu);
+	    fprintf (stderr, "matched seq \"%s\", and btw meta was %d (menu is %x from %x)\n",
+			     s->keystr, *meta_key, menu, s->menu);
 #endif
 	    return s;
 	}
     }
 #ifdef DEBUG
-    fprintf (stderr, "matched nothing btw meta was %d\n", *meta_key);
+    fprintf (stderr, "matched nothing, btw meta was %d\n", *meta_key);
 #endif
 
     return NULL;
 }
 
-
-/* Try to get a function back from a window.  Just a wrapper so
-   functions to need to create function_key meta_key blah blah
-    mmenu - what menu name to look through for valid funcs */
+/* Try to get a function back from a window.  Just a wrapper. */
 const subnfunc *getfuncfromkey(WINDOW *win)
 {
     int kbinput;
     bool func_key = FALSE, meta_key = FALSE;
     const sc *s;
-    const subnfunc *f;
 
     kbinput = parse_kbinput(win, &meta_key, &func_key);
     if (kbinput == 0)
 	return NULL;
 
-    s = get_shortcut(currmenu, &kbinput, &meta_key, &func_key);
+    s = get_shortcut(currmenu, &kbinput, &meta_key);
     if (!s)
 	return NULL;
 
-    f = sctofunc((sc *) s);
-    return f;
-
+    return sctofunc((sc *) s);
 }
-
-
 
 /* Move to (x, y) in win, and display a line of n spaces with the
  * current attributes. */
@@ -1999,7 +1984,7 @@ char *display_string(const char *buf, size_t start_col, size_t len, bool
 
 	/* If buf contains a tab character, interpret it. */
 	if (*buf_mb == '\t') {
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
 	    if (ISSET(WHITESPACE_DISPLAY)) {
 		int i;
 
@@ -2015,7 +2000,7 @@ char *display_string(const char *buf, size_t start_col, size_t len, bool
 	    }
 	/* If buf contains a control character, interpret it.  If buf
 	 * contains an invalid multibyte control character, display it
-	 * as such.*/
+	 * as such. */
 	} else if (is_cntrl_mbchar(buf_mb)) {
 	    char *ctrl_buf_mb = charalloc(mb_cur_max());
 	    int ctrl_buf_mb_len, i;
@@ -2034,7 +2019,7 @@ char *display_string(const char *buf, size_t start_col, size_t len, bool
 	    free(ctrl_buf_mb);
 	/* If buf contains a space character, interpret it. */
 	} else if (*buf_mb == ' ') {
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
 	    if (ISSET(WHITESPACE_DISPLAY)) {
 		int i;
 
@@ -2113,7 +2098,9 @@ void titlebar(const char *path)
 
     assert(path != NULL || openfile->filename != NULL);
 
-    wattron(topwin, reverse_attr);
+    if (interface_color_pair[TITLE_BAR].bright)
+	wattron(topwin, A_BOLD);
+    wattron(topwin, interface_color_pair[TITLE_BAR].pairnum);
 
     blank_titlebar();
 
@@ -2244,7 +2231,8 @@ void titlebar(const char *path)
 	}
     }
 
-    wattroff(topwin, reverse_attr);
+    wattroff(topwin, A_BOLD);
+    wattroff(topwin, interface_color_pair[TITLE_BAR].pairnum);
 
     wnoutrefresh(topwin);
     reset_cursor();
@@ -2260,8 +2248,10 @@ void set_modified(void)
 	titlebar(NULL);
 #ifndef NANO_TINY
 	if (ISSET(LOCKING)) {
-	    if (openfile->lock_filename == NULL) {
-                /* Translators: Try to keep this at most 80 characters. */
+	    if (!strcmp(openfile->filename, ""))
+		return;
+	    else if (openfile->lock_filename == NULL) {
+                /* TRANSLATORS: Try to keep this at most 76 characters. */
                 statusbar(_("Warning: Modifying a file which is not locked, check directory permission?"));
 	    } else {
 		write_lockfile(openfile->lock_filename,
@@ -2279,8 +2269,8 @@ void statusbar(const char *msg, ...)
 {
     va_list ap;
     char *bar, *foo;
-    size_t start_x, foo_len;
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+    size_t start_x;
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
     bool old_whitespace;
 #endif
 
@@ -2296,7 +2286,7 @@ void statusbar(const char *msg, ...)
 
     blank_statusbar();
 
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
     old_whitespace = ISSET(WHITESPACE_DISPLAY);
     UNSET(WHITESPACE_DISPLAY);
 #endif
@@ -2304,21 +2294,23 @@ void statusbar(const char *msg, ...)
     vsnprintf(bar, mb_cur_max() * (COLS - 3), msg, ap);
     va_end(ap);
     foo = display_string(bar, 0, COLS - 4, FALSE);
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+    free(bar);
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
     if (old_whitespace)
 	SET(WHITESPACE_DISPLAY);
 #endif
-    free(bar);
-    foo_len = strlenpt(foo);
-    start_x = (COLS - foo_len - 4) / 2;
+    start_x = (COLS - strlenpt(foo) - 4) / 2;
 
     wmove(bottomwin, 0, start_x);
-    wattron(bottomwin, reverse_attr);
+    if (interface_color_pair[STATUS_BAR].bright)
+	wattron(bottomwin, A_BOLD);
+    wattron(bottomwin, interface_color_pair[STATUS_BAR].pairnum);
     waddstr(bottomwin, "[ ");
     waddstr(bottomwin, foo);
     free(foo);
     waddstr(bottomwin, " ]");
-    wattroff(bottomwin, reverse_attr);
+    wattroff(bottomwin, A_BOLD);
+    wattroff(bottomwin, interface_color_pair[STATUS_BAR].pairnum);
     wnoutrefresh(bottomwin);
     reset_cursor();
     wnoutrefresh(edit);
@@ -2385,7 +2377,7 @@ void bottombars(int menu)
 	    continue;
 
 #ifdef DEBUG
-        fprintf(stderr, "found one! f->menus = %d, desc = \"%s\"\n", f->menus, f->desc);
+        fprintf(stderr, "found one! f->menus = %x, desc = \"%s\"\n", f->menus, f->desc);
 #endif
         s = first_sc_for(menu, f->scfunc);
         if (s == NULL) {
@@ -2418,9 +2410,12 @@ void onekey(const char *keystroke, const char *desc, size_t len)
 
     assert(keystroke != NULL && desc != NULL);
 
-    wattron(bottomwin, reverse_attr);
+    if (interface_color_pair[KEY_COMBO].bright)
+	wattron(bottomwin, A_BOLD);
+    wattron(bottomwin, interface_color_pair[KEY_COMBO].pairnum);
     waddnstr(bottomwin, keystroke, actual_x(keystroke, len));
-    wattroff(bottomwin, reverse_attr);
+    wattroff(bottomwin, A_BOLD);
+    wattroff(bottomwin, interface_color_pair[KEY_COMBO].pairnum);
 
     if (len > keystroke_len)
 	len -= keystroke_len;
@@ -2429,7 +2424,12 @@ void onekey(const char *keystroke, const char *desc, size_t len)
 
     if (len > 0) {
 	waddch(bottomwin, ' ');
+	if (interface_color_pair[FUNCTION_TAG].bright)
+	    wattron(bottomwin, A_BOLD);
+	wattron(bottomwin, interface_color_pair[FUNCTION_TAG].pairnum);
 	waddnstr(bottomwin, desc, actual_x(desc, len));
+	wattroff(bottomwin, A_BOLD);
+	wattroff(bottomwin, interface_color_pair[FUNCTION_TAG].pairnum);
     }
 }
 
@@ -2477,7 +2477,7 @@ void reset_cursor(void)
 void edit_draw(filestruct *fileptr, const char *converted, int
 	line, size_t start)
 {
-#if !defined(NANO_TINY) || defined(ENABLE_COLOR)
+#if !defined(NANO_TINY) || !defined(DISABLE_COLOR)
     size_t startpos = actual_x(fileptr->data, start);
 	/* The position in fileptr->data of the leftmost character
 	 * that displays at least partially on the window. */
@@ -2492,23 +2492,29 @@ void edit_draw(filestruct *fileptr, const char *converted, int
     assert(openfile != NULL && fileptr != NULL && converted != NULL);
     assert(strlenpt(converted) <= COLS);
 
-    /* Just paint the string in any case (we'll add color or reverse on
-     * just the text that needs it). */
+    /* First simply paint the line -- then we'll add colors or the
+     * marking highlight on just the pieces that need it. */
     mvwaddstr(edit, line, 0, converted);
+    /* Tell ncurses to really redraw the line without trying to optimize
+       for what it thinks is already there, because it gets it wrong in
+       the case of a wide character in column zero.  See bug #31743. */
+#ifndef USE_SLANG
+    wredrawln(edit, line, 1);
+#endif
 
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     /* If color syntaxes are available and turned on, we need to display
      * them. */
     if (openfile->colorstrings != NULL && !ISSET(NO_COLOR_SYNTAX)) {
 	const colortype *tmpcolor = openfile->colorstrings;
 
-	/* Set up multi-line color data for this line if it's not yet calculated  */
+	/* Set up multi-line color data for this line if it's not yet calculated. */
         if (fileptr->multidata == NULL && openfile->syntax
 		&& openfile->syntax->nmultis > 0) {
- 	    int i;
+	    int i;
 	    fileptr->multidata = (short *) nmalloc(openfile->syntax->nmultis * sizeof(short));
             for (i = 0; i < openfile->syntax->nmultis; i++)
-		fileptr->multidata[i] = -1;	/* Assue this applies until we know otherwise */
+		fileptr->multidata[i] = -1;	/* Assume this applies until we know otherwise. */
 	}
 	for (; tmpcolor != NULL; tmpcolor = tmpcolor->next) {
 	    int x_start;
@@ -2597,16 +2603,16 @@ void edit_draw(filestruct *fileptr, const char *converted, int
 		if (md == -1)
 		    fileptr->multidata[tmpcolor->id] = CNONE; /* until we find out otherwise */
 		else if (md == CNONE)
-		    continue;
+		    goto end_of_loop;
 		else if (md == CWHOLELINE) {
 		    mvwaddnstr(edit, line, 0, converted, -1);
-		    continue;
+		    goto end_of_loop;
 		} else if (md == CBEGINBEFORE) {
 		    regexec(tmpcolor->end, fileptr->data, 1, &endmatch, 0);
 		    paintlen = actual_x(converted, strnlenpt(fileptr->data,
 			endmatch.rm_eo) - start);
 		    mvwaddnstr(edit, line, 0, converted, paintlen);
-		    continue;
+		    goto end_of_loop;
 		}
 
 		while (start_line != NULL && regexec(tmpcolor->start,
@@ -2756,12 +2762,12 @@ void edit_draw(filestruct *fileptr, const char *converted, int
 		    }
 		}
 	    }
-
+  end_of_loop:
 	    wattroff(edit, A_BOLD);
 	    wattroff(edit, COLOR_PAIR(tmpcolor->pairnum));
 	}
     }
-#endif /* ENABLE_COLOR */
+#endif /* !DISABLE_COLOR */
 
 #ifndef NANO_TINY
     /* If the mark is on, we need to display it. */
@@ -2826,10 +2832,10 @@ void edit_draw(filestruct *fileptr, const char *converted, int
 	    if (paintlen > 0)
 		paintlen = actual_x(converted + index, paintlen);
 
-	    wattron(edit, reverse_attr);
+	    wattron(edit, hilite_attribute);
 	    mvwaddnstr(edit, line, x_start, converted + index,
 		paintlen);
-	    wattroff(edit, reverse_attr);
+	    wattroff(edit, hilite_attribute);
 	}
     }
 #endif /* !NANO_TINY */
@@ -2838,13 +2844,12 @@ void edit_draw(filestruct *fileptr, const char *converted, int
 /* Just update one line in the edit buffer.  This is basically a wrapper
  * for edit_draw().  The line will be displayed starting with
  * fileptr->data[index].  Likely arguments are current_x or zero.
- * Returns: Number of additiona lines consumed (needed for SOFTWRAP)
- */
+ * Returns: Number of additional lines consumed (needed for SOFTWRAP). */
 int update_line(filestruct *fileptr, size_t index)
 {
     int line = 0;
-    int extralinesused = 0;
 	/* The line in the edit window that we want to update. */
+    int extralinesused = 0;
     char *converted;
 	/* fileptr->data converted to have tabs and control characters
 	 * expanded. */
@@ -2900,10 +2905,10 @@ int update_line(filestruct *fileptr, size_t index)
 #ifdef DEBUG
 	    fprintf(stderr, "update_line(): Softwrap code, moving to %d index %lu\n", line, (unsigned long) index);
 #endif
- 	    blank_line(edit, line, 0, COLS);
+	    blank_line(edit, line, 0, COLS);
 
 	    /* Expand the line, replacing tabs with spaces, and control
- 	     * characters with their displayed forms. */
+	     * characters with their displayed forms. */
 	    converted = display_string(fileptr->data, index, COLS, !ISSET(SOFTWRAP));
 #ifdef DEBUG
 	    if (ISSET(SOFTWRAP) && strlen(converted) >= COLS - 2)
@@ -2912,7 +2917,7 @@ int update_line(filestruct *fileptr, size_t index)
 
 	    /* Paint the line. */
 	    edit_draw(fileptr, converted, line, index);
- 	    free(converted);
+	    free(converted);
 	    extralinesused++;
 	}
     }
@@ -2946,8 +2951,7 @@ bool need_vertical_update(size_t pww_save)
 }
 
 /* When edittop changes, try and figure out how many lines
- * we really have to work with (i.e. set maxrows)
- */
+ * we really have to work with (i.e. set maxrows). */
 void compute_maxrows(void)
 {
     int n;
@@ -2960,7 +2964,7 @@ void compute_maxrows(void)
 
     maxrows = 0;
     for (n = 0; n < editwinrows && foo; n++) {
-	maxrows ++;
+	maxrows++;
 	n += strlenpt(foo->data) / COLS;
 	foo = foo->next;
     }
@@ -2969,7 +2973,7 @@ void compute_maxrows(void)
 	maxrows += editwinrows - n;
 
 #ifdef DEBUG
-    fprintf(stderr, "compute_maxrows(): maxrows = %ld\n", maxrows);
+    fprintf(stderr, "compute_maxrows(): maxrows = %i\n", maxrows);
 #endif
 }
 
@@ -2981,8 +2985,8 @@ void compute_maxrows(void)
  * also assume that scrollok(edit) is FALSE. */
 void edit_scroll(scroll_dir direction, ssize_t nlines)
 {
+    ssize_t i;
     filestruct *foo;
-    ssize_t i, extracuzsoft = 0;
     bool do_redraw = FALSE;
 
     /* Don't bother scrolling less than one line. */
@@ -2991,36 +2995,6 @@ void edit_scroll(scroll_dir direction, ssize_t nlines)
 
     if (need_vertical_update(0))
 	do_redraw = TRUE;
-
-
-    /* If using soft wrapping, we want to scroll down enough to display the entire next
-        line, if possible... */
-    if (ISSET(SOFTWRAP) && direction == DOWN_DIR) {
-#ifdef DEBUG
-	   fprintf(stderr, "Softwrap: Entering check for extracuzsoft\n");
-#endif
-	for (i = maxrows, foo = openfile->edittop; foo && i > 0; i--, foo = foo->next)
-	    ;
-
-	if (foo) {
-	   extracuzsoft += strlenpt(foo->data) / COLS;
-#ifdef DEBUG
-	   fprintf(stderr, "Setting extracuzsoft to %lu due to strlen %lu of line %lu\n", (unsigned long) extracuzsoft,
-		(unsigned long) strlenpt(foo->data), (unsigned long) foo->lineno);
-#endif
-
-	    /* Now account for whether the edittop line itself is >COLS, if scrolling down */
-	   for (foo = openfile->edittop; foo && extracuzsoft > 0; nlines++) {
-		extracuzsoft -= 1 + strlenpt(foo->data) / COLS;
-#ifdef DEBUG
- 		fprintf(stderr, "Edittop adjustment, setting nlines to %lu\n", (unsigned long) nlines);
-#endif
-		if (foo == openfile->filebot)
-		    break;
-		foo = foo->next;
-	    }
-	}
-    }
 
     /* Part 1: nlines is the number of lines we're going to scroll the
      * text of the edit window. */
@@ -3038,10 +3012,10 @@ void edit_scroll(scroll_dir direction, ssize_t nlines)
 		break;
 	    openfile->edittop = openfile->edittop->next;
 	}
-	/* Don't over-scroll on long lines */
-	if (ISSET(SOFTWRAP)) {
+	/* Don't over-scroll on long lines. */
+	if (ISSET(SOFTWRAP) && (direction == UP_DIR)) {
 	    ssize_t len = strlenpt(openfile->edittop->data) / COLS;
-	    i -=  len;
+	    i -= len;
 	    if (len > 0)
 		do_redraw = TRUE;
 	}
@@ -3113,6 +3087,7 @@ void edit_scroll(scroll_dir direction, ssize_t nlines)
 		openfile->current_x : 0);
 	foo = foo->next;
     }
+    compute_maxrows();
 }
 
 /* Update any lines between old_current and current that need to be
@@ -3130,10 +3105,9 @@ void edit_redraw(filestruct *old_current, size_t pww_save)
 	maxrows || openfile->current->lineno <
 	openfile->edittop->lineno || openfile->current->lineno >=
 	openfile->edittop->lineno + maxrows) {
-
 #ifdef DEBUG
-    fprintf(stderr, "edit_redraw(): line %lu was offscreen, oldcurrent = %lu edittop = %lu", openfile->current->lineno,
-                    old_current->lineno, openfile->edittop->lineno);
+	fprintf(stderr, "edit_redraw(): line %d was offscreen, oldcurrent = %d edittop = %d",
+	    openfile->current->lineno, old_current->lineno, openfile->edittop->lineno);
 #endif
 
 #ifndef NANO_TINY
@@ -3221,7 +3195,7 @@ void edit_refresh(void)
     filestruct *foo;
     int nlines;
 
-    /* Figure out what maxrows should really be */
+    /* Figure out what maxrows should really be. */
     compute_maxrows();
 
     if (openfile->current->lineno < openfile->edittop->lineno ||
@@ -3323,6 +3297,13 @@ void total_refresh(void)
  * portion of the window. */
 void display_main_list(void)
 {
+#ifndef DISABLE_COLOR
+    if (openfile->syntax && openfile->syntax->linter)
+	set_lint_shortcuts();
+    else
+	set_spell_shortcuts();
+#endif
+
     bottombars(MMAIN);
 }
 
@@ -3394,7 +3375,6 @@ void disable_nodelay(void)
    nodelay(edit, FALSE);
 }
 
-
 /* Highlight the current word being replaced or spell checked.  We
  * expect word to have tabs and control characters expanded. */
 void do_replace_highlight(bool highlight, const char *word)
@@ -3414,7 +3394,7 @@ void do_replace_highlight(bool highlight, const char *word)
     wnoutrefresh(edit);
 
     if (highlight)
-	wattron(edit, reverse_attr);
+	wattron(edit, hilite_attribute);
 
     /* This is so we can show zero-length matches. */
     if (word_len == 0)
@@ -3426,11 +3406,11 @@ void do_replace_highlight(bool highlight, const char *word)
 	waddch(edit, '$');
 
     if (highlight)
-	wattroff(edit, reverse_attr);
+	wattroff(edit, hilite_attribute);
 }
 
-#ifdef NANO_EXTRA
-#define CREDIT_LEN 55
+#ifndef DISABLE_EXTRA
+#define CREDIT_LEN 57
 #define XLCREDIT_LEN 8
 
 /* Easter egg: Display credits.  Assume nodelay(edit) and scrollok(edit)
@@ -3454,9 +3434,10 @@ void do_credits(void)
 	"David Lawrence Ramsey",
 	"David Benbennick",
 	"Mike Frysinger",
+	"Benno Schulenberg",
 	"Ken Tyler",
 	"Sven Guckes",
-	NULL,				/* credits[15], handled below. */
+	NULL,				/* credits[16], handled below. */
 	"Pauli Virtanen",
 	"Daniele Medri",
 	"Clement Laforet",
@@ -3470,6 +3451,7 @@ void do_credits(void)
 	"Albert Chin",
 	"",
 	NULL,				/* "Special thanks to:" */
+	"Monique, Brielle & Joseph",
 	"Plattsburgh State University",
 	"Benet Laboratories",
 	"Amy Allegretta",
@@ -3489,7 +3471,7 @@ void do_credits(void)
 	"",
 	"",
 	"",
-	"(C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007",
+	"(C) 1999 - 2014",
 	"Free Software Foundation, Inc.",
 	"",
 	"",
@@ -3509,10 +3491,10 @@ void do_credits(void)
 	N_("Thank you for using nano!")
     };
 
-    /* credits[15]: Make sure this name is displayed properly, since we
+    /* credits[16]: Make sure this name is displayed properly, since we
      * can't dynamically assign it above, using Unicode 00F6 (Latin
      * Small Letter O with Diaresis) if applicable. */
-    credits[15] =
+    credits[16] =
 #ifdef ENABLE_UTF8
 	 using_utf8() ? "Florian K\xC3\xB6nig" :
 #endif
@@ -3594,4 +3576,4 @@ void do_credits(void)
 
     total_refresh();
 }
-#endif /* NANO_EXTRA */
+#endif /* !DISABLE_EXTRA */

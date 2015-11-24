@@ -1,9 +1,9 @@
-/* $Id: search.c 4559 2013-01-03 05:00:34Z astyanax $ */
+/* $Id: search.c 4921 2014-05-28 14:34:11Z bens $ */
 /**************************************************************************
  *   search.c                                                             *
  *                                                                        *
  *   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,  *
- *   2008, 2009 Free Software Foundation, Inc.                            *
+ *   2008, 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.    *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -32,7 +32,7 @@
 
 static bool search_last_line = FALSE;
 	/* Have we gone past the last line while searching? */
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
 static bool history_changed = FALSE;
 	/* Have any of the history lists changed? */
 #endif
@@ -181,26 +181,23 @@ int search_init(bool replacing, bool use_answer)
 #ifndef NANO_TINY
 	&search_history,
 #endif
+	/* TRANSLATORS: This is the main search prompt. */
 	edit_refresh, "%s%s%s%s%s%s", _("Search"),
 #ifndef NANO_TINY
-	/* TRANSLATORS: This string is just a modifier for the search
-	 * prompt; no grammar is implied. */
+	/* TRANSLATORS: The next three strings are modifiers of the search prompt. */
 	ISSET(CASE_SENSITIVE) ? _(" [Case Sensitive]") :
 #endif
 	"",
 #ifdef HAVE_REGEX_H
-	/* TRANSLATORS: This string is just a modifier for the search
-	 * prompt; no grammar is implied. */
 	ISSET(USE_REGEXP) ? _(" [Regexp]") :
 #endif
 	"",
 #ifndef NANO_TINY
-	/* TRANSLATORS: This string is just a modifier for the search
-	 * prompt; no grammar is implied. */
 	ISSET(BACKWARDS_SEARCH) ? _(" [Backwards]") :
 #endif
 	"", replacing ?
 #ifndef NANO_TINY
+	/* TRANSLATORS: The next two strings are modifiers of the search prompt. */
 	openfile->mark_set ? _(" (to replace) in selection") :
 #endif
 	_(" (to replace)") : "", buf);
@@ -219,12 +216,12 @@ int search_init(bool replacing, bool use_answer)
 	statusbar(_("Cancelled"));
 	return -1;
     } else {
-	void (*func)(void);
+	void (*func)(void) = NULL;
 
 	for  (s = sclist; s != NULL; s = s->next)
 	    if ((s->menu & currmenu) && i == s->seq) {
 	        func = s->scfunc;
-	  	break;
+		break;
 	    }
 
 	if (i == -2 || i == 0 ) {
@@ -307,10 +304,10 @@ bool findnextstr(
     /* Look for needle in the current line we're searching. */
     enable_nodelay();
     while (TRUE) {
-        if (time(NULL) - lastkbcheck > 1) {
-            lastkbcheck = time(NULL);
+	if (time(NULL) - lastkbcheck > 1) {
+	    lastkbcheck = time(NULL);
 	    f = getfuncfromkey(edit);
-            if (f && f->scfunc == do_cancel) {
+	    if (f && f->scfunc == do_cancel) {
 		statusbar(_("Cancelled"));
 		return FALSE;
 	    }
@@ -361,7 +358,7 @@ bool findnextstr(
 	/* We've finished processing the file, so get out. */
 	if (search_last_line) {
 	    not_found_msg(needle);
-            disable_nodelay();
+	    disable_nodelay();
 	    return FALSE;
 	}
 
@@ -525,7 +522,7 @@ void do_search(void)
     search_replace_abort();
 }
 
-#ifndef NANO_TINY
+#if !defined(NANO_TINY) || !defined(DISABLE_BROWSER)
 /* Search for the last string without prompting. */
 void do_research(void)
 {
@@ -573,20 +570,20 @@ void do_research(void)
 			openfile->current_x && !didfind)
 		    statusbar(_("This is the only occurrence"));
 	    } else {
-#endif
+#endif /* HAVE_REGEX_H */
 		statusbar(_("This is the only occurrence"));
 #ifdef HAVE_REGEX_H
 	    }
 #endif
 	}
     } else
-        statusbar(_("No current search pattern"));
+	statusbar(_("No current search pattern"));
 
     openfile->placewewant = xplustabs();
     edit_redraw(fileptr, pww_save);
     search_replace_abort();
 }
-#endif
+#endif /* !NANO_TINY */
 
 #ifdef HAVE_REGEX_H
 int replace_regexp(char *string, bool create)
@@ -636,7 +633,7 @@ int replace_regexp(char *string, bool create)
 
     return new_line_size;
 }
-#endif
+#endif /* HAVE_REGEX_H */
 
 char *replace_line(const char *needle)
 {
@@ -719,12 +716,12 @@ ssize_t do_replace_loop(
 	filepart = partition_filestruct(top, top_x, bot, bot_x);
 	openfile->edittop = openfile->fileage;
 	openfile->mark_set = FALSE;
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 	reset_multis(openfile->current, TRUE);
 #endif
 	edit_refresh();
     }
-#endif
+#endif /* !NANO_TINY */
 
     if (canceled != NULL)
 	*canceled = FALSE;
@@ -781,6 +778,7 @@ ssize_t do_replace_loop(
 
 	    do_replace_highlight(TRUE, exp_word);
 
+	    /* TRANSLATORS: This is a prompt. */
 	    i = do_yesno_prompt(TRUE, _("Replace this instance?"));
 
 	    do_replace_highlight(FALSE, exp_word);
@@ -866,12 +864,12 @@ ssize_t do_replace_loop(
 	    free(openfile->current->data);
 	    openfile->current->data = copy;
 
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 	reset_multis(openfile->current, TRUE);
 #endif
 	edit_refresh();
 	    if (!replaceall) {
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 		/* If color syntaxes are available and turned on, we
 		 * need to call edit_refresh(). */
 		if (openfile->colorstrings != NULL &&
@@ -954,11 +952,12 @@ void do_replace(void)
 #ifndef DISABLE_TABCOMP
 	TRUE,
 #endif
-	MREPLACE2, last_replace,
+	MREPLACEWITH, last_replace,
 	&meta_key, &func_key,
 #ifndef NANO_TINY
 	&replace_history,
 #endif
+	/* TRANSLATORS: This is a prompt. */
 	edit_refresh, _("Replace with"));
 
 #ifndef NANO_TINY
@@ -1008,6 +1007,19 @@ void do_replace(void)
     search_replace_abort();
 }
 
+/* Go to the specified line and x position. */
+void goto_line_posx(ssize_t line, size_t pos_x)
+{
+    for (openfile->current = openfile->fileage; openfile->current != openfile->filebot &&
+					openfile->current->next != NULL && line > 1; line--)
+	openfile->current = openfile->current->next;
+
+    openfile->current_x = pos_x;
+    openfile->placewewant = xplustabs();
+
+    edit_refresh_needed = TRUE;
+}
+
 /* Go to the specified line and column, or ask for them if interactive
  * is TRUE.  Save the x-coordinate and y-coordinate if save_pos is TRUE.
  * Update the screen afterwards if allow_update is TRUE.  Note that both
@@ -1031,6 +1043,7 @@ void do_gotolinecolumn(ssize_t line, ssize_t column, bool use_answer,
 #ifndef NANO_TINY
 		NULL,
 #endif
+		/* TRANSLATORS: This is a prompt. */
 		edit_refresh, _("Enter line number, column number"));
 
 	free(ans);
@@ -1042,9 +1055,9 @@ void do_gotolinecolumn(ssize_t line, ssize_t column, bool use_answer,
 	    return;
 	}
 
+	s = get_shortcut(currmenu, &i, &meta_key);
 
-	s = get_shortcut(currmenu, &i, &meta_key, &func_key);
-	if (s && s->scfunc ==  gototext_void) {
+	if (s && s->scfunc == gototext_void) {
 	    /* Keep answer up on the statusbar. */
 	    search_init(TRUE, TRUE);
 
@@ -1083,10 +1096,11 @@ void do_gotolinecolumn(ssize_t line, ssize_t column, bool use_answer,
     edit_update(save_pos ? NONE : CENTER);
 
     /* If allow_update is TRUE, update the screen. */
-    if (allow_update)
+    if (allow_update) {
 	edit_refresh();
 
-    display_main_list();
+	display_main_list();
+    }
 }
 
 /* Go to the specified line and column, asking for them beforehand. */
@@ -1291,7 +1305,7 @@ void do_find_bracket(void)
     free(found_ch);
 }
 
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 /* Indicate whether any of the history lists have changed. */
 bool history_has_changed(void)
 {
@@ -1394,7 +1408,7 @@ void update_history(filestruct **h, const char *s)
     *hbot = (*hbot)->next;
     (*hbot)->data = mallocstrcpy(NULL, "");
 
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
     /* Indicate that the history's been changed. */
     history_changed = TRUE;
 #endif
@@ -1431,7 +1445,7 @@ char *get_history_newer(filestruct **h)
     return (*h)->data;
 }
 
-/* More placeholders */
+/* More placeholders. */
 void get_history_newer_void(void)
 {
     ;

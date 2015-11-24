@@ -1,9 +1,9 @@
-/* $Id: move.c 4548 2012-12-30 19:20:10Z astyanax $ */
+/* $Id: move.c 4894 2014-05-16 10:34:05Z bens $ */
 /**************************************************************************
  *   move.c                                                               *
  *                                                                        *
  *   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,  *
- *   2008, 2009 Free Software Foundation, Inc.                            *
+ *   2008, 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.    *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -33,7 +33,7 @@ void do_first_line(void)
     openfile->current_x = 0;
     openfile->placewewant = 0;
 
-    edit_refresh_needed = 1;
+    edit_refresh_needed = TRUE;
 }
 
 /* Move to the last line of the file. */
@@ -44,7 +44,7 @@ void do_last_line(void)
     openfile->placewewant = xplustabs();
     openfile->current_y = editwinrows - 1;
 
-    edit_refresh_needed = 1;
+    edit_refresh_needed = TRUE;
 }
 
 /* Move up one page. */
@@ -79,8 +79,8 @@ void do_page_up(void)
 	if (ISSET(SOFTWRAP) && openfile->current) {
 	    skipped += strlenpt(openfile->current->data) / COLS;
 #ifdef DEBUG
-    fprintf(stderr, "do_page_up: i = %d, skipped = %d based on line %ld len %d\n", i, (unsigned long) skipped,
-openfile->current->lineno, strlenpt(openfile->current->data));
+    fprintf(stderr, "do_page_up: i = %d, skipped = %d based on line %lu len %d\n",
+	i, skipped, (unsigned long) openfile->current->lineno, strlenpt(openfile->current->data));
 #endif
 	}
     }
@@ -89,7 +89,8 @@ openfile->current->lineno, strlenpt(openfile->current->data));
 	openfile->placewewant);
 
 #ifdef DEBUG
-    fprintf(stderr, "do_page_up: openfile->current->lineno = %lu, skipped = %d\n", (unsigned long) openfile->current->lineno, skipped);
+    fprintf(stderr, "do_page_up: openfile->current->lineno = %lu, skipped = %d\n",
+	(unsigned long) openfile->current->lineno, skipped);
 #endif
 
     /* Scroll the edit window up a page. */
@@ -563,12 +564,14 @@ void do_down(
 #endif
 	)
 {
-    bool onlastline = FALSE;
+#ifndef NANO_TINY
+    int amount = 0, enough;
+    filestruct *topline;
+#endif
 
     /* If we're at the bottom of the file, get out. */
-    if (openfile->current == openfile->filebot)
+    if (openfile->current == openfile->filebot || !openfile->current->next)
 	return;
-
 
     assert(ISSET(SOFTWRAP) || openfile->current_y == openfile->current->lineno - openfile->edittop->lineno);
 
@@ -577,27 +580,43 @@ void do_down(
     openfile->current_x = actual_x(openfile->current->data,
 	openfile->placewewant);
 
+#ifndef NANO_TINY
     if (ISSET(SOFTWRAP)) {
-	if (openfile->current->lineno - openfile->edittop->lineno >= maxrows)
-	    onlastline = TRUE;
+	/* Compute the amount to scroll. */
+	amount = (strlenpt(openfile->current->data) / COLS + openfile->current_y + 2
+		 + strlenpt(openfile->current->prev->data) / COLS - editwinrows);
+	topline = openfile->edittop;
+	/* Reduce the amount when there are overlong lines at the top. */
+	for (enough = 1; enough < amount; enough++) {
+	    if (amount <= strlenpt(topline->data) / COLS) {
+		amount = enough;
+		break;
+	    }
+	    amount -= strlenpt(topline->data) / COLS;
+	    topline = topline->next;
+	}
     }
+#endif
 
-    /* If scroll_only is FALSE and if we're on the first line of the
+    /* If scroll_only is FALSE and if we're on the last line of the
      * edit window, scroll the edit window down one line if we're in
      * smooth scrolling mode, or down half a page if we're not.  If
      * scroll_only is TRUE, scroll the edit window down one line
      * unconditionally. */
-    if (onlastline || openfile->current_y == editwinrows - 1
+    if (openfile->current_y == editwinrows - 1
 #ifndef NANO_TINY
-	|| scroll_only
+	|| amount > 0 || scroll_only
 #endif
 	) {
+#ifndef NANO_TINY
+	if (amount < 1 || scroll_only)
+	    amount = 1;
+#endif
 	edit_scroll(DOWN_DIR,
 #ifndef NANO_TINY
-		(ISSET(SMOOTH_SCROLL) || scroll_only) ? 1 :
+		(ISSET(SMOOTH_SCROLL) || scroll_only) ? amount :
 #endif
 		editwinrows / 2 + 1);
-
 	edit_refresh_needed = TRUE;
     }
     /* If we're above the last line of the edit window, update the line

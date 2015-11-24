@@ -1,9 +1,9 @@
-/* $Id: proto.h 4569 2013-03-17 22:09:38Z astyanax $ */
+/* $Id: proto.h 4919 2014-05-28 13:24:05Z bens $ */
 /**************************************************************************
  *   proto.h                                                              *
  *                                                                        *
  *   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,  *
- *   2008, 2009 Free Software Foundation, Inc.                            *
+ *   2008, 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.    *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -60,13 +60,17 @@ extern openfilestruct *openfile;
 extern char *matchbrackets;
 #endif
 
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
 extern char *whitespace;
 extern int whitespace_len[2];
 extern undo_type last_action;
 #endif
 
+extern const char *exit_tag;
+extern const char *close_tag;
+extern const char *uncut_tag;
 #ifndef DISABLE_JUSTIFY
+extern const char *unjust_tag;
 extern char *punct;
 extern char *brackets;
 extern char *quotestr;
@@ -99,7 +103,9 @@ extern char *alt_speller;
 
 extern sc *sclist;
 extern subnfunc *allfuncs;
-#ifdef ENABLE_COLOR
+extern subnfunc *exitfunc;
+extern subnfunc *uncutfunc;
+#ifndef DISABLE_COLOR
 extern syntaxtype *syntaxes;
 extern char *syntaxstr;
 #endif
@@ -124,7 +130,11 @@ extern regex_t search_regexp;
 extern regmatch_t regmatches[10];
 #endif
 
-extern int reverse_attr;
+extern int hilite_attribute;
+#ifndef DISABLE_COLOR
+extern char* specified_color_combo[NUMBER_OF_ELEMENTS];
+#endif
+extern color_pair interface_color_pair[NUMBER_OF_ELEMENTS];
 
 extern char *homedir;
 
@@ -133,7 +143,7 @@ extern char *homedir;
 char *do_browser(char *path, DIR *dir);
 char *do_browse_from(const char *inpath);
 void browser_init(const char *path, DIR *dir);
-void parse_browser_input(int *kbinput, bool *meta_key, bool *func_key);
+void parse_browser_input(int *kbinput, bool *meta_key);
 void browser_refresh(void);
 bool browser_select_filename(const char *needle);
 int filesearch_init(void);
@@ -152,6 +162,7 @@ char *striponedir(const char *path);
 void utf8_init(void);
 bool using_utf8(void);
 #endif
+char *addstrings(char* str1, size_t len1, char* str2, size_t len2);
 #ifndef HAVE_ISBLANK
 bool nisblank(int c);
 #endif
@@ -218,19 +229,19 @@ char *revstrpbrk(const char *s, const char *accept, const char
 char *mbrevstrpbrk(const char *s, const char *accept, const char
 	*rev_start);
 #endif
-#if defined(ENABLE_NANORC) && (!defined(NANO_TINY) || !defined(DISABLE_JUSTIFY))
+#if !defined(DISABLE_NANORC) && (!defined(NANO_TINY) || !defined(DISABLE_JUSTIFY))
 bool has_blank_chars(const char *s);
 bool has_blank_mbchars(const char *s);
 #endif
 #ifdef ENABLE_UTF8
 bool is_valid_unicode(wchar_t wc);
 #endif
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 bool is_valid_mbstring(const char *s);
 #endif
 
 /* All functions in color.c. */
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 void set_colorpairs(void);
 void color_init(void);
 void color_update(void);
@@ -255,7 +266,6 @@ void do_cut_text_void(void);
 #ifndef NANO_TINY
 void do_copy_text(void);
 void do_cut_till_end(void);
-
 #endif
 void do_uncut_text(void);
 
@@ -268,7 +278,7 @@ void open_buffer(const char *filename, bool undoable);
 void replace_buffer(const char *filename);
 #endif
 void display_buffer(void);
-#ifdef ENABLE_MULTIBUFFER
+#ifndef DISABLE_MULTIBUFFER
 void switch_to_prevnext_buffer(bool next);
 void switch_to_prev_buffer_void(void);
 void switch_to_next_buffer_void(void);
@@ -323,7 +333,7 @@ char *input_tab(char *buf, bool allow_files, size_t *place, bool
 	*lastwastab, void (*refresh_func)(void), bool *list);
 #endif
 const char *tail(const char *foo);
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
 char *histfilename(void);
 void load_history(void);
 bool writehist(FILE *hist, filestruct *histhead);
@@ -333,40 +343,26 @@ void load_poshistory(void);
 void save_poshistory(void);
 int check_poshistory(const char *file, ssize_t *line, ssize_t *column);
 #endif
+#ifndef DISABLE_COLOR
+void set_lint_shortcuts(void);
+void set_spell_shortcuts(void);
+#endif
 
-/* All functions in global.c. */
+/* Some functions in global.c. */
 size_t length_of_list(int menu);
-#ifndef NANO_TINY
-void toggle_init_one(int val
-#ifndef DISABLE_HELP
-	, const char *desc, bool blank_after
-#endif
-	, long flag);
-void toggle_init(void);
-#endif
-void sc_init_one(shortcut **shortcutage, int ctrlval, const char *desc
-#ifndef DISABLE_HELP
-	, const char *help, bool blank_after
-#endif
-	, int metaval, int funcval, int miscval, bool view, void
-	(*func)(void));
-void shortcut_init(bool unjustify);
-void free_shortcutage(shortcut **shortcutage);
+void shortcut_init(void);
 #ifdef DEBUG
 void thanks_for_all_the_fish(void);
 #endif
 
 /* All functions in help.c. */
-#ifndef DISABLE_BROWSER
-void do_browser_help(void);
-#endif
-void do_help_void(void);
 #ifndef DISABLE_HELP
 void do_help(void (*refresh_func)(void));
 void help_init(void);
-void parse_help_input(int *kbinput, bool *meta_key, bool *func_key);
+void parse_help_input(int *kbinput, bool *meta_key);
 size_t help_line_len(const char *ptr);
 #endif
+void do_help_void(void);
 
 /* All functions in move.c. */
 void do_first_line(void);
@@ -427,7 +423,7 @@ partition *partition_filestruct(filestruct *top, size_t top_x,
 void unpartition_filestruct(partition **p);
 void move_to_filestruct(filestruct **file_top, filestruct **file_bot,
 	filestruct *top, size_t top_x, filestruct *bot, size_t bot_x);
-void copy_from_filestruct(filestruct *file_top, filestruct *file_bot);
+void copy_from_filestruct(filestruct *somebuffer);
 openfilestruct *make_new_opennode(void);
 void splice_opennode(openfilestruct *begin, openfilestruct *newnode,
 	openfilestruct *end);
@@ -468,8 +464,6 @@ RETSIGTYPE do_continue(int signal);
 #ifndef NANO_TINY
 RETSIGTYPE handle_sigwinch(int signal);
 void allow_pending_sigwinch(bool allow);
-#endif
-#ifndef NANO_TINY
 void do_toggle(int flag);
 void do_toggle_void(void);
 #endif
@@ -483,8 +477,7 @@ void enable_signals(void);
 void disable_flow_control(void);
 void enable_flow_control(void);
 void terminal_init(void);
-int do_input(bool *meta_key, bool *func_key, bool *have_shortcut, bool
-	*ran_func, bool *finished, bool allow_funcs);
+int do_input(bool *meta_key, bool *func_key, bool allow_funcs);
 #ifndef DISABLE_MOUSE
 int do_mouse(void);
 #endif
@@ -549,24 +542,24 @@ int do_prompt(bool allow_tabs,
 void do_prompt_abort(void);
 int do_yesno_prompt(bool all, const char *msg);
 
-/* All functions in rcfile.c. */
-#ifdef ENABLE_NANORC
+/* Most functions in rcfile.c. */
+#ifndef DISABLE_NANORC
 void rcfile_error(const char *msg, ...);
 char *parse_next_word(char *ptr);
 char *parse_argument(char *ptr);
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 char *parse_next_regex(char *ptr);
 bool nregcomp(const char *regex, int eflags);
 void parse_syntax(char *ptr);
-void parse_magic_syntax(char *ptr);
 void parse_include(char *ptr);
 short color_to_short(const char *colorname, bool *bright);
 void parse_colors(char *ptr, bool icase);
+bool parse_color_names(char *combostr, short *fg, short *bg, bool *bright);
 void reset_multis(filestruct *fileptr, bool force);
 void alloc_multidata_if_needed(filestruct *fileptr);
 #endif
 void parse_rcfile(FILE *rcstream
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 	, bool syntax_only
 #endif
 	);
@@ -590,7 +583,7 @@ bool findnextstr(
 	char *needle, size_t *needle_len);
 void findnextstr_wrap_reset(void);
 void do_search(void);
-#ifndef NANO_TINY
+#if !defined(NANO_TINY) || !defined(DISABLE_BROWSER)
 void do_research(void);
 #endif
 #ifdef HAVE_REGEX_H
@@ -611,10 +604,11 @@ void do_gotolinecolumn_void(void);
 void do_gotopos(ssize_t pos_line, size_t pos_x, ssize_t pos_y, size_t
 	pos_pww);
 #endif
+void goto_line_posx(ssize_t line, size_t pos_x);
 #ifndef NANO_TINY
 bool find_bracket_match(bool reverse, const char *bracket_set);
 void do_find_bracket(void);
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 bool history_has_changed(void);
 #endif
 void history_init(void);
@@ -686,6 +680,9 @@ const char *do_int_speller(const char *tempfile_name);
 const char *do_alt_speller(char *tempfile_name);
 void do_spell(void);
 #endif
+#ifndef DISABLE_COLOR
+void do_linter(void);
+#endif
 #ifndef NANO_TINY
 void do_wordlinechar_count(void);
 #endif
@@ -703,7 +700,7 @@ void sunder(char *str);
 #ifndef HAVE_GETLINE
 ssize_t ngetline(char **lineptr, size_t *n, FILE *stream);
 #endif
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
 #ifndef HAVE_GETDELIM
 ssize_t ngetdelim(char **lineptr, size_t *n, int delim, FILE *stream);
 #endif
@@ -766,8 +763,7 @@ int *parse_verbatim_kbinput(WINDOW *win, size_t *kbinput_len);
 #ifndef DISABLE_MOUSE
 int get_mouseinput(int *mouse_x, int *mouse_y, bool allow_shortcuts);
 #endif
-const sc *get_shortcut(int menu, int *kbinput, bool
-	*meta_key, bool *func_key);
+const sc *get_shortcut(int menu, int *kbinput, bool *meta_key);
 const sc *first_sc_for(int menu, void (*func)(void));
 void blank_line(WINDOW *win, int y, int x, int n);
 void blank_titlebar(void);
@@ -803,7 +799,7 @@ const char *flagtostr(int flag);
 const subnfunc *sctofunc(sc *s);
 const subnfunc *getfuncfromkey(WINDOW *win);
 void print_sclist(void);
-sc *strtosc(int menu, char *input);
+sc *strtosc(char *input);
 function_type strtokeytype(const char *str);
 int strtomenu(char *input);
 void assign_keyinfo(sc *s);
@@ -812,29 +808,6 @@ void xoff_complaint(void);
 int sc_seq_or (void (*func)(void), int defaultval);
 void do_suspend_void(void);
 
-extern const char *cancel_msg;
-#ifndef NANO_TINY
-extern const char *case_sens_msg;
-extern const char *backwards_msg;
-extern const char *prev_history_msg;
-extern const char *next_history_msg;
-#endif
-extern const char *replace_msg;
-extern const char *no_replace_msg;
-extern const char *go_to_line_msg;
-extern const char *whereis_next_msg;
-extern const char *first_file_msg;
-extern const char *last_file_msg;
-extern const char *goto_dir_msg;
-extern const char *ext_cmd_msg;
-extern const char *to_files_msg;
-extern const char *dos_format_msg;
-extern const char *mac_format_msg;
-extern const char *append_msg;
-extern const char *prepend_msg;
-extern const char *backup_file_msg;
-extern const char *gototext_msg;
-extern const char *new_buffer_msg;
 
 void enable_nodelay(void);
 void disable_nodelay(void);
@@ -843,12 +816,14 @@ void disable_nodelay(void);
 extern const char *regexp_msg;
 #endif
 
-#ifdef NANO_EXTRA
+#ifndef DISABLE_EXTRA
 void do_credits(void);
 #endif
 
-/* May as just throw these here since they are just placeholders */
+/* May as well throw these here, since they are just placeholders. */
 void do_cancel(void);
+void do_page_up(void);
+void do_page_down(void);
 void case_sens_void(void);
 void regexp_void(void);
 void gototext_void(void);
@@ -863,6 +838,5 @@ void backwards_void(void);
 void goto_dir_void(void);
 void no_replace_void(void);
 void ext_cmd_void(void);
-
 
 #endif /* !PROTO_H */

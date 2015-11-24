@@ -1,9 +1,9 @@
-/* $Id: browser.c 4548 2012-12-30 19:20:10Z astyanax $ */
+/* $Id: browser.c 4923 2014-05-28 15:40:24Z bens $ */
 /**************************************************************************
  *   browser.c                                                            *
  *                                                                        *
- *   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009   *
- *   Free Software Foundation, Inc.                                       *
+ *   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,  *
+ *   2010, 2011, 2013, 2014 Free Software Foundation, Inc.                *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -161,8 +161,8 @@ char *do_browser(char *path, DIR *dir)
 	}
 #endif /* !DISABLE_MOUSE */
 
-	parse_browser_input(&kbinput, &meta_key, &func_key);
-        s = get_shortcut(MBROWSER, &kbinput, &meta_key, &func_key);
+	parse_browser_input(&kbinput, &meta_key);
+	s = get_shortcut(MBROWSER, &kbinput, &meta_key);
         if (!s)
             continue;
         f = sctofunc((sc *) s);
@@ -173,10 +173,10 @@ char *do_browser(char *path, DIR *dir)
 		total_redraw();
 	} else if (f->scfunc == do_help_void) {
 #ifndef DISABLE_HELP
-	    do_browser_help();
+	    do_help_void();
 	    curs_set(0);
 #else
-		nano_disabled_msg();
+	    nano_disabled_msg();
 #endif
 	    /* Search for a filename. */
 	} else if (f->scfunc == do_search) {
@@ -217,7 +217,8 @@ char *do_browser(char *path, DIR *dir)
 #ifndef NANO_TINY
 			NULL,
 #endif
-			browser_refresh, N_("Go To Directory"));
+			/* TRANSLATORS: This is a prompt. */
+			browser_refresh, _("Go To Directory"));
 
 		curs_set(0);
 #if !defined(DISABLE_HELP) || !defined(DISABLE_MOUSE)
@@ -540,29 +541,27 @@ void browser_init(const char *path, DIR *dir)
 }
 
 /* Determine the shortcut key corresponding to the values of kbinput
- * (the key itself), meta_key (whether the key is a meta sequence), and
- * func_key (whether the key is a function key), if any.  In the
- * process, convert certain non-shortcut keys into their corresponding
+ * (the key itself) and meta_key (whether the key is a meta sequence).
+ * Also convert certain non-shortcut keys into their corresponding
  * shortcut keys. */
-void parse_browser_input(int *kbinput, bool *meta_key, bool *func_key)
+void parse_browser_input(int *kbinput, bool *meta_key)
 {
-    get_shortcut(MBROWSER, kbinput, meta_key, func_key);
+    get_shortcut(MBROWSER, kbinput, meta_key);
 
     /* Pico compatibility. */
     if (!*meta_key) {
 	switch (*kbinput) {
 	    case ' ':
-		*kbinput = sc_seq_or(do_page_down, 0);
+		*kbinput = KEY_NPAGE;
 		break;
 	    case '-':
-		*kbinput = sc_seq_or(do_page_up, 0);
+		*kbinput = KEY_PPAGE;
 		break;
 	    case '?':
 #ifndef DISABLE_HELP
 		*kbinput = sc_seq_or(do_help_void, 0);
 #endif
 		break;
-	    /* Cancel equivalent to Exit here. */
 	    case 'E':
 	    case 'e':
 		*kbinput = sc_seq_or(do_exit, 0);
@@ -635,7 +634,7 @@ void browser_refresh(void)
 	/* Start highlighting the currently selected file or
 	 * directory. */
 	if (i == selected)
-	    wattron(edit, reverse_attr);
+	    wattron(edit, hilite_attribute);
 
 	blank_line(edit, line, col, longest);
 
@@ -710,7 +709,7 @@ void browser_refresh(void)
 	/* Finish highlighting the currently selected file or
 	 * directory. */
 	if (i == selected)
-	    wattroff(edit, reverse_attr);
+	    wattroff(edit, hilite_attribute);
 
 	free(foo);
 
@@ -798,25 +797,19 @@ int filesearch_init(void)
 #ifndef NANO_TINY
 	&search_history,
 #endif
-	browser_refresh, "%s%s%s%s%s%s", _("Search"),
+	browser_refresh, "%s%s%s%s%s", _("Search"),
 #ifndef NANO_TINY
-	/* This string is just a modifier for the search prompt; no
-	 * grammar is implied. */
 	ISSET(CASE_SENSITIVE) ? _(" [Case Sensitive]") :
 #endif
 	"",
 #ifdef HAVE_REGEX_H
-	/* This string is just a modifier for the search prompt; no
-	 * grammar is implied. */
 	ISSET(USE_REGEXP) ? _(" [Regexp]") :
 #endif
 	"",
 #ifndef NANO_TINY
-	/* This string is just a modifier for the search prompt; no
-	 * grammar is implied. */
 	ISSET(BACKWARDS_SEARCH) ? _(" [Backwards]") :
 #endif
-	"", "", buf);
+	"", buf);
 
     /* Release buf now that we don't need it anymore. */
     free(buf);
@@ -830,7 +823,7 @@ int filesearch_init(void)
 	statusbar(_("Cancelled"));
 	return -1;
     } else {
-        s = get_shortcut(MBROWSER, &i, &meta_key, &func_key);
+	s = get_shortcut(MBROWSER, &i, &meta_key);
 	if (i == -2 || i == 0) {
 #ifdef HAVE_REGEX_H
 		/* Use last_search if answer is an empty string, or
@@ -845,7 +838,7 @@ int filesearch_init(void)
 		TOGGLE(CASE_SENSITIVE);
 		backupstring = mallocstrcpy(backupstring, answer);
 		return 1;
-	} else if (s && s->scfunc ==  backwards_void) {
+	} else if (s && s->scfunc == backwards_void) {
 		TOGGLE(BACKWARDS_SEARCH);
 		backupstring = mallocstrcpy(backupstring, answer);
 		return 1;
@@ -1070,7 +1063,7 @@ char *striponedir(const char *path)
     tmp = strrchr(retval, '/');
 
     if (tmp != NULL)
- 	null_at(&retval, tmp - retval);
+	null_at(&retval, tmp - retval);
 
     return retval;
 }

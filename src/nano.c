@@ -1,9 +1,9 @@
-/* $Id: nano.c 4549 2013-01-01 03:24:39Z astyanax $ */
+/* $Id: nano.c 4924 2014-05-28 15:44:11Z bens $ */
 /**************************************************************************
  *   nano.c                                                               *
  *                                                                        *
  *   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,  *
- *   2008, 2009 Free Software Foundation, Inc.                            *
+ *   2008, 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.    *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -48,7 +48,7 @@
 static int oldinterval = -1;
 	/* Used to store the user's original mouse click interval. */
 #endif
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 static bool no_rcfiles = FALSE;
 	/* Should we ignore all rcfiles? */
 #endif
@@ -68,7 +68,7 @@ filestruct *make_new_node(filestruct *prevnode)
     newnode->next = NULL;
     newnode->lineno = (prevnode != NULL) ? prevnode->lineno + 1 : 1;
 
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     newnode->multidata = NULL;
 #endif
 
@@ -88,7 +88,7 @@ filestruct *copy_node(const filestruct *src)
     dst->next = src->next;
     dst->prev = src->prev;
     dst->lineno = src->lineno;
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     dst->multidata = NULL;
 #endif
 
@@ -127,7 +127,7 @@ void delete_node(filestruct *fileptr)
     if (fileptr->data != NULL)
 	free(fileptr->data);
 
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     if (fileptr->multidata)
 	free(fileptr->multidata);
 #endif
@@ -297,6 +297,7 @@ void move_to_filestruct(filestruct **file_top, filestruct **file_bot,
     bool edittop_inside;
 #ifndef NANO_TINY
     bool mark_inside = FALSE;
+    bool same_line = FALSE;
 #endif
 
     assert(file_top != NULL && file_bot != NULL && top != NULL && bot != NULL);
@@ -314,7 +315,7 @@ void move_to_filestruct(filestruct **file_top, filestruct **file_bot,
 	openfile->fileage->lineno && openfile->edittop->lineno <=
 	openfile->filebot->lineno);
 #ifndef NANO_TINY
-    if (openfile->mark_set)
+    if (openfile->mark_set) {
 	mark_inside = (openfile->mark_begin->lineno >=
 		openfile->fileage->lineno &&
 		openfile->mark_begin->lineno <=
@@ -323,6 +324,8 @@ void move_to_filestruct(filestruct **file_top, filestruct **file_bot,
 		openfile->mark_begin_x >= top_x) &&
 		(openfile->mark_begin != openfile->filebot ||
 		openfile->mark_begin_x <= bot_x));
+	same_line = (openfile->mark_begin == openfile->fileage);
+    }
 #endif
 
     /* Get the number of characters in the text, and subtract it from
@@ -369,7 +372,7 @@ void move_to_filestruct(filestruct **file_top, filestruct **file_bot,
     openfile->fileage->data = mallocstrcpy(NULL, "");
     openfile->filebot = openfile->fileage;
 
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     openfile->fileage->multidata = NULL;
 #endif
 
@@ -382,7 +385,9 @@ void move_to_filestruct(filestruct **file_top, filestruct **file_bot,
     if (mark_inside) {
 	openfile->mark_begin = openfile->current;
 	openfile->mark_begin_x = openfile->current_x;
-    }
+    } else if (same_line)
+	/* Update the content of this partially cut line. */
+	openfile->mark_begin = openfile->current;
 #endif
 
     top_save = openfile->fileage;
@@ -406,10 +411,9 @@ void move_to_filestruct(filestruct **file_top, filestruct **file_bot,
 	new_magicline();
 }
 
-/* Copy all the text from the filestruct beginning with file_top and
- * ending with file_bot to the current filestruct at the current cursor
- * position. */
-void copy_from_filestruct(filestruct *file_top, filestruct *file_bot)
+/* Copy all text from the given filestruct to the current filestruct
+ * at the current cursor position. */
+void copy_from_filestruct(filestruct *somebuffer)
 {
     filestruct *top_save;
     size_t current_x_save = openfile->current_x;
@@ -418,7 +422,7 @@ void copy_from_filestruct(filestruct *file_top, filestruct *file_bot)
     bool right_side_up = FALSE, single_line = FALSE;
 #endif
 
-    assert(file_top != NULL && file_bot != NULL);
+    assert(somebuffer != NULL);
 
 #ifndef NANO_TINY
     /* Keep track of whether the mark begins inside the partition and
@@ -441,9 +445,9 @@ void copy_from_filestruct(filestruct *file_top, filestruct *file_bot)
 	openfile->current_x, openfile->current, openfile->current_x);
     edittop_inside = (openfile->edittop == openfile->fileage);
 
-    /* Put the top and bottom of the filestruct at copies of file_top
-     * and file_bot. */
-    openfile->fileage = copy_filestruct(file_top);
+    /* Put the top and bottom of the current filestruct at the top and
+     * bottom of a copy of the passed buffer. */
+    openfile->fileage = copy_filestruct(somebuffer);
     openfile->filebot = openfile->fileage;
     while (openfile->filebot->next != NULL)
 	openfile->filebot = openfile->filebot->next;
@@ -465,7 +469,12 @@ void copy_from_filestruct(filestruct *file_top, filestruct *file_bot)
     }
 #ifndef NANO_TINY
     else if (openfile->mark_set) {
-	if (!right_side_up) {
+	if (right_side_up) {
+	    if (single_line)
+		/* Get the new data, stuff was inserted on the mark line. */
+		openfile->mark_begin = openfile->fileage;
+		/* The x is okay, it did not move. */
+	} else {
 	    if (single_line) {
 		openfile->mark_begin = openfile->current;
 		openfile->mark_begin_x -= current_x_save;
@@ -603,7 +612,7 @@ void finish(void)
     /* Restore the old terminal settings. */
     tcsetattr(0, TCSANOW, &oldterm);
 
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
     if (!no_rcfiles && ISSET(HISTORYLOG))
 	save_history();
     if (!no_rcfiles && ISSET(POS_HISTORY)) {
@@ -647,7 +656,7 @@ void die(const char *msg, ...)
 		);
     }
 
-#ifdef ENABLE_MULTIBUFFER
+#ifndef DISABLE_MULTIBUFFER
     /* Save all of the other modified file buffers, if any. */
     if (openfile != NULL) {
 	openfilestruct *tmp = openfile;
@@ -713,6 +722,8 @@ void die_save_file(const char *die_filename
 	int shush;
 	shush = chmod(retval, die_stat->st_mode);
 	shush = chown(retval, die_stat->st_uid, die_stat->st_gid);
+	if (shush)
+	    ;
     }
 #endif
 
@@ -815,7 +826,7 @@ void print_opt_full(const char *shortflag
     printf("\n");
 }
 
-/* Explain how to properly use nano and its command line options. */
+/* Explain how to properly use nano and its command-line options. */
 void usage(void)
 {
     printf(_("Usage: nano [OPTIONS] [[+LINE,COLUMN] FILE]...\n\n"));
@@ -826,8 +837,9 @@ void usage(void)
 	_("Option\t\tMeaning\n")
 #endif
 	);
-    print_opt("-h, -?", "--help", N_("Show this message"));
     print_opt(_("+LINE,COLUMN"), "",
+	/* TRANSLATORS: The next forty or so strings are option descriptions
+	 * for the --help output.  Try to keep them at most 40 characters. */
 	N_("Start at line LINE, column COLUMN"));
 #ifndef NANO_TINY
     print_opt("-A", "--smarthome", N_("Enable smart home key"));
@@ -841,10 +853,10 @@ void usage(void)
     print_opt("-E", "--tabstospaces",
 	N_("Convert typed tabs to spaces"));
 #endif
-#ifdef ENABLE_MULTIBUFFER
+#ifndef DISABLE_MULTIBUFFER
     print_opt("-F", "--multibuffer", N_("Enable multiple file buffers"));
 #endif
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 #ifndef NANO_TINY
     print_opt("-G", "--locking",
 	N_("Use (vim-style) lock files"));
@@ -887,7 +899,7 @@ void usage(void)
     print_opt("-W", "--wordbounds",
 	N_("Detect word boundaries more accurately"));
 #endif
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     print_opt(_("-Y <str>"), _("--syntax=<str>"),
 	N_("Syntax definition to use for coloring"));
 #endif
@@ -895,6 +907,7 @@ void usage(void)
     print_opt("-d", "--rebinddelete",
 	N_("Fix Backspace/Delete confusion problem"));
 #ifndef NANO_TINY
+    print_opt("-h", "--help", N_("Show this help text"));
     print_opt("-i", "--autoindent",
 	N_("Automatically indent new lines"));
     print_opt("-k", "--cut", N_("Cut from cursor to end of line"));
@@ -904,6 +917,7 @@ void usage(void)
 #ifndef DISABLE_MOUSE
     print_opt("-m", "--mouse", N_("Enable the use of the mouse"));
 #endif
+    print_opt("-n", "--noread", N_("Do not read the file (only write it)"));
 #ifndef DISABLE_OPERATINGDIR
     print_opt(_("-o <dir>"), _("--operatingdir=<dir>"),
 	N_("Set operating directory"));
@@ -914,7 +928,7 @@ void usage(void)
 	N_("Silently ignore startup issues like rc file errors"));
 #ifndef DISABLE_WRAPJUSTIFY
     print_opt(_("-r <#cols>"), _("--fill=<#cols>"),
-	N_("Set wrapping point at column #cols"));
+	N_("Set hard-wrapping point at column #cols"));
 #endif
 #ifndef DISABLE_SPELLER
     print_opt(_("-s <prog>"), _("--speller=<prog>"),
@@ -928,17 +942,13 @@ void usage(void)
 
     print_opt("-v", "--view", N_("View mode (read-only)"));
 #ifndef DISABLE_WRAPPING
-    print_opt("-w", "--nowrap", N_("Don't wrap long lines"));
+    print_opt("-w", "--nowrap", N_("Don't hard-wrap long lines"));
 #endif
     print_opt("-x", "--nohelp", N_("Don't show the two help lines"));
     print_opt("-z", "--suspend", N_("Enable suspension"));
+#ifndef NANO_TINY
     print_opt("-$", "--softwrap", N_("Enable soft line wrapping"));
-
-    /* This is a special case. */
-    print_opt("-a, -b, -e,", "", NULL);
-    print_opt("-f, -g, -j", "", N_("(ignored, for Pico compatibility)"));
-
-    exit(0);
+#endif
 }
 
 /* Display the current version of nano, the date and time it was
@@ -948,14 +958,61 @@ void version(void)
 {
     printf(_(" GNU nano version %s (compiled %s, %s)\n"), VERSION,
 	__TIME__, __DATE__);
-    printf(" (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,\n");
-    printf(" 2008, 2009 Free Software Foundation, Inc.\n");
+    printf(" (C) 1999..2014 Free Software Foundation, Inc.\n");
     printf(
 	_(" Email: nano@nano-editor.org	Web: http://www.nano-editor.org/"));
     printf(_("\n Compiled options:"));
 
+#ifdef NANO_TINY
+    printf(" --enable-tiny");
+#ifndef DISABLE_BROWSER
+    printf(" --enable-browser");
+#endif
+#ifndef DISABLE_COLOR
+    printf(" --enable-color");
+#endif
+#ifndef DISABLE_EXTRA
+    printf(" --enable-extra");
+#endif
+#ifndef DISABLE_HELP
+    printf(" --enable-help");
+#endif
+#ifndef DISABLE_JUSTIFY
+    printf(" --enable-justify");
+#endif
+#ifdef HAVE_LIBMAGIC
+    printf(" --enable-libmagic");
+#endif
+#ifndef DISABLE_MOUSE
+    printf(" --enable-mouse");
+#endif
+#ifndef DISABLE_NANORC
+    printf(" --enable-nanorc");
+#endif
+#ifndef DISABLE_MULTIBUFFER
+    printf(" --enable-multibuffer");
+#endif
+#ifndef DISABLE_OPERATINGDIR
+    printf(" --enable-operatingdir");
+#endif
+#ifndef DISABLE_SPELLER
+    printf(" --enable-speller");
+#endif
+#ifndef DISABLE_TABCOMP
+    printf(" --enable-tabcomp");
+#endif
+#ifndef DISABLE_WRAPPING
+    printf(" --enable-wrapping");
+#endif
+#else /* !NANO_TINY */
 #ifdef DISABLE_BROWSER
     printf(" --disable-browser");
+#endif
+#ifdef DISABLE_COLOR
+    printf(" --disable-color");
+#endif
+#ifdef DISABLE_EXTRA
+    printf(" --disable-extra");
 #endif
 #ifdef DISABLE_HELP
     printf(" --disable-help");
@@ -963,11 +1020,17 @@ void version(void)
 #ifdef DISABLE_JUSTIFY
     printf(" --disable-justify");
 #endif
+#ifndef HAVE_LIBMAGIC
+    printf(" --disable-libmagic");
+#endif
 #ifdef DISABLE_MOUSE
     printf(" --disable-mouse");
 #endif
-#ifndef ENABLE_NLS
-    printf(" --disable-nls");
+#ifdef DISABLE_MULTIBUFFER
+    printf(" --disable-multibuffer");
+#endif
+#ifdef DISABLE_NANORC
+    printf(" --disable-nanorc");
 #endif
 #ifdef DISABLE_OPERATINGDIR
     printf(" --disable-operatingdir");
@@ -981,29 +1044,21 @@ void version(void)
 #ifdef DISABLE_WRAPPING
     printf(" --disable-wrapping");
 #endif
+#endif /* !NANO_TINY */
+
 #ifdef DISABLE_ROOTWRAPPING
     printf(" --disable-wrapping-as-root");
-#endif
-#ifdef ENABLE_COLOR
-    printf(" --enable-color");
 #endif
 #ifdef DEBUG
     printf(" --enable-debug");
 #endif
-#ifdef NANO_EXTRA
-    printf(" --enable-extra");
-#endif
-#ifdef ENABLE_MULTIBUFFER
-    printf(" --enable-multibuffer");
-#endif
-#ifdef ENABLE_NANORC
-    printf(" --enable-nanorc");
-#endif
-#ifdef NANO_TINY
-    printf(" --enable-tiny");
+#ifndef ENABLE_NLS
+    printf(" --disable-nls");
 #endif
 #ifdef ENABLE_UTF8
     printf(" --enable-utf8");
+#else
+    printf(" --disable-utf8");
 #endif
 #ifdef USE_SLANG
     printf(" --with-slang");
@@ -1065,9 +1120,9 @@ void do_exit(void)
 #ifndef NANO_TINY
         if (ISSET(LOCKING) && openfile->lock_filename)
             delete_lockfile(openfile->lock_filename);
-#endif /* NANO_TINY */
+#endif
 
-#ifdef ENABLE_MULTIBUFFER
+#ifndef DISABLE_MULTIBUFFER
 	/* Exit only if there are no more open file buffers. */
 	if (!close_buffer())
 #endif
@@ -1076,11 +1131,10 @@ void do_exit(void)
     } else if (i != 1)
 	statusbar(_("Cancelled"));
 
-    shortcut_init(FALSE);
     display_main_list();
 }
 
-/* Another placeholder for function mapping */
+/* Another placeholder for function mapping. */
 void do_cancel(void)
 {
     ;
@@ -1090,15 +1144,14 @@ static struct sigaction pager_oldaction, pager_newaction;  /* Original and tempo
 static bool pager_sig_failed = FALSE; /* Did sigaction() fail without changing the signal handlers? */
 static bool pager_input_aborted = FALSE; /* Did someone invoke the pager and abort it via ^C? */
 
-
 /* Things which need to be run regardless of whether
-   we finished the stdin pipe correctly or not */
+ * we finished the stdin pipe correctly or not. */
 void finish_stdin_pager(void)
 {
     FILE *f;
     int ttystdin;
 
-    /* Read whatever we did get from stdin */
+    /* Read whatever we did get from stdin. */
     f = fopen("/dev/stdin", "rb");
        if (f == NULL)
         nperror("fopen");
@@ -1118,15 +1171,14 @@ void finish_stdin_pager(void)
     doupdate();
 }
 
-
-/* Cancel reading from stdin like a pager */
+/* Cancel reading from stdin like a pager. */
 RETSIGTYPE cancel_stdin_pager(int signal)
 {
-    /* Currently do nothing, just handle the intr silently */
+    /* Currently do nothing, just handle the intr silently. */
     pager_input_aborted = TRUE;
 }
 
-/* Let nano read stdin for the first file at least */
+/* Let nano read stdin for the first file at least. */
 void stdin_pager(void)
 {
     endwin();
@@ -1135,8 +1187,8 @@ void stdin_pager(void)
     fprintf(stderr, _("Reading from stdin, ^C to abort\n"));
 
     /* Set things up so that Ctrl-C will cancel the new process. */
-    /* Enable interpretation of the special control keys so that we get
-     * SIGINT when Ctrl-C is pressed. */
+    /* Enable interpretation of the special control keys so that
+     * we get SIGINT when Ctrl-C is pressed. */
 #ifndef NANO_TINY
     enable_signals();
 #endif
@@ -1155,8 +1207,6 @@ void stdin_pager(void)
     open_buffer("", FALSE);
     finish_stdin_pager();
 }
-
-
 
 /* Initialize the signal handlers. */
 void signal_init(void)
@@ -1295,7 +1345,7 @@ RETSIGTYPE handle_sigwinch(int signal)
      * otherwise.  However, COLS and LINES are curses global variables,
      * and in some cases curses has already updated them.  But not in
      * all cases.  Argh. */
-#ifdef REDEFINIG_MACROS_OK
+#ifdef REDEFINING_MACROS_OK
     COLS = win.ws_col;
     LINES = win.ws_row;
 #endif
@@ -1353,11 +1403,11 @@ void allow_pending_sigwinch(bool allow)
 #endif /* !NANO_TINY */
 
 #ifndef NANO_TINY
-/* Handle the global toggle specified in which. */
+/* Handle the global toggle specified in flag. */
 void do_toggle(int flag)
 {
     bool enabled;
-    char *desc;
+    const char *desc;
 
     TOGGLE(flag);
 
@@ -1375,13 +1425,13 @@ void do_toggle(int flag)
 	case SUSPEND:
 	    signal_init();
 	    break;
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 	case WHITESPACE_DISPLAY:
 	    titlebar(NULL);
 	    edit_refresh();
 	    break;
 #endif
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 	case NO_COLOR_SYNTAX:
 	    edit_refresh();
 	    break;
@@ -1393,25 +1443,24 @@ void do_toggle(int flag)
 
     enabled = ISSET(flag);
 
-    if (flag ==  NO_HELP
+    if (flag == NO_HELP
 #ifndef DISABLE_WRAPPING
 	|| flag == NO_WRAP
 #endif
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 	|| flag == NO_COLOR_SYNTAX
 #endif
 	)
 	enabled = !enabled;
 
-    desc = _(flagtostr(flag));
-    statusbar("%s %s", desc, enabled ? _("enabled") :
-	_("disabled"));
+    desc = (char *) _(flagtostr(flag));
+    statusbar("%s %s", desc, enabled ? _("enabled") : _("disabled"));
 }
 
-/* Bleh */
+/* Bleh. */
 void do_toggle_void(void)
 {
-;
+    ;
 }
 #endif /* !NANO_TINY */
 
@@ -1517,15 +1566,10 @@ void terminal_init(void)
 
 /* Read in a character, interpret it as a shortcut or toggle if
  * necessary, and return it.  Set meta_key to TRUE if the character is a
- * meta sequence, set func_key to TRUE if the character is a function
- * key, set s_or_t to TRUE if the character is a shortcut or toggle
- * key, set ran_func to TRUE if we ran a function associated with a
- * shortcut key, and set finished to TRUE if we're done after running
- * or trying to run a function associated with a shortcut key.  If
- * allow_funcs is FALSE, don't actually run any functions associated
+ * meta sequence, set func_key to TRUE if the character is a function key.
+ * If allow_funcs is FALSE, don't actually run any functions associated
  * with shortcut keys. */
-int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
-	*ran_func, bool *finished, bool allow_funcs)
+int do_input(bool *meta_key, bool *func_key, bool allow_funcs)
 {
     int input;
 	/* The character we read in. */
@@ -1537,10 +1581,6 @@ int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
 	/* Are we cutting or copying text? */
     const sc *s;
     bool have_shortcut;
-
-    *s_or_t = FALSE;
-    *ran_func = FALSE;
-    *finished = FALSE;
 
     /* Read in a character. */
     input = get_kbinput(edit, meta_key, func_key);
@@ -1567,7 +1607,7 @@ int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
     }
 
     /* Check for a shortcut in the main list. */
-    s = get_shortcut(MMAIN, &input, meta_key, func_key);
+    s = get_shortcut(MMAIN, &input, meta_key);
 
     /* If we got a shortcut from the main list, or a "universal"
      * edit window shortcut, set have_shortcut to TRUE. */
@@ -1610,8 +1650,7 @@ int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
 	 if (have_shortcut || get_key_buffer_len() == 0) {
 #ifndef DISABLE_WRAPPING
 	    /* If we got a shortcut or toggle, and it's not the shortcut
-	     * for verbatim input, turn off prepending of wrapped
-	     * text. */
+	     * for verbatim input, turn off prepending of wrapped text. */
 	    if (have_shortcut && (!have_shortcut || s == NULL || s->scfunc !=
 		do_verbatim_input))
 		wrap_reset();
@@ -1640,11 +1679,7 @@ int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
 
 	if (have_shortcut) {
 	    switch (input) {
-		/* Handle the normal edit window shortcuts, setting
-		 * ran_func to TRUE if we try to run their associated
-		 * functions and setting finished to TRUE to indicate
-		 * that we're done after running or trying to run their
-		 * associated functions. */
+		/* Handle the normal edit-window shortcuts. */
 		default:
 		    /* If the function associated with this shortcut is
 		     * cutting or copying text, indicate this. */
@@ -1658,19 +1693,17 @@ int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
 
 		    if (s->scfunc != 0) {
 			const subnfunc *f = sctofunc((sc *) s);
-			*ran_func = TRUE;
 			if (ISSET(VIEW_MODE) && f && !f->viewok)
 			    print_view_warning();
 			else {
 #ifndef NANO_TINY
 			    if (s->scfunc == do_toggle_void)
 				do_toggle(s->toggle);
-			    else {
-#else
-			    {
+			    else
 #endif
+			    {
 				s->scfunc();
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 				if (f && !f->viewok && openfile->syntax != NULL
 					&& openfile->syntax->nmultis > 0) {
 				    reset_multis(openfile->current, FALSE);
@@ -1678,16 +1711,14 @@ int do_input(bool *meta_key, bool *func_key, bool *s_or_t, bool
 #endif
 				if (edit_refresh_needed) {
 #ifdef DEBUG
-	    			    fprintf(stderr, "running edit_refresh() as edit_refresh_needed is true\n");
+				    fprintf(stderr, "running edit_refresh() as edit_refresh_needed is true\n");
 #endif
 				    edit_refresh();
 				    edit_refresh_needed = FALSE;
 				}
-
 			    }
 			}
 		    }
-		    *finished = TRUE;
 		    break;
 	    }
 	}
@@ -1725,7 +1756,9 @@ int do_mouse(void)
 	    /* Did they click on the line with the cursor?  If they
 	     * clicked on the cursor, we set the mark. */
 	filestruct *current_save = openfile->current;
+#ifndef NANO_TINY
 	size_t current_x_save = openfile->current_x;
+#endif
 	size_t pww_save = openfile->placewewant;
 
 	sameline = (mouse_y == openfile->current_y);
@@ -1734,7 +1767,7 @@ int do_mouse(void)
 	    fprintf(stderr, "mouse_y = %d, current_y = %d\n", mouse_y, openfile->current_y);
 #endif
 
- 	if (ISSET(SOFTWRAP)) {
+	if (ISSET(SOFTWRAP)) {
 	    int i = 0;
 	    for (openfile->current = openfile->edittop;
 		 openfile->current->next && i < mouse_y;
@@ -1793,19 +1826,19 @@ int do_mouse(void)
 }
 #endif /* !DISABLE_MOUSE */
 
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 void alloc_multidata_if_needed(filestruct *fileptr)
 {
     if (!fileptr->multidata)
 	fileptr->multidata = (short *) nmalloc(openfile->syntax->nmultis * sizeof(short));
 }
 
-/* Precalculate the multi-line start and end regex info so we can speed up
-   rendering (with any hope at all...) */
+/* Precalculate the multi-line start and end regex info so we can
+ * speed up rendering (with any hope at all...). */
 void precalc_multicolorinfo(void)
 {
 #ifdef DEBUG
-	    fprintf(stderr, "entering precalc_multicolorinfo()\n");
+    fprintf(stderr, "Entering precalculation of multiline color info\n");
 #endif
     if (openfile->colorstrings != NULL && !ISSET(NO_COLOR_SYNTAX)) {
 	const colortype *tmpcolor = openfile->colorstrings;
@@ -1813,30 +1846,26 @@ void precalc_multicolorinfo(void)
 	filestruct *fileptr, *endptr;
 	time_t last_check = time(NULL), cur_check = 0;
 
-	/* Let us get keypresses to see if the user is trying to
-	   start editing.  We may want to throw up a statusbar
-	   message before starting this later if it takes
-	   too long to do this routine.  For now silently
-	   abort if they hit a key */
- 	nodelay(edit, FALSE);
+	/* Let us get keypresses to see if the user is trying to start
+	 * editing.  Later we may want to throw up a statusbar message
+	 * before starting this if it takes too long to do this routine.
+	 * For now silently abort if they hit a key. */
+	nodelay(edit, TRUE);
 
 	for (; tmpcolor != NULL; tmpcolor = tmpcolor->next) {
 
-	    /* If it's not a multi-line regex, amscray */
+	    /* If it's not a multi-line regex, amscray. */
 	    if (tmpcolor->end == NULL)
 		continue;
 #ifdef DEBUG
-	    fprintf(stderr, "working on color id %d\n", tmpcolor->id);
+	    fprintf(stderr, "Starting work on color id %d\n", tmpcolor->id);
 #endif
-
 
 	    for (fileptr = openfile->fileage; fileptr != NULL; fileptr = fileptr->next) {
 		int startx = 0;
 		int nostart = 0;
-
-
 #ifdef DEBUG
-	    fprintf(stderr, "working on lineno %lu\n", (unsigned long) fileptr->lineno);
+		fprintf(stderr, "working on lineno %lu... ", (unsigned long) fileptr->lineno);
 #endif
 
 		alloc_multidata_if_needed(fileptr);
@@ -1844,38 +1873,39 @@ void precalc_multicolorinfo(void)
 		if ((cur_check = time(NULL)) - last_check > 1) {
 		    last_check = cur_check;
 		    if (wgetch(edit) != ERR)
-	   		goto precalc_cleanup;
+			goto precalc_cleanup;
 		}
 
-		while ((nostart = regexec(tmpcolor->start, &fileptr->data[startx], 1, &startmatch, 0))  == 0) {
-		    /* Look for end and start marking how many lines are encompassed
-		       whcih should speed up rendering later */
+		while ((nostart = regexec(tmpcolor->start, &fileptr->data[startx], 1, &startmatch,
+					  (startx == 0) ? 0 : REG_NOTBOL)) == 0) {
+		    /* Look for an end, and start marking how many lines are
+		     * encompassed, which should speed up rendering later. */
 		    startx += startmatch.rm_eo;
 #ifdef DEBUG
-		    fprintf(stderr, "match found at pos %d...", startx);
+		    fprintf(stderr, "start found at pos %d... ", startx);
 #endif
 
-		    /* Look on this line first for end */
-		    if (regexec(tmpcolor->end, &fileptr->data[startx], 1, &endmatch, 0)  == 0) {
+		    /* Look first on this line for an end. */
+		    if (regexec(tmpcolor->end, &fileptr->data[startx], 1, &endmatch,
+				(startx == 0) ? 0 : REG_NOTBOL) == 0) {
 			startx += endmatch.rm_eo;
 			fileptr->multidata[tmpcolor->id] |= CSTARTENDHERE;
 #ifdef DEBUG
-	    fprintf(stderr, "end found on this line\n");
+			fprintf(stderr, "end found on this line\n");
 #endif
 			continue;
 		    }
 
-		    /* Nice, we didn't find the end regex on this line.  Let's start looking for it */
+		    /* Nice, we didn't find the end regex on this line.  Let's start looking for it. */
 		    for (endptr = fileptr->next; endptr != NULL; endptr = endptr->next) {
-
 #ifdef DEBUG
-	    fprintf(stderr, "advancing to line %lu to find end...\n", (unsigned long) endptr->lineno);
+			fprintf(stderr, "\nadvancing to line %lu to find end... ", (unsigned long) endptr->lineno);
 #endif
-			/* Check for keyboard input  again */
+			/* Check for keyboard input, again. */
 			if ((cur_check = time(NULL)) - last_check > 1) {
 			    last_check = cur_check;
 			    if (wgetch(edit) != ERR)
-		   		goto precalc_cleanup;
+				goto precalc_cleanup;
 			}
 			if (regexec(tmpcolor->end, endptr->data, 1, &endmatch, 0) == 0)
 			   break;
@@ -1883,18 +1913,16 @@ void precalc_multicolorinfo(void)
 
 		    if (endptr == NULL) {
 #ifdef DEBUG
-	    		fprintf(stderr, "no end found, breaking out\n");
+			fprintf(stderr, "no end found, breaking out\n");
 #endif
 			break;
 		    }
 
-
 #ifdef DEBUG
 		    fprintf(stderr, "end found\n");
 #endif
-
-		    /* We found it, we found it, la la la la la.  Mark all the
-			lines in between and the ends properly */
+		    /* We found it, we found it, la la la la la.  Mark all
+		     * the lines in between and the end properly. */
 		    fileptr->multidata[tmpcolor->id] |= CENDAFTER;
 #ifdef DEBUG
 		    fprintf(stderr, "marking line %lu as CENDAFTER\n", (unsigned long) fileptr->lineno);
@@ -1907,21 +1935,19 @@ void precalc_multicolorinfo(void)
 #endif
 		    }
 		    alloc_multidata_if_needed(endptr);
+		    fileptr->multidata[tmpcolor->id] |= CBEGINBEFORE;
 #ifdef DEBUG
-		    fprintf(stderr, "marking line %lu as BEGINBEFORE\n", (unsigned long) fileptr->lineno);
+		    fprintf(stderr, "marking line %lu as CBEGINBEFORE\n", (unsigned long) fileptr->lineno);
 #endif
-		    endptr->multidata[tmpcolor->id] |= CBEGINBEFORE;
-		    /* We should be able to skip all the way to the line of the match.
-			This may introduce more bugs but it's the Right Thing to do */
-		    fileptr = endptr;
+		    /* Skip to the end point of the match. */
 		    startx = endmatch.rm_eo;
 #ifdef DEBUG
-		    fprintf(stderr, "jumping to line %lu pos %d to continue\n", (unsigned long) endptr->lineno, startx);
+		    fprintf(stderr, "jumping to line %lu pos %d to continue\n", (unsigned long) fileptr->lineno, startx);
 #endif
 		}
 		if (nostart && startx == 0) {
 #ifdef DEBUG
-		    fprintf(stderr, "no start found on line %lu, continuing\n", (unsigned long) fileptr->lineno);
+		    fprintf(stderr, "no match\n");
 #endif
 		    fileptr->multidata[tmpcolor->id] = CNONE;
 		    continue;
@@ -1932,14 +1958,14 @@ void precalc_multicolorinfo(void)
 precalc_cleanup:
     nodelay(edit, FALSE);
 }
-#endif /* ENABLE_COLOR */
+#endif /* !DISABLE_COLOR */
 
 /* The user typed output_len multibyte characters.  Add them to the edit
  * buffer, filtering out all ASCII control characters if allow_cntrls is
  * TRUE. */
 void do_output(char *output, size_t output_len, bool allow_cntrls)
 {
-    size_t current_len, orig_lenpt, i = 0;
+    size_t current_len, orig_lenpt = 0, i = 0;
     char *char_buf = charalloc(mb_cur_max());
     int char_buf_len;
 
@@ -1998,7 +2024,7 @@ void do_output(char *output, size_t output_len, bool allow_cntrls)
 	set_modified();
 
 #ifndef NANO_TINY
-	update_undo(ADD);
+	add_undo(ADD);
 
 	/* Note that current_x has not yet been incremented. */
 	if (openfile->mark_set && openfile->current ==
@@ -2009,6 +2035,10 @@ void do_output(char *output, size_t output_len, bool allow_cntrls)
 
 	openfile->current_x += char_buf_len;
 
+#ifndef NANO_TINY
+	update_undo(ADD);
+#endif
+
 #ifndef DISABLE_WRAPPING
 	/* If we're wrapping text, we need to call edit_refresh(). */
 	if (!ISSET(NO_WRAP))
@@ -2016,7 +2046,7 @@ void do_output(char *output, size_t output_len, bool allow_cntrls)
 		edit_refresh_needed = TRUE;
 #endif
 
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 	/* If color syntaxes are available and turned on, we need to
 	 * call edit_refresh(). */
 	if (openfile->colorstrings != NULL && !ISSET(NO_COLOR_SYNTAX))
@@ -2025,7 +2055,7 @@ void do_output(char *output, size_t output_len, bool allow_cntrls)
     }
 
     /* Well we might also need a full refresh if we've changed the
-       line length to be a new multiple of COLS */
+     * line length to be a new multiple of COLS. */
     if (ISSET(SOFTWRAP) && edit_refresh_needed == FALSE)
 	if (strlenpt(openfile->current->data) / COLS  != orig_lenpt / COLS)
 	    edit_refresh_needed = TRUE;
@@ -2034,8 +2064,7 @@ void do_output(char *output, size_t output_len, bool allow_cntrls)
 
     openfile->placewewant = xplustabs();
 
-
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     reset_multis(openfile->current, FALSE);
 #endif
     if (edit_refresh_needed == TRUE) {
@@ -2056,7 +2085,7 @@ int main(int argc, char **argv)
     bool fill_used = FALSE;
 	/* Was the fill option used? */
 #endif
-#ifdef ENABLE_MULTIBUFFER
+#ifndef DISABLE_MULTIBUFFER
     bool old_multibuffer;
 	/* The old value of the multibuffer option, restored after we
 	 * load all files on the command line. */
@@ -2065,10 +2094,10 @@ int main(int argc, char **argv)
     const struct option long_options[] = {
 	{"help", 0, NULL, 'h'},
 	{"boldtext", 0, NULL, 'D'},
-#ifdef ENABLE_MULTIBUFFER
+#ifndef DISABLE_MULTIBUFFER
 	{"multibuffer", 0, NULL, 'F'},
 #endif
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 	{"ignorercfiles", 0, NULL, 'I'},
 #endif
 	{"rebindkeypad", 0, NULL, 'K'},
@@ -2080,7 +2109,7 @@ int main(int argc, char **argv)
 	{"restricted", 0, NULL, 'R'},
 	{"tabsize", 1, NULL, 'T'},
 	{"version", 0, NULL, 'V'},
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 	{"syntax", 1, NULL, 'Y'},
 #endif
 	{"const", 0, NULL, 'c'},
@@ -2089,6 +2118,7 @@ int main(int argc, char **argv)
 #ifndef DISABLE_MOUSE
 	{"mouse", 0, NULL, 'm'},
 #endif
+	{"noread", 0, NULL, 'n'},
 #ifndef DISABLE_OPERATINGDIR
 	{"operatingdir", 1, NULL, 'o'},
 #endif
@@ -2151,7 +2181,7 @@ int main(int argc, char **argv)
     textdomain(PACKAGE);
 #endif
 
-#if !defined(ENABLE_NANORC) && defined(DISABLE_ROOTWRAPPING)
+#if defined(DISABLE_NANORC) && defined(DISABLE_ROOTWRAPPING)
     /* If we don't have rcfile support, --disable-wrapping-as-root is
      * used, and we're root, turn wrapping off. */
     if (geteuid() == NANO_ROOT_UID)
@@ -2161,11 +2191,11 @@ int main(int argc, char **argv)
     while ((optchr =
 #ifdef HAVE_GETOPT_LONG
 	getopt_long(argc, argv,
-		"h?ABC:DEFGHIKLNOPQ:RST:UVWY:abcdefgijklmo:pqr:s:tuvwxz$",
+		"ABC:DEFGHIKLNOPQ:RST:UVWY:abcdefghijklmno:pqr:s:tuvwxz$",
 		long_options, NULL)
 #else
 	getopt(argc, argv,
-		"h?ABC:DEFGHIKLNOPQ:RST:UVWY:abcdefgijklmo:pqr:s:tuvwxz$")
+		"ABC:DEFGHIKLNOPQ:RST:UVWY:abcdefghijklmno:pqr:s:tuvwxz$")
 #endif
 		) != -1) {
 	switch (optchr) {
@@ -2196,12 +2226,12 @@ int main(int argc, char **argv)
 		SET(TABS_TO_SPACES);
 		break;
 #endif
-#ifdef ENABLE_MULTIBUFFER
+#ifndef DISABLE_MULTIBUFFER
 	    case 'F':
 		SET(MULTIBUFFER);
 		break;
 #endif
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 #ifndef NANO_TINY
 	    case 'G':
 		SET(LOCKING);
@@ -2266,7 +2296,7 @@ int main(int argc, char **argv)
 		SET(WORD_BOUNDS);
 		break;
 #endif
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
 	    case 'Y':
 		syntaxstr = mallocstrcpy(syntaxstr, optarg);
 		break;
@@ -2293,6 +2323,9 @@ int main(int argc, char **argv)
 		SET(USE_MOUSE);
 		break;
 #endif
+	    case 'n':
+		SET(NOREAD_MODE);
+		break;
 #ifndef DISABLE_OPERATINGDIR
 	    case 'o':
 		operating_dir = mallocstrcpy(operating_dir, optarg);
@@ -2333,11 +2366,9 @@ int main(int argc, char **argv)
 #ifndef DISABLE_WRAPPING
 	    case 'w':
 		SET(NO_WRAP);
-
-		/* If both --fill and --nowrap are given on the command line,
-		   the last option wins, */
+		/* If both --fill and --nowrap are given on the
+		 * command line, the last given option wins. */
 		fill_used = FALSE;
-
 		break;
 #endif
 	    case 'x':
@@ -2351,8 +2382,12 @@ int main(int argc, char **argv)
 		SET(SOFTWRAP);
 		break;
 #endif
-	    default:
+	    case 'h':
 		usage();
+		exit(0);
+	    default:
+		printf(_("Type '%s -h' for a list of available options.\n"), argv[0]);
+		exit(1);
 	}
     }
 
@@ -2367,20 +2402,19 @@ int main(int argc, char **argv)
     if (ISSET(RESTRICTED)) {
 	UNSET(SUSPEND);
 	UNSET(BACKUP_FILE);
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 	no_rcfiles = TRUE;
 #endif
     }
 
-
-    /* Set up the shortcut lists.
-       Need to do this before the rcfile */
-    shortcut_init(FALSE);
+    /* Set up the function and shortcut lists.  This needs to be done
+     * before reading the rcfile, to be able to rebind/unbind keys. */
+    shortcut_init();
 
 /* We've read through the command line options.  Now back up the flags
  * and values that are set, and read the rcfile(s).  If the values
  * haven't changed afterward, restore the backed-up values. */
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
     if (!no_rcfiles) {
 #ifndef DISABLE_OPERATINGDIR
 	char *operating_dir_cpy = operating_dir;
@@ -2463,7 +2497,7 @@ int main(int argc, char **argv)
     else if (geteuid() == NANO_ROOT_UID)
 	SET(NO_WRAP);
 #endif
-#endif /* ENABLE_NANORC */
+#endif /* !DISABLE_NANORC */
 
 #ifndef DISABLE_WRAPPING
     /* Overwrite an rcfile "set nowrap" or --disable-wrapping-as-root
@@ -2475,12 +2509,12 @@ int main(int argc, char **argv)
     /* If we're using bold text instead of reverse video text, set it up
      * now. */
     if (ISSET(BOLD_TEXT))
-	reverse_attr = A_BOLD;
+	hilite_attribute = A_BOLD;
 
 #ifndef NANO_TINY
     /* Set up the search/replace history. */
     history_init();
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
     if (!no_rcfiles) {
 	if (ISSET(HISTORYLOG) || ISSET(POS_HISTORY)) {
 	    if (check_dotnano() == 0) {
@@ -2493,10 +2527,8 @@ int main(int argc, char **argv)
 	if (ISSET(POS_HISTORY))
 	    load_poshistory();
     }
-#endif /* ENABLE_NANORC */
-#endif /* NANO_TINY */
+#endif /* !DISABLE_NANORC */
 
-#ifndef NANO_TINY
     /* Set up the backup directory (unless we're using restricted mode,
      * in which case backups are disabled, since they would allow
      * reading from or writing to files not specified on the command
@@ -2504,7 +2536,7 @@ int main(int argc, char **argv)
      * that backup files will be saved there. */
     if (!ISSET(RESTRICTED))
 	init_backup_dir();
-#endif
+#endif /* !NANO_TINY */
 
 #ifndef DISABLE_OPERATINGDIR
     /* Set up the operating directory.  This entails chdir()ing there,
@@ -2565,16 +2597,28 @@ int main(int argc, char **argv)
     /* If matchbrackets wasn't specified, set its default value. */
     if (matchbrackets == NULL)
 	matchbrackets = mallocstrcpy(NULL, "(<[{)>]}");
-#endif
 
-#if !defined(NANO_TINY) && defined(ENABLE_NANORC)
-    /* If whitespace wasn't specified, set its default value. */
+#ifndef DISABLE_NANORC
+    /* If whitespace wasn't specified, set its default value.  If we're
+     * using UTF-8, it's Unicode 00BB (Right-Pointing Double Angle
+     * Quotation Mark) and Unicode 00B7 (Middle Dot).  Otherwise, it's
+     * ">" and ".". */
     if (whitespace == NULL) {
-	whitespace = mallocstrcpy(NULL, "  ");
-	whitespace_len[0] = 1;
-	whitespace_len[1] = 1;
-    }
+#ifdef ENABLE_UTF8
+	if (using_utf8()) {
+	    whitespace = mallocstrcpy(NULL, "\xC2\xBB\xC2\xB7");
+	    whitespace_len[0] = 2;
+	    whitespace_len[1] = 2;
+	} else
 #endif
+	{
+	    whitespace = mallocstrcpy(NULL, ">.");
+	    whitespace_len[0] = 1;
+	    whitespace_len[1] = 1;
+	}
+    }
+#endif /* !DISABLE_NANORC */
+#endif /* !NANO_TINY */
 
     /* If tabsize wasn't specified, set its default value. */
     if (tabsize == -1)
@@ -2609,6 +2653,19 @@ int main(int argc, char **argv)
     mouse_init();
 #endif
 
+#ifndef DISABLE_COLOR
+    set_colorpairs();
+#else
+    interface_color_pair[TITLE_BAR].pairnum = hilite_attribute;
+    interface_color_pair[STATUS_BAR].pairnum = hilite_attribute;
+    interface_color_pair[KEY_COMBO].pairnum = hilite_attribute;
+    interface_color_pair[FUNCTION_TAG].pairnum = A_NORMAL;
+    interface_color_pair[TITLE_BAR].bright = FALSE;
+    interface_color_pair[STATUS_BAR].bright = FALSE;
+    interface_color_pair[KEY_COMBO].bright = FALSE;
+    interface_color_pair[FUNCTION_TAG].bright = FALSE;
+#endif
+
 #ifdef DEBUG
     fprintf(stderr, "Main: open file\n");
 #endif
@@ -2627,7 +2684,7 @@ int main(int argc, char **argv)
 	optind++;
     }
 
-#ifdef ENABLE_MULTIBUFFER
+#ifndef DISABLE_MULTIBUFFER
     old_multibuffer = ISSET(MULTIBUFFER);
     SET(MULTIBUFFER);
 
@@ -2653,19 +2710,19 @@ int main(int argc, char **argv)
 		    iline = 1;
 		    icol = 1;
 		}
-#ifndef NANO_TINY
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
                   else {
-		    /* See if we have a POS history to use if we haven't overridden it */
+		    /* See if we have a POS history to use if we haven't overridden it. */
 		    ssize_t savedposline, savedposcol;
 		    if (check_poshistory(argv[i], &savedposline, &savedposcol))
 			do_gotolinecolumn(savedposline, savedposcol, FALSE, FALSE, FALSE,
 			FALSE);
 		}
-#endif /* NANO_TINY */
+#endif
 	    }
 	}
     }
-#endif
+#endif /* !DISABLE_MULTIBUFFER */
 
     /* Read the first file on the command line into either the current
      * buffer or a new buffer, depending on whether multibuffer mode is
@@ -2682,7 +2739,7 @@ int main(int argc, char **argv)
 	UNSET(VIEW_MODE);
     }
 
-#ifdef ENABLE_MULTIBUFFER
+#ifndef DISABLE_MULTIBUFFER
     if (!old_multibuffer)
 	UNSET(MULTIBUFFER);
 #endif
@@ -2691,29 +2748,30 @@ int main(int argc, char **argv)
     fprintf(stderr, "Main: top and bottom win\n");
 #endif
 
-#ifdef ENABLE_COLOR
-    if (openfile->syntax && openfile->syntax->nmultis > 0)
-	precalc_multicolorinfo();
+#ifndef DISABLE_COLOR
+    if (openfile->syntax)
+	if (openfile->syntax->nmultis > 0)
+	    precalc_multicolorinfo();
 #endif
 
     if (startline > 1 || startcol > 1)
 	do_gotolinecolumn(startline, startcol, FALSE, FALSE, FALSE,
 		FALSE);
-# ifndef NANO_TINY
+#if !defined(NANO_TINY) && !defined(DISABLE_NANORC)
     else {
-	/* See if we have a POS history to use if we haven't overridden it */
+	/* See if we have a POS history to use if we haven't overridden it. */
 	ssize_t savedposline, savedposcol;
 	if (check_poshistory(argv[optind], &savedposline, &savedposcol))
 	    do_gotolinecolumn(savedposline, savedposcol, FALSE, FALSE, FALSE, FALSE);
     }
-#endif /* NANO_TINY */
+#endif
 
     display_main_list();
 
     display_buffer();
 
     while (TRUE) {
-	bool meta_key, func_key, s_or_t, ran_func, finished;
+	bool meta_key, func_key;
 
 	/* Make sure the cursor is in the edit window. */
 	reset_cursor();
@@ -2743,11 +2801,9 @@ int main(int argc, char **argv)
         currmenu = MMAIN;
 
 	/* Read in and interpret characters. */
-	do_input(&meta_key, &func_key, &s_or_t, &ran_func, &finished,
-		TRUE);
+	do_input(&meta_key, &func_key, TRUE);
     }
 
     /* We should never get here. */
     assert(FALSE);
 }
-

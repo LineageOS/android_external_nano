@@ -1,9 +1,9 @@
-/* $Id: prompt.c 4527 2011-02-07 14:45:56Z astyanax $ */
+/* $Id: prompt.c 4878 2014-05-13 21:11:59Z bens $ */
 /**************************************************************************
  *   prompt.c                                                             *
  *                                                                        *
  *   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,  *
- *   2008, 2009 Free Software Foundation, Inc.                            *
+ *   2008, 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.    *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -93,7 +93,7 @@ int do_statusbar_input(bool *meta_key, bool *func_key, bool *have_shortcut,
     }
 
     /* Check for a shortcut in the current list. */
-    s = get_shortcut(currmenu, &input, meta_key, func_key);
+    s = get_shortcut(currmenu, &input, meta_key);
 
     /* If we got a shortcut from the current list, or a "universal"
      * statusbar prompt shortcut, set have_shortcut to TRUE. */
@@ -131,7 +131,7 @@ int do_statusbar_input(bool *meta_key, bool *func_key, bool *have_shortcut,
 	/* If we got a shortcut, or if there aren't any other characters
 	 * waiting after the one we read in, we need to display all the
 	 * characters in the input buffer if it isn't empty. */
-	 if (*have_shortcut || get_key_buffer_len() == 0) {
+	if (*have_shortcut || get_key_buffer_len() == 0) {
 	    if (kbinput != NULL) {
 		/* Display all the characters in the input buffer at
 		 * once, filtering out control characters. */
@@ -191,7 +191,7 @@ int do_statusbar_input(bool *meta_key, bool *func_key, bool *have_shortcut,
 	    else if (s->scfunc == do_verbatim_input) {
 		    /* If we're using restricted mode, the filename
 		     * isn't blank, and we're at the "Write File"
-	   	     * prompt, disable verbatim input. */
+		     * prompt, disable verbatim input. */
 		    if (!ISSET(RESTRICTED) ||
 			openfile->filename[0] == '\0' ||
 			currmenu != MWRITEFILE) {
@@ -225,15 +225,14 @@ int do_statusbar_input(bool *meta_key, bool *func_key, bool *have_shortcut,
 			'\0' || currmenu != MWRITEFILE)
 		    do_statusbar_backspace();
 	    } else {
-	    /* Handle the normal statusbar prompt shortcuts, setting
-	     * ran_func to TRUE if we try to run their associated
-	     * functions and setting finished to TRUE to indicate
-	     * that we're done after running or trying to run their
-	     * associated functions. */
-
+		/* Handle the normal statusbar prompt shortcuts, setting
+		 * ran_func to TRUE if we try to run their associated
+		 * functions and setting finished to TRUE to indicate
+		 * that we're done after running or trying to run their
+		 * associated functions. */
 		f = sctofunc((sc *) s);
-		if (s->scfunc != 0 &&  s->execute == TRUE) {
-			*ran_func = TRUE;
+		if (s->scfunc != 0 && s->execute == TRUE) {
+		    *ran_func = TRUE;
 		    if (f && (!ISSET(VIEW_MODE) || (f->viewok)))
 		        f->scfunc();
 		}
@@ -325,7 +324,7 @@ void do_statusbar_output(char *output, size_t output_len, bool
 		char_buf_len)))
 	    continue;
 
-	/* More dangerousness fun =) */
+	/* More dangerousness fun. =) */
 	answer = charealloc(answer, answer_len + (char_buf_len * 2));
 
 	assert(statusbar_x <= answer_len);
@@ -859,7 +858,9 @@ void update_statusbar_line(const char *curranswer, size_t index)
     index = strnlenpt(curranswer, index);
     page_start = get_statusbar_page_start(start_col, start_col + index);
 
-    wattron(bottomwin, reverse_attr);
+    if (interface_color_pair[TITLE_BAR].bright)
+	wattron(bottomwin, A_BOLD);
+    wattron(bottomwin, interface_color_pair[TITLE_BAR].pairnum);
 
     blank_statusbar();
 
@@ -872,7 +873,8 @@ void update_statusbar_line(const char *curranswer, size_t index)
     waddstr(bottomwin, expanded);
     free(expanded);
 
-    wattroff(bottomwin, reverse_attr);
+    wattroff(bottomwin, A_BOLD);
+    wattroff(bottomwin, interface_color_pair[TITLE_BAR].pairnum);
     statusbar_pww = statusbar_xplustabs();
     reset_statusbar_cursor();
     wnoutrefresh(bottomwin);
@@ -981,7 +983,7 @@ fprintf(stderr, "get_prompt_string: answer = \"%s\", statusbar_x = %lu\n", answe
 	    &ran_func, &finished, TRUE, refresh_func);
 	assert(statusbar_x <= strlen(answer));
 
-	s = get_shortcut(currmenu, &kbinput, meta_key, func_key);
+	s = get_shortcut(currmenu, &kbinput, meta_key);
 
 	if (s)
 	    if (s->scfunc == do_cancel || s->scfunc == do_enter_void)
@@ -990,106 +992,92 @@ fprintf(stderr, "get_prompt_string: answer = \"%s\", statusbar_x = %lu\n", answe
 #ifndef DISABLE_TABCOMP
 	if (s && s->scfunc != do_tab)
 	    tabbed = FALSE;
-#endif
 
-#ifndef DISABLE_TABCOMP
-#ifndef NANO_TINY
 	if (s && s->scfunc == do_tab) {
-		if (history_list != NULL) {
-		    if (last_kbinput != sc_seq_or(do_tab, NANO_CONTROL_I))
-			complete_len = strlen(answer);
+#ifndef NANO_TINY
+	    if (history_list != NULL) {
+		if (last_kbinput != sc_seq_or(do_tab, NANO_CONTROL_I))
+		    complete_len = strlen(answer);
 
-		    if (complete_len > 0) {
-			answer = mallocstrcpy(answer,
+		if (complete_len > 0) {
+		    answer = mallocstrcpy(answer,
 				get_history_completion(history_list,
-				answer, complete_len));
-			statusbar_x = strlen(answer);
-		    }
-		} else
+					answer, complete_len));
+		    statusbar_x = strlen(answer);
+		}
+	    } else
 #endif /* !NANO_TINY */
-		if (allow_tabs)
-		    answer = input_tab(answer, allow_files,
-			&statusbar_x, &tabbed, refresh_func, list);
+	    if (allow_tabs)
+		answer = input_tab(answer, allow_files, &statusbar_x,
+				   &tabbed, refresh_func, list);
 
-		update_statusbar_line(answer, statusbar_x);
+	    update_statusbar_line(answer, statusbar_x);
 	} else
 #endif /* !DISABLE_TABCOMP */
 #ifndef NANO_TINY
 	if (s && s->scfunc == get_history_older_void) {
-		if (history_list != NULL) {
-		    /* If we're scrolling up at the bottom of the
-		     * history list and answer isn't blank, save answer
-		     * in magichistory. */
-		    if ((*history_list)->next == NULL &&
-			answer[0] != '\0')
-			magichistory = mallocstrcpy(magichistory,
-				answer);
+	    if (history_list != NULL) {
+		/* If we're scrolling up at the bottom of the history list
+		 * and answer isn't blank, save answer in magichistory. */
+		if ((*history_list)->next == NULL && answer[0] != '\0')
+		    magichistory = mallocstrcpy(magichistory, answer);
 
-		    /* Get the older search from the history list and
-		     * save it in answer.  If there is no older search,
-		     * don't do anything. */
-		    if ((history =
-			get_history_older(history_list)) != NULL) {
-			answer = mallocstrcpy(answer, history);
-			statusbar_x = strlen(answer);
-		    }
-
-		    update_statusbar_line(answer, statusbar_x);
-
-		    /* This key has a shortcut list entry when it's used
-		     * to move to an older search, which means that
-		     * finished has been set to TRUE.  Set it back to
-		     * FALSE here, so that we aren't kicked out of the
-		     * statusbar prompt. */
-		    finished = FALSE;
+		/* Get the older search from the history list and save it in
+		 * answer.  If there is no older search, don't do anything. */
+		if ((history = get_history_older(history_list)) != NULL) {
+		    answer = mallocstrcpy(answer, history);
+		    statusbar_x = strlen(answer);
 		}
-	} else if (s && s->scfunc == get_history_newer_void) {
-		if (history_list != NULL) {
-		    /* Get the newer search from the history list and
-		     * save it in answer.  If there is no newer search,
-		     * don't do anything. */
-		    if ((history =
-			get_history_newer(history_list)) != NULL) {
-			answer = mallocstrcpy(answer, history);
-			statusbar_x = strlen(answer);
-		    }
 
-		    /* If, after scrolling down, we're at the bottom of
-		     * the history list, answer is blank, and
-		     * magichistory is set, save magichistory in
-		     * answer. */
-		    if ((*history_list)->next == NULL &&
-			*answer == '\0' && magichistory != NULL) {
+		update_statusbar_line(answer, statusbar_x);
+
+		/* This key has a shortcut-list entry when it's used to
+		 * move to an older search, which means that finished has
+		 * been set to TRUE.  Set it back to FALSE here, so that
+		 * we aren't kicked out of the statusbar prompt. */
+		 finished = FALSE;
+	    }
+	} else if (s && s->scfunc == get_history_newer_void) {
+	    if (history_list != NULL) {
+		/* Get the newer search from the history list and save it in
+		 * answer.  If there is no newer search, don't do anything. */
+		if ((history = get_history_newer(history_list)) != NULL) {
+		    answer = mallocstrcpy(answer, history);
+		    statusbar_x = strlen(answer);
+		}
+
+		/* If, after scrolling down, we're at the bottom of the
+		 * history list, answer is blank, and magichistory is set,
+		 * save magichistory in answer. */
+		if ((*history_list)->next == NULL &&
+		    *answer == '\0' && magichistory != NULL) {
 			answer = mallocstrcpy(answer, magichistory);
 			statusbar_x = strlen(answer);
 		    }
 
-		    update_statusbar_line(answer, statusbar_x);
+		update_statusbar_line(answer, statusbar_x);
 
-		    /* This key has a shortcut list entry when it's used
-		     * to move to a newer search, which means that
-		     * finished has been set to TRUE.  Set it back to
-		     * FALSE here, so that we aren't kicked out of the
-		     * statusbar prompt. */
-		    finished = FALSE;
-		}
+		/* This key has a shortcut-list entry when it's used to
+		 * move to a newer search, which means that finished has
+		 * been set to TRUE.  Set it back to FALSE here, so that
+		 * we aren't kicked out of the statusbar prompt. */
+		finished = FALSE;
+	    }
 	} else
 #endif /* !NANO_TINY */
 	if (s && s->scfunc == do_help_void) {
-		update_statusbar_line(answer, statusbar_x);
+	    update_statusbar_line(answer, statusbar_x);
 
-		/* This key has a shortcut list entry when it's used to
-		 * go to the help browser or display a message
-		 * indicating that help is disabled, which means that
-		 * finished has been set to TRUE.  Set it back to FALSE
-		 * here, so that we aren't kicked out of the statusbar
-		 * prompt. */
-		finished = FALSE;
+	    /* This key has a shortcut-list entry when it's used to go to
+	     * the help browser or display a message indicating that help
+	     * is disabled, which means that finished has been set to TRUE.
+	     * Set it back to FALSE here, so that we aren't kicked out of
+	     * the statusbar prompt. */
+	    finished = FALSE;
 	}
 
-	/* If we have a shortcut with an associated function, break out
-	 * if we're finished after running or trying to run the
-	 * function. */
+	/* If we have a shortcut with an associated function, break out if
+	 * we're finished after running or trying to run the function. */
 	if (finished)
 	    break;
 
@@ -1103,8 +1091,8 @@ fprintf(stderr, "get_prompt_string: answer = \"%s\", statusbar_x = %lu\n", answe
 
 
 #ifndef NANO_TINY
-    /* Set the current position in the history list to the bottom and
-     * free magichistory, if we need to. */
+    /* Set the current position in the history list to the bottom,
+     * and free magichistory if we need to. */
     if (history_list != NULL) {
 	history_reset(*history_list);
 
@@ -1119,7 +1107,7 @@ fprintf(stderr, "get_prompt_string: answer = \"%s\", statusbar_x = %lu\n", answe
      * we've finished putting in an answer, reset the statusbar cursor
      * position too. */
     if (s) {
-	if (s->scfunc ==  do_cancel || s->scfunc == do_enter_void ||
+	if (s->scfunc == do_cancel || s->scfunc == do_enter_void ||
 	ran_func) {
 	    statusbar_x = old_statusbar_x;
 	    statusbar_pww = old_pww;
@@ -1206,7 +1194,7 @@ int do_prompt(bool allow_tabs,
 
     /* If we left the prompt via Cancel or Enter, set the return value
      * properly. */
-    if (s && s->scfunc ==  do_cancel)
+    if (s && s->scfunc == do_cancel)
 	retval = -1;
     else if (s && s->scfunc == do_enter_void)
 	retval = (*answer == '\0') ? -2 : 0;
@@ -1293,12 +1281,15 @@ int do_yesno_prompt(bool all, const char *msg)
 	onekey("^C", _("Cancel"), width);
     }
 
-    wattron(bottomwin, reverse_attr);
+    if (interface_color_pair[TITLE_BAR].bright)
+	wattron(bottomwin, A_BOLD);
+    wattron(bottomwin, interface_color_pair[TITLE_BAR].pairnum);
 
     blank_statusbar();
     mvwaddnstr(bottomwin, 0, 0, msg, actual_x(msg, COLS - 1));
 
-     wattroff(bottomwin, reverse_attr);
+    wattroff(bottomwin, A_BOLD);
+    wattroff(bottomwin, interface_color_pair[TITLE_BAR].pairnum);
 
     /* Refresh the edit window and the statusbar before getting
      * input. */
@@ -1314,9 +1305,9 @@ int do_yesno_prompt(bool all, const char *msg)
 
 	currmenu = MYESNO;
 	kbinput = get_kbinput(bottomwin, &meta_key, &func_key);
-	s = get_shortcut(currmenu, &kbinput, &meta_key, &func_key);
+	s = get_shortcut(currmenu, &kbinput, &meta_key);
 
-	if (s && s->scfunc ==  do_cancel)
+	if (s && s->scfunc == do_cancel)
 	    ok = -1;
 #ifndef DISABLE_MOUSE
 	else if (kbinput == KEY_MOUSE) {

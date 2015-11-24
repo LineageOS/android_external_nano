@@ -1,9 +1,9 @@
-/* $Id: nano.h 4569 2013-03-17 22:09:38Z astyanax $ */
+/* $Id: nano.h 4908 2014-05-25 19:41:49Z bens $ */
 /**************************************************************************
  *   nano.h                                                               *
  *                                                                        *
  *   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,  *
- *   2008, 2009 Free Software Foundation, Inc.                            *
+ *   2008, 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.    *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -54,13 +54,12 @@
 #include <stdarg.h>
 #endif
 
-/* Suppress warnings for __attribute__((warn_unused_result)) */
+/* Suppress warnings for __attribute__((warn_unused_result)). */
 #define IGNORE_CALL_RESULT(call) do { if (call) {} } while(0)
 
-/* Macros for flags. */
-#define FLAGOFF(flag) ((flag) / (sizeof(unsigned) * 8))
+/* Macros for flags, indexing each bit in a small array. */
+#define FLAGS(flag) flags[((flag) / (sizeof(unsigned) * 8))]
 #define FLAGMASK(flag) (1 << ((flag) % (sizeof(unsigned) * 8)))
-#define FLAGS(flag) flags[FLAGOFF(flag)]
 #define SET(flag) FLAGS(flag) |= FLAGMASK(flag)
 #define UNSET(flag) FLAGS(flag) &= ~FLAGMASK(flag)
 #define ISSET(flag) ((FLAGS(flag) & FLAGMASK(flag)) != 0)
@@ -189,10 +188,18 @@ typedef enum {
 }  function_type;
 
 typedef enum {
-    ADD, DEL, REPLACE, SPLIT, UNSPLIT, CUT, UNCUT, ENTER, INSERT, OTHER
+    ADD, DEL, REPLACE, SPLIT, UNSPLIT, CUT, CUT_EOF, PASTE, ENTER, INSERT, OTHER
 } undo_type;
 
-#ifdef ENABLE_COLOR
+typedef struct color_pair {
+    int pairnum;
+	/* The color pair number used for this foreground color and
+	 * background color. */
+    bool bright;
+	/* Is this color A_BOLD? */
+} color_pair;
+
+#ifndef DISABLE_COLOR
 typedef struct colortype {
     short fg;
 	/* This syntax's foreground color. */
@@ -215,50 +222,68 @@ typedef struct colortype {
 	/* The compiled end (if any) of the regex string. */
     struct colortype *next;
 	/* Next set of colors. */
-     int id;
-	/* basic id for assigning to lines later */
+    int id;
+	/* Basic id for assigning to lines later. */
 } colortype;
 
-typedef struct exttype {
+typedef struct regexlisttype {
     char *ext_regex;
-	/* The extensions that match this syntax. */
+	/* The regexstrings for the things that match this syntax. */
     regex_t *ext;
-	/* The compiled extensions that match this syntax. */
-    struct exttype *next;
-	/* Next set of extensions. */
-} exttype;
+	/* The compiled regexes. */
+    struct regexlisttype *next;
+	/* Next set of regexes. */
+} regexlisttype;
 
 typedef struct syntaxtype {
     char *desc;
 	/* The name of this syntax. */
-    exttype *extensions;
+    regexlisttype *extensions;
 	/* The list of extensions that this syntax applies to. */
-    exttype *headers;
-	/* Regexes to match on the 'header' (1st line) of the file */
-    exttype *magics;
-	/* Regexes to match libmagic results */
+    regexlisttype *headers;
+	/* The list of headerlines that this syntax applies to. */
+    regexlisttype *magics;
+	/* The list of libmagic results that this syntax applies to. */
     colortype *color;
 	/* The colors used in this syntax. */
+    char *linter;
+	/* The command to lint this type of file. */
     int nmultis;
-	/* How many multi line strings this syntax has */
+	/* How many multi-line strings this syntax has. */
     struct syntaxtype *next;
 	/* Next syntax. */
 } syntaxtype;
 
-#define CNONE 		(1<<1)
-	/* Yay, regex doesn't apply to this line at all! */
-#define CBEGINBEFORE 	(1<<2)
-	/* regex starts on an earlier line, ends on this one */
-#define CENDAFTER 	(1<<3)
-	/* regex sraers on this line and ends on a later one */
-#define CWHOLELINE 	(1<<4)
-	/* whole line engulfed by the regex  start < me, end > me */
-#define CSTARTENDHERE 	(1<<5)
-	/* regex starts and ends within this line */
-#define CWTF		(1<<6)
-	/* Something else */
+typedef struct lintstruct {
+    ssize_t lineno;
+	/* Line number of the error. */
+    ssize_t colno;
+	/* Column # of the error. */
+    char *msg;
+	/* Error message text. */
+    char *filename;
+	/* Filename. */
+    struct lintstruct *next;
+	/* Next error. */
+    struct lintstruct *prev;
+	/* Previous error. */
+} lintstruct;
 
-#endif /* ENABLE_COLOR */
+
+#define CNONE		(1<<1)
+	/* Yay, regex doesn't apply to this line at all! */
+#define CBEGINBEFORE	(1<<2)
+	/* Regex starts on an earlier line, ends on this one. */
+#define CENDAFTER	(1<<3)
+	/* Regex starts on this line and ends on a later one. */
+#define CWHOLELINE	(1<<4)
+	/* Whole line engulfed by the regex, start < me, end > me. */
+#define CSTARTENDHERE	(1<<5)
+	/* Regex starts and ends within this line. */
+#define CWTF		(1<<6)
+	/* Something else. */
+
+#endif /* !DISABLE_COLOR */
 
 
 /* Structure types. */
@@ -271,8 +296,9 @@ typedef struct filestruct {
 	/* Next node. */
     struct filestruct *prev;
 	/* Previous node. */
-#ifdef ENABLE_COLOR
-    short *multidata;		/* Array of which multi-line regexes apply to this line */
+#ifndef DISABLE_COLOR
+    short *multidata;
+	/* Array of which multi-line regexes apply to this line. */
 #endif
 } filestruct;
 
@@ -298,43 +324,44 @@ typedef struct partition {
 typedef struct undo {
     ssize_t lineno;
     undo_type type;
-	/* What type of undo was this */
-    int begin;
-	/* Where did this  action begin or end */
+	/* What type of undo this was. */
+    size_t begin;
+	/* Where did this action begin or end. */
     char *strdata;
-	/* String type data we will use for ccopying the affected line back */
+	/* String type data we will use for copying the affected line back. */
     char *strdata2;
-	/* Sigh, need this too it looks like */
+	/* Sigh, need this too, it looks like. */
     int xflags;
-	/* Some flag data we need */
+	/* Some flag data we need. */
 
-    /* Cut specific stuff we need */
+    /* Cut-specific stuff we need. */
     filestruct *cutbuffer;
-	/* Copy of the cutbuffer */
+	/* Copy of the cutbuffer. */
     filestruct *cutbottom;
-	/* Copy of cutbottom */
+	/* Copy of cutbottom. */
     bool mark_set;
-	/* was the marker set when we cut */
+	/* Was the marker set when we cut? */
     bool to_end;
-	/* was this a cut to end */
+	/* Was this a cut to end? */
     ssize_t mark_begin_lineno;
 	/* copy copy copy */
-    ssize_t mark_begin_x;
-	/* Another shadow variable */
+    size_t mark_begin_x;
+	/* Another shadow variable. */
     struct undo *next;
 } undo;
 
 
 typedef struct poshiststruct {
     char *filename;
-        /* The file. */
+	/* The file. */
     ssize_t lineno;
-	/* Line number we left off on */
+	/* Line number we left off on. */
     ssize_t xno;
-	/* x position in the file we left off on */
+	/* x position in the file we left off on. */
     struct poshiststruct *next;
 } poshiststruct;
-#endif /* NANO_TINY */
+
+#endif /* !NANO_TINY */
 
 
 typedef struct openfilestruct {
@@ -353,7 +380,7 @@ typedef struct openfilestruct {
     size_t current_x;
 	/* The current file's x-coordinate position. */
     size_t placewewant;
-	/* The current file's place we want. */
+	/* The current file's x position we would like. */
     ssize_t current_y;
 	/* The current file's y-coordinate position. */
     bool modified;
@@ -371,16 +398,16 @@ typedef struct openfilestruct {
     struct stat *current_stat;
 	/* The current file's stat. */
     undo *undotop;
-	/* Top of the undo list */
+	/* Top of the undo list. */
     undo *current_undo;
-	/* The current (i.e. n ext) level of undo */
+	/* The current (i.e. next) level of undo. */
     undo_type last_action;
     const char *lock_filename;
-        /* The path of the lockfile, if we created one */
+	/* The path of the lockfile, if we created one. */
 #endif
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     syntaxtype *syntax;
-	/* The  syntax struct for this file, if any */
+	/* The  syntax struct for this file, if any. */
     colortype *colorstrings;
 	/* The current file's associated colors. */
 #endif
@@ -400,17 +427,6 @@ typedef struct shortcut {
 	/* Whether there should be a blank line after the help entry
 	 * text for this function. */
 #endif
-    /* Note: Key values that aren't used should be set to
-     * NANO_NO_KEY. */
-    int ctrlval;
-	/* The special sentinel key or control key we want bound, if
-	 * any. */
-    int metaval;
-	/* The meta key we want bound, if any. */
-    int funcval;
-	/* The function key we want bound, if any. */
-    int miscval;
-	/* The other meta key we want bound, if any. */
     bool viewok;
 	/* Is this function allowed when in view mode? */
     void (*func)(void);
@@ -419,7 +435,7 @@ typedef struct shortcut {
 	/* Next shortcut. */
 } shortcut;
 
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 typedef struct rcoption {
    const char *name;
 	/* The name of the rcfile option. */
@@ -431,29 +447,29 @@ typedef struct rcoption {
 
 typedef struct sc {
     char *keystr;
-	/* The shortcut key for a function, ASCII version */
+	/* The shortcut key for a function, ASCII version. */
     function_type type;
-        /* What kind of function key is it for convenience later */
+	/* What kind of function key it is, for convenience later. */
     int seq;
-        /* The actual sequence to check on the type is determined */
+	/* The actual sequence to check on the type is determined. */
     int menu;
-        /* What list does this apply to */
+	/* What list this applies to. */
     void (*scfunc)(void);
-        /* The function we're going to run */
+	/* The function we're going to run. */
     int toggle;
-        /* If a toggle, what we're toggling */
+	/* If a toggle, what we're toggling. */
     bool execute;
 	/* Whether to execute the function in question or just return
-	   so the sequence can be caught by the calling code */
+	 * so the sequence can be caught by the calling code. */
     struct sc *next;
-        /* Next in the list */
+	/* Next in the list. */
 } sc;
 
 typedef struct subnfunc {
     void (*scfunc)(void);
-	/* What function is this */
+	/* What function this is. */
     int menus;
-	/* In what menus does this function applu */
+	/* In what menus this function applies. */
     const char *desc;
 	/* The function's description, e.g. "Page Up". */
 #ifndef DISABLE_HELP
@@ -464,16 +480,24 @@ typedef struct subnfunc {
 	 * text for this function. */
 #endif
     bool viewok;
-        /* Is this function allowed when in view mode? */
+	/* Is this function allowed when in view mode? */
     long toggle;
-	/* If this is a toggle, if nonzero what toggle to set */
+	/* If this is a toggle, if nonzero what toggle to set. */
     struct subnfunc *next;
-	/* next item in the list */
+	/* Next item in the list. */
 } subnfunc;
 
+/* The elements of the interface that can be colored differently. */
+enum
+{
+    TITLE_BAR = 0,
+    STATUS_BAR,
+    KEY_COMBO,
+    FUNCTION_TAG,
+    NUMBER_OF_ELEMENTS
+};
 
-/* Enumeration to be used in flags table. See FLAGBIT and FLAGOFF
- * definitions. */
+/* Enumeration used in the flags array.  See the definition of FLAGMASK. */
 enum
 {
     DONTUSE,
@@ -513,270 +537,50 @@ enum
     UNDOABLE,
     SOFTWRAP,
     POS_HISTORY,
-    LOCKING
+    LOCKING,
+    NOREAD_MODE
 };
 
-/* Flags for which menus in which a given function should be present */
-#define MMAIN				(1<<0)
-#define	MWHEREIS			(1<<1)
-#define	MREPLACE			(1<<2)
-#define	MREPLACE2			(1<<3)
-#define	MGOTOLINE			(1<<4)
-#define	MWRITEFILE			(1<<5)
-#define	MINSERTFILE			(1<<6)
-#define	MEXTCMD				(1<<7)
-#define	MHELP				(1<<8)
-#define	MSPELL				(1<<9)
-#define	MBROWSER			(1<<10)
-#define	MWHEREISFILE			(1<<11)
-#define MGOTODIR			(1<<12)
-#define MYESNO				(1<<13)
-/* This really isnt all but close enough */
-#define	MALL				(MMAIN|MWHEREIS|MREPLACE|MREPLACE2|MGOTOLINE|MWRITEFILE|MINSERTFILE|MEXTCMD|MSPELL|MBROWSER|MWHEREISFILE|MGOTODIR|MHELP)
+/* Flags for the menus in which a given function should be present. */
+#define MMAIN			(1<<0)
+#define MWHEREIS		(1<<1)
+#define MREPLACE		(1<<2)
+#define MREPLACEWITH		(1<<3)
+#define MGOTOLINE		(1<<4)
+#define MWRITEFILE		(1<<5)
+#define MINSERTFILE		(1<<6)
+#define MEXTCMD			(1<<7)
+#define MHELP			(1<<8)
+#define MSPELL			(1<<9)
+#define MBROWSER		(1<<10)
+#define MWHEREISFILE		(1<<11)
+#define MGOTODIR		(1<<12)
+#define MYESNO			(1<<13)
+#define MLINTER			(1<<14)
+/* This is an abbreviation for all menus except Help and YesNo. */
+#define MMOST	(MMAIN|MWHEREIS|MREPLACE|MREPLACEWITH|MGOTOLINE|MWRITEFILE|MINSERTFILE|MEXTCMD|MBROWSER|MWHEREISFILE|MGOTODIR|MSPELL|MLINTER)
 
 /* Control key sequences.  Changing these would be very, very bad. */
 #define NANO_CONTROL_SPACE 0
-#define NANO_CONTROL_A 1
-#define NANO_CONTROL_B 2
-#define NANO_CONTROL_C 3
-#define NANO_CONTROL_D 4
-#define NANO_CONTROL_E 5
-#define NANO_CONTROL_F 6
-#define NANO_CONTROL_G 7
-#define NANO_CONTROL_H 8
 #define NANO_CONTROL_I 9
-#define NANO_CONTROL_J 10
-#define NANO_CONTROL_K 11
-#define NANO_CONTROL_L 12
-#define NANO_CONTROL_M 13
-#define NANO_CONTROL_N 14
-#define NANO_CONTROL_O 15
-#define NANO_CONTROL_P 16
-#define NANO_CONTROL_Q 17
-#define NANO_CONTROL_R 18
-#define NANO_CONTROL_S 19
-#define NANO_CONTROL_T 20
-#define NANO_CONTROL_U 21
-#define NANO_CONTROL_V 22
-#define NANO_CONTROL_W 23
-#define NANO_CONTROL_X 24
-#define NANO_CONTROL_Y 25
-#define NANO_CONTROL_Z 26
 #define NANO_CONTROL_3 27
-#define NANO_CONTROL_4 28
-#define NANO_CONTROL_5 29
-#define NANO_CONTROL_6 30
 #define NANO_CONTROL_7 31
 #define NANO_CONTROL_8 127
 
-/* Meta key sequences. */
-#define NANO_META_SPACE ' '
-#define NANO_META_LPARENTHESIS '('
-#define NANO_META_RPARENTHESIS ')'
-#define NANO_META_PLUS '+'
-#define NANO_META_COMMA ','
-#define NANO_META_MINUS '-'
-#define NANO_META_PERIOD '.'
-#define NANO_META_SLASH '/'
-#define NANO_META_0 '0'
-#define NANO_META_6 '6'
-#define NANO_META_9 '9'
-#define NANO_META_LCARET '<'
-#define NANO_META_EQUALS '='
-#define NANO_META_RCARET '>'
-#define NANO_META_QUESTION '?'
-#define NANO_META_BACKSLASH '\\'
-#define NANO_META_RBRACKET ']'
-#define NANO_META_CARET '^'
-#define NANO_META_UNDERSCORE '_'
-#define NANO_META_A 'a'
-#define NANO_META_B 'b'
-#define NANO_META_C 'c'
-#define NANO_META_D 'd'
-#define NANO_META_E 'e'
-#define NANO_META_F 'f'
-#define NANO_META_G 'g'
-#define NANO_META_H 'h'
-#define NANO_META_I 'i'
-#define NANO_META_J 'j'
-#define NANO_META_K 'k'
-#define NANO_META_L 'l'
-#define NANO_META_M 'm'
-#define NANO_META_N 'n'
-#define NANO_META_O 'o'
-#define NANO_META_P 'p'
-#define NANO_META_Q 'q'
-#define NANO_META_R 'r'
-#define NANO_META_S 's'
-#define NANO_META_T 't'
-#define NANO_META_U 'u'
-#define NANO_META_V 'v'
-#define NANO_META_W 'w'
-#define NANO_META_X 'x'
-#define NANO_META_Y 'y'
-#define NANO_META_Z 'z'
-#define NANO_META_LCURLYBRACKET '{'
-#define NANO_META_PIPE '|'
-#define NANO_META_RCURLYBRACKET '}'
 
-/* Some semi-changeable keybindings; don't play with these unless you're
- * sure you know what you're doing.  Assume ERR is defined as -1. */
-
-/* No key at all. */
-#define NANO_NO_KEY			-2
-
-/* Normal keys. */
-#define NANO_XON_KEY			NANO_CONTROL_Q
-#define NANO_XOFF_KEY			NANO_CONTROL_S
-#define NANO_CANCEL_KEY			NANO_CONTROL_C
-#define NANO_EXIT_KEY			NANO_CONTROL_X
-#define NANO_EXIT_FKEY			KEY_F(2)
-#define NANO_INSERTFILE_KEY		NANO_CONTROL_R
-#define NANO_INSERTFILE_FKEY		KEY_F(5)
-#define NANO_TOOTHERINSERT_KEY		NANO_CONTROL_X
-#define NANO_WRITEOUT_KEY		NANO_CONTROL_O
-#define NANO_WRITEOUT_FKEY		KEY_F(3)
-#define NANO_GOTOLINE_KEY		NANO_CONTROL_7
-#define NANO_GOTOLINE_FKEY		KEY_F(13)
-#define NANO_GOTOLINE_METAKEY		NANO_META_G
-#define NANO_GOTODIR_KEY		NANO_CONTROL_7
-#define NANO_GOTODIR_FKEY		KEY_F(13)
-#define NANO_GOTODIR_METAKEY		NANO_META_G
-#define NANO_TOGOTOLINE_KEY		NANO_CONTROL_T
-#define NANO_HELP_KEY			NANO_CONTROL_G
-#define NANO_HELP_FKEY			KEY_F(1)
-#define NANO_WHEREIS_KEY		NANO_CONTROL_W
-#define NANO_WHEREIS_FKEY		KEY_F(6)
-#define NANO_WHEREIS_NEXT_KEY		NANO_META_W
-#define NANO_WHEREIS_NEXT_FKEY		KEY_F(16)
-#define NANO_TOOTHERWHEREIS_KEY		NANO_CONTROL_T
-#define NANO_REGEXP_KEY			NANO_META_R
-#define NANO_REPLACE_KEY		NANO_CONTROL_4
-#define NANO_REPLACE_FKEY		KEY_F(14)
-#define NANO_REPLACE_METAKEY		NANO_META_R
-#define NANO_TOOTHERSEARCH_KEY		NANO_CONTROL_R
-#define NANO_PREVPAGE_KEY		NANO_CONTROL_Y
-#define NANO_PREVPAGE_FKEY		KEY_F(7)
-#define NANO_NEXTPAGE_KEY		NANO_CONTROL_V
-#define NANO_NEXTPAGE_FKEY		KEY_F(8)
-#define NANO_CUT_KEY			NANO_CONTROL_K
-#define NANO_CUT_FKEY			KEY_F(9)
-#define NANO_COPY_KEY			NANO_META_CARET
-#define NANO_COPY_METAKEY		NANO_META_6
-#define NANO_UNCUT_KEY			NANO_CONTROL_U
-#define NANO_UNCUT_FKEY			KEY_F(10)
-#define NANO_CURSORPOS_KEY		NANO_CONTROL_C
-#define NANO_CURSORPOS_FKEY		KEY_F(11)
-#define NANO_SPELL_KEY			NANO_CONTROL_T
-#define NANO_SPELL_FKEY			KEY_F(12)
-#define NANO_FIRSTLINE_KEY		NANO_PREVPAGE_KEY
-#define NANO_FIRSTLINE_FKEY		NANO_PREVPAGE_FKEY
-#define NANO_FIRSTLINE_METAKEY		NANO_META_BACKSLASH
-#define NANO_FIRSTLINE_METAKEY2		NANO_META_PIPE
-#define NANO_FIRSTFILE_KEY		NANO_FIRSTLINE_KEY
-#define NANO_FIRSTFILE_FKEY		NANO_FIRSTLINE_FKEY
-#define NANO_FIRSTFILE_METAKEY		NANO_FIRSTLINE_METAKEY
-#define NANO_FIRSTFILE_METAKEY2		NANO_FIRSTLINE_METAKEY2
-#define NANO_LASTLINE_KEY		NANO_NEXTPAGE_KEY
-#define NANO_LASTLINE_FKEY		NANO_NEXTPAGE_FKEY
-#define NANO_LASTLINE_METAKEY		NANO_META_SLASH
-#define NANO_LASTLINE_METAKEY2		NANO_META_QUESTION
-#define NANO_LASTFILE_KEY		NANO_LASTLINE_KEY
-#define NANO_LASTFILE_FKEY		NANO_LASTLINE_FKEY
-#define NANO_LASTFILE_METAKEY		NANO_LASTLINE_METAKEY
-#define NANO_LASTFILE_METAKEY2		NANO_LASTLINE_METAKEY2
-#define NANO_REFRESH_KEY		NANO_CONTROL_L
-#define NANO_JUSTIFY_KEY		NANO_CONTROL_J
-#define NANO_JUSTIFY_FKEY		KEY_F(4)
-#define NANO_UNJUSTIFY_KEY		NANO_UNCUT_KEY
-#define NANO_UNJUSTIFY_FKEY		NANO_UNCUT_FKEY
-#define NANO_PREVLINE_KEY		NANO_CONTROL_P
-#define NANO_NEXTLINE_KEY		NANO_CONTROL_N
-#define NANO_FORWARD_KEY		NANO_CONTROL_F
-#define NANO_BACK_KEY			NANO_CONTROL_B
-#define NANO_MARK_KEY			NANO_CONTROL_6
-#define NANO_MARK_METAKEY		NANO_META_A
-#define NANO_MARK_FKEY			KEY_F(15)
-#define NANO_HOME_KEY			NANO_CONTROL_A
-#define NANO_END_KEY			NANO_CONTROL_E
-#define NANO_DELETE_KEY			NANO_CONTROL_D
-#define NANO_BACKSPACE_KEY		NANO_CONTROL_H
-#define NANO_TAB_KEY			NANO_CONTROL_I
-#define NANO_INDENT_KEY			NANO_META_RCURLYBRACKET
-#define NANO_UNINDENT_KEY		NANO_META_LCURLYBRACKET
-#define NANO_SUSPEND_KEY		NANO_CONTROL_Z
-#define NANO_ENTER_KEY			NANO_CONTROL_M
-#define NANO_TOFILES_KEY		NANO_CONTROL_T
-#define NANO_APPEND_KEY			NANO_META_A
-#define NANO_PREPEND_KEY		NANO_META_P
-#define NANO_PREVFILE_KEY		NANO_META_LCARET
-#define NANO_PREVFILE_METAKEY		NANO_META_COMMA
-#define NANO_NEXTFILE_KEY		NANO_META_RCARET
-#define NANO_NEXTFILE_METAKEY		NANO_META_PERIOD
-#define NANO_BRACKET_KEY		NANO_META_RBRACKET
-#define NANO_NEXTWORD_KEY		NANO_CONTROL_SPACE
-#define NANO_PREVWORD_KEY		NANO_META_SPACE
-#define NANO_WORDCOUNT_KEY		NANO_META_D
-#define NANO_SCROLLUP_KEY		NANO_META_MINUS
-#define NANO_SCROLLDOWN_KEY		NANO_META_PLUS
-#define NANO_SCROLLUP_METAKEY		NANO_META_UNDERSCORE
-#define NANO_SCROLLDOWN_METAKEY		NANO_META_EQUALS
-#define NANO_CUTTILLEND_METAKEY		NANO_META_T
-#define NANO_PARABEGIN_KEY		NANO_CONTROL_W
-#define NANO_PARABEGIN_METAKEY		NANO_META_LPARENTHESIS
-#define NANO_PARABEGIN_METAKEY2		NANO_META_9
-#define NANO_PARAEND_KEY		NANO_CONTROL_O
-#define NANO_PARAEND_METAKEY		NANO_META_RPARENTHESIS
-#define NANO_PARAEND_METAKEY2		NANO_META_0
-#define NANO_FULLJUSTIFY_KEY		NANO_CONTROL_U
-#define NANO_FULLJUSTIFY_METAKEY	NANO_META_J
-#define NANO_VERBATIM_KEY		NANO_META_V
-
-/* Toggles do not exist if NANO_TINY is defined. */
 #ifndef NANO_TINY
-
-/* No toggle at all. */
-#define TOGGLE_NO_KEY			-2
-
-/* Normal toggles. */
-#define TOGGLE_NOHELP_KEY		NANO_META_X
-#define TOGGLE_CONST_KEY		NANO_META_C
-#define TOGGLE_MORESPACE_KEY		NANO_META_O
-#define TOGGLE_SMOOTH_KEY		NANO_META_S
-#define TOGGLE_WHITESPACE_KEY		NANO_META_P
-#define TOGGLE_SYNTAX_KEY		NANO_META_Y
-#define TOGGLE_SMARTHOME_KEY		NANO_META_H
-#define TOGGLE_AUTOINDENT_KEY		NANO_META_I
-#define TOGGLE_CUTTOEND_KEY		NANO_META_K
-#define TOGGLE_WRAP_KEY			NANO_META_L
-#define TOGGLE_TABSTOSPACES_KEY		NANO_META_Q
-#define TOGGLE_BACKUP_KEY		NANO_META_B
-#define TOGGLE_MULTIBUFFER_KEY		NANO_META_F
-#define TOGGLE_MOUSE_KEY		NANO_META_M
-#define TOGGLE_NOCONVERT_KEY		NANO_META_N
-#define TOGGLE_SUSPEND_KEY		NANO_META_Z
-#define TOGGLE_CASE_KEY			NANO_META_C
-#define TOGGLE_BACKWARDS_KEY		NANO_META_B
-#define TOGGLE_DOS_KEY			NANO_META_D
-#define TOGGLE_MAC_KEY			NANO_META_M
-
-/* Extra bits for the undo function */
+/* Extra bits for the undo function. */
 #define UNdel_del		(1<<0)
 #define UNdel_backspace	(1<<1)
 #define UNsplit_madenew	(1<<2)
-
-/* Since in ISO C you can't pass around function pointers anymore,
-  let's make some integer macros for function names, and then I
-  can go cut my wrists after writing the big switch statement
-  that will necessitate. */
-
+#define UNcut_cutline		(1<<3)
 #endif /* !NANO_TINY */
 
 #define VIEW TRUE
 #define NOVIEW FALSE
 
 /* The maximum number of entries displayed in the main shortcut list. */
-#define MAIN_VISIBLE 12
+#define MAIN_VISIBLE (((COLS + 40) / 20) * 2)
 
 /* The minimum editor window columns and rows required for nano to work
  * correctly. */

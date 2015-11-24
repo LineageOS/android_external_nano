@@ -1,5 +1,5 @@
 %define name	nano
-%define version	2.3.2
+%define version	2.3.3
 %define release	1
 
 Summary	: Pico editor clone with enhancements
@@ -21,7 +21,7 @@ Pico text editor while also offering a few enhancements.
 %setup -q
 
 %build
-%configure --enable-all
+%configure
 make
 
 %install

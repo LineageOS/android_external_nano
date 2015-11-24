@@ -1,9 +1,9 @@
-/* $Id: help.c 4535 2011-02-26 14:22:37Z astyanax $ */
+/* $Id: help.c 4876 2014-05-13 20:34:15Z bens $ */
 /**************************************************************************
  *   help.c                                                               *
  *                                                                        *
  *   Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,  *
- *   2009 Free Software Foundation, Inc.                                  *
+ *   2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.          *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -38,8 +38,6 @@ void do_help(void (*refresh_func)(void))
 {
     int kbinput = ERR;
     bool meta_key, func_key, old_no_help = ISSET(NO_HELP);
-    bool abort = FALSE;
-	/* Whether we should abort the help browser. */
     size_t line = 0;
 	/* The line number in help_text of the first displayed help
 	 * line.  This variable is zero-based. */
@@ -47,8 +45,8 @@ void do_help(void (*refresh_func)(void))
 	/* The line number in help_text of the last help line.  This
 	 * variable is zero-based. */
 #ifndef DISABLE_MOUSE
-	/* The current shortcut list. */
     int oldmenu = currmenu;
+	/* The menu we were called from. */
 #endif
     const char *ptr;
 	/* The current line of the help text. */
@@ -59,7 +57,6 @@ void do_help(void (*refresh_func)(void))
 
     curs_set(0);
     blank_edit();
-    wattroff(bottomwin, reverse_attr);
     blank_statusbar();
 
     /* Set help_text as the string to display. */
@@ -94,7 +91,7 @@ void do_help(void (*refresh_func)(void))
     if (last_line > 0)
 	last_line--;
 
-    while (!abort) {
+    while (TRUE) {
 	size_t i;
 
 	/* Display the help text if we don't have a key, or if the help
@@ -129,25 +126,23 @@ void do_help(void (*refresh_func)(void))
 	kbinput = get_kbinput(edit, &meta_key, &func_key);
 
 #ifndef DISABLE_MOUSE
-        if (kbinput == KEY_MOUSE) {
+	if (kbinput == KEY_MOUSE) {
 		int mouse_x, mouse_y;
 		get_mouseinput(&mouse_x, &mouse_y, TRUE);
-		continue;
-	    /* Redraw the screen. */
+		continue;    /* Redraw the screen. */
 	}
 #endif
 
-	parse_help_input(&kbinput, &meta_key, &func_key);
-        s = get_shortcut(MHELP, &kbinput, &meta_key, &func_key);
+	parse_help_input(&kbinput, &meta_key);
+	s = get_shortcut(MHELP, &kbinput, &meta_key);
 	if (!s)
 	    continue;
-        f = sctofunc((sc *) s);
+	f = sctofunc((sc *) s);
 	if (!f)
 	    continue;
 
-	  if (f->scfunc == total_refresh) {
+	if (f->scfunc == total_refresh) {
 		total_redraw();
-		break;
 	} else if (f->scfunc == do_page_up) {
 		if (line > editwinrows - 2)
 		    line -= editwinrows - 2;
@@ -165,17 +160,14 @@ void do_help(void (*refresh_func)(void))
 	} else if (f->scfunc == do_first_line) {
 		if (meta_key)
 		    line = 0;
-		break;
 	} else if (f->scfunc == do_last_line) {
 		if (meta_key) {
 		    if (line + (editwinrows - 1) < last_line)
 			line = last_line - (editwinrows - 1);
 		}
-		break;
-	    /* Abort the help browser. */
 	} else if (f->scfunc == do_exit) {
-		abort = TRUE;
-		break;
+	    /* Abort the help browser. */
+	    break;
 	}
     }
 
@@ -201,14 +193,6 @@ void do_help(void (*refresh_func)(void))
     help_text = NULL;
 }
 
-#ifndef DISABLE_BROWSER
-/* Start the help browser for the file browser. */
-void do_browser_help(void)
-{
-    do_help(&browser_refresh);
-}
-#endif
-
 /* This function allocates help_text, and stores the help string in it.
  * help_text should be NULL initially. */
 void help_init(void)
@@ -224,7 +208,7 @@ void help_init(void)
     int scsfound = 0;
 
 #ifndef NANO_TINY
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
     bool old_whitespace = ISSET(WHITESPACE_DISPLAY);
 
     UNSET(WHITESPACE_DISPLAY);
@@ -232,7 +216,7 @@ void help_init(void)
 #endif
 
     /* First, set up the initial help text for the current function. */
-    if (currmenu == MWHEREIS || currmenu == MREPLACE || currmenu == MREPLACE2) {
+    if (currmenu == MWHEREIS || currmenu == MREPLACE || currmenu == MREPLACEWITH) {
 	htx[0] = N_("Search Command Help Text\n\n "
 		"Enter the words or characters you would like to "
 		"search for, and then press Enter.  If there is a "
@@ -392,24 +376,23 @@ void help_init(void)
     if (htx[2] != NULL)
 	allocsize += strlen(htx[2]);
 
-    /* Count the shortcut help text.  Each entry has up to three keys,
-     * which fill 24 columns, plus translated text, plus one or two
-     * \n's. */
+    /* Calculate the length of the shortcut help text.  Each entry has
+     * one or two keys, which fill 16 columns, plus translated text,
+     * plus one or two \n's. */
 	for (f = allfuncs; f != NULL; f = f->next)
-            if (f->menus & currmenu)
-		allocsize += (24 * mb_cur_max()) + strlen(f->help) + 2;
+	    if (f->menus & currmenu)
+		allocsize += (16 * mb_cur_max()) + strlen(f->help) + 2;
 
 #ifndef NANO_TINY
     /* If we're on the main list, we also count the toggle help text.
-     * Each entry has "M-%c\t\t\t", which fills 24 columns, plus a
-     * space, plus translated text, plus one or two '\n's. */
+     * Each entry has "M-%c\t\t", five chars which fill 16 columns,
+     * plus a space, plus translated text, plus one or two '\n's. */
     if (currmenu == MMAIN) {
 	size_t endis_len = strlen(_("enable/disable"));
 
 	for (s = sclist; s != NULL; s = s->next)
-            if (s->scfunc ==  do_toggle_void)
-		allocsize += strlen(_(flagtostr(s->toggle))) + endis_len + 9;
-
+	    if (s->scfunc == do_toggle_void)
+		allocsize += strlen(_(flagtostr(s->toggle))) + endis_len + 8;
     }
 #endif
 
@@ -433,39 +416,39 @@ void help_init(void)
     /* Now add our shortcut info. */
     for (f = allfuncs; f != NULL; f = f->next) {
 
-        if ((f->menus & currmenu) == 0)
+	if ((f->menus & currmenu) == 0)
 	    continue;
 
-        if (!f->desc || !strcmp(f->desc, ""))
+	if (!f->desc || !strcmp(f->desc, ""))
 	    continue;
 
-        /* Lets just try and use the first 3 shortcuts
-           from the new struct... */
-        for (s = sclist, scsfound = 0; s != NULL; s = s->next) {
+	/* Let's simply show the first two shortcuts from the list. */
+	for (s = sclist, scsfound = 0; s != NULL; s = s->next) {
 
-            if (scsfound == 3)
-		continue;
-
-            if (s->type == RAWINPUT)
+	    if (s->type == RAWINPUT)
 		continue;
 
 	    if ((s->menu & currmenu) == 0)
 		continue;
 
-            if (s->scfunc == f->scfunc) {
+	    if (s->scfunc == f->scfunc) {
 		scsfound++;
-
-		if (scsfound == 1)
-		    ptr += sprintf(ptr, "%s", s->keystr);
-		else
-		    ptr += sprintf(ptr, "(%s)", s->keystr);
-		*(ptr++) = '\t';
+		/* Make the first column narrower (6) than the second (10),
+		 * but allow it to spill into the second, for "M-Space". */
+		if (scsfound == 1) {
+		    sprintf(ptr, "%s              ", s->keystr);
+		    ptr += 6;
+		} else {
+		    ptr += sprintf(ptr, "(%s)\t", s->keystr);
+		    break;
+		}
 	    }
 	}
-	/* Pad with tabs if we didnt find 3 */
-        for (; scsfound < 3; scsfound++) {
-	    *(ptr++) = '\t';
-	}
+
+	if (scsfound == 0)
+	    ptr += sprintf(ptr, "\t\t");
+	else if (scsfound == 1)
+	    ptr += 10;
 
 	/* The shortcut's help text. */
 	ptr += sprintf(ptr, "%s\n", _(f->help));
@@ -477,17 +460,19 @@ void help_init(void)
 #ifndef NANO_TINY
     /* And the toggles... */
     if (currmenu == MMAIN)
-        for (s = sclist; s != NULL; s = s->next)
-            if (s->scfunc == do_toggle_void)
-		ptr += sprintf(ptr, "(%s)\t\t\t%s %s\n",
-		    s->keystr, _(flagtostr(s->toggle)), _("enable/disable"));
+	for (s = sclist; s != NULL; s = s->next) {
+	    if (s->scfunc == do_toggle_void)
+		ptr += sprintf(ptr, "%s\t\t%s %s\n", (s->menu == MMAIN ? s->keystr : ""),
+				 _(flagtostr(s->toggle)), _("enable/disable"));
+	    if (s->toggle == NO_COLOR_SYNTAX || s->toggle == TABS_TO_SPACES)
+		ptr += sprintf(ptr, "\n");
+	}
 
-
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
     if (old_whitespace)
 	SET(WHITESPACE_DISPLAY);
 #endif
-#endif
+#endif /* !NANO_TINY */
 
     /* If all went well, we didn't overwrite the allocated space for
      * help_text. */
@@ -495,27 +480,25 @@ void help_init(void)
 }
 
 /* Determine the shortcut key corresponding to the values of kbinput
- * (the key itself), meta_key (whether the key is a meta sequence), and
- * func_key (whether the key is a function key), if any.  In the
- * process, convert certain non-shortcut keys into their corresponding
+ * (the key itself) and meta_key (whether the key is a meta sequence).
+ * Also convert certain non-shortcut keys into their corresponding
  * shortcut keys. */
-void parse_help_input(int *kbinput, bool *meta_key, bool *func_key)
+void parse_help_input(int *kbinput, bool *meta_key)
 {
-    get_shortcut(MHELP, kbinput, meta_key, func_key);
+    get_shortcut(MHELP, kbinput, meta_key);
 
     if (!*meta_key) {
 	switch (*kbinput) {
 	    /* For consistency with the file browser. */
 	    case ' ':
-		*kbinput = sc_seq_or(do_page_up, 0);
+		*kbinput = KEY_NPAGE;
 		break;
 	    case '-':
-		*kbinput = sc_seq_or(do_page_down, 0);;
+		*kbinput = KEY_PPAGE;
 		break;
-	    /* Cancel is equivalent to Exit here. */
 	    case 'E':
 	    case 'e':
-		*kbinput = sc_seq_or(do_exit, 0);;
+		*kbinput = sc_seq_or(do_exit, 0);
 		break;
 	}
     }
@@ -547,17 +530,21 @@ size_t help_line_len(const char *ptr)
 
 #endif /* !DISABLE_HELP */
 
-/* Start the help browser for the edit window. */
+/* Start the help browser. */
 void do_help_void(void)
 {
-
 #ifndef DISABLE_HELP
-    /* Start the help browser for the edit window. */
-    do_help(&edit_refresh);
+    /* Start the help browser, with the correct refresher for afterwards. */
+#ifndef DISABLE_BROWSER
+    if (currmenu == MBROWSER || currmenu == MWHEREISFILE || currmenu == MGOTODIR)
+	do_help(&browser_refresh);
+    else
+#endif
+	do_help(&edit_refresh);
 #else
     if (currmenu == MMAIN)
 	nano_disabled_msg();
     else
 	beep();
-#endif
+#endif /* !DISABLE_HELP */
 }

@@ -1,9 +1,9 @@
-/* $Id: utils.c 4563 2013-01-13 08:37:54Z astyanax $ */
+/* $Id: utils.c 4893 2014-05-15 20:00:46Z bens $ */
 /**************************************************************************
  *   utils.c                                                              *
  *                                                                        *
  *   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,  *
- *   2008, 2009 Free Software Foundation, Inc.                            *
+ *   2008, 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.    *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
  *   the Free Software Foundation; either version 3, or (at your option)  *
@@ -187,7 +187,7 @@ void sunder(char *str)
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301, USA. */
 
-#ifdef ENABLE_NANORC
+#ifndef DISABLE_NANORC
 
 #ifndef HAVE_GETDELIM
 /* This function is equivalent to getdelim(). */
@@ -247,7 +247,7 @@ ssize_t ngetline(char **lineptr, size_t *n, FILE *stream)
     return getdelim(lineptr, n, '\n', stream);
 }
 #endif
-#endif /* ENABLE_NANORC */
+#endif /* !DISABLE_NANORC */
 
 #ifdef HAVE_REGEX_H
 /* Do the compiled regex in preg and the regex in string match the
@@ -259,8 +259,8 @@ bool regexp_bol_or_eol(const regex_t *preg, const char *string)
 	REG_NOMATCH);
 }
 
-/* Fix the regex if we're on platforms which requires an adjustment
- * from GNU-style to BSD-style word boundaries.  */
+/* Fix the regex if we're on platforms which require an adjustment
+ * from GNU-style to BSD-style word boundaries. */
 const char *fixbounds(const char *r) {
 #ifndef GNU_WORDBOUNDS
     int i, j = 0;
@@ -476,7 +476,10 @@ size_t get_page_start(size_t column)
  * current_x. */
 size_t xplustabs(void)
 {
-    return strnlenpt(openfile->current->data, openfile->current_x);
+    if (openfile->current)
+	return strnlenpt(openfile->current->data, openfile->current_x);
+    else
+	return 0;
 }
 
 /* Return the index in s of the character displayed at the given column,
@@ -546,7 +549,7 @@ void new_magicline(void)
     openfile->filebot->next->prev = openfile->filebot;
     openfile->filebot->next->next = NULL;
     openfile->filebot->next->lineno = openfile->filebot->lineno + 1;
-#ifdef ENABLE_COLOR
+#ifndef DISABLE_COLOR
     openfile->filebot->next->multidata = NULL;
 #endif
     openfile->filebot = openfile->filebot->next;
@@ -598,7 +601,7 @@ void mark_order(const filestruct **top, size_t *top_x, const filestruct
 	    *right_side_up = FALSE;
     }
 }
-#endif
+#endif /* !NANO_TINY */
 
 /* Calculate the number of characters between begin and end, and return
  * it. */
@@ -630,7 +633,7 @@ size_t get_totsize(const filestruct *begin, const filestruct *end)
     return totsize;
 }
 
-/* Get back a pointer given a line number in the current openfilestruct */
+/* Get back a pointer given a line number in the current openfilestruct. */
 filestruct *fsfromline(ssize_t lineno)
 {
     filestruct *f = openfile->current;
