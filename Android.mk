@@ -41,11 +41,10 @@ include $(BUILD_EXECUTABLE)
 # ========================================================
 # nano configs
 # ========================================================
-etc_files := $(shell ls -1 $(LOCAL_PATH)/etc/)
+etc_files := $(wildcard $(LOCAL_PATH)/etc/*)
 
 NANO_ETC := $(TARGET_OUT)/etc/$(LOCAL_MODULE)/
-NANO_CONFIGS := $(addprefix $(LOCAL_PATH)/etc/,$(etc_files))
-$(NANO_CONFIGS): NANO_BINARY := $(LOCAL_MODULE)
+NANO_CONFIGS := $(addprefix $(LOCAL_PATH)/etc/,$(notdir $(etc_files)))
 $(NANO_CONFIGS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Install: $@ -> $(NANO_ETC)"
 	@mkdir -p $(NANO_ETC)
