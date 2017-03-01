@@ -42,13 +42,13 @@ LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
 LOCAL_MODULE_TAGS := debug
 include $(BUILD_EXECUTABLE)
 
-
 # ========================================================
 # nano configs
 # ========================================================
-etc_files := $(wildcard $(LOCAL_PATH)/syntax/*)
+etc_files := $(wildcard $(LOCAL_PATH)/syntax/*.nanorc)
+etc_files += $(LOCAL_PATH)/etc/nanorc
 
-NANO_ETC := $(TARGET_OUT)/etc/$(LOCAL_MODULE)/
+NANO_ETC := $(TARGET_OUT)/etc/$(LOCAL_MODULE)
 NANO_CONFIGS := $(addprefix $(LOCAL_PATH)/syntax/,$(notdir $(etc_files)))
 $(NANO_CONFIGS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Install: $@ -> $(NANO_ETC)"
