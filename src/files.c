@@ -2447,11 +2447,16 @@ char *real_dir_from_tilde(const char *buf)
 	    tilde_dir = mallocstrncpy(NULL, buf, i + 1);
 	    tilde_dir[i] = '\0';
 
+#ifndef __BIONIC__
 	    do {
 		userdata = getpwent();
 	    } while (userdata != NULL &&
 			strcmp(userdata->pw_name, tilde_dir + 1) != 0);
 	    endpwent();
+#else
+	    userdata = NULL;
+#endif
+
 	    if (userdata != NULL)
 		tilde_dir = mallocstrcpy(tilde_dir, userdata->pw_dir);
 	}
@@ -2550,6 +2555,7 @@ char **username_tab_completion(const char *buf, size_t *num_matches,
 
     *num_matches = 0;
 
+#ifndef __BIONIC__
     while ((userdata = getpwent()) != NULL) {
 	if (strncmp(userdata->pw_name, buf + 1, buf_len - 1) == 0) {
 	    /* Cool, found a match.  Add it to the list.  This makes a
@@ -2570,6 +2576,7 @@ char **username_tab_completion(const char *buf, size_t *num_matches,
 	}
     }
     endpwent();
+#endif
 
     return matches;
 }
