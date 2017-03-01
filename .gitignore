@@ -14,7 +14,6 @@ core
 .gdbinit
 
 /src/nano
-/src/revision.h
 
 /ABOUT-NLS
 /INSTALL
@@ -24,7 +23,6 @@ core
 /compile
 /config.cache
 /config.guess
-/config.h
 /config.h.in
 /config.log
 /config.rpath
