@@ -2453,8 +2453,6 @@ char *real_dir_from_tilde(const char *buf)
 	    } while (userdata != NULL &&
 			strcmp(userdata->pw_name, tilde_dir + 1) != 0);
 	    endpwent();
-#else
-	    userdata = NULL;
 #endif
 
 	    if (userdata != NULL)
