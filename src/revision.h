@@ -1,1 +1,1 @@
-#define REVISION ""
+// Stub
