@@ -45,20 +45,27 @@ include $(BUILD_EXECUTABLE)
 # ========================================================
 # nano configs
 # ========================================================
-etc_files := $(wildcard $(LOCAL_PATH)/syntax/*.nanorc)
-etc_files += $(LOCAL_PATH)/etc/nanorc
+NANO_ETC := $(TARGET_OUT_ETC)/$(LOCAL_MODULE)
 
-NANO_ETC := $(TARGET_OUT)/etc/$(LOCAL_MODULE)
-NANO_CONFIGS := $(addprefix $(LOCAL_PATH)/syntax/,$(notdir $(etc_files)))
-$(NANO_CONFIGS): $(LOCAL_INSTALLED_MODULE)
+syntax_files := $(wildcard $(LOCAL_PATH)/syntax/*.nanorc)
+NANO_SYNTAX := $(addprefix $(LOCAL_PATH)/syntax/,$(notdir $(syntax_files)))
+$(NANO_SYNTAX): $(LOCAL_INSTALLED_MODULE)
 	@echo "Install: $@ -> $(NANO_ETC)"
 	@mkdir -p $(NANO_ETC)
 	$(hide) cp $@ $(NANO_ETC)
 
-ALL_DEFAULT_INSTALLED_MODULES += $(NANO_CONFIGS)
+nanorc_file := $(LOCAL_PATH)/etc/nanorc
+NANO_NANORC := $(addprefix $(LOCAL_PATH)/etc/,$(notdir $(nanorc_file)))
+$(NANO_NANORC): $(LOCAL_INSTALLED_MODULE)
+	@echo "Install: $@ -> $(NANO_ETC)"
+	@mkdir -p $(NANO_ETC)
+	$(hide) cp $@ $(NANO_ETC)
+
+ALL_DEFAULT_INSTALLED_MODULES += $(NANO_SYNTAX) $(NANO_NANORC)
 
 ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
-	$(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(NANO_CONFIGS)
+	$(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(NANO_SYNTAX) \
+	$(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(NANO_NANORC)
 
 # ========================================================
 include $(call all-makefiles-under,$(LOCAL_PATH))
