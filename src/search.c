@@ -22,9 +22,7 @@
 #include "proto.h"
 
 #include <string.h>
-#ifdef DEBUG
 #include <time.h>
-#endif
 
 static bool came_full_circle = FALSE;
 		/* Have we reached the starting line again while searching? */
