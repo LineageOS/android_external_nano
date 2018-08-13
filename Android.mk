@@ -33,6 +33,8 @@ LOCAL_CFLAGS += \
 	-DLOCALEDIR=\"/data/locale\" \
 	-DSYSCONFDIR=\"/system/etc/nano\"
 
+LOCAL_CFLAGS += -Wno-sign-compare -Wno-unused-parameter
+
 LOCAL_SHARED_LIBRARIES += \
 	libncurses \
 	libssh
