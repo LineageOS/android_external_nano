@@ -1,9 +1,7 @@
 ## Sample initialization file for GNU nano.
 ##
-## Please note that you must have configured nano with --enable-nanorc
-## for this file to be read!  Also note that this file should not be in
-## DOS or Mac format, and that characters specially interpreted by the
-## shell should not be escaped here.
+## This file should not be in DOS or Mac format, and characters
+## specially interpreted by the shell should not be escaped here.
 ##
 ## To make sure an option is disabled, use "unset <option>".
 ##
@@ -42,6 +40,9 @@
 ## optionally followed by these closing brackets, can end sentences.
 # set brackets ""')>]}"
 
+## Automatically hard-wrap the current line when it becomes overlong.
+# set breaklonglines
+
 ## Do case-sensitive searches by default.
 # set casesensitive
 
@@ -51,15 +52,20 @@
 
 ## Use cut-from-cursor-to-end-of-line by default.
 # set cutfromcursor
-## (The old form, 'cut', is deprecated.)
 
-## Set the line length for wrapping text and justifying paragraphs.
-## If the value is 0 or less, the wrapping point will be the screen
-## width less this number.
+## Do not use the line below the title bar, leaving it entirely blank.
+# set emptyline
+
+## Enable hard-wrapping and set the target width, both for automatic
+## line wrapping and for justifying paragraphs.  If the value is 0 or
+## less, the wrapping point will be the screen width minus this number.
 # set fill -8
 
 ## Remember the used search/replace strings for the next session.
 # set historylog
+
+## Scroll the buffer contents per half-screen instead of per line.
+# set jumpyscrolling
 
 ## Display line numbers to the left of the text.
 # set linenumbers
@@ -73,9 +79,6 @@
 ## searches.  They cannot contain blank characters.  The former set must
 ## come before the latter set, and both must be in the same order.
 # set matchbrackets "(<[{)>]}"
-
-## Use the blank line below the title bar as extra editing space.
-# set morespace
 
 ## Enable mouse support, if available for your system.  When enabled,
 ## mouse clicks can be used to place the cursor, set the mark (with a
@@ -100,9 +103,6 @@
 ## last one will be readable (when there are multiple ones).
 # set nopauses
 
-## Don't wrap text at all.
-# set nowrap
-
 ## Set operating directory.  nano will not read or write files outside
 ## this directory and its subdirectories.  Also, the current directory
 ## is changed to here, so any files are inserted from this dir.  A blank
@@ -125,21 +125,22 @@
 ## 1 keystroke instead of 26.  Note that "constantshow" overrides this.
 # set quickblank
 
-## The email-quote string, used to justify email-quoted paragraphs.
-## This is an extended regular expression.  The default is:
-# set quotestr "^([ 	]*([#:>|}]|//))+"
+## The regular expression that matches quoting characters in email
+## or line-comment introducers in source code.  The default is:
+# set quotestr "^([ 	]*([!#%:;>|}]|//|--))+"
+
+## Try to work around a mismatching terminfo terminal description.
+# set rawsequences
 
 ## Fix Backspace/Delete confusion problem.
 # set rebinddelete
 
-## Fix numeric keypad key confusion problem.
-# set rebindkeypad
-
 ## Do extended regular expression searches by default.
 # set regexp
 
-## Put the cursor on the highlighted item in the file browser;
-## useful for people who use a braille display.
+## Put the cursor on the highlighted item in the file browser, and show
+## the cursor in the help viewer; useful for people who use a braille
+## display and people with poor vision.
 # set showcursor
 
 ## Make the Home key smarter.  When Home is pressed anywhere but at the
@@ -148,9 +149,6 @@
 ## cursor is already at that position, it will jump to the true
 ## beginning of the line.
 # set smarthome
-
-## Use smooth scrolling as the default.
-# set smooth
 
 ## Enable soft line wrapping (AKA full-line display).
 # set softwrap
@@ -173,7 +171,6 @@
 
 ## Snip whitespace at the end of lines when justifying or hard-wrapping.
 # set trimblanks
-## (The old form, 'justifytrim', is deprecated.)
 
 ## Disallow file modification.  Why would you want this in an rcfile? ;)
 # set view
@@ -195,6 +192,9 @@
 ## set, it overrides option 'set wordbounds'.
 # set wordchars "<_>."
 
+## Let an unmodified Backspace or Delete erase the marked region (instead
+## of a single character, and without affecting the cutbuffer).
+# set zap
 
 ## Paint the interface elements of nano.  These are examples;
 ## by default there are no colors, except for errorcolor.
@@ -202,6 +202,7 @@
 # set statuscolor brightwhite,green
 # set errorcolor brightwhite,red
 # set selectedcolor brightwhite,magenta
+# set stripecolor ,yellow
 # set numbercolor cyan
 # set keycolor cyan
 # set functioncolor green
@@ -210,6 +211,7 @@
 # set statuscolor brightwhite,magenta
 # set errorcolor brightwhite,red
 # set selectedcolor brightwhite,cyan
+# set stripecolor ,yellow
 # set numbercolor magenta
 # set keycolor brightmagenta
 # set functioncolor magenta
@@ -233,9 +235,9 @@
 ## "color" will do case-sensitive matches, while "icolor" will do
 ## case-insensitive matches.
 ##
-## Valid colors: white, black, red, blue, green, yellow, magenta, cyan.
-## For foreground colors, you may use the prefix "bright" to get a
-## stronger highlight.
+## Valid color names ares: white, black, normal, red, blue, green,
+## yellow, magenta, cyan.  For foreground colors, you may use the
+## prefix "bright" to get a stronger highlight.
 ##
 ## To use multi-line regexes, use the start="regex" end="regex"
 ## [start="regex" end="regex"...] format.
@@ -255,18 +257,51 @@
 ## ".nanorc" extension) should be the same as the "short description"
 ## name inside that file.  These names are kept fairly short to make
 ## them easier to remember and faster to type using nano's -Y option.
-##
+
 ## To include all existing syntax definitions, you can do:
 # include "@PKGDATADIR@/*.nanorc"
 
 
 ## Key bindings.
 ## See nanorc(5) (section REBINDING KEYS) for more details on this.
-##
-## The following two functions are not bound to any key by default.
-## You may wish to choose other keys than the ones suggested here.
-# bind M-B cutwordleft main
-# bind M-N cutwordright main
 
-## Set this if your Backspace key sends Del most of the time.
-# bind Del backspace all
+## The <Ctrl+Delete> keystroke deletes the word to the right of the cursor.
+## On some terminals the <Ctrl+Backspace> keystroke produces ^H, which is
+## the ASCII character for backspace, so it is bound by default to the
+## backspace function.  The <Backspace> key itself produces a different
+## keycode, which is hard-bound to the backspace function.  So, if you
+## normally use <Backspace> for backspacing and not ^H, you can make
+## <Ctrl+Backspace> delete the word to the left of the cursor with:
+# bind ^H chopwordleft main
+
+## If you would like nano to have keybindings that are more "usual",
+## such as ^O for Open, ^F for Find, ^H for Help, and ^Q for Quit,
+## then uncomment these:
+#bind ^Q exit all
+#bind ^H help all
+#bind ^H exit help
+#bind ^F whereis all
+#bind ^G findnext all
+#bind ^B wherewas all
+#bind ^D findprevious all
+#bind ^R replace main
+#bind ^W writeout main
+#bind ^O insert main
+#unbind ^V all
+#unbind ^Y all
+#bind M-X flipnewbuffer all
+#bind ^X cut all
+#bind ^C copy all
+#bind ^V paste all
+#bind ^P curpos main
+#bind ^T gotoline main
+#bind ^T gotodir browser
+#bind ^Y speller main
+#unbind ^K all
+#unbind ^U all
+#bind M-R redo main
+#bind ^U undo main
+#bind ^E redo main
+#unbind M-J main
+#unbind M-T main
+#set multibuffer

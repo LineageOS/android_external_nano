@@ -1,9 +1,9 @@
 /**************************************************************************
  *   help.c  --  This file is part of GNU nano.                           *
  *                                                                        *
- *   Copyright (C) 2000-2011, 2013-2018 Free Software Foundation, Inc.    *
+ *   Copyright (C) 2000-2011, 2013-2019 Free Software Foundation, Inc.    *
  *   Copyright (C) 2017 Rishabh Dave                                      *
- *   Copyright (C) 2014-2017 Benno Schulenberg                            *
+ *   Copyright (C) 2014-2018 Benno Schulenberg                            *
  *                                                                        *
  *   GNU nano is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published    *
@@ -110,7 +110,7 @@ void do_help(void)
 		/* The current answer when the user invokes help at the prompt. */
 	unsigned stash[sizeof(flags) / sizeof(flags[0])];
 		/* A storage place for the current flag settings. */
-	filestruct *line;
+	linestruct *line;
 	int length;
 	FILE *fp;
 
@@ -161,7 +161,6 @@ void do_help(void)
 	didfind = 0;
 
 	bottombars(MHELP);
-	wnoutrefresh(bottomwin);
 
 	/* Extract the title from the head of the help text. */
 	length = break_line(help_text, MAX_BUF_SIZE, TRUE);
@@ -184,41 +183,34 @@ void do_help(void)
 		focusing = TRUE;
 
 		/* Show the cursor when we searched and found something. */
-		kbinput = get_kbinput(edit, didfind == 1);
+		kbinput = get_kbinput(edit, didfind == 1 || ISSET(SHOW_CURSOR));
 		didfind = 0;
 
 		func = parse_help_input(&kbinput);
 
 		if (func == total_refresh) {
 			total_redraw();
-		} else if (func == do_up) {
+		} else if (ISSET(SHOW_CURSOR) && (func == do_left || func == do_right ||
+											func == do_up || func == do_down)) {
+			func();
+		} else if (func == do_up || func == do_scroll_up) {
 			do_scroll_up();
-		} else if (func == do_down) {
+		} else if (func == do_down || func == do_scroll_down) {
 			if (openfile->edittop->lineno + editwinrows - 1 <
 								openfile->filebot->lineno)
 				do_scroll_down();
-		} else if (func == do_page_up) {
-			do_page_up();
-		} else if (func == do_page_down) {
-			do_page_down();
-		} else if (func == to_first_line) {
-			to_first_line();
-		} else if (func == to_last_line) {
-			to_last_line();
-		} else if (func == do_search_forward) {
-			do_search();
+		} else if (func == do_page_up || func == do_page_down ||
+					func == to_first_line || func == to_last_line ||
+					func == do_findprevious || func == do_findnext) {
+			func();
+		} else if (func == do_search_forward || func == do_search_backward) {
+			func();
 			bottombars(MHELP);
-		} else if (func == do_research) {
-			do_research();
-#ifndef NANO_TINY
-		} else if (func == do_findprevious) {
-			do_findprevious();
-		} else if (func == do_findnext) {
-			do_findnext();
 #ifdef ENABLE_NANORC
 		} else if (func == (functionptrtype)implant) {
 			implant(first_sc_for(MHELP, func)->expansion);
 #endif
+#ifndef NANO_TINY
 		} else if (kbinput == KEY_WINCH) {
 			; /* Nothing to do. */
 #endif
@@ -239,7 +231,7 @@ void do_help(void)
 		edit_refresh();
 
 		location = 0;
-		line = openfile->fileage;
+		line = openfile->filetop;
 
 		/* Count how far (in bytes) edittop is into the file. */
 		while (line != openfile->edittop) {
@@ -299,8 +291,8 @@ void help_init(void)
 		/* Untranslated help introduction.  We break it up into three chunks
 		 * in case the full string is too long for the compiler to handle. */
 	char *ptr;
-	const subnfunc *f;
-	const sc *s;
+	const funcstruct *f;
+	const keystruct *s;
 
 	/* First, set up the initial help text for the current function. */
 	if (currmenu == MWHEREIS || currmenu == MREPLACE || currmenu == MREPLACEWITH) {
@@ -414,11 +406,21 @@ void help_init(void)
 		htx[0] = N_("Execute Command Help Text\n\n "
 				"This mode allows you to insert the output of a "
 				"command run by the shell into the current buffer (or "
-				"a new buffer in multiple file buffer mode).  If you "
-				"need another blank buffer, do not enter any "
-				"command.\n\n The following function keys are "
+				"into a new buffer).  If the command is preceded by '|' "
+				"(the pipe symbol), the current contents of the buffer "
+				"(or marked region) will be piped to the command.  ");
+		htx[1] = N_("If you just need another blank buffer, do not enter any "
+				"command.\n\n");
+		htx[2] = N_(" The following function keys are "
 				"available in Execute Command mode:\n\n");
-		htx[1] = NULL;
+	} else if (currmenu == MLINTER) {
+		htx[0] = N_("=== Linter ===\n\n "
+				"In this mode, the status bar shows an error message or "
+				"warning, and the cursor is put at the corresponding "
+				"position in the file.  With PageUp and PageDown you "
+				"can switch to earlier and later messages.\n\n");
+		htx[1] = N_(" The following function keys are "
+				"available in Linter mode:\n\n");
 		htx[2] = NULL;
 	}
 #endif /* !NANO_TINY */
@@ -498,28 +500,20 @@ void help_init(void)
 
 	/* Now add our shortcut info. */
 	for (f = allfuncs; f != NULL; f = f->next) {
-		int scsfound = 0;
+		int tally = 0;
 
 		if ((f->menus & currmenu) == 0)
 			continue;
 
 		/* Let's simply show the first two shortcuts from the list. */
 		for (s = sclist; s != NULL; s = s->next) {
-
-			if ((s->menus & currmenu) == 0)
-				continue;
-
-			if (s->func == f->func) {
-				scsfound++;
+			if ((s->menus & currmenu) && s->func == f->func) {
 				/* Make the first column narrower (6) than the second (10),
 				 * but allow it to spill into the second, for "M-Space". */
-				if (scsfound == 1) {
+				if (++tally == 1) {
 					sprintf(ptr, "%s               ", s->keystr);
 					/* Unicode arrows take three bytes instead of one. */
-					if (strstr(s->keystr, "\xE2") != NULL)
-						ptr += 8;
-					else
-						ptr += 6;
+					ptr += (strstr(s->keystr, "\xE2") != NULL ? 8 : 6);
 				} else {
 					ptr += sprintf(ptr, "(%s)\t", s->keystr);
 					break;
@@ -527,9 +521,9 @@ void help_init(void)
 			}
 		}
 
-		if (scsfound == 0)
+		if (tally == 0)
 			ptr += sprintf(ptr, "\t\t");
-		else if (scsfound == 1)
+		else if (tally == 1)
 			ptr += 10;
 
 		/* The shortcut's help text. */
@@ -562,9 +556,6 @@ void help_init(void)
 		}
 	}
 #endif /* !NANO_TINY */
-
-	if (strlen(help_text) > allocsize)
-		statusline(ALERT, "Help text spilled over -- please report a bug");
 }
 
 /* Return the function that is bound to the given key, accepting certain
@@ -573,20 +564,19 @@ functionptrtype parse_help_input(int *kbinput)
 {
 	if (!meta_key) {
 		switch (*kbinput) {
-			case ' ':
-				return do_page_down;
+			case BS_CODE:
 			case '-':
 				return do_page_up;
+			case ' ':
+				return do_page_down;
 			case 'W':
 			case 'w':
 			case '/':
 				return do_search_forward;
 			case 'N':
-#ifndef NANO_TINY
 				return do_findprevious;
-#endif
 			case 'n':
-				return do_research;
+				return do_findnext;
 			case 'E':
 			case 'e':
 			case 'Q':
@@ -620,7 +610,7 @@ size_t help_line_len(const char *ptr)
 		length = move_mbright(ptr, length);
 
 	/* If the entire line will just fit the screen, don't wrap it. */
-	if (strnlenpt(ptr, length) <= wrapping_point + 1)
+	if (wideness(ptr, length) <= wrapping_point + 1)
 		return length;
 	else if (wrap_location > 0)
 		return wrap_location;

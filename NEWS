@@ -1,3 +1,99 @@
+2019.04.24 - GNU nano 4.2 "Tax the rich, pay the teachers"
+• The integrated spell checker does not crash when 'spell' is missing.
+• Option --breaklonglines works also when --ignorercfiles is used.
+• Automatic hard-wrapping is more persistent in pushing words to the
+  same overflow line.
+
+2019.04.15 - GNU nano 4.1 "Qué corchos será eso?"
+• By default, a newline character is again automatically added at the
+  end of a buffer, to produce valid POSIX text files by default, but
+  also to get back the easy adding of text at the bottom.
+• The now unneeded option --finalnewline (-f) has been removed.
+• Syntax files are read in alphabetical order when globbing, so that
+  the precedence of syntaxes becomes predictable.
+• In the C syntax, preprocessor directives are highlighted differently.
+• M-S now toggles soft wrapping, and M-N toggles line numbers.
+• The jumpy-scrolling toggle has been removed.
+• The legacy keystrokes ^W^Y and ^W^V are recognized again.
+• Executing an external command is disallowed when in view mode.
+• Problems with resizing during external or speller commands were fixed.
+
+2019.03.24 - GNU nano 4.0 "Thy Rope of Sands"
+• An overlong line is no longer automatically hard-wrapped.
+• Smooth scrolling (one line at a time) has become the default.
+• A newline character is no longer automatically added at end of buffer.
+• The line below the title bar is by default part of the editing space.
+• Option --breaklonglines (-b) turns automatic hard-wrapping back on.
+• Option --jumpyscrolling (-j) gives the chunky, half-screen scrolling.
+• Option --finalnewline (-f) brings back the automatic newline at EOF.
+• Option --emptyline (-e) leaves the line below the title bar unused.
+• <Alt+Up> and <Alt+Down> now do a linewise scroll instead of a findnext.
+• Any number of justifications can be undone (like all other operations).
+• When marked text is justified, it becomes a single, separate paragraph.
+• Option --guidestripe=<number> draws a vertical bar at the given column.
+• Option --fill=<number> no longer turns on automatic hard-wrapping.
+• When a line continues offscreen, it now ends with a highlighted ">".
+• The halves of a split two-column character are shown as "[" and "]".
+• A line now scrolls horizontally one column earlier.
+• The bindable functions 'cutwordleft' and 'cutwordright' were renamed
+  to 'chopwordleft' and 'chopwordright' as they don't use the cutbuffer.
+• The paragraph-jumping functions were moved from Search to Go-to-Line.
+• Option --rebinddelete is able to compensate for more misbindings.
+• Options --morespace and --smooth are obsolete and thus ignored.
+• The --disable-wrapping-as-root configure option was removed.
+
+
+2018.11.11 - GNU nano 3.2 "Het kromme hout" changes the default binding
+             for the linter to M-B so that the spell checker (^T) can
+             always be used, and changes (when linting) the text in the
+             title bar and the color of the status bar to make linting
+             mode more obvious.  It also adds a bindable 'zap' function
+             for deleting a line or marked region without changing the
+             cutbuffer, adds --zap to bind the <Del> and <Backspace>
+             keys to the zap function when something is marked, and
+             hard-binds <Alt+Del> to 'zap'.  Furthermore, it shows the
+             cursor also in the help viewer (when --showcursor is used),
+             renames the bindable functions 'prevhistory' to 'older' and
+             'nexthistory' to 'newer' (update your nanorcs when needed),
+             reads the nanorc files also in restricted mode to allow
+             customization by the user (if this should not be allowed,
+             use --ignorercfiles in addition to --restricted), allows
+             in view mode to open also other files (if this should not
+             be allowed, use --restricted in addition to --view), makes
+             resizes respect a relative --fill again, no longer binds
+             F13...F15 by default, properly re-highlights a misspelled
+             word after invoking help in the internal spell checker,
+             and does not skip Unicode characters in string binds.
+
+2018.09.18 - GNU nano 3.1 "Je faisais des bonds comme ça!" fixes a
+             misbinding of ^H on some terminals and some systems,
+             does not leave stray stuff after the prompt upon exit
+             when having suspended nano while using --constantshow,
+             and does not allow to toggle to Replace in view mode.
+
+2018.09.09 - GNU nano 3.0 "Water Flowing Underground" speeds up the
+             reading of a file by seventy percent, roughly doubles the
+             speed of handling ASCII text, changes the way words at line
+             boundaries are deleted, makes <Ctrl+Delete> wipe the next
+             word and <Ctrl+Shift+Delete> the preceding word, binds M-Q
+             to 'findprevious' by default (the Tabs-to-Spaces toggle is
+             placed on M-O, and the More-Space toggle is fully removed),
+             makes an external spell check undoable, shows the correct
+             number of lines on the status bar when opening multiple
+             files, removes the 'formatter' command, removes the
+             'searchagain' bindable function (M-W is now bound to
+             'findnext' by default), moves the No-Convert toggle to the
+             Insert menu, removes the Backup and New-Buffer toggles from
+             the main menu (they remain in the Write-Out and Insert
+             menus, respectively), is more precise in what it accepts as
+             a rebindable key name, ignores any presses of <Esc> before
+             a valid command keystroke, recognizes some more escape
+             sequences for modified editing-pad keys, does not hide
+             rcfile error messages on a Linux console, renames the
+             bindable functions 'copytext' to 'copy' and 'uncut' to
+             'paste', and avoids a possible hang during a Full-Justify.
+
+
 2018.06.02 - GNU nano 2.9.8 "Espresso" brings the ability to filter the
              buffer (or the marked region) through an external command
              (^R^X and prefix the command with the pipe symbol, "|"), is
@@ -594,8 +690,8 @@
              without the usual truncation and a '$' symbol at the end
              of the line.  It can be enabled via Meta-$ inside the
              editor, via the -$ or --softwrap command-line flags,
-             or "set softwrap" in your .nanorc).  As always, please
-             report any bugs to the nano Savannah project page
+             or via "set softwrap" in your .nanorc.  As always,
+             please report any bugs to the nano Savannah project page
              (http://savannah.gnu.org/bugs/?func=additem&group=nano)
              Remember: data loss happens, back up your files.
 
