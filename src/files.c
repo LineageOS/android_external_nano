@@ -975,7 +975,8 @@ bool execute_command(const char *command)
 {
 	int from_fd[2], to_fd[2];
 		/* The pipes through which text will be written and read. */
-	struct sigaction oldaction, newaction = {{0}};
+	struct sigaction oldaction, newaction;
+	memset(&oldaction, 0, sizeof(struct sigaction));
 		/* Original and temporary handlers for SIGINT. */
 	const bool should_pipe = (command[0] == '|');
 	FILE *stream;
