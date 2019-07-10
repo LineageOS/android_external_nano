@@ -27,6 +27,9 @@
 #include <sys/ioctl.h>
 #endif
 #include <string.h>
+#ifdef ENABLE_UTF8
+#include <wchar.h>
+#endif
 
 #ifdef REVISION
 #define BRANDING REVISION
@@ -1903,7 +1906,7 @@ char *display_string(const char *buf, size_t column, size_t span,
 			if (start_col < column) {
 				converted[index++] = control_mbrep(buf, isdata);
 				column++;
-				buf += parse_mbchar(buf, NULL, NULL);
+				buf += char_length(buf);
 			}
 		}
 #ifdef ENABLE_UTF8
@@ -1916,21 +1919,30 @@ char *display_string(const char *buf, size_t column, size_t span,
 			/* Display the right half of a two-column character as ']'. */
 			converted[index++] = ']';
 			column++;
-			buf += parse_mbchar(buf, NULL, NULL);
+			buf += char_length(buf);
 		}
 #endif
 	}
 
-	while (*buf != '\0' && (column < beyond || mbwidth(buf) == 0)) {
-		int charlength, charwidth = 1;
+#ifdef ENABLE_UTF8
+#define ISO8859_CHAR  FALSE
+#else
+#define ISO8859_CHAR  ((unsigned char)*buf > 0x9F)
+#endif
 
+	while (*buf != '\0' && (column < beyond || mbwidth(buf) == 0)) {
+		/* A plain printable ASCII character is one byte, one column. */
+		if (((signed char)*buf > 0x20 && *buf != DEL_CODE) || ISO8859_CHAR) {
+			converted[index++] = *(buf++);
+			column++;
+			continue;
+		}
+
+		/* Show a space as a visible character, or as a space. */
 		if (*buf == ' ') {
-			/* Show a space as a visible character, or as a space. */
 #ifndef NANO_TINY
 			if (ISSET(WHITESPACE_DISPLAY)) {
-				int i = whitelen[0];
-
-				while (i < whitelen[0] + whitelen[1])
+				for (int i = whitelen[0]; i < whitelen[0] + whitelen[1];)
 					converted[index++] = whitespace[i++];
 			} else
 #endif
@@ -1938,15 +1950,15 @@ char *display_string(const char *buf, size_t column, size_t span,
 			column++;
 			buf++;
 			continue;
-		} else if (*buf == '\t') {
-			/* Show a tab as a visible character, or as as a space. */
+		}
+
+		/* Show a tab as a visible character plus spaces, or as just spaces. */
+		if (*buf == '\t') {
 #ifndef NANO_TINY
 			if (ISSET(WHITESPACE_DISPLAY) && (index > 0 || !isdata ||
 						!ISSET(SOFTWRAP) || column % tabsize == 0 ||
 						column == start_col)) {
-				int i = 0;
-
-				while (i < whitelen[0])
+				for (int i = 0; i < whitelen[0];)
 					converted[index++] = whitespace[i++];
 			} else
 #endif
@@ -1961,47 +1973,54 @@ char *display_string(const char *buf, size_t column, size_t span,
 			continue;
 		}
 
-		charlength = length_of_char(buf, &charwidth);
-
-		/* If buf contains a control character, represent it. */
+		/* Represent a control character with a leading caret. */
 		if (is_cntrl_mbchar(buf)) {
 			converted[index++] = '^';
 			converted[index++] = control_mbrep(buf, isdata);
+			buf += char_length(buf);
 			column += 2;
-			buf += charlength;
 			continue;
 		}
 
-		/* If buf contains a valid non-control character, simply copy it. */
-		if (charlength > 0) {
-			for (; charlength > 0; charlength--)
-				converted[index++] = *(buf++);
+#ifdef ENABLE_UTF8
+		int charlength, charwidth;
+		wchar_t wc;
 
-			column += charwidth;
+		/* Convert a multibyte character to a single code. */
+		charlength = mbtowc(&wc, buf, MAXCHARLEN);
+
+		/* Represent an invalid character with the Replacement Character. */
+		if (charlength < 0 || !is_valid_unicode(wc)) {
+			converted[index++] = '\xEF';
+			converted[index++] = '\xBF';
+			converted[index++] = '\xBD';
+			buf += (charlength > 0 ? charlength : 1);
+			column++;
+			continue;
+		}
+
+		/* For any valid character, just copy its bytes. */
+		for (; charlength > 0; charlength--)
+			converted[index++] = *(buf++);
+
+		/* Determine whether the character occupies one or two columns. */
+		charwidth = wcwidth(wc);
+
+		/* If the codepoint is unassigned, assume a width of one. */
+		column += (charwidth < 0 ? 1 : charwidth);
+
 #ifdef USING_OLD_NCURSES
-			if (charwidth > 1)
-				seen_wide = TRUE;
+		if (charwidth > 1)
+			seen_wide = TRUE;
 #endif
-			continue;
-		}
-
-		/* Represent an invalid starter byte with the Replacement Character. */
-		converted[index++] = '\xEF';
-		converted[index++] = '\xBF';
-		converted[index++] = '\xBD';
-		column++;
-		buf++;
-
-		/* For invalid codepoints, skip extra bytes. */
-		if (charlength < -1)
-			buf += charlength + 7;
+#endif /* ENABLE_UTF8 */
 	}
 
 	/* If there is more text than can be shown, make room for the ">". */
 	if (column > beyond || (*buf != '\0' && (isprompt ||
 					(isdata && !ISSET(SOFTWRAP))))) {
 		do {
-			index = move_mbleft(converted, index);
+			index = step_left(converted, index);
 		} while (mbwidth(converted + index) == 0);
 
 #ifdef ENABLE_UTF8
@@ -2211,16 +2230,15 @@ void statusline(message_type importance, const char *msg, ...)
 				(lastmessage == MILD && importance == HUSH))
 		return;
 
-	va_start(ap, msg);
-
-	/* Curses mode is turned off.  If we use wmove() now, it will muck
-	 * up the terminal settings.  So we just use vfprintf(). */
-	if (isendwin()) {
-		fprintf(stderr, "\n");
-		vfprintf(stderr, msg, ap);
-		va_end(ap);
+#ifndef NANO_TINY
+	/* Curses mode shouldn't be off when trying to write to the status bar. */
+	if (!started_curses || isendwin()) {
+		fprintf(stderr, "Out of curses -- please report a bug\n");
+		lastmessage = HUSH;
+		napms(1400);
 		return;
 	}
+#endif
 
 	/* If the ALERT status has been reset, reset the counter. */
 	if (lastmessage == HUSH)
@@ -2248,6 +2266,7 @@ void statusline(message_type importance, const char *msg, ...)
 
 	/* Construct the message out of all the arguments. */
 	compound = charalloc(MAXCHARLEN * (COLS + 1));
+	va_start(ap, msg);
 	vsnprintf(compound, MAXCHARLEN * (COLS + 1), msg, ap);
 	va_end(ap);
 	message = display_string(compound, 0, COLS, FALSE, FALSE);
@@ -2494,8 +2513,7 @@ void edit_draw(linestruct *fileptr, const char *converted,
 
 					/* If the match is of length zero, skip it. */
 					if (match.rm_so == match.rm_eo) {
-						index = move_mbright(fileptr->data,
-												index + match.rm_eo);
+						index = step_right(fileptr->data, index + match.rm_eo);
 						continue;
 					}
 
@@ -2517,8 +2535,7 @@ void edit_draw(linestruct *fileptr, const char *converted,
 					paintlen = actual_x(thetext, wideness(fileptr->data,
 										match.rm_eo) - from_col - start_col);
 
-					mvwaddnstr(edit, row, margin + start_col,
-												thetext, paintlen);
+					mvwaddnstr(edit, row, margin + start_col, thetext, paintlen);
 				}
 				goto tail_of_loop;
 			}
@@ -2581,7 +2598,7 @@ void edit_draw(linestruct *fileptr, const char *converted,
 								endmatch.rm_so == endmatch.rm_eo) {
 					if (start_line->data[index] == '\0')
 						break;
-					index = move_mbright(start_line->data, index);
+					index = step_right(start_line->data, index);
 				}
 				/* If there is no later start on this line, next step. */
 				if (regexec(varnish->start, start_line->data + index,
@@ -2663,7 +2680,7 @@ void edit_draw(linestruct *fileptr, const char *converted,
 								endmatch.rm_so == endmatch.rm_eo) {
 						if (fileptr->data[index] == '\0')
 							break;
-						index = move_mbright(fileptr->data, index);
+						index = step_right(fileptr->data, index);
 					}
 					continue;
 				}
@@ -2739,7 +2756,7 @@ void edit_draw(linestruct *fileptr, const char *converted,
 		int paintlen = -1;
 			/* The number of characters to paint.  Negative means "all". */
 
-		mark_order(&top, &top_x, &bot, &bot_x, NULL);
+		get_region(&top, &top_x, &bot, &bot_x, NULL);
 
 		if (top->lineno < fileptr->lineno || top_x < from_x)
 			top_x = from_x;
@@ -3375,9 +3392,10 @@ void total_refresh(void)
 	if (currmenu != MBROWSER && currmenu != MWHEREISFILE && currmenu != MGOTODIR)
 		titlebar(title);
 #ifdef ENABLE_HELP
-	if (inhelp)
-		wrap_the_help_text(TRUE);
-	else
+	if (inhelp) {
+		close_buffer();
+		wrap_help_text_into_buffer();
+	} else
 #endif
 	if (currmenu != MBROWSER && currmenu != MWHEREISFILE && currmenu != MGOTODIR)
 		edit_refresh();
