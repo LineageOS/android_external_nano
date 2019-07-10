@@ -4,13 +4,14 @@
 #
 # LI Daobing <lidaobing@gmail.com>, 2007, 2008, 2009.
 # Aron Xu <happyaron.xu@gmail.com>, 2009, 2010, 2011, 2015.
+# Boyuan Yang <073plan@gmail.com>, 2018, 2019.
 msgid ""
 msgstr ""
-"Project-Id-Version: nano 2.4.2\n"
+"Project-Id-Version: nano 4.3-pre1\n"
 "Report-Msgid-Bugs-To: nano-devel@gnu.org\n"
-"POT-Creation-Date: 2017-11-27 19:15+0100\n"
-"PO-Revision-Date: 2015-11-13 12:46+0800\n"
-"Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
+"POT-Creation-Date: 2019-06-18 10:30+0200\n"
+"PO-Revision-Date: 2019-06-06 11:08-0400\n"
+"Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -18,1215 +19,1215 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: src/browser.c:67
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot open directory: %s"
-msgstr "无法上移一个目录"
+msgstr "无法打开目录：%s"
 
 #. TRANSLATORS: This is a prompt.
-#: src/browser.c:230
+#: src/browser.c:226
 msgid "Go To Directory"
 msgstr "跳至目录"
 
-#: src/browser.c:233 src/browser.c:691 src/files.c:1076 src/files.c:2090
-#: src/nano.c:1079 src/search.c:156 src/search.c:240 src/search.c:759
-#: src/search.c:816 src/text.c:3074 src/text.c:3269
+#: src/browser.c:227 src/browser.c:683 src/files.c:1091 src/files.c:2115
+#: src/nano.c:1005 src/search.c:114 src/search.c:208 src/search.c:712
+#: src/search.c:765 src/text.c:2686 src/text.c:2881
 msgid "Cancelled"
 msgstr "已取消"
 
 #. TRANSLATORS: This refers to the confining effect of the
 #. * option --operatingdir, not of --restricted.
-#: src/browser.c:250 src/browser.c:281
-#, fuzzy, c-format
+#: src/browser.c:244 src/browser.c:275
+#, c-format
 msgid "Can't go outside of %s"
-msgstr "无法写入%s 外部"
+msgstr "无法访问 %s 外部"
 
-#: src/browser.c:272
+#: src/browser.c:266
 msgid "Can't move up a directory"
 msgstr "无法上移一个目录"
 
-#: src/browser.c:287 src/files.c:967 src/files.c:973 src/files.c:1611
-#: src/files.c:1728 src/files.c:1769 src/files.c:1789 src/files.c:1901
-#: src/history.c:311 src/history.c:407 src/rcfile.c:540 src/rcfile.c:1215
+#: src/browser.c:281 src/files.c:971 src/files.c:977 src/files.c:1623
+#: src/files.c:1736 src/files.c:1778 src/files.c:1798 src/files.c:1928
+#: src/history.c:311 src/history.c:407 src/rcfile.c:574 src/rcfile.c:1287
 #, c-format
 msgid "Error reading %s: %s"
-msgstr "读取%s 出错：%s"
+msgstr "读取 %s 出错：%s"
 
-#: src/browser.c:367
+#: src/browser.c:364
 msgid "The working directory has disappeared"
-msgstr ""
+msgstr "工作目录已消失"
 
 #. TRANSLATORS: Try to keep this at most 7 characters.
-#: src/browser.c:562 src/browser.c:569
+#: src/browser.c:554 src/browser.c:561
 msgid "(dir)"
-msgstr "(目录)"
+msgstr "（目录）"
 
 #. TRANSLATORS: Try to keep this at most 12 characters.
-#: src/browser.c:566
+#: src/browser.c:558
 msgid "(parent dir)"
-msgstr "(父目录)"
+msgstr "（父目录）"
 
 #. TRANSLATORS: Try to keep this at most 7 characters.
 #. * If necessary, you can leave out the parentheses.
-#: src/browser.c:596
+#: src/browser.c:588
 msgid "(huge)"
-msgstr ""
+msgstr "（巨大）"
 
 #. TRANSLATORS: This is the main search prompt.
-#: src/browser.c:680 src/search.c:136
+#: src/browser.c:673 src/search.c:100
 msgid "Search"
 msgstr "搜索"
 
-#: src/browser.c:721 src/browser.c:726 src/search.c:315
+#: src/browser.c:674 src/search.c:104
+msgid " [Backwards]"
+msgstr " [向后搜索]"
+
+#: src/browser.c:713 src/browser.c:718 src/search.c:278
 msgid "Search Wrapped"
 msgstr "已从头搜索"
 
-#: src/browser.c:737 src/search.c:447
+#: src/browser.c:729 src/search.c:414
 msgid "This is the only occurrence"
-msgstr "这是惟一出现之处"
+msgstr "这是唯一出现之处"
 
-#: src/browser.c:782 src/search.c:415
+#: src/browser.c:775 src/search.c:352
 msgid "No current search pattern"
 msgstr "没有当前搜索模式"
 
-#: src/color.c:185
-#, fuzzy, c-format
-msgid "Unknown syntax name: %s"
-msgstr "缺少语法名称"
-
-#: src/color.c:241
+#: src/color.c:189
 #, c-format
-msgid "magic_load() failed: %s"
-msgstr ""
+msgid "Unknown syntax name: %s"
+msgstr "未知语法名称：%s"
 
 #: src/color.c:245
 #, c-format
+msgid "magic_load() failed: %s"
+msgstr "magic_load() 失败：%s"
+
+#: src/color.c:249
+#, c-format
 msgid "magic_file(%s) failed: %s"
-msgstr ""
+msgstr "magic_file(%s) 失败：%s"
+
+#: src/cut.c:366 src/cut.c:433
+msgid "Nothing was cut"
+msgstr "无剪切部分"
+
+#: src/cut.c:476
+msgid "Cutbuffer is empty"
+msgstr "剪贴缓冲区为空"
 
 #: src/files.c:45
-#, fuzzy, c-format
+#, c-format
 msgid "Directory '%s' does not exist"
-msgstr "写入备份文件%s 出错：文件所有者不匹配"
+msgstr "目录“%s”不存在"
 
 #: src/files.c:47
 #, c-format
 msgid "Path '%s': %s"
-msgstr ""
+msgstr "路径“%s”：%s"
 
 #: src/files.c:49
-#, fuzzy, c-format
+#, c-format
 msgid "Path '%s' is not a directory"
-msgstr "\"%s\" 是一个目录"
+msgstr "路径“%s”不是目录"
 
 #: src/files.c:51
 #, c-format
 msgid "Path '%s' is not accessible"
-msgstr ""
+msgstr "路径“%s”不可访问"
 
 #: src/files.c:53
 #, c-format
 msgid "Directory '%s' is not writable"
-msgstr ""
+msgstr "目录“%s”不可写入"
 
 #. TRANSLATORS: Keep the next eight messages at most 76 characters.
-#: src/files.c:183
+#: src/files.c:181
 msgid "Couldn't determine my identity for lock file (getpwuid() failed)"
-msgstr ""
+msgstr "无法为锁文件确定我的身份（getpwuid() 失败）"
 
-#: src/files.c:192
+#: src/files.c:190
 #, c-format
 msgid "Couldn't determine hostname for lock file: %s"
-msgstr ""
+msgstr "无法为锁文件确定主机名称：%s"
 
-#: src/files.c:212 src/files.c:221 src/files.c:259 src/files.c:266
-#, fuzzy, c-format
+#: src/files.c:210 src/files.c:219 src/files.c:257 src/files.c:264
+#, c-format
 msgid "Error writing lock file %s: %s"
-msgstr "写入备份文件%s 出错：%s"
+msgstr "写入锁文件 %s 出错：%s"
 
-#: src/files.c:288
-#, fuzzy, c-format
+#: src/files.c:286
+#, c-format
 msgid "Error deleting lock file %s: %s"
-msgstr "写入备份文件%s 出错：%s"
+msgstr "删除锁文件 %s 出错：%s"
 
-#: src/files.c:319
-#, fuzzy, c-format
+#: src/files.c:317
+#, c-format
 msgid "Error opening lock file %s: %s"
-msgstr "写入备份文件%s 出错：%s"
+msgstr "打开锁文件 %s 出错：%s"
 
-#: src/files.c:333
+#: src/files.c:331
 #, c-format
 msgid "Error reading lock file %s: Not enough data read"
-msgstr ""
+msgstr "读取锁文件 %s 时出错：没有读入足够数据"
 
 #. TRANSLATORS: The second %s is the name of the user, the third that of the editor.
-#: src/files.c:349
+#: src/files.c:350
 #, c-format
 msgid "File %s is being edited (by %s with %s, PID %s); continue?"
-msgstr ""
+msgstr "文件 %s 已被编辑（编辑者 %s 编辑工具 %s，PID %s）；是否继续？"
 
 #: src/files.c:425
-#, fuzzy, c-format
+#, c-format
 msgid "Can't read file from outside of %s"
-msgstr "无法插入%s 外部的文件"
+msgstr "无法读取 %s 外部的文件"
 
-#: src/files.c:440 src/files.c:957 src/rcfile.c:519
+#: src/files.c:436 src/rcfile.c:552
 #, c-format
 msgid "\"%s\" is a directory"
-msgstr "\"%s\" 是一个目录"
+msgstr "“%s”是一个目录"
 
-#: src/files.c:442
-#, fuzzy, c-format
-msgid "\"%s\" is not a normal file"
-msgstr "\"%s\" 是一个设备文件"
-
-#: src/files.c:593
-msgid "No more open file buffers"
-msgstr "无多余文件缓冲区可启用"
-
-#: src/files.c:618
-#, c-format
-msgid "Switched to %s"
-msgstr "切换至%s"
-
-#: src/files.c:620 src/global.c:1045 src/winio.c:2114
-msgid "New Buffer"
-msgstr "新缓冲区"
-
-#: src/files.c:888
-#, c-format
-msgid "File '%s' is unwritable"
-msgstr ""
-
-#. TRANSLATORS: Keep the next four messages at most 78 characters.
-#: src/files.c:892
-#, fuzzy, c-format
-msgid "Read %zu line (Converted from DOS and Mac format)"
-msgid_plural "Read %zu lines (Converted from DOS and Mac format)"
-msgstr[0] "已读取%lu 行(转换自DOS 与Mac 格式)"
-
-#: src/files.c:897
-#, fuzzy, c-format
-msgid "Read %zu line (Converted from Mac format)"
-msgid_plural "Read %zu lines (Converted from Mac format)"
-msgstr[0] "已读取%lu 行 (转换自Mac 格式)"
-
-#: src/files.c:902
-#, fuzzy, c-format
-msgid "Read %zu line (Converted from DOS format)"
-msgid_plural "Read %zu lines (Converted from DOS format)"
-msgstr[0] "已读取%lu 行 (转换自DOS 格式)"
-
-#: src/files.c:908
-#, fuzzy, c-format
-msgid "Read %zu line"
-msgid_plural "Read %zu lines"
-msgstr[0] "已读取%lu 行"
-
-#: src/files.c:943
-msgid "New File"
-msgstr "新文件"
-
-#: src/files.c:948
-#, fuzzy, c-format
-msgid "File \"%s\" not found"
-msgstr "找不到\"%s\""
-
-#: src/files.c:958 src/rcfile.c:520
+#: src/files.c:441 src/rcfile.c:553
 #, c-format
 msgid "\"%s\" is a device file"
 msgstr "\"%s\" 是一个设备文件"
 
-#: src/files.c:976
-msgid "Reading File"
-msgstr "正在读取文件"
+#: src/files.c:447
+#, c-format
+msgid "\"%s\" is a FIFO"
+msgstr "“%s”是一个命名管道（FIFO）"
 
-#. TRANSLATORS: The next four messages are prompts.
-#: src/files.c:1042
-#, fuzzy
+#: src/files.c:531 src/files.c:557
+msgid "spelling correction"
+msgstr "拼写检查"
+
+#. TRANSLATORS: first %s is file name, second %s is file format.
+#: src/files.c:591
+#, c-format
+msgid "%s -- %zu line (%s)"
+msgid_plural "%s -- %zu lines (%s)"
+msgstr[0] "%s -- %zu 行（%s）"
+
+#: src/files.c:593 src/files.c:599 src/global.c:1010 src/winio.c:2117
+msgid "New Buffer"
+msgstr "新缓冲区"
+
+#: src/files.c:594
+msgid "DOS"
+msgstr "DOS"
+
+#: src/files.c:594
+msgid "Mac"
+msgstr "Mac"
+
+#: src/files.c:597
+#, c-format
+msgid "%s -- %zu line"
+msgid_plural "%s -- %zu lines"
+msgstr[0] "%s -- %zu 行"
+
+#: src/files.c:607
+msgid "No more open file buffers"
+msgstr "无多余文件缓冲区可启用"
+
+#: src/files.c:748 src/files.c:969 src/files.c:1841
+msgid "Interrupted"
+msgstr "被中断"
+
+#: src/files.c:887
+#, c-format
+msgid "File '%s' is unwritable"
+msgstr "文件“%s”不可写入"
+
+#. TRANSLATORS: Keep the next four messages at most 78 characters.
+#: src/files.c:891
+#, c-format
+msgid "Read %zu line (Converted from DOS and Mac format)"
+msgid_plural "Read %zu lines (Converted from DOS and Mac format)"
+msgstr[0] "已读取 %zu 行（转换自 DOS 与 Mac 格式）"
+
+#: src/files.c:896
+#, c-format
+msgid "Read %zu line (Converted from Mac format)"
+msgid_plural "Read %zu lines (Converted from Mac format)"
+msgstr[0] "已读取 %zu 行（转换自 Mac 格式）"
+
+#: src/files.c:901
+#, c-format
+msgid "Read %zu line (Converted from DOS format)"
+msgid_plural "Read %zu lines (Converted from DOS format)"
+msgstr[0] "已读取 %zu 行（转换自 DOS 格式）"
+
+#: src/files.c:907
+#, c-format
+msgid "Read %zu line"
+msgid_plural "Read %zu lines"
+msgstr[0] "已读取 %zu 行"
+
+#: src/files.c:941
+msgid "New File"
+msgstr "新文件"
+
+#: src/files.c:946
+#, c-format
+msgid "File \"%s\" not found"
+msgstr "文件“%s”未找到"
+
+#: src/files.c:953
+msgid "Reading from FIFO..."
+msgstr "正在从命名管道（FIFO）录制..."
+
+#: src/files.c:981
+msgid "Reading..."
+msgstr "正在读取..."
+
+#. TRANSLATORS: The next six messages are prompts.
+#: src/files.c:1047
 msgid "Command to execute in new buffer"
-msgstr "在新缓冲区中执行的命令 [从%s] "
+msgstr "在新缓冲区中要执行的命令"
 
-#: src/files.c:1045
-#, fuzzy
+#: src/files.c:1050
 msgid "Command to execute"
-msgstr "执行的命令 [从%s] "
+msgstr "要执行的命令"
 
-#: src/files.c:1051
-#, fuzzy, c-format
-msgid "File to insert into new buffer [from %s]"
-msgstr "要插入新缓冲区的文件 [从%s] "
+#: src/files.c:1058
+#, c-format
+msgid "File to read unconverted into new buffer [from %s]"
+msgstr "要不经转换读入新缓冲区的文件 [来自 %s]"
 
-#: src/files.c:1054
-#, fuzzy, c-format
+#: src/files.c:1061
+#, c-format
+msgid "File to read into new buffer [from %s]"
+msgstr "要读入新缓冲区的文件 [来自 %s]"
+
+#: src/files.c:1066
+#, c-format
+msgid "File to insert unconverted [from %s]"
+msgstr "要不经转换插入的文件 [来自 %s]"
+
+#: src/files.c:1069
+#, c-format
 msgid "File to insert [from %s]"
-msgstr "要插入的文件 [从%s] "
+msgstr "要插入的文件 [来自 %s]"
 
-#: src/files.c:1197
-msgid "Key invalid in non-multibuffer mode"
-msgstr "非多重缓冲区模式中此按键无效"
+#: src/files.c:1425
+#, c-format
+msgid "Invalid operating directory: %s\n"
+msgstr "无效的操作目录：%s\n"
 
-#: src/files.c:1410
-#, fuzzy
-msgid "Invalid operating directory\n"
-msgstr "设定操作目录"
-
-#: src/files.c:1459
-#, fuzzy
+#: src/files.c:1475
 msgid "Failed to write backup file; continue saving? (Say N if unsure.) "
-msgstr "写入备份文件失败，继续保存吗？(如果不确定请输入N)"
+msgstr "写入备份文件失败；继续保存吗？（如果不确定请输入N。）"
 
-#: src/files.c:1476
-#, fuzzy
-msgid "Invalid backup directory\n"
-msgstr "无法上移一个目录"
+#: src/files.c:1492
+#, c-format
+msgid "Invalid backup directory: %s\n"
+msgstr "无效的备份目录：%s\n"
 
-#: src/files.c:1569
+#: src/files.c:1582
 #, c-format
 msgid "Can't write outside of %s"
 msgstr "无法写入%s 外部"
 
-#: src/files.c:1647 src/files.c:1671 src/files.c:1689 src/files.c:1703
-#: src/files.c:1715 src/files.c:1738
+#: src/files.c:1659 src/files.c:1683 src/files.c:1701 src/files.c:1715
+#: src/files.c:1727 src/files.c:1746
 #, c-format
 msgid "Error writing backup file %s: %s"
-msgstr "写入备份文件%s 出错：%s"
+msgstr "写入备份文件 %s 出错：%s"
 
-#: src/files.c:1648 src/nano.c:663
+#: src/files.c:1660 src/nano.c:596
 msgid "Too many backup files?"
 msgstr "太多备份文件？"
 
-#: src/files.c:1778 src/files.c:1800 src/help.c:55 src/help.c:122
-#: src/text.c:3002 src/text.c:3014 src/text.c:3394 src/text.c:3405
+#: src/files.c:1787 src/files.c:1809 src/text.c:2603 src/text.c:2621
 #, c-format
 msgid "Error writing temp file: %s"
 msgstr "写入临时文件%s 出错"
 
-#: src/files.c:1819 src/files.c:1829 src/files.c:1849 src/files.c:1866
-#: src/files.c:1876 src/files.c:1908 src/files.c:1915
+#: src/files.c:1817
+msgid "Writing to FIFO..."
+msgstr "正在写入命名管道（FIFO）..."
+
+#: src/files.c:1843 src/files.c:1853 src/files.c:1875 src/files.c:1892
+#: src/files.c:1902 src/files.c:1935 src/files.c:1944
 #, c-format
 msgid "Error writing %s: %s"
 msgstr "写入%s 出错：%s"
 
-#: src/files.c:1958
-#, fuzzy, c-format
+#: src/files.c:1861
+msgid "Writing..."
+msgstr "正在写入..."
+
+#: src/files.c:1994
+#, c-format
 msgid "Wrote %zu line"
 msgid_plural "Wrote %zu lines"
-msgstr[0] "已写入%lu 行"
+msgstr[0] "已写入 %zu 行"
 
-#: src/files.c:2050
+#: src/files.c:2075
 msgid " [DOS Format]"
 msgstr " [DOS 格式]"
 
-#: src/files.c:2051
+#: src/files.c:2076
 msgid " [Mac Format]"
 msgstr " [Mac 格式]"
 
-#: src/files.c:2052
+#: src/files.c:2077
 msgid " [Backup]"
 msgstr " [备份]"
 
 #. TRANSLATORS: The next six strings are prompts.
-#: src/files.c:2059
+#: src/files.c:2084
 msgid "Prepend Selection to File"
 msgstr "前引选择部份于文件"
 
-#: src/files.c:2060
+#: src/files.c:2085
 msgid "Append Selection to File"
 msgstr "附加选择部份至文件"
 
-#: src/files.c:2061
+#: src/files.c:2086
 msgid "Write Selection to File"
 msgstr "写入选择部份至文件"
 
-#: src/files.c:2063
+#: src/files.c:2088
 msgid "File Name to Prepend to"
 msgstr "要前引于的文件名"
 
-#: src/files.c:2064
+#: src/files.c:2089
 msgid "File Name to Append to"
 msgstr "要附加至的文件名"
 
-#: src/files.c:2067
+#: src/files.c:2092
 msgid "File Name to Write"
 msgstr "要写入的文件名"
 
+#. TRANSLATORS: Concisely say the screen is too small.
+#: src/files.c:2175
+msgid "Too tiny"
+msgstr "屏幕过小"
+
 #. TRANSLATORS: Restricted mode forbids overwriting.
-#: src/files.c:2176
+#: src/files.c:2205
 msgid "File exists -- cannot overwrite"
-msgstr ""
+msgstr "文件已存在——无法覆写"
 
-#: src/files.c:2186
-#, fuzzy
+#: src/files.c:2215
 msgid "Save file under DIFFERENT NAME? "
-msgstr "以不同的名称存档？"
+msgstr "以不同的名称保存文件？ "
 
-#: src/files.c:2194
-#, fuzzy, c-format
+#: src/files.c:2223
+#, c-format
 msgid "File \"%s\" exists; OVERWRITE? "
-msgstr "文件已存在，要覆盖吗？"
+msgstr "文件“%s”已存在；要覆盖吗？ "
 
-#: src/files.c:2216
+#: src/files.c:2249
 msgid "File on disk has changed"
-msgstr ""
+msgstr "磁盘上的文件已改变"
 
-#: src/files.c:2218
-#, fuzzy
+#: src/files.c:2251
 msgid "File was modified since you opened it; continue saving? "
-msgstr "在您打开文件后文件已被改变，是否继续保存？"
+msgstr "在您打开文件后文件已被改变；是否继续保存？"
 
-#: src/files.c:2637
+#: src/files.c:2657
 msgid "(more)"
 msgstr "(更多)"
 
-#. TRANSLATORS: Try to keep the next fifteen strings at most 10 characters.
-#: src/global.c:494
+#. TRANSLATORS: Try to keep the next two strings at most 10 characters.
+#: src/global.c:501
 msgid "Exit"
 msgstr "离开"
 
-#: src/global.c:495
+#: src/global.c:502
 msgid "Close"
 msgstr "关闭"
 
-#: src/global.c:496
-#, fuzzy
-msgid "Uncut Text"
-msgstr "还原剪切"
-
-#: src/global.c:498
-#, fuzzy
-msgid "Unjustify"
-msgstr "还原对齐"
-
-#: src/global.c:504
-msgid "Read File"
-msgstr "读档"
-
-#: src/global.c:505
-msgid "Where Is"
-msgstr "搜索"
-
-#: src/global.c:506
-msgid "Replace"
-msgstr "替换"
-
-#: src/global.c:507
-msgid "Go To Line"
-msgstr "跳行"
-
-#: src/global.c:508
-msgid "Prev Line"
-msgstr "上行"
-
-#: src/global.c:509
-msgid "Next Line"
-msgstr "下行"
-
-#: src/global.c:510
-msgid "Prev Page"
-msgstr "上页"
-
-#: src/global.c:511
-msgid "Next Page"
-msgstr "下页"
-
-#: src/global.c:513
-msgid "Justify"
-msgstr "对齐"
-
-#: src/global.c:514
-msgid "FullJstify"
-msgstr "全部对齐"
-
-#: src/global.c:516
-msgid "Refresh"
-msgstr "刷新"
-
-#. TRANSLATORS: Try to keep this string at most 12 characters.
-#: src/global.c:518
-msgid "WhereIs Next"
-msgstr "何处是下一个"
-
 #. TRANSLATORS: The next long series of strings are shortcut descriptions;
 #. * they are best kept shorter than 56 characters, but may be longer.
-#: src/global.c:523
+#: src/global.c:510
 msgid "Cancel the current function"
 msgstr "取消当前功能"
 
-#: src/global.c:524
+#: src/global.c:511
 msgid "Display this help text"
 msgstr "显示帮助"
 
+#: src/global.c:513
+msgid "Close the current buffer / Exit from nano"
+msgstr "关闭当前缓冲区 / 离开 nano"
+
+#: src/global.c:515
+msgid "Write the current buffer (or the marked region) to disk"
+msgstr "将当前缓冲区（或标记的区域）写入磁盘"
+
+#: src/global.c:517
+msgid "Insert another file into current buffer (or into new buffer)"
+msgstr "将另一个文件插入当前缓冲区（或者插入新缓冲区）"
+
+#: src/global.c:519
+msgid "Search forward for a string or a regular expression"
+msgstr "正向查找字符串或正则表达式"
+
+#: src/global.c:521
+msgid "Search backward for a string or a regular expression"
+msgstr "反向查找字符串或正则表达式"
+
+#: src/global.c:523
+msgid "Search forward for a string"
+msgstr "向前查找字符串"
+
+#: src/global.c:524
+msgid "Search backward for a string"
+msgstr "向后查找字符串"
+
+#: src/global.c:525
+msgid "Refresh the file list"
+msgstr "刷新文件列表"
+
 #: src/global.c:527
-msgid "Close the current file buffer / Exit from nano"
-msgstr "关闭当前文件缓冲区 / 离开 nano"
+msgid "Go to lefthand column"
+msgstr "跳至左栏"
+
+#: src/global.c:528
+msgid "Go to righthand column"
+msgstr "跳至右栏"
 
 #: src/global.c:529
-msgid "Exit from nano"
-msgstr "离开 nano"
+msgid "Go to first row in this column"
+msgstr "跳至本栏第一列"
+
+#: src/global.c:530
+msgid "Go to last row in this column"
+msgstr "跳至本栏最后一列"
 
 #: src/global.c:533
-msgid "Write the current file to disk"
-msgstr "写入当前文件至磁盘"
+msgid "Go one screenful up"
+msgstr "向上跳转一屏"
 
-#: src/global.c:535
-msgid "Insert another file into the current one"
-msgstr "插入其他文件至当前文件"
+#: src/global.c:534
+msgid "Go one screenful down"
+msgstr "向下跳转一屏"
 
-#: src/global.c:537
-#, fuzzy
-msgid "Search forward for a string or a regular expression"
-msgstr "查找字符串或正则表示式"
+#: src/global.c:536
+msgid "Cut current line (or marked region) and store it in cutbuffer"
+msgstr "剪切当前行（或者标记的区域）并存至剪贴缓冲区"
+
+#: src/global.c:538
+msgid "Paste the contents of cutbuffer at current cursor position"
+msgstr "在当前游标位置粘贴剪贴缓冲区内容"
 
 #: src/global.c:539
-#, fuzzy
-msgid "Search backward for a string or a regular expression"
-msgstr "查找字符串或正则表示式"
-
-#: src/global.c:541
-#, fuzzy
-msgid "Search for a string"
-msgstr "查找字符串或正则表示式"
-
-#: src/global.c:542
-msgid "Refresh the file list"
-msgstr ""
-
-#: src/global.c:544
-#, fuzzy
-msgid "Go to lefthand column"
-msgstr "跳至指定行与列位置"
-
-#: src/global.c:545
-#, fuzzy
-msgid "Go to righthand column"
-msgstr "跳至指定行与列位置"
-
-#: src/global.c:546
-#, fuzzy
-msgid "Go to first row in this column"
-msgstr "跳至文件第一列"
-
-#: src/global.c:547
-#, fuzzy
-msgid "Go to last row in this column"
-msgstr "跳至文件最后一列"
-
-#: src/global.c:550
-#, fuzzy
-msgid "Go one screenful up"
-msgstr "跳至后一屏"
-
-#: src/global.c:551
-#, fuzzy
-msgid "Go one screenful down"
-msgstr "跳至后一屏"
-
-#: src/global.c:553
-msgid "Cut the current line and store it in the cutbuffer"
-msgstr "剪切当前这行并存至剪贴板"
-
-#: src/global.c:555
-msgid "Uncut from the cutbuffer into the current line"
-msgstr "从剪贴板粘贴至当前行"
-
-#: src/global.c:556
 msgid "Display the position of the cursor"
 msgstr "显示光标位置"
 
-#: src/global.c:558
+#: src/global.c:541
 msgid "Invoke the spell checker, if available"
 msgstr "尝试运行拼写检查"
 
-#: src/global.c:560
+#: src/global.c:543
 msgid "Replace a string or a regular expression"
-msgstr "替换字符串或正则表示式"
+msgstr "替换字符串或正则表达式"
 
-#: src/global.c:561
+#: src/global.c:544
 msgid "Go to line and column number"
 msgstr "跳至指定行与列位置"
 
-#: src/global.c:562
-#, fuzzy
-msgid "Repeat the last search"
-msgstr "重复上次搜索"
-
-#: src/global.c:564
-#, fuzzy
+#: src/global.c:546
 msgid "Mark text starting from the cursor position"
-msgstr "标记游标所在文字"
+msgstr "标记游标所在位置开始的文本"
 
-#: src/global.c:566
-msgid "Copy the current line and store it in the cutbuffer"
-msgstr "拷贝当前行至剪贴板"
+#: src/global.c:548
+msgid "Copy current line (or marked region) and store it in cutbuffer"
+msgstr "复制当前行（或者标记的区域）并存至剪贴缓冲区"
 
-#: src/global.c:567
-msgid "Indent the current line"
-msgstr "缩进当前行"
+#: src/global.c:549
+msgid "Throw away the current line (or marked region)"
+msgstr "去除当前行（或者标记的行）"
 
-#: src/global.c:568
-msgid "Unindent the current line"
-msgstr "取消缩进当前行"
+#: src/global.c:550
+msgid "Indent the current line (or marked lines)"
+msgstr "缩进当前行（或者标记的行）"
 
-#: src/global.c:569
+#: src/global.c:551
+msgid "Unindent the current line (or marked lines)"
+msgstr "取消缩进当前行（或者标记的行）"
+
+#: src/global.c:552
 msgid "Undo the last operation"
 msgstr "撤销上次操作"
 
-#: src/global.c:570
+#: src/global.c:553
 msgid "Redo the last undone operation"
 msgstr "重做撤销的操作"
 
-#: src/global.c:572
+#: src/global.c:555
 msgid "Go back one character"
 msgstr "向后跳一字符"
 
-#: src/global.c:573
+#: src/global.c:556
 msgid "Go forward one character"
 msgstr "向前跳一字符"
 
-#: src/global.c:574
+#: src/global.c:557
 msgid "Go back one word"
 msgstr "向后跳一个词"
 
-#: src/global.c:575
+#: src/global.c:558
 msgid "Go forward one word"
 msgstr "向前跳一个词"
 
-#: src/global.c:576
+#: src/global.c:559
 msgid "Go to previous line"
 msgstr "跳至前一行"
 
-#: src/global.c:577
+#: src/global.c:560
 msgid "Go to next line"
 msgstr "跳至后一行"
 
-#: src/global.c:578
+#: src/global.c:561
 msgid "Go to beginning of current line"
 msgstr "跳至当前行首"
 
-#: src/global.c:579
+#: src/global.c:562
 msgid "Go to end of current line"
 msgstr "跳至当前行尾"
 
-#: src/global.c:580
-#, fuzzy
+#: src/global.c:563
 msgid "Go to previous block of text"
-msgstr "跳至前一行"
+msgstr "跳至前一段文本"
 
-#: src/global.c:581
-#, fuzzy
+#: src/global.c:564
 msgid "Go to next block of text"
-msgstr "跳至后一行"
+msgstr "跳至后一段文本"
 
-#: src/global.c:584
+#: src/global.c:567
 msgid "Go to beginning of paragraph; then of previous paragraph"
 msgstr "跳至当前段落开头，如已在段落开头，则调至上一段落起始处"
 
-#: src/global.c:586
+#: src/global.c:569
 msgid "Go just beyond end of paragraph; then of next paragraph"
 msgstr "跳至当前段落结尾，如已在段落结尾，则调至下一段落结尾"
 
-#: src/global.c:588
+#: src/global.c:571
 msgid "Go to the first line of the file"
 msgstr "跳至文件第一行"
 
-#: src/global.c:589
+#: src/global.c:572
 msgid "Go to the last line of the file"
 msgstr "跳至文件最后一行"
 
-#: src/global.c:591
+#: src/global.c:574
 msgid "Go to the matching bracket"
 msgstr "移动至对应括号"
 
-#: src/global.c:593
-msgid "Scroll up one line without scrolling the cursor"
-msgstr "向上卷动一行但不卷动游标"
+#: src/global.c:578
+msgid "Scroll up one line without moving the cursor textually"
+msgstr "向上滚动一行但不移动文本中的游标"
 
-#: src/global.c:595
-msgid "Scroll down one line without scrolling the cursor"
-msgstr "向下卷动一行但不卷动游标"
+#: src/global.c:580
+msgid "Scroll down one line without moving the cursor textually"
+msgstr "向下滚动一行但不移动文本中的游标"
 
-#: src/global.c:598
+#: src/global.c:583
 msgid "Switch to the previous file buffer"
 msgstr "切换至上个文件缓冲区"
 
-#: src/global.c:599
+#: src/global.c:584
 msgid "Switch to the next file buffer"
 msgstr "切换至下个文件缓冲区"
 
-#: src/global.c:601
+#: src/global.c:586
 msgid "Insert the next keystroke verbatim"
 msgstr "插入下一按键原型"
 
-#: src/global.c:602
+#: src/global.c:587
 msgid "Insert a tab at the cursor position"
 msgstr "插入制表符于游标位置"
 
-#: src/global.c:603
+#: src/global.c:588
 msgid "Insert a newline at the cursor position"
 msgstr "插入新行于游标位置"
 
-#: src/global.c:604
+#: src/global.c:589
 msgid "Delete the character under the cursor"
 msgstr "删除游标之下的字符"
 
-#: src/global.c:606
+#: src/global.c:591
 msgid "Delete the character to the left of the cursor"
 msgstr "删除游标左侧的字符"
 
-#: src/global.c:609
-#, fuzzy
-msgid "Cut backward from cursor to word start"
-msgstr "从游标剪切至行尾"
+#: src/global.c:594
+msgid "Delete backward from cursor to word start"
+msgstr "从游标向单词起始位置向后删除"
 
-#: src/global.c:611
-#, fuzzy
-msgid "Cut forward from cursor to next word start"
-msgstr "从游标剪切至行尾"
+#: src/global.c:596
+msgid "Delete forward from cursor to next word start"
+msgstr "从游标向下一个单词起始位置向前删除"
 
-#: src/global.c:613
+#: src/global.c:598
 msgid "Cut from the cursor position to the end of the file"
 msgstr "从游标位置剪切至文件结尾"
 
-#: src/global.c:616
+#: src/global.c:601
 msgid "Justify the current paragraph"
 msgstr "对齐当前段落"
 
-#: src/global.c:617
+#: src/global.c:602
 msgid "Justify the entire file"
 msgstr "对齐整个文件"
 
-#: src/global.c:621
+#: src/global.c:606
 msgid "Count the number of words, lines, and characters"
 msgstr "计算字数、行数与字符数"
 
-#: src/global.c:624
+#: src/global.c:609
 msgid "Refresh (redraw) the current screen"
 msgstr "重新显示当前画面"
 
-#: src/global.c:626
-#, fuzzy
+#: src/global.c:611
 msgid "Suspend the editor (if suspension is enabled)"
-msgstr "暂停编辑器(如果启用了暂停)"
+msgstr "挂起编辑器（如果启用了挂起功能）"
 
-#: src/global.c:628
-#, fuzzy
+#: src/global.c:613
 msgid "Try and complete the current word"
-msgstr "缩进当前行"
+msgstr "尝试补全当前单词"
 
-#: src/global.c:632
-msgid "Comment/uncomment the current line or marked lines"
-msgstr ""
+#: src/global.c:617
+msgid "Comment/uncomment the current line (or marked lines)"
+msgstr "注释/反注释当前行（或者标记的行）"
 
-#: src/global.c:635
+#: src/global.c:619
 msgid "Save file without prompting"
-msgstr ""
+msgstr "不提示而保存文件"
 
-#: src/global.c:636
+#: src/global.c:620
 msgid "Search next occurrence backward"
-msgstr ""
+msgstr "向后搜索下一个出现位置"
 
-#: src/global.c:637
+#: src/global.c:621
 msgid "Search next occurrence forward"
-msgstr ""
+msgstr "向前搜索下一个出现位置"
 
-#: src/global.c:638
+#: src/global.c:623
 msgid "Start/stop recording a macro"
-msgstr ""
+msgstr "开始/停止录制宏"
 
-#: src/global.c:639
-#, fuzzy
+#: src/global.c:624
 msgid "Run the last recorded macro"
-msgstr "撤销上次操作"
+msgstr "运行最近录制的宏"
 
-#: src/global.c:642
+#: src/global.c:627
 msgid "Toggle the case sensitivity of the search"
 msgstr "切换查找的区分大小写选项"
 
-#: src/global.c:644
+#: src/global.c:629
 msgid "Reverse the direction of the search"
 msgstr "反转搜索方向"
 
-#: src/global.c:646
+#: src/global.c:631
 msgid "Toggle the use of regular expressions"
-msgstr "切换使用正则表示式"
+msgstr "切换使用正则表达式"
 
-#: src/global.c:649
+#: src/global.c:634
 msgid "Recall the previous search/replace string"
 msgstr "编辑前次搜索/替换字符串"
 
-#: src/global.c:651
+#: src/global.c:636
 msgid "Recall the next search/replace string"
 msgstr "编辑下次搜索/替换字符串"
 
-#: src/global.c:654
+#: src/global.c:639
 msgid "Toggle the use of DOS format"
 msgstr "切换使用DOS 格式"
 
-#: src/global.c:655
+#: src/global.c:640
 msgid "Toggle the use of Mac format"
 msgstr "切换使用Mac 格式"
 
-#: src/global.c:656
+#: src/global.c:641
 msgid "Toggle appending"
 msgstr "切换追加"
 
-#: src/global.c:657
+#: src/global.c:642
 msgid "Toggle prepending"
 msgstr "切换前置插入"
 
-#: src/global.c:658
+#: src/global.c:643
 msgid "Toggle backing up of the original file"
 msgstr "切换储存既有文件的备份"
 
-#: src/global.c:659
+#: src/global.c:644
 msgid "Execute external command"
 msgstr "执行外部命令"
 
-#: src/global.c:662
+#: src/global.c:646
+msgid "Pipe the current buffer (or marked region) to the command"
+msgstr "将当前缓冲区（或标记的区域）通过管道送给外部命令"
+
+#: src/global.c:647
+msgid "Do not convert from DOS/Mac format"
+msgstr "不要从 DOS/Mac 格式转换"
+
+#: src/global.c:650
 msgid "Toggle the use of a new buffer"
 msgstr "切换使用新缓冲区"
 
-#: src/global.c:664
+#: src/global.c:652
 msgid "Close buffer without saving it"
-msgstr ""
+msgstr "不保存而关闭缓冲区"
 
-#: src/global.c:666
+#: src/global.c:654
 msgid "Go to file browser"
 msgstr "打开文件选单"
 
-#: src/global.c:667
+#: src/global.c:655
 msgid "Exit from the file browser"
 msgstr "从文件选单离开"
 
-#: src/global.c:668
+#: src/global.c:656
 msgid "Go to the first file in the list"
 msgstr "跳至文件第一列"
 
-#: src/global.c:669
+#: src/global.c:657
 msgid "Go to the last file in the list"
 msgstr "跳至文件最后一列"
 
-#: src/global.c:670
+#: src/global.c:658
 msgid "Go to the previous file in the list"
 msgstr "跳至列表中的前一个文件"
 
-#: src/global.c:671
+#: src/global.c:659
 msgid "Go to the next file in the list"
 msgstr "跳至列表中的下一个文件"
 
-#: src/global.c:672
+#: src/global.c:660
 msgid "Go to directory"
 msgstr "跳至目录"
 
-#: src/global.c:675
-#, fuzzy
+#: src/global.c:663
 msgid "Invoke the linter, if available"
-msgstr "尝试运行拼写检查"
+msgstr "尝试运行代码语法检查"
 
-#: src/global.c:676
-#, fuzzy
+#: src/global.c:664
 msgid "Go to previous linter msg"
-msgstr "跳至前一行"
+msgstr "跳至上一个 linter 信息"
 
-#: src/global.c:677
-#, fuzzy
+#: src/global.c:665
 msgid "Go to next linter msg"
-msgstr "跳至后一行"
+msgstr "跳至下一个 linter 信息"
 
-#: src/global.c:679
-#, fuzzy
-msgid "Invoke formatter, if available"
-msgstr "尝试运行拼写检查"
-
-#. TRANSLATORS: Try to keep the following strings at most 10 characters.
-#: src/global.c:694
+#. TRANSLATORS: Try to keep the next ninety strings or so at most 10
+#. * characters.  Some strings may be longer -- run nano and see.
+#: src/global.c:680
 msgid "Get Help"
 msgstr "求助"
 
-#: src/global.c:697 src/prompt.c:715
+#: src/global.c:683 src/prompt.c:695
 msgid "Cancel"
 msgstr "取消"
 
-#: src/global.c:710
-#, fuzzy
+#: src/global.c:696
 msgid "Write Out"
 msgstr "写入"
 
-#: src/global.c:749
+#: src/global.c:704 src/global.c:1025
+msgid "Read File"
+msgstr "读档"
+
+#: src/global.c:711 src/global.c:744
+msgid "Justify"
+msgstr "对齐"
+
+#: src/global.c:717 src/global.c:732 src/global.c:834 src/global.c:945
+msgid "Refresh"
+msgstr "刷新"
+
+#: src/global.c:722 src/global.c:810
+msgid "Where Is"
+msgstr "搜索"
+
+#: src/global.c:725 src/global.c:783
+msgid "Replace"
+msgstr "替换"
+
+#: src/global.c:729
 msgid "Go To Dir"
 msgstr "跳至目录"
 
-#: src/global.c:766
+#: src/global.c:736
 msgid "Cut Text"
 msgstr "剪切文字"
 
-#: src/global.c:781
+#: src/global.c:739
+msgid "Paste Text"
+msgstr "粘贴文字"
+
+#: src/global.c:748
 msgid "To Spell"
 msgstr "拼写检查"
 
-#: src/global.c:785
-#, fuzzy
-msgid "To Linter"
-msgstr "跳行"
-
-#: src/global.c:788
-#, fuzzy
-msgid "Formatter"
-msgstr "DOS 格式"
-
-#: src/global.c:794
+#: src/global.c:753
 msgid "Cur Pos"
 msgstr "游标位置"
 
-#: src/global.c:806
+#: src/global.c:760 src/global.c:796 src/global.c:901
+msgid "Go To Line"
+msgstr "跳行"
+
+#: src/global.c:765
 msgid "Undo"
 msgstr "撤销"
 
-#: src/global.c:808
+#: src/global.c:767
 msgid "Redo"
 msgstr "重做"
 
-#: src/global.c:811
+#: src/global.c:770
 msgid "Mark Text"
 msgstr "标记文字"
 
-#: src/global.c:813
+#: src/global.c:772
 msgid "Copy Text"
 msgstr "复制文字"
 
-#: src/global.c:817
+#: src/global.c:776
 msgid "Case Sens"
 msgstr "区分大小写"
 
-#: src/global.c:819
+#: src/global.c:778
 msgid "Regexp"
 msgstr "正则表达式"
 
-#: src/global.c:821
+#: src/global.c:780
 msgid "Backwards"
 msgstr "向后搜索"
 
-#: src/global.c:827
+#: src/global.c:786
 msgid "No Replace"
 msgstr "不替换"
 
-#: src/global.c:839
-#, fuzzy
+#: src/global.c:790
+msgid "Older"
+msgstr "更旧"
+
+#: src/global.c:792
+msgid "Newer"
+msgstr "更新"
+
+#: src/global.c:800 src/global.c:932
+msgid "FullJstify"
+msgstr "全部对齐"
+
+#: src/global.c:805
 msgid "To Bracket"
-msgstr "并非一个括号"
+msgstr "至括号"
 
-#: src/global.c:845
+#. TRANSLATORS: This starts a backward search.
+#: src/global.c:812 src/global.c:818 src/global.c:832
+msgid "Where Was"
+msgstr "向前搜索"
+
+#. TRANSLATORS: This refers to searching the preceding occurrence.
+#: src/global.c:822
 msgid "Previous"
-msgstr ""
+msgstr "上一个"
 
-#: src/global.c:847
-#, fuzzy
+#: src/global.c:825 src/global.c:830
 msgid "Next"
-msgstr "下行"
+msgstr "下一个"
 
-#: src/global.c:851 src/global.c:856
+#. TRANSLATORS: This means move the cursor one character back.
+#: src/global.c:839 src/global.c:844
 msgid "Back"
 msgstr "向后"
 
-#: src/global.c:853 src/global.c:858
+#: src/global.c:841 src/global.c:846
 msgid "Forward"
 msgstr "向前"
 
-#: src/global.c:862
+#: src/global.c:850
 msgid "Prev Word"
 msgstr "前一个字"
 
-#: src/global.c:864
+#: src/global.c:852
 msgid "Next Word"
 msgstr "后一个字"
 
-#: src/global.c:867
+#: src/global.c:855
 msgid "Home"
 msgstr "顶端"
 
-#: src/global.c:869
+#: src/global.c:857
 msgid "End"
 msgstr "尾端"
 
-#: src/global.c:877
+#: src/global.c:860
+msgid "Prev Line"
+msgstr "上行"
+
+#: src/global.c:862
+msgid "Next Line"
+msgstr "下行"
+
+#: src/global.c:865
 msgid "Scroll Up"
 msgstr "向上卷动"
 
-#: src/global.c:879
+#: src/global.c:867
 msgid "Scroll Down"
 msgstr "向下卷动"
 
-#: src/global.c:883
-#, fuzzy
+#: src/global.c:871
 msgid "Prev Block"
-msgstr "前一个字"
+msgstr "上一段"
 
-#: src/global.c:885
-#, fuzzy
+#: src/global.c:873
 msgid "Next Block"
-msgstr "后一个字"
+msgstr "下一段"
 
-#: src/global.c:888
+#: src/global.c:876
 msgid "Beg of Par"
 msgstr "段落开头"
 
-#: src/global.c:890
+#: src/global.c:878
 msgid "End of Par"
 msgstr "段落结尾"
 
-#: src/global.c:899
+#: src/global.c:882 src/global.c:1035
+msgid "Prev Page"
+msgstr "上页"
+
+#: src/global.c:884 src/global.c:1037
+msgid "Next Page"
+msgstr "下页"
+
+#: src/global.c:887
 msgid "First Line"
 msgstr "首行"
 
-#: src/global.c:901
+#: src/global.c:889
 msgid "Last Line"
 msgstr "尾行"
 
-#: src/global.c:905
-#, fuzzy
+#: src/global.c:893
 msgid "Prev File"
 msgstr "上个文件"
 
-#: src/global.c:907
+#: src/global.c:895
 msgid "Next File"
 msgstr "下个文件"
 
-#: src/global.c:923
+#: src/global.c:905
 msgid "Tab"
 msgstr "制表符"
 
-#: src/global.c:925
+#: src/global.c:907
 msgid "Enter"
 msgstr "回车"
 
-#: src/global.c:928
-msgid "Delete"
-msgstr "删除"
-
-#: src/global.c:930
+#: src/global.c:910
 msgid "Backspace"
 msgstr "退格"
 
-#. TRANSLATORS: The next two strings refer to cutting words.
-#: src/global.c:941
-#, fuzzy
-msgid "Cut Left"
-msgstr "剪切文字"
+#: src/global.c:912
+msgid "Delete"
+msgstr "删除"
 
-#: src/global.c:943
-msgid "Cut Right"
-msgstr ""
+#. TRANSLATORS: The next two strings refer to deleting words.
+#: src/global.c:923
+msgid "Chop Left"
+msgstr "向左切除"
 
-#: src/global.c:945
+#: src/global.c:925
+msgid "Chop Right"
+msgstr "向右切除"
+
+#: src/global.c:927
 msgid "CutTillEnd"
-msgstr "删至末端"
+msgstr "剪切至文末"
 
-#: src/global.c:955
+#: src/global.c:937
 msgid "Word Count"
 msgstr "字数统计"
 
-#: src/global.c:959
-#, fuzzy
+#: src/global.c:941
 msgid "Verbatim"
-msgstr "原形输入"
+msgstr "原本形式"
 
-#: src/global.c:965
+#: src/global.c:949
 msgid "Suspend"
-msgstr "暂停"
+msgstr "挂起"
 
-#: src/global.c:969
-msgid "Indent Text"
-msgstr "缩进文字"
+#: src/global.c:953
+msgid "Indent"
+msgstr "缩进"
 
-#: src/global.c:971
-msgid "Unindent Text"
+#: src/global.c:955
+msgid "Unindent"
 msgstr "取消缩进"
 
-#: src/global.c:975
-msgid "Complete"
-msgstr ""
-
-#: src/global.c:979
-#, fuzzy
+#: src/global.c:959
 msgid "Comment Lines"
-msgstr "下行"
+msgstr "注释行"
 
-#: src/global.c:983
+#: src/global.c:963
+msgid "Complete"
+msgstr "补全"
+
+#: src/global.c:967
 msgid "Record"
-msgstr ""
+msgstr "录制"
 
-#: src/global.c:985
+#: src/global.c:969
 msgid "Run Macro"
-msgstr ""
+msgstr "运行宏"
 
-#. TRANSLATORS: This starts a backward search.
-#: src/global.c:989
-#, fuzzy
-msgid "Where Was"
-msgstr "搜索"
+#: src/global.c:972
+msgid "Zap Text"
+msgstr "清除文字"
 
-#: src/global.c:992
+#: src/global.c:977
+msgid "To Linter"
+msgstr "转至代码语法检查器"
+
+#: src/global.c:981
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
-#: src/global.c:998
-msgid "PrevHstory"
-msgstr "前一记录"
-
-#: src/global.c:1001
-msgid "NextHstory"
-msgstr "后一记录"
-
-#: src/global.c:1010
+#: src/global.c:984
 msgid "Go To Text"
 msgstr "跳至文字"
 
-#: src/global.c:1014
+#: src/global.c:988
 msgid "DOS Format"
 msgstr "DOS 格式"
 
-#: src/global.c:1016
+#: src/global.c:990
 msgid "Mac Format"
 msgstr "Mac 格式"
 
-#: src/global.c:1024
+#: src/global.c:998
 msgid "Append"
 msgstr "附加"
 
-#: src/global.c:1026
+#: src/global.c:1000
 msgid "Prepend"
 msgstr "前引"
 
-#: src/global.c:1029
+#: src/global.c:1003
 msgid "Backup File"
 msgstr "备份文件"
 
-#: src/global.c:1036
+#: src/global.c:1014
+msgid "No Conversion"
+msgstr "不转换"
+
+#: src/global.c:1019
 msgid "Execute Command"
 msgstr "执行命令"
 
-#: src/global.c:1051
+#: src/global.c:1022
+msgid "Pipe Text"
+msgstr "管道传递文字"
+
+#: src/global.c:1032
 msgid "To Files"
 msgstr "文件选单"
 
-#: src/global.c:1059
+#: src/global.c:1040
 msgid "First File"
 msgstr "首文件"
 
-#: src/global.c:1061
+#: src/global.c:1042
 msgid "Last File"
 msgstr "末文件"
 
-#: src/global.c:1064
+#: src/global.c:1045
 msgid "Left Column"
-msgstr ""
+msgstr "左栏"
 
-#: src/global.c:1066
+#: src/global.c:1047
 msgid "Right Column"
-msgstr ""
+msgstr "右栏"
 
-#: src/global.c:1068
+#: src/global.c:1049
 msgid "Top Row"
-msgstr ""
+msgstr "顶行"
 
-#: src/global.c:1070
+#: src/global.c:1051
 msgid "Bottom Row"
-msgstr ""
+msgstr "底行"
 
-#: src/global.c:1075
+#: src/global.c:1056
 msgid "Discard buffer"
-msgstr ""
+msgstr "禁用缓冲区"
 
 #. TRANSLATORS: Try to keep the next two strings at most 20 characters.
-#: src/global.c:1080
-#, fuzzy
+#: src/global.c:1061
 msgid "Prev Lint Msg"
-msgstr "上行"
+msgstr "上一条 Lint 信息"
 
-#: src/global.c:1082
-#, fuzzy
+#: src/global.c:1063
 msgid "Next Lint Msg"
-msgstr "下行"
+msgstr "下一条 Lint 信息"
 
-#. TRANSLATORS: The next eighteen strings are toggle descriptions;
+#. TRANSLATORS: The next fourteen strings are toggle descriptions;
 #. * they are best kept shorter than 40 characters, but may be longer.
-#: src/global.c:1409
+#: src/global.c:1385
 msgid "Help mode"
 msgstr "辅助模式"
 
-#: src/global.c:1411
+#: src/global.c:1387
 msgid "Constant cursor position display"
 msgstr "持续显示游标位置"
 
-#: src/global.c:1413
-msgid "Use of one more line for editing"
-msgstr "编辑时使用多一行"
-
-#: src/global.c:1415
-msgid "Smooth scrolling"
-msgstr "平滑式卷动画面"
-
-#: src/global.c:1417
-#, fuzzy
+#: src/global.c:1389
 msgid "Soft wrapping of overlong lines"
-msgstr "不要自动换行"
+msgstr "为过长行进行软折行"
 
-#: src/global.c:1419
+#: src/global.c:1391
 msgid "Whitespace display"
 msgstr "显示空格"
 
-#: src/global.c:1421
+#: src/global.c:1393
 msgid "Color syntax highlighting"
 msgstr "语法色彩高亮"
 
-#: src/global.c:1423
+#: src/global.c:1395
 msgid "Smart home key"
-msgstr "智能HOME 键"
+msgstr "智能HOME键"
 
-#: src/global.c:1425
+#: src/global.c:1397
 msgid "Auto indent"
 msgstr "自动缩进"
 
-#: src/global.c:1427
+#: src/global.c:1399
 msgid "Cut to end"
 msgstr "剪切至行尾"
 
-#: src/global.c:1429
-#, fuzzy
+#: src/global.c:1401
 msgid "Hard wrapping of overlong lines"
-msgstr "不要自动换行"
+msgstr "为过长行强制换行"
 
-#: src/global.c:1431
+#: src/global.c:1403
 msgid "Conversion of typed tabs to spaces"
 msgstr "已输入制表符至空白的转换"
 
-#: src/global.c:1433
-msgid "Backup files"
-msgstr "备份文件"
-
-#: src/global.c:1435
-msgid "Reading file into separate buffer"
-msgstr ""
-
-#: src/global.c:1437
+#: src/global.c:1405
 msgid "Mouse support"
 msgstr "鼠标支持"
 
-#: src/global.c:1439
-msgid "No conversion from DOS/Mac format"
-msgstr "不从 DOS/Mac 格式转换"
-
-#: src/global.c:1441
+#: src/global.c:1407
 msgid "Suspension"
-msgstr "暂停"
+msgstr "挂起"
 
-#: src/global.c:1443
+#: src/global.c:1409
 msgid "Line numbering"
-msgstr ""
+msgstr "行编号"
 
-#: src/help.c:302
+#: src/help.c:283
 msgid ""
 "Search Command Help Text\n"
 "\n"
@@ -1244,9 +1245,9 @@ msgstr ""
 "字，画面就会更新到最合乎搜索字符串的位置。\n"
 "\n"
 "最近一次搜索的字符串将会显示在搜索提示符后的括号中。不输入任何文字而直接按下"
-"回车键则会重复使用最近一次的搜索条件。"
+"回车键则会重复使用最近一次的搜索条件。  "
 
-#: src/help.c:311
+#: src/help.c:292
 msgid ""
 "If you have selected text with the mark and then search to replace, only "
 "matches in the selected text will be replaced.\n"
@@ -1260,7 +1261,7 @@ msgstr ""
 " 以下的功能键可用于搜索模式：\n"
 "\n"
 
-#: src/help.c:317
+#: src/help.c:298
 msgid ""
 "Go To Line Help Text\n"
 "\n"
@@ -1279,7 +1280,7 @@ msgstr ""
 " 以下的功能键可用于跳行模式：\n"
 "\n"
 
-#: src/help.c:326
+#: src/help.c:307
 msgid ""
 "Insert File Help Text\n"
 "\n"
@@ -1299,7 +1300,7 @@ msgstr ""
 "multibuffer、Meta-F 开关，或者 nanorc 文件来启动的话，所插入的文件 将会被载入"
 "另外的缓冲区中 (利用 Meta-< 和 > 在文件缓冲区间切换)。 "
 
-#: src/help.c:335
+#: src/help.c:316
 msgid ""
 "If you need another blank buffer, do not enter any filename, or type in a "
 "nonexistent filename at the prompt and press Enter.\n"
@@ -1313,7 +1314,7 @@ msgstr ""
 " 以下的功能键可用于插入文件模式：\n"
 "\n"
 
-#: src/help.c:341
+#: src/help.c:322
 msgid ""
 "Write File Help Text\n"
 "\n"
@@ -1339,7 +1340,7 @@ msgstr ""
 " 以下的功能键可用于写入文件模式：\n"
 "\n"
 
-#: src/help.c:355
+#: src/help.c:336
 msgid ""
 "File Browser Help Text\n"
 "\n"
@@ -1361,7 +1362,7 @@ msgstr ""
 " 以下的功能键可用于文件选单：\n"
 "\n"
 
-#: src/help.c:368
+#: src/help.c:349
 msgid ""
 "Browser Search Command Help Text\n"
 "\n"
@@ -1383,7 +1384,7 @@ msgstr ""
 "按下回车键则会重复最近一次的搜索条件。\n"
 "\n"
 
-#: src/help.c:377
+#: src/help.c:358
 msgid ""
 " The following function keys are available in Browser Search mode:\n"
 "\n"
@@ -1391,7 +1392,7 @@ msgstr ""
 "在搜索模式可使用如下的功能键：\n"
 "\n"
 
-#: src/help.c:381
+#: src/help.c:362
 msgid ""
 "Browser Go To Directory Help Text\n"
 "\n"
@@ -1412,7 +1413,7 @@ msgstr ""
 " 以下的功能键可用于跳至目录模式：\n"
 "\n"
 
-#: src/help.c:394
+#: src/help.c:375
 msgid ""
 "Spell Check Help Text\n"
 "\n"
@@ -1434,26 +1435,61 @@ msgstr ""
 " 以下的功能键可用于拼写检查模式：\n"
 "\n"
 
-#: src/help.c:409
+#: src/help.c:390
 msgid ""
 "Execute Command Help Text\n"
 "\n"
 " This mode allows you to insert the output of a command run by the shell "
-"into the current buffer (or a new buffer in multiple file buffer mode).  If "
-"you need another blank buffer, do not enter any command.\n"
-"\n"
-" The following function keys are available in Execute Command mode:\n"
-"\n"
+"into the current buffer (or into a new buffer).  If the command is preceded "
+"by '|' (the pipe symbol), the current contents of the buffer (or marked "
+"region) will be piped to the command.  "
 msgstr ""
 "执行命令辅助说明\n"
 "\n"
-" 本选单允许您将shell 执行的命令输出结果，插入当前的缓冲区(或是多重缓冲区模式"
-"下的新缓冲区)。如果您需要另一个空白缓冲区，就不要输入任何命令。\n"
+" 本选单允许您将 shell 执行的命令输出结果，插入当前的缓冲区（或是插入一个新缓"
+"冲区）。  如果命令前输入了一个“|”字符（管道符号），则当前缓冲区中的内容（或者"
+"标记的区域）将通过管道提供给对应命令。  "
+
+#: src/help.c:396
+msgid ""
+"If you just need another blank buffer, do not enter any command.\n"
 "\n"
-" 以下的功能键可用于执行命令模式：\n"
+msgstr ""
+"如果您仅仅需要另一个空白缓冲区，请不要输入任何命令。\n"
 "\n"
 
-#: src/help.c:422
+#: src/help.c:398
+msgid ""
+" The following function keys are available in Execute Command mode:\n"
+"\n"
+msgstr ""
+"在执行模式可使用如下的功能键：\n"
+"\n"
+
+#: src/help.c:401
+msgid ""
+"=== Linter ===\n"
+"\n"
+" In this mode, the status bar shows an error message or warning, and the "
+"cursor is put at the corresponding position in the file.  With PageUp and "
+"PageDown you can switch to earlier and later messages.\n"
+"\n"
+msgstr ""
+"=== 代码语法检查 ===\n"
+"\n"
+" 在此模式下，状态栏显示警告或错误消息，游标将定位在文件的对应位置。  您可以使"
+"用向上翻页或向下翻页键切换更前或更后的消息。\n"
+"\n"
+
+#: src/help.c:406
+msgid ""
+" The following function keys are available in Linter mode:\n"
+"\n"
+msgstr ""
+"在代码语法检查模式可使用如下的功能键：\n"
+"\n"
+
+#: src/help.c:413
 msgid ""
 "Main nano help text\n"
 "\n"
@@ -1464,17 +1500,14 @@ msgid ""
 "showing the file being edited.  The status line is the third line from the "
 "bottom and shows important messages.  "
 msgstr ""
-"nano 辅助说明\n"
+"nano 主帮助文档\n"
 "\n"
-" nano 编辑器是设计来在功能性及易用性方面，模仿华盛顿大学的Pico 文字编辑器。它"
-"包括四个主要部份：顶行显示程序版本、当前被编辑的文件名， 以及是否这文件已经更"
-"动过。接着是主要编辑区，显示正在编辑的文件。状态行位于倒数第三行，用来显示重"
-"要的信息。底部的两行则显示编辑器中最常用到的快捷键。\n"
-"\n"
-" "
+" nano 编辑器被设计用来模仿华盛顿大学 Pico 文本编辑器，  且具有类似的功能性与"
+"易用性。它包括四个主要部分：  顶行显示程序版本、当前被编辑的文件名以及该文件"
+"是否已被修改。  接着是主要编辑区，显示正在编辑的文件。  状态行位于倒数第三"
+"行，用来显示重要的信息。  "
 
-#: src/help.c:432
-#, fuzzy
+#: src/help.c:423
 msgid ""
 "The bottom two lines show the most commonly used shortcuts in the editor.\n"
 "\n"
@@ -1483,12 +1516,13 @@ msgid ""
 "twice.  Meta-key sequences are notated with 'M-' and can be entered using "
 "either the Alt, Cmd, or Esc key, depending on your keyboard setup.  "
 msgstr ""
-"快捷键的记号定义如下：控制键组(Control-key) 序列是以一个 \"帽子\" (caret, ^)"
-"符号来表示，它可以通过Ctrl键或是按两次Esc 键来输入。脱离键组(Escape-key) 序列"
-"是以\"中介\" (Meta, M) 符号表示，它可以依照您的键盘设定，利用Esc，Alt 或Meta "
-"来输入。"
+"底部的两行显示了编辑器中最常用的快捷键。\n"
+"\n"
+" 快捷键用如下方式进行表示：控制键序列使用一个“^”符号标记，它可以用 Ctrl 键或"
+"按 Esc 键两次的方式进行输入。Meta 键序列使用“M-”符号标记，它可以用 Alt、Cmd "
+"或 Esc 键输入，具体取决于您的键盘设置。  "
 
-#: src/help.c:439
+#: src/help.c:430
 msgid ""
 "Also, pressing Esc twice and then typing a three-digit decimal number from "
 "000 to 255 will enter the character with the corresponding value.  The "
@@ -1496,11 +1530,11 @@ msgid ""
 "keys are shown in parentheses:\n"
 "\n"
 msgstr ""
-"另外，按Esc 两次之后再键入从000 到255 之间的三位数字，则会输入该ASCII 码对应"
-"的字符。下列按键组合可用于主要编辑区，替代按键则显示于括号内“\n"
+"另外，按 Esc 两次之后再键入从 000 到 255 之间的三位数字，则会输入该 ASCII 码"
+"对应的字符。下列按键组合可用于主要编辑区，替代按键则显示于括号内：\n"
 "\n"
 
-#: src/help.c:471 src/help.c:552
+#: src/help.c:462 src/help.c:534
 msgid "enable/disable"
 msgstr "启用/关闭"
 
@@ -1514,7 +1548,7 @@ msgstr ""
 "按下回车键继续\n"
 
 #: src/history.c:283
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to create directory %s: %s\n"
 "It is required for saving/loading search history or cursor positions.\n"
@@ -1523,34 +1557,32 @@ msgstr ""
 "然而保存和载入搜索历史或光标位置需要它。\n"
 
 #: src/history.c:290
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Path %s is not a directory and needs to be.\n"
 "Nano will be unable to load or save search history or cursor positions.\n"
 msgstr ""
-"路径%s 应为一个目录，但现在不是。\n"
-"Nano 将无法载入或保存搜索历史或光标位置\n"
+"路径 %s 应为一个目录，但现在不是。\n"
+"Nano 将无法载入或保存搜索历史或光标位置。\n"
 
 #: src/history.c:380 src/history.c:389 src/history.c:471 src/history.c:493
-#, fuzzy, c-format
+#, c-format
 msgid "Error writing %s: %s\n"
-msgstr "写入%s 出错：%s"
+msgstr "写入 %s 出错：%s\n"
 
-#: src/nano.c:534
-#, fuzzy
+#: src/nano.c:465
 msgid "Key is invalid in view mode"
 msgstr "观看模式中此按键无效"
 
-#: src/nano.c:540
-#, fuzzy
+#: src/nano.c:471
 msgid "This function is disabled in restricted mode"
-msgstr "在限制模式中无法跳至%s 外部"
+msgstr "在限制模式中此功能被禁用"
 
-#: src/nano.c:548
+#: src/nano.c:479
 msgid "Help is not available"
-msgstr ""
+msgstr "帮助不可用"
 
-#: src/nano.c:657
+#: src/nano.c:590
 #, c-format
 msgid ""
 "\n"
@@ -1559,7 +1591,7 @@ msgstr ""
 "\n"
 "缓冲内容已写入 %s\n"
 
-#: src/nano.c:659
+#: src/nano.c:592
 #, c-format
 msgid ""
 "\n"
@@ -1568,7 +1600,7 @@ msgstr ""
 "\n"
 "缓冲内容未写入至 %s：%s\n"
 
-#: src/nano.c:662
+#: src/nano.c:595
 #, c-format
 msgid ""
 "\n"
@@ -1577,301 +1609,326 @@ msgstr ""
 "\n"
 "缓冲区未写入：%s\n"
 
-#: src/nano.c:777
-#, fuzzy, c-format
+#: src/nano.c:694
+#, c-format
 msgid ""
 "Usage: nano [OPTIONS] [[+LINE[,COLUMN]] FILE]...\n"
 "\n"
 msgstr ""
-"用法: nano [选项] [[+行,列] 文件名]...\n"
+"用法: nano [选项] [[+行[,列]] 文件名]...\n"
 "\n"
 
 #. TRANSLATORS: The next two strings are part of the --help output.
 #. * It's best to keep its lines within 80 characters.
-#: src/nano.c:780
+#: src/nano.c:697
 #, c-format
 msgid ""
 "To place the cursor on a specific line of a file, put the line number with\n"
 "a '+' before the filename.  The column number can be added after a comma.\n"
 msgstr ""
+"如需启动时将游标置放在文件的特定行上，请在文件名前使用“+”符号加上行号以\n"
+"进行指定。如需同时指定特定列，可以在其后添加半角逗号和列号。\n"
 
-#: src/nano.c:782
+#: src/nano.c:699
 #, c-format
 msgid ""
 "When a filename is '-', nano reads data from standard input.\n"
 "\n"
 msgstr ""
+"当文件名为“-”时，nano 从标准输入读取数据。\n"
+"\n"
 
-#: src/nano.c:783
-#, c-format
-msgid "Option\t\tGNU long option\t\tMeaning\n"
-msgstr "选项\t\tGNU 长选项\t\t意义\n"
+#. TRANSLATORS: The next three are column headers of the --help output.
+#: src/nano.c:701
+msgid "Option"
+msgstr "选项"
+
+#: src/nano.c:701
+msgid "Long option"
+msgstr "长选项"
+
+#: src/nano.c:701
+msgid "Meaning"
+msgstr "意义"
 
 #. TRANSLATORS: The next forty or so strings are option descriptions
 #. * for the --help output.  Try to keep them at most 40 characters.
-#: src/nano.c:788
+#: src/nano.c:705
 msgid "Enable smart home key"
 msgstr "启用智能 HOME 键"
 
-#: src/nano.c:790
+#: src/nano.c:707
 msgid "Save backups of existing files"
 msgstr "储存既有文件的备份"
 
-#: src/nano.c:791
+#: src/nano.c:708
 msgid "-C <dir>"
 msgstr "-C <目录>"
 
-#: src/nano.c:791
+#: src/nano.c:708
 msgid "--backupdir=<dir>"
 msgstr "--backupdir=<目录>"
 
-#: src/nano.c:792
+#: src/nano.c:709
 msgid "Directory for saving unique backup files"
 msgstr "用以储存独一备份文件的目录"
 
-#: src/nano.c:795
+#: src/nano.c:712
 msgid "Use bold instead of reverse video text"
 msgstr "用粗体替代颜色反转"
 
-#: src/nano.c:797
+#: src/nano.c:714
 msgid "Convert typed tabs to spaces"
 msgstr "将已输入的制表符转换为空白"
 
-#: src/nano.c:802
+#: src/nano.c:719
 msgid "Read a file into a new buffer by default"
-msgstr ""
+msgstr "默认从文件读入到一个新的缓冲区"
 
-#: src/nano.c:805
+#: src/nano.c:722
 msgid "Use (vim-style) lock files"
-msgstr ""
+msgstr "使用（vim 风格）锁文件"
 
-#: src/nano.c:810
+#: src/nano.c:727
 msgid "Log & read search/replace string history"
 msgstr "记录与读取搜索/替换的历史字符串"
 
-#: src/nano.c:814
+#: src/nano.c:730
 msgid "Don't look at nanorc files"
 msgstr "不要参考nanorc 文件"
 
-#: src/nano.c:817
+#: src/nano.c:734
+msgid "Show a guiding bar at this column"
+msgstr "在此栏显示一个导引条"
+
+#: src/nano.c:737
 msgid "Fix numeric keypad key confusion problem"
 msgstr "修正数字键区按键混淆问题"
 
-#: src/nano.c:819
-msgid "Don't add newlines to the ends of files"
-msgstr "不要将换行加到文件末端"
+#: src/nano.c:740
+msgid "Don't add an automatic newline"
+msgstr "不要自动添加换行符"
 
-#: src/nano.c:822
+#: src/nano.c:744
+msgid "Trim tail spaces when hard-wrapping"
+msgstr "强制折行时移除末尾空白"
+
+#: src/nano.c:748
 msgid "Don't convert files from DOS/Mac format"
 msgstr "不要从 DOS/Mac 格式转换"
 
-#: src/nano.c:824
-msgid "Use one more line for editing"
-msgstr "编辑时多使用一行"
-
-#: src/nano.c:828
+#: src/nano.c:753
 msgid "Log & read location of cursor position"
 msgstr "记录并读取光标位置"
 
-#: src/nano.c:831
-msgid "-Q <str>"
-msgstr "-Q <字符串>"
+#: src/nano.c:756
+msgid "-Q <regex>"
+msgstr "-Q <正则表达式>"
 
-#: src/nano.c:831
-msgid "--quotestr=<str>"
-msgstr "--quotestr=<字符串>"
+#: src/nano.c:756
+msgid "--quotestr=<regex>"
+msgstr "--quotestr=<正则表达式>"
 
-#: src/nano.c:831
-msgid "Quoting string"
-msgstr "引用代表字符串"
+#: src/nano.c:757
+msgid "Regular expression to match quoting"
+msgstr "匹配引用的正则表达式"
 
-#: src/nano.c:834
+#: src/nano.c:760
 msgid "Restricted mode"
 msgstr "限制模式"
 
-#: src/nano.c:836
-msgid "Scroll by line instead of half-screen"
-msgstr "按行滚动而不是半屏"
-
-#: src/nano.c:838
+#: src/nano.c:761
 msgid "-T <#cols>"
 msgstr "-T <#列数>"
 
-#: src/nano.c:838
+#: src/nano.c:761
 msgid "--tabsize=<#cols>"
 msgstr "--tabsize=<#列数>"
 
-#: src/nano.c:839
+#: src/nano.c:762
 msgid "Set width of a tab to #cols columns"
 msgstr "设定制表符宽度为 #列数"
 
-#: src/nano.c:840
+#: src/nano.c:763
 msgid "Do quick statusbar blanking"
 msgstr "状态行快速闪动"
 
-#: src/nano.c:841
+#: src/nano.c:764
 msgid "Print version information and exit"
-msgstr "显示版本资讯并离开"
+msgstr "显示版本信息并离开"
 
-#: src/nano.c:844
+#: src/nano.c:767
 msgid "Detect word boundaries more accurately"
 msgstr "更正确地侦测单字边界"
 
-#: src/nano.c:845
-#, fuzzy
+#: src/nano.c:768
 msgid "-X <str>"
-msgstr "-Q <字符串>"
+msgstr "-X <字符串>"
 
-#: src/nano.c:845
-#, fuzzy
+#: src/nano.c:768
 msgid "--wordchars=<str>"
-msgstr "--quotestr=<字符串>"
+msgstr "--wordchars=<字符串>"
 
-#: src/nano.c:846
+#: src/nano.c:769
 msgid "Which other characters are word parts"
-msgstr ""
+msgstr "指定哪些其它特殊字符也是单词的一部分"
 
-#: src/nano.c:850
+#: src/nano.c:773
 msgid "-Y <name>"
-msgstr ""
+msgstr "-Y <名称>"
 
-#: src/nano.c:850
-#, fuzzy
+#: src/nano.c:773
 msgid "--syntax=<name>"
-msgstr "--syntax=<字符串>"
+msgstr "--syntax=<名称>"
 
-#: src/nano.c:851
+#: src/nano.c:774
 msgid "Syntax definition to use for coloring"
 msgstr "用于加亮的语法定义"
 
-#: src/nano.c:854
-msgid "When soft-wrapping, do it at whitespace"
-msgstr ""
+#: src/nano.c:777
+msgid "Let Bsp and Del erase a marked region"
+msgstr "让退格键和删除键清除选中的区域"
 
-#: src/nano.c:856
+#: src/nano.c:778
+msgid "When soft-wrapping, do it at whitespace"
+msgstr "软折行时在空白处进行"
+
+#: src/nano.c:781
+msgid "Automatically hard-wrap overlong lines"
+msgstr "对过长的行自动强制换行"
+
+#: src/nano.c:783
 msgid "Constantly show cursor position"
 msgstr "持续显示游标位置"
 
-#: src/nano.c:858
+#: src/nano.c:785
 msgid "Fix Backspace/Delete confusion problem"
 msgstr "修正退格键/删除键混淆问题"
 
-#: src/nano.c:861
-#, fuzzy
-msgid "Show cursor in file browser"
-msgstr "打开文件选单"
+#: src/nano.c:786
+msgid "Keep the line below the title bar empty"
+msgstr "保持标题栏下面的行一直为空"
 
-#: src/nano.c:863
-#, fuzzy
+#: src/nano.c:789
+msgid "Show cursor in file browser & help text"
+msgstr "在文件浏览器和帮助文本中显示游标"
+
+#: src/nano.c:791
 msgid "Show this help text and exit"
-msgstr "显示帮助"
+msgstr "显示本帮助文本并退出"
 
-#: src/nano.c:865
+#: src/nano.c:793
 msgid "Automatically indent new lines"
 msgstr "自动缩进新行"
 
-#: src/nano.c:866
+#: src/nano.c:795
+msgid "Scroll per half-screen, not per line"
+msgstr "按半屏幕滚动文本，不按行"
+
+#: src/nano.c:797
 msgid "Cut from cursor to end of line"
 msgstr "从游标剪切至行尾"
 
-#: src/nano.c:869
+#: src/nano.c:800
 msgid "Show line numbers in front of the text"
-msgstr ""
+msgstr "在文本之前显示行号"
 
-#: src/nano.c:872
+#: src/nano.c:803
 msgid "Enable the use of the mouse"
 msgstr "启用鼠标功能"
 
-#: src/nano.c:874
+#: src/nano.c:805
 msgid "Do not read the file (only write it)"
-msgstr ""
+msgstr "不要读取文件（仅写入）"
 
-#: src/nano.c:876
+#: src/nano.c:807
 msgid "-o <dir>"
 msgstr "-o <目录>"
 
-#: src/nano.c:876
+#: src/nano.c:807
 msgid "--operatingdir=<dir>"
 msgstr "--operatingdir=<目录>"
 
-#: src/nano.c:877
+#: src/nano.c:808
 msgid "Set operating directory"
 msgstr "设定操作目录"
 
-#: src/nano.c:879
+#: src/nano.c:810
 msgid "Preserve XON (^Q) and XOFF (^S) keys"
 msgstr "保留XON (^Q) 和XOFF (^S) 按键"
 
-#: src/nano.c:881
+#: src/nano.c:812
 msgid "-r <#cols>"
 msgstr "-r <#列数>"
 
-#: src/nano.c:881
+#: src/nano.c:812
 msgid "--fill=<#cols>"
 msgstr "--fill=<#列数>"
 
-#: src/nano.c:882
-#, fuzzy
-msgid "Set hard-wrapping point at column #cols"
-msgstr "设定折行宽度为 #列数"
+#: src/nano.c:813
+msgid "Set width for hard-wrap and justify"
+msgstr "设置强制换行宽度并进行重排"
 
-#: src/nano.c:886
+#: src/nano.c:817
 msgid "-s <prog>"
 msgstr "-s <程序>"
 
-#: src/nano.c:886
+#: src/nano.c:817
 msgid "--speller=<prog>"
 msgstr "--speller=<程序>"
 
-#: src/nano.c:887
+#: src/nano.c:818
 msgid "Enable alternate speller"
 msgstr "启用替代的拼写检查程序"
 
-#: src/nano.c:889
+#: src/nano.c:820
 msgid "Auto save on exit, don't prompt"
 msgstr "离开时自动储存，不要提示"
 
-#: src/nano.c:891
+#: src/nano.c:822
 msgid "Save a file by default in Unix format"
-msgstr ""
+msgstr "默认将文件保存为 Unix 格式"
 
-#: src/nano.c:893
+#: src/nano.c:824
 msgid "View mode (read-only)"
-msgstr "查看(只读)模式"
+msgstr "查看（只读）模式"
 
-#: src/nano.c:895
-#, fuzzy
-msgid "Don't hard-wrap long lines"
-msgstr "不要自动换行"
+#: src/nano.c:826
+msgid "Don't hard-wrap long lines [default]"
+msgstr "不要为过长行强制折行 [默认]"
 
-#: src/nano.c:897
+#: src/nano.c:828
 msgid "Don't show the two help lines"
 msgstr "不要显示辅助区"
 
-#: src/nano.c:899
-msgid "Enable suspension"
-msgstr "启用暂停功能"
+#: src/nano.c:830
+msgid "Make Ctrl+Right stop at word ends"
+msgstr "使 Ctrl+Right 在单词末尾处停止"
 
-#: src/nano.c:901
+#: src/nano.c:833
+msgid "Enable suspension"
+msgstr "启用挂起功能"
+
+#: src/nano.c:835
 msgid "Enable soft line wrapping"
 msgstr "启用软换行"
 
-#: src/nano.c:913
-#, fuzzy, c-format
+#: src/nano.c:847
+#, c-format
 msgid " GNU nano, version %s\n"
-msgstr " GNU nano 版本%s (编译于%s, %s)\n"
+msgstr " GNU nano，版本 %s\n"
 
-#: src/nano.c:916
+#: src/nano.c:850
 #, c-format
 msgid " (C) 2014-%s the contributors to nano\n"
-msgstr ""
+msgstr " (C) 2014-%s nano 贡献者\n"
 
-#: src/nano.c:917
-#, fuzzy, c-format
+#: src/nano.c:851
+#, c-format
 msgid " Email: nano@nano-editor.org\tWeb: https://nano-editor.org/"
-msgstr " 电子邮件: nano@nano-editor.org\t\t网页: http://www.nano-editor.org/"
+msgstr " 电子邮件：nano@nano-editor.org\t网页：https://www.nano-editor.org/"
 
-#: src/nano.c:918
+#: src/nano.c:852
 #, c-format
 msgid ""
 "\n"
@@ -1880,908 +1937,852 @@ msgstr ""
 "\n"
 " 编译选项："
 
-#: src/nano.c:1064
+#: src/nano.c:995
 msgid "No file name"
-msgstr ""
+msgstr "无文件名"
+
+#: src/nano.c:997
+msgid "Save modified buffer? "
+msgstr "保存已修改的缓冲区？"
 
 #: src/nano.c:1066
-msgid "Save modified buffer?  (Answering \"No\" will DISCARD changes.) "
-msgstr ""
+msgid "Could not reconnect stdin to keyboard\n"
+msgstr "无法从键盘设备重新连接标准输入\n"
 
-#: src/nano.c:1123
+#: src/nano.c:1087
 #, c-format
-msgid "Reading from stdin, ^C to abort\n"
-msgstr "正在从标准输入读入，可用 ^C 中断\n"
+msgid "Reading data from keyboard; type ^D or ^D^D to finish.\n"
+msgstr "正在从键盘读取数据；输入 ^D 或 ^D^D 以结束。\n"
 
-#: src/nano.c:1150
+#: src/nano.c:1097
 #, c-format
 msgid "Failed to open stdin: %s"
-msgstr ""
+msgstr "打开标准输入失败：%s"
 
-#: src/nano.c:1162
-msgid "Couldn't reopen stdin from keyboard, sorry\n"
-msgstr "对不起，无法从键盘设备重新打开标准输入\n"
-
-#: src/nano.c:1231
+#: src/nano.c:1181
 msgid "Received SIGHUP or SIGTERM\n"
-msgstr "接收到SIGHUP 或SIGTERM\n"
+msgstr "接收到 SIGHUP 或 SIGTERM\n"
 
-#: src/nano.c:1246
+#: src/nano.c:1188
+#, c-format
+msgid "Sorry! Nano crashed!  Code: %d.  Please report a bug.\n"
+msgstr "抱歉！Nano 崩溃了！代码：%d。请报告这个问题。\n"
+
+#: src/nano.c:1204
 #, c-format
 msgid "Use \"fg\" to return to nano.\n"
-msgstr "使用\"fg\" 返回nano\n"
+msgstr "使用 \"fg\" 返回 nano\n"
 
-#: src/nano.c:1264
+#: src/nano.c:1225
 msgid "Suspension is not enabled"
-msgstr ""
+msgstr "挂起功能未启用"
 
-#: src/nano.c:1409
+#: src/nano.c:1374
 msgid "enabled"
 msgstr "已启用"
 
-#: src/nano.c:1409
+#: src/nano.c:1374
 msgid "disabled"
 msgstr "已禁用"
 
-#: src/nano.c:1546
+#: src/nano.c:1525
 msgid "Unbound key"
-msgstr ""
+msgstr "按键未绑定"
 
-#: src/nano.c:1549
+#: src/nano.c:1528
 msgid "Unbindable key: M-["
-msgstr ""
+msgstr "不可绑定的按键：M-["
 
-#: src/nano.c:1551
+#: src/nano.c:1530
 #, c-format
 msgid "Unbound key: M-%c"
-msgstr ""
+msgstr "按键未绑定：M-%c"
 
-#: src/nano.c:1553
+#: src/nano.c:1532
+msgid "Unbindable key: ^["
+msgstr "不可绑定的按键：^["
+
+#: src/nano.c:1534
 #, c-format
 msgid "Unbound key: ^%c"
-msgstr ""
+msgstr "按键未绑定：^%c"
 
-#: src/nano.c:1555
+#: src/nano.c:1536
 #, c-format
 msgid "Unbound key: %c"
-msgstr ""
+msgstr "按键未绑定：%c"
 
-#: src/nano.c:2106 src/rcfile.c:1172
+#: src/nano.c:2086 src/rcfile.c:1204
+#, c-format
+msgid "Guide column \"%s\" is invalid"
+msgstr "指导栏“%s”无效"
+
+#: src/nano.c:2110 src/nano.c:2129
+#, c-format
+msgid "Option %s is ignored; it is the default\n"
+msgstr "选项 %s 已忽略；这是默认值\n"
+
+#: src/nano.c:2135 src/rcfile.c:1260
 #, c-format
 msgid "Requested tab size \"%s\" is invalid"
 msgstr "所要求的制表符宽度%s 无效"
 
-#: src/nano.c:2175 src/rcfile.c:1109
+#: src/nano.c:2224 src/rcfile.c:1195
 #, c-format
 msgid "Requested fill size \"%s\" is invalid"
 msgstr "所要求的填满行数\"%s\" 无效"
 
-#: src/nano.c:2231
+#: src/nano.c:2271
 #, c-format
 msgid "Type '%s -h' for a list of available options.\n"
-msgstr ""
+msgstr "输入“%s -h”以获取所有可用选项的列表。\n"
 
-#: src/nano.c:2553 src/search.c:834
+#: src/nano.c:2456
+#, c-format
+msgid "Bad quoting regex \"%s\": %s\n"
+msgstr "非法的正则表达式 \"%s\": %s\n"
+
+#: src/nano.c:2590 src/search.c:782
 msgid "Invalid line or column number"
 msgstr "无效的列号或行号"
 
-#: src/nano.c:2600
+#: src/nano.c:2641
 #, c-format
 msgid "Mistakes in '%s'"
-msgstr ""
+msgstr "“%s”中的错误"
 
-#. TRANSLATORS: For the next three strings, if possible, specify
-#. * the single-byte letters for both your language and English.
-#. * For example, in French: "OoYy", for both "Oui" and "Yes".
-#: src/prompt.c:678
+#: src/nano.c:2647
+msgid "Welcome to nano.  For basic help, type Ctrl+G."
+msgstr "欢迎使用 nano。  如需基本帮助信息，请按下 Ctrl+G。"
+
+#. TRANSLATORS: For the next three strings, specify the starting letters
+#. * of the translations for "Yes"/"No"/"All".  The first letter of each of
+#. * these strings MUST be a single-byte letter; others may be multi-byte.
+#: src/prompt.c:656
 msgid "Yy"
 msgstr "Yy"
 
-#: src/prompt.c:679
+#: src/prompt.c:657
 msgid "Nn"
 msgstr "Nn"
 
-#: src/prompt.c:680
+#: src/prompt.c:658
 msgid "Aa"
 msgstr "Aa"
 
-#: src/prompt.c:702
+#: src/prompt.c:682
 msgid "Yes"
 msgstr "是"
 
-#: src/prompt.c:707
-msgid "All"
-msgstr "全部"
-
-#: src/prompt.c:712
+#: src/prompt.c:686
 msgid "No"
 msgstr "否"
 
-#: src/rcfile.c:148
-#, c-format
-msgid "Error in %s on line %lu: "
-msgstr "在%s(第%lu 行)中发生错误："
+#: src/prompt.c:691
+msgid "All"
+msgstr "全部"
 
-#: src/rcfile.c:206
+#: src/rcfile.c:181
+#, c-format
+msgid "Error in %s on line %zu: "
+msgstr "在 %s（第 %zu 行）中发生错误："
+
+#: src/rcfile.c:230
 #, c-format
 msgid "Argument '%s' has an unterminated \""
 msgstr "参数%s 有未封闭的 \""
 
-#: src/rcfile.c:234 src/rcfile.c:668 src/rcfile.c:720 src/rcfile.c:813
+#: src/rcfile.c:255 src/rcfile.c:757 src/rcfile.c:804 src/rcfile.c:880
 msgid "Regex strings must begin and end with a \" character"
-msgstr "正则表示式字符串必须以 \" 字符开始及结束"
+msgstr "正则表达式字符串必须以 \" 字符开始及结束"
 
-#: src/rcfile.c:260 src/search.c:47
+#: src/rcfile.c:280 src/search.c:44
 #, c-format
 msgid "Bad regex \"%s\": %s"
-msgstr "非法的正则表示式 \"%s\": %s"
+msgstr "非法的正则表达式 \"%s\": %s"
 
-#: src/rcfile.c:282
+#: src/rcfile.c:302
 msgid "Missing syntax name"
 msgstr "缺少语法名称"
 
-#: src/rcfile.c:291
-msgid "A syntax name must be quoted"
-msgstr ""
+#: src/rcfile.c:310
+msgid "Unpaired quote in syntax name"
+msgstr "语法名称中的未配对引用"
 
-#: src/rcfile.c:300
+#: src/rcfile.c:322
 msgid "The \"none\" syntax is reserved"
 msgstr "\"none\" 语法已被保留"
 
-#: src/rcfile.c:332
-#, fuzzy
+#: src/rcfile.c:351
 msgid "The \"default\" syntax does not accept extensions"
-msgstr "\"default\" 语法必须不含任何副文件名"
+msgstr "默认“default”语法不接受扩展"
 
-#: src/rcfile.c:374
+#: src/rcfile.c:366
+#, c-format
+msgid "Syntax \"%s\" has no color commands"
+msgstr "语法“%s”没有color 命令"
+
+#: src/rcfile.c:396
 msgid "Missing key name"
 msgstr "缺少键名称"
 
-#: src/rcfile.c:383 src/rcfile.c:394
+#: src/rcfile.c:405 src/rcfile.c:416
 msgid "Key name is too short"
-msgstr ""
+msgstr "键名称过短"
 
-#: src/rcfile.c:404
-#, fuzzy
+#: src/rcfile.c:426
 msgid "Key name must begin with \"^\", \"M\", or \"F\""
-msgstr "键绑定必须以\"^\", \"M\" 或 \"F\" 开始"
+msgstr "键名称必须以“^”、“M”或“F”开始"
 
-#: src/rcfile.c:407
-#, fuzzy, c-format
+#: src/rcfile.c:429
+#, c-format
 msgid "Key name %s is invalid"
-msgstr "所要求的制表符宽度%s 无效"
+msgstr "键名称 %s 无效"
 
-#: src/rcfile.c:416
-#, fuzzy
+#: src/rcfile.c:438
 msgid "Must specify a function to bind the key to"
-msgstr "必须指定键绑定到的函数"
+msgstr "必须指定键绑定到的功能"
 
 #. TRANSLATORS: Do not translate the word "all".
-#: src/rcfile.c:426
+#: src/rcfile.c:449
 msgid "Must specify a menu (or \"all\") in which to bind/unbind the key"
-msgstr ""
+msgstr "必须指定一个要绑定/接触绑定按键的菜单（或“全部（all）”）"
 
-#: src/rcfile.c:433
-#, fuzzy, c-format
-msgid "Cannot map name \"%s\" to a function"
-msgstr "无法映射名字\"%s\" 到一个函数"
-
-#: src/rcfile.c:440
-#, fuzzy, c-format
-msgid "Cannot map name \"%s\" to a menu"
-msgstr "无法映射名字\"%s\" 到一个菜单"
-
-#: src/rcfile.c:466
+#: src/rcfile.c:468
 #, c-format
-msgid "Function '%s' does not exist in menu '%s'"
-msgstr ""
+msgid "Cannot map name \"%s\" to a function"
+msgstr "无法映射名字“%s”到一个功能"
 
 #: src/rcfile.c:475
-#, fuzzy, c-format
-msgid "Sorry, keystroke \"%s\" may not be rebound"
-msgstr "对不起，键\"%s\" 属非法绑定"
+#, c-format
+msgid "Cannot map name \"%s\" to a menu"
+msgstr "无法映射名字“%s”到一个菜单"
 
-#: src/rcfile.c:575
-#, fuzzy, c-format
+#: src/rcfile.c:508
+#, c-format
+msgid "Function '%s' does not exist in menu '%s'"
+msgstr "功能“%s”在菜单“%s”中不存在"
+
+#: src/rcfile.c:519
+#, c-format
+msgid "Keystroke %s may not be rebound"
+msgstr "按键 %s 无法重新绑定"
+
+#: src/rcfile.c:606 src/rcfile.c:1108
+#, c-format
+msgid "Command \"%s\" not understood"
+msgstr "无法识别“%s”命令"
+
+#: src/rcfile.c:639
+#, c-format
 msgid "Error expanding %s: %s"
-msgstr "读取%s 出错：%s"
+msgstr "展开 %s 出错：%s"
 
-#: src/rcfile.c:612
+#: src/rcfile.c:679
 #, c-format
-msgid ""
-"Color \"%s\" not understood.\n"
-"Valid colors are \"green\", \"red\", \"blue\",\n"
-"\"white\", \"yellow\", \"cyan\", \"magenta\" and\n"
-"\"black\", with the optional prefix \"bright\"\n"
-"for foreground colors."
-msgstr ""
-"颜色 %s 无法识别。\n"
-"有效的颜色是 \"green\"(绿)、\"red\"(红)、\"blue\"(蓝)、\n"
-"\"white\"(白)、\"yellow\"(黄)、\"cyan\"(青)、\"magenta\"(瑰)和\n"
-"\"black\"(黑)，选择性的前置字 \"bright\"(明亮) \n"
-"可用于前景色。"
+msgid "Color \"%s\" not understood"
+msgstr "无法识别颜色“%s”"
 
-#: src/rcfile.c:631 src/rcfile.c:784 src/rcfile.c:847
-#, c-format
-msgid "A '%s' command requires a preceding 'syntax' command"
-msgstr ""
+#: src/rcfile.c:695
+msgid "A background color cannot be bright"
+msgstr "背景色不可为明亮"
 
-#: src/rcfile.c:637
+#: src/rcfile.c:727
 msgid "Missing color name"
 msgstr "缺少颜色名称"
 
-#: src/rcfile.c:647 src/rcfile.c:796
-#, fuzzy, c-format
+#: src/rcfile.c:737 src/rcfile.c:864
+#, c-format
 msgid "Missing regex string after '%s' command"
-msgstr "缺少颜色名称"
+msgstr "“%s”命令后缺少正则表达式字符串"
 
-#: src/rcfile.c:679 src/rcfile.c:730
-#, fuzzy
+#: src/rcfile.c:768 src/rcfile.c:814
 msgid "Empty regex string"
-msgstr "缺少正则表示式字符串"
+msgstr "空正则表达式字符串"
 
-#: src/rcfile.c:714
+#: src/rcfile.c:798
 msgid "\"start=\" requires a corresponding \"end=\""
 msgstr "\"start=\" 要求对应的\"end=\""
 
-#: src/rcfile.c:757
-#, fuzzy
-msgid "A background color cannot be bright"
-msgstr "背景色%s 不可为明亮"
+#: src/rcfile.c:853 src/rcfile.c:1088
+#, c-format
+msgid "A '%s' command requires a preceding 'syntax' command"
+msgstr "“%s”命令需要一个前导 \"syntax\" 命令"
 
-#: src/rcfile.c:791
-#, fuzzy, c-format
+#: src/rcfile.c:859
+#, c-format
 msgid "The \"default\" syntax does not accept '%s' regexes"
-msgstr "\"default\" 语法必须不含任何副文件名"
+msgstr "\"default\" 语法不接受“%s”正则表达式"
 
-#: src/rcfile.c:852
+#: src/rcfile.c:911
 #, c-format
 msgid "Missing argument after '%s'"
-msgstr ""
+msgstr "“%s”后缺少参数"
 
-#: src/rcfile.c:864
-#, fuzzy, c-format
+#: src/rcfile.c:921
+#, c-format
 msgid "Argument of '%s' lacks closing \""
-msgstr "参数%s 有未封闭的 \""
+msgstr "“%s”的参数缺少封闭的 \""
 
-#: src/rcfile.c:890
-#, fuzzy, c-format
-msgid "Fatal error: no keys mapped for function \"%s\".  Exiting.\n"
-msgstr "严重错误; 没有键映射到函数 \"%s\""
+#: src/rcfile.c:968
+#, c-format
+msgid "No key is bound to function '%s' in menu '%s'.  Exiting.\n"
+msgstr "没有绑定到功能“%s”的按键（在菜单“%s”中）。退出。\n"
 
-#: src/rcfile.c:892
-#, fuzzy, c-format
+#: src/rcfile.c:971
+#, c-format
 msgid ""
 "If needed, use nano with the -I option to adjust your nanorc settings.\n"
-msgstr "正在退出。如果您想调整您的nanorc 设置，请使用nano 的-I 选项。\n"
+msgstr "如有需要，请在启动 nano 时带上 -I 选项以调整您的 nanorc 设置。\n"
 
-#: src/rcfile.c:947
-#, fuzzy, c-format
-msgid "Could not find syntax \"%s\" to extend"
-msgstr "无法映射名字\"%s\" 到一个菜单"
-
-#: src/rcfile.c:969 src/rcfile.c:1183
+#: src/rcfile.c:1034
 #, c-format
-msgid "Syntax \"%s\" has no color commands"
-msgstr "语法\"%s\" 没有color 命令"
+msgid "Could not find syntax \"%s\" to extend"
+msgstr "无法找到要扩展的语法“%s”"
 
-#: src/rcfile.c:1000
+#: src/rcfile.c:1079
 #, c-format
 msgid "Command \"%s\" not allowed in included file"
-msgstr "命令\"%s\" 被禁止在包含文件中使用"
+msgstr "命令“%s”被禁止在包含文件中使用"
 
-#: src/rcfile.c:1015
-#, c-format
-msgid "Command \"%s\" not understood"
-msgstr "无法识别\"%s\" 命令"
-
-#: src/rcfile.c:1027
-#, fuzzy
+#: src/rcfile.c:1116
 msgid "Missing option"
-msgstr "缺少颜色名称"
+msgstr "缺少选项"
 
-#: src/rcfile.c:1041
-#, fuzzy, c-format
+#: src/rcfile.c:1130
+#, c-format
 msgid "Unknown option \"%s\""
-msgstr "未知旗标 %s"
+msgstr "未知选项“%s”"
 
-#: src/rcfile.c:1054
-#, fuzzy, c-format
+#: src/rcfile.c:1145
+#, c-format
 msgid "Cannot unset option \"%s\""
-msgstr "无法解除旗标 %s 设定"
+msgstr "无法解除选项设定“%s”"
 
-#: src/rcfile.c:1066
+#: src/rcfile.c:1150
 #, c-format
 msgid "Option \"%s\" requires an argument"
 msgstr "选项%s 需要参数"
 
-#: src/rcfile.c:1082
-#, fuzzy
+#: src/rcfile.c:1164
 msgid "Argument is not a valid multibyte string"
-msgstr "选项并非正确的多字节字符串"
+msgstr "参数并非有效的多字节字符串"
 
-#: src/rcfile.c:1121 src/rcfile.c:1142 src/rcfile.c:1149
+#: src/rcfile.c:1210 src/rcfile.c:1231 src/rcfile.c:1237
 msgid "Non-blank characters required"
 msgstr "需要非空格字符"
 
-#: src/rcfile.c:1128
+#: src/rcfile.c:1213
+msgid "Even number of characters required"
+msgstr "需要偶数个字符"
+
+#: src/rcfile.c:1219
 msgid "Two single-column characters required"
 msgstr "需要两个单行字符"
 
-#: src/rcfile.c:1258
+#: src/rcfile.c:1321
 msgid "I can't find my home directory!  Wah!"
 msgstr "我找不到我的家目录！哇！"
 
-#: src/search.c:74
-#, c-format
-msgid "\"%.*s%s\" not found"
-msgstr "找不到 \"%.*s%s\""
-
-#. TRANSLATORS: The next three modify the search prompt.
-#: src/search.c:138
+#. TRANSLATORS: The next five modify the search prompt.
+#: src/search.c:102
 msgid " [Case Sensitive]"
 msgstr " [区分大小写]"
 
-#: src/search.c:139
+#: src/search.c:103
 msgid " [Regexp]"
-msgstr " [正则表示式]"
+msgstr " [正则表达式]"
 
-#: src/search.c:140
-msgid " [Backwards]"
-msgstr " [向后搜索]"
-
-#. TRANSLATORS: The next two modify the search prompt.
-#: src/search.c:143
+#: src/search.c:107
 msgid " (to replace) in selection"
 msgstr " 在标记中(替换)"
 
-#: src/search.c:145
+#: src/search.c:109
 msgid " (to replace)"
 msgstr " (替换)"
 
 #. TRANSLATORS: This is shown when searching takes
 #. * more than half a second.
-#: src/search.c:250
-#, fuzzy
+#: src/search.c:218
 msgid "Searching..."
-msgstr "搜索"
+msgstr "正在搜索..."
+
+#: src/search.c:387
+#, c-format
+msgid "\"%.*s%s\" not found"
+msgstr "找不到 \"%.*s%s\""
 
 #. TRANSLATORS: This is a prompt.
-#: src/search.c:618
+#: src/search.c:580
 msgid "Replace this instance?"
 msgstr "替换这个？"
 
 #. TRANSLATORS: This is a prompt.
-#: src/search.c:748
+#: src/search.c:702
 msgid "Replace with"
 msgstr "替换为"
 
-#: src/search.c:780
-#, fuzzy, c-format
+#: src/search.c:733
+#, c-format
 msgid "Replaced %zd occurrence"
 msgid_plural "Replaced %zd occurrences"
-msgstr[0] "已替换%lu 处"
+msgstr[0] "已替换 %zd 处"
 
 #. TRANSLATORS: This is a prompt.
-#: src/search.c:812
+#: src/search.c:761
 msgid "Enter line number, column number"
 msgstr "输入列号，行号"
 
-#: src/search.c:1002
+#: src/search.c:938
 msgid "Not a bracket"
 msgstr "并非一个括号"
 
-#: src/search.c:1063
+#: src/search.c:981
 msgid "No matching bracket"
 msgstr "无对应括号"
 
-#: src/text.c:63
+#: src/text.c:52
 msgid "Mark Set"
 msgstr "标记设定"
 
-#: src/text.c:67
+#: src/text.c:56
 msgid "Mark Unset"
 msgstr "标记解除"
 
-#: src/text.c:77
+#: src/text.c:67
 #, c-format
 msgid "Error invoking \"%s\""
-msgstr "运行 \"%s\" 错误"
+msgstr "调用 \"%s\" 错误"
 
-#: src/text.c:421
-msgid "Can unindent only by a full tab size"
-msgstr ""
-
-#: src/text.c:505
+#: src/text.c:385
 msgid "Commenting is not supported for this file type"
-msgstr ""
+msgstr "该文件类型不支持做注释"
 
-#: src/text.c:521
+#: src/text.c:395
 msgid "Cannot comment past end of file"
-msgstr ""
+msgstr "无法注释越过文件末尾"
 
-#: src/text.c:718
-msgid "Nothing in undo buffer!"
-msgstr "没有可撤销的操作！"
+#: src/text.c:522
+msgid "Nothing to undo"
+msgstr "没有可重做的操作"
 
-#. TRANSLATORS: The next twelve strings describe actions
-#. * that are undone or redone.  It are all nouns, not verbs.
-#: src/text.c:736 src/text.c:765 src/text.c:909 src/text.c:950
-msgid "text add"
-msgstr "文字增加"
+#. TRANSLATORS: The next thirteen strings describe actions
+#. * that are undone or redone.  They are all nouns, not verbs.
+#: src/text.c:534 src/text.c:600 src/text.c:700 src/text.c:764
+msgid "addition"
+msgstr "添加"
 
-#: src/text.c:746 src/text.c:920
-msgid "text delete"
-msgstr "文本删除"
+#: src/text.c:545 src/text.c:712
+msgid "line break"
+msgstr "换行"
 
-#: src/text.c:769 src/text.c:958
+#: src/text.c:557 src/text.c:725
+msgid "deletion"
+msgstr "删除"
+
+#: src/text.c:567 src/text.c:734
 msgid "line join"
 msgstr "行合并"
 
-#: src/text.c:788 src/text.c:974
-msgid "text cut"
-msgstr "文字剪切"
+#: src/text.c:586 src/text.c:749
+msgid "replacement"
+msgstr "替换"
 
-#: src/text.c:793 src/text.c:978
-msgid "text uncut"
-msgstr "取消剪切"
+#: src/text.c:604 src/text.c:768
+msgid "erasure"
+msgstr "清除"
 
-#: src/text.c:802 src/text.c:929
-msgid "line break"
-msgstr "换行符"
+#. TRANSLATORS: Remember: these are nouns, NOT verbs.
+#: src/text.c:610 src/text.c:773
+msgid "cut"
+msgstr "剪切"
 
-#: src/text.c:813 src/text.c:997
-#, fuzzy
+#: src/text.c:614 src/text.c:777
+msgid "paste"
+msgstr "粘贴"
+
+#: src/text.c:618 src/text.c:781
+msgid "insertion"
+msgstr "插入"
+
+#: src/text.c:641 src/text.c:799
 msgid "indent"
-msgstr "自动缩进"
+msgstr "缩进"
 
-#: src/text.c:817 src/text.c:1001
-#, fuzzy
+#: src/text.c:645 src/text.c:803
 msgid "unindent"
-msgstr "自动缩进"
+msgstr "取消缩进"
 
-#: src/text.c:822 src/text.c:1006
+#: src/text.c:650 src/text.c:808
 msgid "comment"
-msgstr ""
+msgstr "注释"
 
-#: src/text.c:826 src/text.c:1010
+#: src/text.c:654 src/text.c:812
 msgid "uncomment"
-msgstr ""
+msgstr "取消注释"
 
-#: src/text.c:830 src/text.c:989
-msgid "text insert"
-msgstr "文本插入"
-
-#: src/text.c:846 src/text.c:982
-msgid "text replace"
-msgstr "文本替换"
-
-#: src/text.c:858
+#: src/text.c:662
 #, c-format
-msgid "Undid action (%s)"
-msgstr "已撤销操作(%s)"
+msgid "Undid %s"
+msgstr "已撤销 %s"
 
-#: src/text.c:885
-msgid "Nothing to re-do!"
-msgstr "没有可重做的操作！"
+#: src/text.c:687
+msgid "Nothing to redo"
+msgstr "没有可重做的操作"
 
-#: src/text.c:1019
+#: src/text.c:820
 #, c-format
-msgid "Redid action (%s)"
-msgstr "已重做操作(%s)"
+msgid "Redid %s"
+msgstr "已重做 %s"
 
-#: src/text.c:1118 src/text.c:2697 src/text.c:3083
+#: src/text.c:952 src/text.c:2313 src/text.c:2694
 msgid "Could not create pipe"
-msgstr "无法建立管线功能"
+msgstr "无法创建管道"
 
-#: src/text.c:1144 src/text.c:2784 src/text.c:2911 src/text.c:3131
-#: src/text.c:3438
+#: src/text.c:988 src/text.c:2402 src/text.c:2526 src/text.c:2731
 msgid "Could not fork"
-msgstr "执行功能无效"
+msgstr "无法 fork"
 
-#: src/text.c:2105
+#: src/text.c:993
+msgid "Executing..."
+msgstr "正在执行..."
+
+#: src/text.c:1009 src/text.c:1054
+msgid "filtering"
+msgstr "过滤"
+
+#: src/text.c:1048
 #, c-format
-msgid "Bad quote string %s: %s"
-msgstr "不良引用字符串%s：%s"
+msgid "Failed to open pipe: %s"
+msgstr "打开管道失败：%s"
 
-#: src/text.c:2468
-msgid "Can now UnJustify!"
-msgstr "现在可以还原对齐！"
+#: src/text.c:1995 src/text.c:2113
+msgid "justification"
+msgstr "对齐"
 
-#: src/text.c:2617
+#: src/text.c:2134
+msgid "Justified selection"
+msgstr "已对齐选中内容"
+
+#: src/text.c:2138
+msgid "Justified file"
+msgstr "已对齐文件"
+
+#: src/text.c:2140
+msgid "Justified paragraph"
+msgstr "已对齐段落"
+
+#: src/text.c:2234
 #, c-format
 msgid "Unfindable word: %s"
-msgstr ""
+msgstr "无法找到单词：%s"
 
-#: src/text.c:2636
+#: src/text.c:2250
 msgid "Edit a replacement"
 msgstr "编辑替代文字"
 
 #. TRANSLATORS: Shown after fixing misspellings in one word.
-#: src/text.c:2645
-#, fuzzy
+#: src/text.c:2263
 msgid "Next word..."
-msgstr "后一个字"
+msgstr "下一个单词..."
 
-#: src/text.c:2699
+#: src/text.c:2315
 msgid "Creating misspelled word list, please wait..."
 msgstr "正在建立错字列表，请稍待..."
 
-#: src/text.c:2790 src/text.c:3138
+#: src/text.c:2410 src/text.c:2740
 msgid "Could not get size of pipe buffer"
-msgstr "无法得知管线缓冲区大小"
+msgstr "无法获取管道缓冲区大小"
 
-#: src/text.c:2839
-msgid "Error invoking \"spell\""
-msgstr "运行 \"spell\" 错误"
-
-#: src/text.c:2842
-msgid "Error invoking \"sort -f\""
-msgstr "运行 \"sort -f\" 错误"
-
-#: src/text.c:2845
+#: src/text.c:2469
 msgid "Error invoking \"uniq\""
-msgstr "运行 \"uniq\" 错误"
+msgstr "调用 \"uniq\" 错误"
 
-#: src/text.c:3020
-#, fuzzy
-msgid "Invoking spell checker, please wait"
-msgstr "尝试运行拼写检查"
+#: src/text.c:2472
+msgid "Error invoking \"sort -f\""
+msgstr "调用 \"sort -f\" 错误"
 
-#: src/text.c:3034
+#: src/text.c:2475
+msgid "Error invoking \"spell\""
+msgstr "调用 \"spell\" 错误"
+
+#: src/text.c:2645
 #, c-format
-msgid "Spell checking failed: %s"
-msgstr "拼写检查失败：%s"
+msgid "%s: %s"
+msgstr "%s: %s"
 
-#: src/text.c:3036
-#, c-format
-msgid "Spell checking failed: %s: %s"
-msgstr "拼写检查失败：%s：%s"
-
-#: src/text.c:3039
+#: src/text.c:2647
 msgid "Finished checking spelling"
 msgstr "拼写检查结束"
 
-#: src/text.c:3063
-#, fuzzy
+#: src/text.c:2673
 msgid "No linter defined for this type of file!"
-msgstr "不要将换行加到文件末端"
+msgstr "没有为该类型文件而定义的代码语法检查器！"
 
-#: src/text.c:3071
+#: src/text.c:2683
 msgid "Save modified buffer before linting?"
-msgstr ""
+msgstr "运行代码语法检查之前保存已修改的缓冲区吗？"
 
-#: src/text.c:3088
+#: src/text.c:2700
 msgid "Invoking linter, please wait"
-msgstr ""
+msgstr "正在调用代码语法检查器，请稍候"
 
-#: src/text.c:3233
+#: src/text.c:2836
 #, c-format
 msgid "Got 0 parsable lines from command: %s"
-msgstr ""
+msgstr "从命令 %s 获得了 0 行可解析的行"
 
-#: src/text.c:3263
+#: src/text.c:2874
 #, c-format
 msgid "This message is for unopened file %s, open it in a new buffer?"
-msgstr ""
+msgstr "该信息对应于未打开的文件 %s，在新缓冲区打开它吗？"
 
-#: src/text.c:3299
-msgid "No more errors in unopened files, cancelling"
-msgstr ""
+#: src/text.c:2913
+msgid "No messages for this file"
+msgstr "没有该文件的消息"
 
-#: src/text.c:3344
-#, fuzzy
-msgid "At last message"
-msgstr "显示此信息"
-
-#: src/text.c:3349
-#, fuzzy
+#: src/text.c:2960
 msgid "At first message"
-msgstr "显示此信息"
+msgstr "在第一条消息"
 
-#: src/text.c:3387
-msgid "Finished"
-msgstr ""
+#: src/text.c:2969
+msgid "At last message"
+msgstr "在最后一条消息"
 
-#: src/text.c:3411
-msgid "Invoking formatter, please wait"
-msgstr ""
-
-#: src/text.c:3472
-msgid "Finished formatting"
-msgstr ""
-
-#: src/text.c:3554
+#: src/text.c:3046
 #, c-format
-msgid "%sWords: %lu  Lines: %ld  Chars: %lu"
-msgstr "%s字数: %lu  行数: %ld  字符数: %lu"
+msgid "%sWords: %zu  Lines: %zd  Chars: %zu"
+msgstr "%s字数：%zu  行数：%zd  字符数：%zu"
 
-#: src/text.c:3555
+#: src/text.c:3047
 msgid "In Selection:  "
-msgstr "于选择部份："
+msgstr "于选择部分："
 
 #. TRANSLATORS: This is displayed when the next keystroke will be
 #. * inserted verbatim.
-#: src/text.c:3569
+#: src/text.c:3060
 msgid "Verbatim Input"
 msgstr "原形输入"
 
-#: src/text.c:3764
+#: src/text.c:3157
+msgid "No word fragment"
+msgstr "没有单词片段"
+
+#: src/text.c:3249
 msgid "No further matches"
-msgstr ""
+msgstr "没有更多匹配"
 
 #. TRANSLATORS: Shown when there are zero possible completions.
-#: src/text.c:3768
-#, fuzzy
+#: src/text.c:3253
 msgid "No matches"
-msgstr "无对应括号"
+msgstr "没有匹配"
 
-#: src/utils.c:358 src/utils.c:370
-msgid "nano is out of memory!"
-msgstr "nano 已耗尽内存！"
+#: src/utils.c:297 src/utils.c:309
+msgid "Nano is out of memory!\n"
+msgstr "Nano 已耗尽内存！\n"
 
-#: src/winio.c:85
+#: src/winio.c:89
 msgid "Recording a macro..."
-msgstr ""
+msgstr "正在录制宏..."
 
-#: src/winio.c:88
+#: src/winio.c:92
 msgid "Stopped recording"
-msgstr ""
+msgstr "停止录制"
 
-#: src/winio.c:99
+#: src/winio.c:103
 msgid "Cannot run macro while recording"
-msgstr ""
+msgstr "录制时无法运行宏"
 
-#: src/winio.c:105
+#: src/winio.c:109
 msgid "Macro is empty"
-msgstr ""
+msgstr "宏为空"
 
-#: src/winio.c:211
-msgid "Too many errors from stdin"
-msgstr ""
+#: src/winio.c:210
+msgid "Too many errors from stdin\n"
+msgstr "标准输入含有太多错误\n"
 
 #. TRANSLATORS: This refers to a sequence of escape codes
-#. * (from the keyboard) that nano does not know about.
-#: src/winio.c:1335
+#. * (from the keyboard) that nano does not recognize.
+#: src/winio.c:1355
 msgid "Unknown sequence"
-msgstr ""
+msgstr "未知序列"
 
 #. TRANSLATORS: This is shown while a six-digit hexadecimal
 #. * Unicode character code (%s) is being typed in.
-#: src/winio.c:1499
-#, fuzzy, c-format
+#: src/winio.c:1494
+#, c-format
 msgid "Unicode Input: %s"
-msgstr "Unicode 输入"
+msgstr "Unicode 输入：%s"
 
-#: src/winio.c:2100
+#. TRANSLATORS: The next five are "labels" in the title bar.
+#: src/winio.c:2095
+msgid "Linting --"
+msgstr "语法检查中 --"
+
+#: src/winio.c:2101
 msgid "DIR:"
 msgstr "目录："
 
-#: src/winio.c:2119 src/winio.c:2123
+#: src/winio.c:2122 src/winio.c:2128
 msgid "Modified"
 msgstr "已更改"
 
-#: src/winio.c:2121
+#: src/winio.c:2124
 msgid "View"
 msgstr "查看"
 
-#: src/winio.c:2249
+#: src/winio.c:2126
+msgid "Restricted"
+msgstr "受限"
+
+#: src/winio.c:2254
 msgid "Further warnings were suppressed"
-msgstr ""
+msgstr "更多的警告信息未显示"
 
-#: src/winio.c:3436
+#: src/winio.c:3440
 #, c-format
-msgid "line %ld/%ld (%d%%), col %lu/%lu (%d%%), char %lu/%lu (%d%%)"
-msgstr "行 %ld/%ld (%d%%)，列 %lu/%lu (%d%%)，字符 %lu/%lu (%d%%)"
+msgid "line %zd/%zd (%d%%), col %zu/%zu (%d%%), char %zu/%zu (%d%%)"
+msgstr "行 %zd/%zd (%d%%)，列 %zu/%zu (%d%%)，字符 %zu/%zu (%d%%)"
 
-#: src/winio.c:3636
+#: src/winio.c:3632
 msgid "The nano text editor"
 msgstr "nano 文本编辑器"
 
-#: src/winio.c:3637
+#: src/winio.c:3633
 msgid "version"
 msgstr "版本"
 
-#: src/winio.c:3638
+#: src/winio.c:3634
 msgid "Brought to you by:"
-msgstr "来自于:"
+msgstr "来自于："
+
+#: src/winio.c:3635
+msgid "Special thanks to:"
+msgstr "特别感谢："
+
+#: src/winio.c:3636
+msgid "The Free Software Foundation"
+msgstr "自由软件基金会"
+
+#: src/winio.c:3637
+msgid "the many translators and the TP"
+msgstr "TP 项目和众多翻译人员"
+
+#: src/winio.c:3638
+msgid "For ncurses:"
+msgstr "ncurses 部分："
 
 #: src/winio.c:3639
-msgid "Special thanks to:"
-msgstr "特别感谢:"
-
-#: src/winio.c:3640
-msgid "The Free Software Foundation"
-msgstr "自由软体基金会"
-
-#: src/winio.c:3641
-msgid "the many translators and the TP"
-msgstr ""
-
-#: src/winio.c:3642
-msgid "For ncurses:"
-msgstr "ncurses 部份:"
-
-#: src/winio.c:3643
 msgid "and anyone else we forgot..."
 msgstr "以及其他我们不记得的人..."
 
-#: src/winio.c:3644
+#: src/winio.c:3640
 msgid "Thank you for using nano!"
-msgstr "谢谢您使用 nano！"
+msgstr "感谢您使用 nano！"
 
-#~ msgid ""
-#~ "Read %lu line (Converted from DOS and Mac format - Warning: No write "
-#~ "permission)"
-#~ msgid_plural ""
-#~ "Read %lu lines (Converted from DOS and Mac format - Warning: No write "
-#~ "permission)"
-#~ msgstr[0] "已读取%lu 行(转换自DOS 与Mac 格式- 警告：无写入权限)"
+#: lib/getopt.c:278
+#, c-format
+msgid "%s: option '%s%s' is ambiguous\n"
+msgstr "%s：选项“%s%s”有歧义\n"
 
-#~ msgid ""
-#~ "Read %lu line (Converted from Mac format - Warning: No write permission)"
-#~ msgid_plural ""
-#~ "Read %lu lines (Converted from Mac format - Warning: No write permission)"
-#~ msgstr[0] "已读取%lu 行 (转换自Mac 格式- 警告：无写入权限)"
+#: lib/getopt.c:284
+#, c-format
+msgid "%s: option '%s%s' is ambiguous; possibilities:"
+msgstr "%s：选项“%s%s”有歧义；可能是："
 
-#~ msgid ""
-#~ "Read %lu line (Converted from DOS format - Warning: No write permission)"
-#~ msgid_plural ""
-#~ "Read %lu lines (Converted from DOS format - Warning: No write permission)"
-#~ msgstr[0] "已读取%lu 行 (转换自DOS 格式- 警告：无写入权限)"
+#: lib/getopt.c:319
+#, c-format
+msgid "%s: unrecognized option '%s%s'\n"
+msgstr "%s：无法识别的选项“%s%s”\n"
 
-#~ msgid "Read %lu line ( Warning: No write permission)"
-#~ msgid_plural "Read %lu lines (Warning: No write permission)"
-#~ msgstr[0] "已读取%lu 行(警告：无写入权限)"
+#: lib/getopt.c:345
+#, c-format
+msgid "%s: option '%s%s' doesn't allow an argument\n"
+msgstr "%s：选项“%s%s”不允许带参数\n"
 
-#~ msgid "Cannot prepend or append to a symlink with --nofollow set"
-#~ msgstr "--nofollow 设定下，无法前引或附加至符号连结档"
+#: lib/getopt.c:360
+#, c-format
+msgid "%s: option '%s%s' requires an argument\n"
+msgstr "%s：选项“%s%s”需要参数\n"
 
-#~ msgid ""
-#~ "Detected a legacy nano history file (%s) which I tried to move\n"
-#~ "to the preferred location (%s) but encountered an error: %s"
-#~ msgstr ""
-#~ "检测到了旧版的Nano 历史文件(%s)并试图移动到默认位置(%s)。\n"
-#~ "此操作出现错误：%s"
+#: lib/getopt.c:621
+#, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s：无效的选项 -- '%c'\n"
 
-#~ msgid ""
-#~ "Detected a legacy nano history file (%s) which I moved\n"
-#~ "to the preferred location (%s)\n"
-#~ "(see the nano FAQ about this change)"
-#~ msgstr ""
-#~ "检测到了旧版的Nano 历史文件(%s)并已移动到默认位置(%s)。\n"
-#~ "(关于这个变更请参阅Nano 常见问题解答)"
+#: lib/getopt.c:636 lib/getopt.c:682
+#, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s：选项需要一个参数 -- '%c'\n"
 
-#~ msgid "Window size is too small for nano...\n"
-#~ msgstr "窗口尺寸对 nano 来说太小了...\n"
+#: lib/regcomp.c:135
+msgid "Success"
+msgstr "成功"
 
-#~ msgid "Option\t\tMeaning\n"
-#~ msgstr "选项\t\t意义\n"
+#: lib/regcomp.c:138
+msgid "No match"
+msgstr "没有匹配"
 
-#~ msgid "+LINE,COLUMN"
-#~ msgstr "+行,列"
+#: lib/regcomp.c:141
+msgid "Invalid regular expression"
+msgstr "无效的正则表达式"
 
-#~ msgid "Start at line LINE, column COLUMN"
-#~ msgstr "从所指列数与行数开始"
+#: lib/regcomp.c:144
+msgid "Invalid collation character"
+msgstr "无效的字符序字符"
 
-#~ msgid "-Y <str>"
-#~ msgstr "-Y <字符串>"
+#: lib/regcomp.c:147
+msgid "Invalid character class name"
+msgstr "无效的字符类型名称"
 
-#~ msgid "Don't follow symbolic links, overwrite"
-#~ msgstr "不要依照符号连结，而是覆盖"
+#: lib/regcomp.c:150
+msgid "Trailing backslash"
+msgstr "末尾的反斜杠"
 
-#~ msgid "Silently ignore startup issues like rc file errors"
-#~ msgstr "沉默忽略启动问题, 比如rc 文件错误"
+#: lib/regcomp.c:153
+msgid "Invalid back reference"
+msgstr "无效的后向引用"
 
-#~ msgid "Sorry, support for this function has been disabled"
-#~ msgstr "对不起，此功能的支持以禁用"
+#: lib/regcomp.c:156
+msgid "Unmatched [, [^, [:, [., or [="
+msgstr "不匹配的 [、[^、[:、[. 或 [="
 
-#~ msgid "Save modified buffer (ANSWERING \"No\" WILL DESTROY CHANGES) ? "
-#~ msgstr "储存更动过的缓冲区吗(回答 \"No\" 会撤销修改)？"
+#: lib/regcomp.c:159
+msgid "Unmatched ( or \\("
+msgstr "未匹配的 ( 或 \\("
 
-#~ msgid "Unknown Command"
-#~ msgstr "未知命令"
+#: lib/regcomp.c:162
+msgid "Unmatched \\{"
+msgstr "未匹配的 \\{"
 
-#~ msgid "XON ignored, mumble mumble"
-#~ msgstr "忽略XON，嗯嗯。"
+#: lib/regcomp.c:165
+msgid "Invalid content of \\{\\}"
+msgstr "\\{\\} 的无效内容"
 
-#~ msgid "XOFF ignored, mumble mumble"
-#~ msgstr "忽略XOFF，嗯嗯。"
+#: lib/regcomp.c:168
+msgid "Invalid range end"
+msgstr "无效的范围结束符"
 
-#~ msgid "Cannot add a color command without a syntax command"
-#~ msgstr "无法直接增加颜色而没有语法行"
+#: lib/regcomp.c:171
+msgid "Memory exhausted"
+msgstr "内存耗尽"
 
-#~ msgid "Cannot add a header regex without a syntax command"
-#~ msgstr "无法直接增加头部正则表达式而没有语法行"
+#: lib/regcomp.c:174
+msgid "Invalid preceding regular expression"
+msgstr "无效的前置正则表达式"
 
-#~ msgid "Cannot add a magic string regex without a syntax command"
-#~ msgstr "无法在没有语法命令的情况下添加魔字符串"
+#: lib/regcomp.c:177
+msgid "Premature end of regular expression"
+msgstr "正则表达式过早结束"
 
-#~ msgid "Missing magic string name"
-#~ msgstr "缺少魔字符串名称"
+#: lib/regcomp.c:180
+msgid "Regular expression too big"
+msgstr "正则表达式过长"
 
-#, fuzzy
-#~| msgid "Cannot add a header regex without a syntax command"
-#~ msgid "Cannot add a linter without a syntax command"
-#~ msgstr "无法直接增加头部正则表达式而没有语法行"
+#: lib/regcomp.c:183
+msgid "Unmatched ) or \\)"
+msgstr "未匹配的 ) 或 \\)"
 
-#, fuzzy
-#~| msgid "Cannot add a color command without a syntax command"
-#~ msgid "Cannot add formatter without a syntax command"
-#~ msgstr "无法直接增加颜色而没有语法行"
-
-#~ msgid ""
-#~ "\n"
-#~ "Press Enter to continue starting nano.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "按下回车键继续启动 nano\n"
-
-#, fuzzy
-#~| msgid "Internal error: can't match line %d.  Please save your work"
-#~ msgid "Internal error: can't match line %d.  Please save your work."
-#~ msgstr "内部错误：无法匹配行 %d。请保存您的工作"
-
-#~ msgid "Internal error: unknown type.  Please save your work."
-#~ msgstr "内部错误：未知类型。请保存您的工作。"
-
-#, fuzzy
-#~| msgid "Internal error: can't setup uncut.  Please save your work."
-#~ msgid "Internal error: cannot set up redo.  Please save your work."
-#~ msgstr "内部错误：无法配置取消剪切。请保存您的工作"
-
-#, fuzzy
-#~| msgid "Internal error: can't setup uncut.  Please save your work."
-#~ msgid "Internal error: cannot set up uncut.  Please save your work."
-#~ msgstr "内部错误：无法配置取消剪切。请保存您的工作"
-
-#~ msgid "File:"
-#~ msgstr "文件："
-
-#~ msgid "Insert File"
-#~ msgstr "插入文件"
-
-#~ msgid "Go to previous screen"
-#~ msgstr "跳至前一屏"
-
-#~ msgid "Find Other Bracket"
-#~ msgstr "寻找其他括号"
-
-#~ msgid "Long line wrapping"
-#~ msgstr "长行转换"
-
-#~ msgid "Multiple file buffers"
-#~ msgstr "多重文件缓冲区"
-
-#~ msgid "Soft line wrapping"
-#~ msgstr "软换行"
-
-#~ msgid "Enable multiple file buffers"
-#~ msgstr "启用多重文件缓冲区功能"
-
-#~ msgid "Allow generic undo [EXPERIMENTAL]"
-#~ msgstr "允许通用撤销[试验性特性]"
-
-#~ msgid "(ignored, for Pico compatibility)"
-#~ msgstr "(忽略，为与Pico 相容)"
-
-#~ msgid "Must specify menu to bind key to (or \"all\")"
-#~ msgstr "必须指定键绑定到的菜单(或 \"all\")"
-
-#~ msgid "Missing flag"
-#~ msgstr "缺少旗标"
-
-#~ msgid "line wrap"
-#~ msgstr "自动换行"
-
-#~ msgid "Internal error: unknown type.  Please save your work"
-#~ msgstr "内部错误：未知类型。请保存您的工作"
-
-#~ msgid "Internal error: Redo setup failed.  Please save your work"
-#~ msgstr "内部错误：重做设置失败。请保存您的工作"
-
-#~ msgid "Could not pipe"
-#~ msgstr "管线功能无效"
-
-#~ msgid "line split"
-#~ msgstr "行分割"
+#: lib/regcomp.c:676
+msgid "No previous regular expression"
+msgstr "缺少之前的正则表达式"
