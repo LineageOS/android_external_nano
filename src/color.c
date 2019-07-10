@@ -39,11 +39,34 @@
 #define A_BANDAID  A_NORMAL
 #endif
 
+/* Assign pair numbers for the colors in the given syntax, giving identical
+ * color pairs the same number. */
+void set_syntax_colorpairs(syntaxtype *sint)
+{
+	int new_number = NUMBER_OF_ELEMENTS + 1;
+	colortype *ink;
+
+	for (ink = sint->color; ink != NULL; ink = ink->next) {
+		const colortype *beforenow = sint->color;
+
+		while (beforenow != ink && (beforenow->fg != ink->fg ||
+									beforenow->bg != ink->bg))
+			beforenow = beforenow->next;
+
+		if (beforenow != ink)
+			ink->pairnum = beforenow->pairnum;
+		else
+			ink->pairnum = new_number++;
+
+		ink->attributes |= COLOR_PAIR(ink->pairnum) | A_BANDAID;
+	}
+}
+
 /* Initialize the colors for nano's interface, and assign pair numbers
- * for the colors in each syntax. */
+ * for the colors in each loaded syntax. */
 void set_colorpairs(void)
 {
-	const syntaxtype *sint;
+	syntaxtype *sint;
 	bool using_defaults = FALSE;
 	size_t i;
 
@@ -82,27 +105,10 @@ void set_colorpairs(void)
 		free(color_combo[i]);
 	}
 
-	/* For each syntax, go through its list of colors and assign each
-	 * its pair number, giving identical color pairs the same number. */
-	for (sint = syntaxes; sint != NULL; sint = sint->next) {
-		colortype *ink;
-		int new_number = NUMBER_OF_ELEMENTS + 1;
-
-		for (ink = sint->color; ink != NULL; ink = ink->next) {
-			const colortype *beforenow = sint->color;
-
-			while (beforenow != ink && (beforenow->fg != ink->fg ||
-										beforenow->bg != ink->bg))
-				beforenow = beforenow->next;
-
-			if (beforenow != ink)
-				ink->pairnum = beforenow->pairnum;
-			else
-				ink->pairnum = new_number++;
-
-			ink->attributes |= COLOR_PAIR(ink->pairnum) | A_BANDAID;
-		}
-	}
+	/* For each loaded syntax, assign pair numbers to color combinations. */
+	for (sint = syntaxes; sint != NULL; sint = sint->next)
+		if (sint->filename == NULL)
+			set_syntax_colorpairs(sint);
 }
 
 /* Initialize the color information. */
@@ -163,7 +169,6 @@ bool found_in_list(regexlisttype *head, const char *shibboleth)
 void color_update(void)
 {
 	syntaxtype *sint = NULL;
-	colortype *ink;
 
 	/* If the rcfiles were not read, or contained no syntaxes, get out. */
 	if (syntaxes == NULL)
@@ -267,22 +272,14 @@ void color_update(void)
 		}
 	}
 
+	/* When the syntax isn't loaded yet, parse it and initialize its colors. */
+	if (sint != NULL && sint->filename != NULL) {
+		parse_one_include(sint->filename, sint);
+		set_syntax_colorpairs(sint);
+	}
+
 	openfile->syntax = sint;
 	openfile->colorstrings = (sint == NULL ? NULL : sint->color);
-
-	/* If a syntax was found, compile its specified regexes (which have
-	 * already been checked for validity when they were read in). */
-	for (ink = openfile->colorstrings; ink != NULL; ink = ink->next) {
-		if (ink->start == NULL) {
-			ink->start = (regex_t *)nmalloc(sizeof(regex_t));
-			regcomp(ink->start, ink->start_regex, ink->rex_flags);
-		}
-
-		if (ink->end_regex != NULL && ink->end == NULL) {
-			ink->end = (regex_t *)nmalloc(sizeof(regex_t));
-			regcomp(ink->end, ink->end_regex, ink->rex_flags);
-		}
-	}
 }
 
 /* Determine whether the matches of multiline regexes are still the same,
@@ -334,12 +331,10 @@ void check_the_multis(linestruct *line)
 /* Allocate (for one line) the cache space for multiline color regexes. */
 void alloc_multidata_if_needed(linestruct *fileptr)
 {
-	int i;
-
 	if (fileptr->multidata == NULL) {
 		fileptr->multidata = (short *)nmalloc(openfile->syntax->nmultis * sizeof(short));
 
-		for (i = 0; i < openfile->syntax->nmultis; i++)
+		for (int i = 0; i < openfile->syntax->nmultis; i++)
 			fileptr->multidata[i] = -1;
 	}
 }
@@ -354,10 +349,6 @@ void precalc_multicolorinfo(void)
 
 	if (openfile->colorstrings == NULL || ISSET(NO_COLOR_SYNTAX))
 		return;
-
-#ifdef DEBUG
-	fprintf(stderr, "Precalculating the multiline color info...\n");
-#endif
 
 	for (ink = openfile->colorstrings; ink != NULL; ink = ink->next) {
 		/* If this is not a multi-line regex, skip it. */
@@ -380,14 +371,14 @@ void precalc_multicolorinfo(void)
 			/* When the line contains a start match, look for an end, and if
 			 * found, mark all the lines that are affected. */
 			while (regexec(ink->start, line->data + index, 1,
-						&startmatch, (index == 0) ? 0 : REG_NOTBOL) == 0) {
+							&startmatch, (index == 0) ? 0 : REG_NOTBOL) == 0) {
 				/* Begin looking for an end match after the start match. */
 				index += startmatch.rm_eo;
 
 				/* If there is an end match on this line, mark the line, but
 				 * continue looking for other starts after it. */
 				if (regexec(ink->end, line->data + index, 1,
-						&endmatch, (index == 0) ? 0 : REG_NOTBOL) == 0) {
+							&endmatch, (index == 0) ? 0 : REG_NOTBOL) == 0) {
 					line->multidata[ink->id] = CSTARTENDHERE;
 					index += endmatch.rm_eo;
 					/* If both start and end are mere anchors, step ahead. */
@@ -396,7 +387,7 @@ void precalc_multicolorinfo(void)
 						/* When at end-of-line, we're done. */
 						if (line->data[index] == '\0')
 							break;
-						index = move_mbright(line->data, index);
+						index = step_right(line->data, index);
 					}
 					continue;
 				}

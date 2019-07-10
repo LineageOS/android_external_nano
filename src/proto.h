@@ -29,9 +29,7 @@
 extern volatile sig_atomic_t the_window_resized;
 #endif
 
-#ifdef __linux__
 extern bool on_a_vt;
-#endif
 
 extern bool meta_key;
 extern bool shift_held;
@@ -40,7 +38,11 @@ extern bool focusing;
 
 extern bool as_an_at;
 
+extern bool control_C_was_pressed;
+
 extern bool suppress_cursorpos;
+
+extern bool started_curses;
 
 extern message_type lastmessage;
 
@@ -96,7 +98,6 @@ extern linestruct *cutbuffer;
 extern linestruct *cutbottom;
 extern bool keep_cutbuffer;
 
-extern partition *filepart;
 extern openfilestruct *openfile;
 #ifdef ENABLE_MULTIBUFFER
 extern openfilestruct *startfile;
@@ -209,12 +210,12 @@ bool is_ascii_cntrl_char(int c);
 bool is_cntrl_mbchar(const char *c);
 bool is_word_mbchar(const char *c, bool allow_punct);
 char control_mbrep(const char *c, bool isdata);
-int length_of_char(const char *c, int *width);
 int mbwidth(const char *c);
 char *make_mbchar(long chr, int *chr_mb_len);
+int char_length(const char *pointer);
 int parse_mbchar(const char *buf, char *chr, size_t *col);
-size_t move_mbleft(const char *buf, size_t pos);
-size_t move_mbright(const char *buf, size_t pos);
+size_t step_left(const char *buf, size_t pos);
+size_t step_right(const char *buf, size_t pos);
 int mbstrcasecmp(const char *s1, const char *s2);
 int mbstrncasecmp(const char *s1, const char *s2, size_t n);
 char *mbstrcasestr(const char *haystack, const char *needle);
@@ -254,35 +255,32 @@ void chop_previous_word(void);
 void chop_next_word(void);
 void cut_marked(bool *right_side_up);
 #endif
-void do_cut_text(bool copy_text, bool marked, bool cut_till_eof, bool append);
+void do_cut_text(bool copying, bool marked, bool until_eof, bool append);
 bool is_cuttable(bool test_cliff);
-void do_cut_text_void(void);
+void cut_text(void);
 #ifndef NANO_TINY
-void do_copy_text(void);
-void do_cut_till_eof(void);
+void copy_text(void);
+void cut_till_eof(void);
 void zap_text(void);
 #endif
-void do_uncut_text(void);
+void paste_text(void);
 
 /* Most functions in files.c. */
-void initialize_buffer_text(void);
+void make_new_buffer(void);
 void set_modified(void);
 bool open_buffer(const char *filename, bool new_buffer);
 #ifdef ENABLE_SPELLER
-void replace_buffer(const char *filename);
-#ifndef NANO_TINY
-void replace_marked_buffer(const char *filename);
-#endif
+bool replace_buffer(const char *filename, undo_type action, bool marked);
 #endif
 void prepare_for_display(void);
 #ifdef ENABLE_MULTIBUFFER
 void mention_name_and_linecount(void);
 void switch_to_prev_buffer(void);
 void switch_to_next_buffer(void);
-bool close_buffer(void);
+void close_buffer(void);
 #endif
 void read_file(FILE *f, int fd, const char *filename, bool undoable);
-int open_file(const char *filename, bool newfie, bool quiet, FILE **f);
+int open_file(const char *filename, bool newfie, FILE **f);
 char *get_next_filename(const char *name, const char *suffix);
 void do_insertfile_void(void);
 char *get_full_path(const char *origpath);
@@ -322,9 +320,7 @@ int the_code_for(void (*func)(void), int defaultval);
 functionptrtype func_from_key(int *kbinput);
 int keycode_from_string(const char *keystring);
 void assign_keyinfo(keystruct *s, const char *keystring, const int keycode);
-void print_sclist(void);
 void shortcut_init(void);
-const funcstruct *sctofunc(const keystruct *s);
 const char *flagtostr(int flag);
 #ifdef ENABLE_NANORC
 keystruct *strtosc(const char *input);
@@ -334,7 +330,7 @@ char *menu_to_name(int menu);
 
 /* All functions in help.c. */
 #ifdef ENABLE_HELP
-void wrap_the_help_text(bool redisplaying);
+void wrap_help_text_into_buffer();
 void do_help(void);
 void help_init(void);
 functionptrtype parse_help_input(int *kbinput);
@@ -397,18 +393,13 @@ void unlink_node(linestruct *fileptr);
 void delete_node(linestruct *fileptr);
 linestruct *copy_buffer(const linestruct *src);
 void free_lines(linestruct *src);
-void renumber(linestruct *line);
-partition *partition_buffer(linestruct *top, size_t top_x,
+void renumber_from(linestruct *line);
+void partition_buffer(linestruct *top, size_t top_x,
 		linestruct *bot, size_t bot_x);
-void unpartition_buffer(partition **p);
-void extract_buffer(linestruct **file_top, linestruct **file_bot,
-		linestruct *top, size_t top_x, linestruct *bot, size_t bot_x);
+void unpartition_buffer();
+void extract(linestruct *top, size_t top_x, linestruct *bot, size_t bot_x);
 void ingraft_buffer(linestruct *somebuffer);
 void copy_from_buffer(linestruct *somebuffer);
-#ifdef ENABLE_MULTIBUFFER
-void unlink_opennode(openfilestruct *fileptr);
-void delete_opennode(openfilestruct *fileptr);
-#endif
 void print_view_warning(void);
 void show_restricted_warning(void);
 #ifndef ENABLE_HELP
@@ -420,6 +411,9 @@ void emergency_save(const char *die_filename, struct stat *die_stat);
 void window_init(void);
 void do_exit(void);
 void close_and_go(void);
+void install_handler_for_Ctrl_C(void);
+void restore_handler_for_Ctrl_C(void);
+void reconnect_and_store_state(void);
 RETSIGTYPE handle_hupterm(int signal);
 #ifndef DEBUG
 RETSIGTYPE handle_crash(int signal);
@@ -433,8 +427,9 @@ void block_sigwinch(bool blockit);
 RETSIGTYPE handle_sigwinch(int signal);
 void regenerate_screen(void);
 void do_toggle(int flag);
-void enable_signals(void);
 #endif
+void disable_kb_interrupt(void);
+void enable_kb_interrupt(void);
 void disable_flow_control(void);
 void enable_flow_control(void);
 void terminal_init(void);
@@ -470,15 +465,17 @@ int do_yesno_prompt(bool all, const char *msg);
 
 /* Most functions in rcfile.c. */
 #ifdef ENABLE_NANORC
+void display_rcfile_errors();
 #ifdef ENABLE_COLOR
+void parse_one_include(char *file, syntaxtype *syntax);
 void grab_and_store(const char *kind, char *ptr, regexlisttype **storage);
+bool parse_syntax_commands(char *keyword, char *ptr);
 #endif
-void parse_rcfile(FILE *rcstream, bool syntax_only);
+void parse_rcfile(FILE *rcstream, bool just_syntax, bool intros_only);
 void do_rcfiles(void);
 #endif /* ENABLE_NANORC */
 
 /* Most functions in search.c. */
-void tidy_up_after_search(void);
 int findnextstr(const char *needle, bool whole_word_only, int modus,
 		size_t *match_len, bool skipone, const linestruct *begin, size_t begin_x);
 void do_search(void);
@@ -571,7 +568,6 @@ bool is_separate_word(size_t position, size_t length, const char *buf);
 #endif
 const char *strstrwrapper(const char *haystack, const char *needle,
 		const char *start);
-void nperror(const char *s);
 void *nmalloc(size_t howmuch);
 void *nrealloc(void *ptr, size_t howmuch);
 char *mallocstrncpy(char *dest, const char *src, size_t n);
@@ -587,13 +583,13 @@ void new_magicline(void);
 void remove_magicline(void);
 #endif
 #ifndef NANO_TINY
-void mark_order(const linestruct **top, size_t *top_x,
+void get_region(const linestruct **top, size_t *top_x,
 		const linestruct **bot, size_t *bot_x, bool *right_side_up);
 void get_range(const linestruct **top, const linestruct **bot);
 #endif
 size_t get_totsize(const linestruct *begin, const linestruct *end);
 #ifndef NANO_TINY
-linestruct *fsfromline(ssize_t lineno);
+linestruct *line_from_number(ssize_t lineno);
 #endif
 
 /* Most functions in winio.c. */
