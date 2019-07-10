@@ -1,1052 +1,1040 @@
-# Dutch translations for GNU nano.
+# Korean translation for the nano package.
 # Copyright (C) 2019 Free Software Foundation, Inc.
 # This file is distributed under the same license as the nano package.
+# Seong-ho Cho <darkcircle.0426@gmail.com>, 2019.
 #
-# "De ene baby is een slome donder die je nog niet cadeau zou willen krijgen,
-# de andere is een wonder van lachlust en oorspronkelijkheid die je dood zou
-# willen knuffelen."
-#
-# Benno Schulenberg <benno@vertaalt.nl>, 2005, 2006, 2007, 2008, 2010, 2011.
-# Benno Schulenberg <benno@vertaalt.nl>, 2013, 2014, 2015, 2016, 2017, 2018, 2019.
-# Erwin Poeze <erwin.poeze@gmail.com>, 2009.
-# Reinout van Schouwen <reinout@cs.vu.nl>, 2005.
-# Guus Sliepen <guus@sliepen.eu.org>, 2003.
 msgid ""
 msgstr ""
-"Project-Id-Version: nano-4.3-pre1\n"
+"Project-Id-Version: GNU nano 4.1-pre1\n"
 "Report-Msgid-Bugs-To: nano-devel@gnu.org\n"
 "POT-Creation-Date: 2019-06-18 10:30+0200\n"
-"PO-Revision-Date: 2019-06-16 13:34+0200\n"
-"Last-Translator: Benno Schulenberg <vertaling@coevern.nl>\n"
-"Language-Team: Dutch <vertaling@vrijschrift.org>\n"
-"Language: nl\n"
+"PO-Revision-Date: 2019-04-10 15:29+0900\n"
+"Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
+"Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
+"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: src/browser.c:67
 #, c-format
 msgid "Cannot open directory: %s"
-msgstr "Kan map niet openen: %s"
+msgstr "디렉터리를 열 수 없음: %s"
 
 #. TRANSLATORS: This is a prompt.
 #: src/browser.c:226
 msgid "Go To Directory"
-msgstr "Naar map"
+msgstr "디렉터리로 이동"
 
 #: src/browser.c:227 src/browser.c:683 src/files.c:1091 src/files.c:2115
 #: src/nano.c:1005 src/search.c:114 src/search.c:208 src/search.c:712
 #: src/search.c:765 src/text.c:2686 src/text.c:2881
 msgid "Cancelled"
-msgstr "Geannuleerd"
+msgstr "취소함"
 
 #. TRANSLATORS: This refers to the confining effect of the
 #. * option --operatingdir, not of --restricted.
 #: src/browser.c:244 src/browser.c:275
 #, c-format
 msgid "Can't go outside of %s"
-msgstr "Kan niet buiten %s gaan"
+msgstr "%s 밖으로 이동할 수 없습니다"
 
 #: src/browser.c:266
 msgid "Can't move up a directory"
-msgstr "Kan niet naar bovenliggende map gaan"
+msgstr "상위 디렉터리로 이동할 수 없습니다"
 
 #: src/browser.c:281 src/files.c:971 src/files.c:977 src/files.c:1623
 #: src/files.c:1736 src/files.c:1778 src/files.c:1798 src/files.c:1928
 #: src/history.c:311 src/history.c:407 src/rcfile.c:574 src/rcfile.c:1287
 #, c-format
 msgid "Error reading %s: %s"
-msgstr "Fout bij lezen van %s: %s"
+msgstr "%s 읽기 오류: %s"
 
 #: src/browser.c:364
 msgid "The working directory has disappeared"
-msgstr "De werkmap is verdwenen"
+msgstr "작업 디렉터리가 사라졌습니다"
 
 #. TRANSLATORS: Try to keep this at most 7 characters.
 #: src/browser.c:554 src/browser.c:561
 msgid "(dir)"
-msgstr "(map)"
+msgstr "(디렉터리)"
 
 #. TRANSLATORS: Try to keep this at most 12 characters.
 #: src/browser.c:558
 msgid "(parent dir)"
-msgstr "(oudermap)"
+msgstr "(상위 디렉터리)"
 
 #. TRANSLATORS: Try to keep this at most 7 characters.
 #. * If necessary, you can leave out the parentheses.
 #: src/browser.c:588
 msgid "(huge)"
-msgstr "(enorm)"
+msgstr "(매우 큼)"
 
 #. TRANSLATORS: This is the main search prompt.
 #: src/browser.c:673 src/search.c:100
 msgid "Search"
-msgstr "Zoeken"
+msgstr "검색"
 
 #: src/browser.c:674 src/search.c:104
 msgid " [Backwards]"
-msgstr " [Achterwaarts]"
+msgstr "[후위]"
 
 #: src/browser.c:713 src/browser.c:718 src/search.c:278
 msgid "Search Wrapped"
-msgstr "Rondgelopen"
+msgstr "순환 검색"
 
 #: src/browser.c:729 src/search.c:414
 msgid "This is the only occurrence"
-msgstr "Dit is de enige overeenkomst"
+msgstr "유일한 검색 결과입니다"
 
 #: src/browser.c:775 src/search.c:352
 msgid "No current search pattern"
-msgstr "Nog geen zoekpatroon bekend"
+msgstr "현재 검색 패턴이 없습니다"
 
 #: src/color.c:189
 #, c-format
 msgid "Unknown syntax name: %s"
-msgstr "Onbekende syntaxnaam: %s"
+msgstr "알 수 없는 문법 이름: %s"
 
 #: src/color.c:245
 #, c-format
 msgid "magic_load() failed: %s"
-msgstr "magic_load() is mislukt: %s"
+msgstr "magic_load() 처리 실패: %s"
 
 #: src/color.c:249
 #, c-format
 msgid "magic_file(%s) failed: %s"
-msgstr "magic_file(%s) is mislukt: %s"
+msgstr "magic_file(%s) 처리 실패: %s"
 
 #: src/cut.c:366 src/cut.c:433
 msgid "Nothing was cut"
-msgstr "Niets geknipt"
+msgstr "자른 항목이 없습니다"
 
 #: src/cut.c:476
 msgid "Cutbuffer is empty"
-msgstr "Knipbuffer is leeg"
+msgstr "잘라내기 버퍼가 비어 있습니다"
 
 #: src/files.c:45
 #, c-format
 msgid "Directory '%s' does not exist"
-msgstr "Map '%s' bestaat niet"
+msgstr "'%s' 디렉터리가 없습니다"
 
 #: src/files.c:47
 #, c-format
 msgid "Path '%s': %s"
-msgstr "Pad '%s': %s"
+msgstr "'%s' 경로: %s"
 
 #: src/files.c:49
 #, c-format
 msgid "Path '%s' is not a directory"
-msgstr "Pad '%s' is geen map"
+msgstr "'%s' 경로는 디렉터리가 아닙니다"
 
 #: src/files.c:51
 #, c-format
 msgid "Path '%s' is not accessible"
-msgstr "Pad '%s' is niet toegankelijk"
+msgstr "'%s' 경로에 접근할 수 없습니다"
 
 #: src/files.c:53
 #, c-format
 msgid "Directory '%s' is not writable"
-msgstr "Map '%s' is niet schrijfbaar"
+msgstr "'%s' 디렉터리에 기록할 수 없습니다"
 
 #. TRANSLATORS: Keep the next eight messages at most 76 characters.
 #: src/files.c:181
 msgid "Couldn't determine my identity for lock file (getpwuid() failed)"
-msgstr "Kan eigen identiteit niet bepalen (voor vergrendelingsbestand)"
+msgstr "파일을 잠글 사용자 식별자를 확인할 수 없음(getpwuid() 실패)"
 
 #: src/files.c:190
 #, c-format
 msgid "Couldn't determine hostname for lock file: %s"
-msgstr "Kan hostnaam voor vergrendelingsbestand niet bepalen: %s"
+msgstr "파일을 잠글 호스트 이름을 확인할 수 없음: %s"
 
 #: src/files.c:210 src/files.c:219 src/files.c:257 src/files.c:264
 #, c-format
 msgid "Error writing lock file %s: %s"
-msgstr "Fout bij schrijven van vergrendelingsbestand %s: %s"
+msgstr "%s 잠금 파일 기록 오류: %s"
 
 #: src/files.c:286
 #, c-format
 msgid "Error deleting lock file %s: %s"
-msgstr "Fout bij verwijderen van vergrendelingsbestand %s: %s"
+msgstr "%s 잠금 파일 삭제 오류: %s"
 
 #: src/files.c:317
 #, c-format
 msgid "Error opening lock file %s: %s"
-msgstr "Fout bij openen van vergrendelingsbestand %s: %s"
+msgstr "%s 잠금 파일 열기 오류: %s"
 
 #: src/files.c:331
 #, c-format
 msgid "Error reading lock file %s: Not enough data read"
-msgstr ""
-"Fout bij lezen van vergrendelingsbestand %s: niet genoeg gegevens gelezen"
+msgstr "%s 잠금 파일 읽기 오류: 읽을 데이터가 충분하지 않음"
 
 #. TRANSLATORS: The second %s is the name of the user, the third that of the editor.
 #: src/files.c:350
 #, c-format
 msgid "File %s is being edited (by %s with %s, PID %s); continue?"
-msgstr "Bestand %s wordt al bewerkt (%s, %s, PID %s); doorgaan?"
+msgstr ""
+"%s 파일을 편집하고 있습니다(%s 사용자, %s 프로그램, PID %s). 계속하시겠습니"
+"까?"
 
 #: src/files.c:425
 #, c-format
 msgid "Can't read file from outside of %s"
-msgstr "Kan geen bestand van buiten %s lezen"
+msgstr "%s 외부의 파일을 읽을 수 없습니다"
 
 #: src/files.c:436 src/rcfile.c:552
 #, c-format
 msgid "\"%s\" is a directory"
-msgstr "'%s' is een map"
+msgstr "\"%s\"은(는) 디렉터리입니다"
 
 #: src/files.c:441 src/rcfile.c:553
 #, c-format
 msgid "\"%s\" is a device file"
-msgstr "'%s' is een apparaat"
+msgstr "\"%s\" 파일은 장치 파일입니다"
 
 #: src/files.c:447
 #, c-format
 msgid "\"%s\" is a FIFO"
-msgstr "'%s' is een FIFO"
+msgstr ""
 
 #: src/files.c:531 src/files.c:557
 msgid "spelling correction"
-msgstr "Spellingscorrectie"
+msgstr "철자 수정"
 
 #. TRANSLATORS: first %s is file name, second %s is file format.
 #: src/files.c:591
 #, c-format
 msgid "%s -- %zu line (%s)"
 msgid_plural "%s -- %zu lines (%s)"
-msgstr[0] "%s -- %zu regel (%s)"
-msgstr[1] "%s -- %zu regels (%s)"
+msgstr[0] "%s -- %zu 행(%s)"
 
 #: src/files.c:593 src/files.c:599 src/global.c:1010 src/winio.c:2117
 msgid "New Buffer"
-msgstr "Nieuwe buffer"
+msgstr "새 버퍼"
 
 #: src/files.c:594
 msgid "DOS"
-msgstr "DOS"
+msgstr "도스"
 
 #: src/files.c:594
 msgid "Mac"
-msgstr "Mac"
+msgstr "맥"
 
 #: src/files.c:597
 #, c-format
 msgid "%s -- %zu line"
 msgid_plural "%s -- %zu lines"
-msgstr[0] "%s -- %zu regel"
-msgstr[1] "%s -- %zu regels"
+msgstr[0] "%s -- %zu 행"
 
 #: src/files.c:607
 msgid "No more open file buffers"
-msgstr "Geen andere open buffers"
+msgstr "더 이상 파일 열기 버퍼 없음"
 
 #: src/files.c:748 src/files.c:969 src/files.c:1841
 msgid "Interrupted"
-msgstr "Afgebroken"
+msgstr ""
 
 #: src/files.c:887
 #, c-format
 msgid "File '%s' is unwritable"
-msgstr "Bestand '%s' is niet schrijfbaar"
+msgstr "'%s' 파일에 기록할 수 없음"
 
 #. TRANSLATORS: Keep the next four messages at most 78 characters.
 #: src/files.c:891
 #, c-format
 msgid "Read %zu line (Converted from DOS and Mac format)"
 msgid_plural "Read %zu lines (Converted from DOS and Mac format)"
-msgstr[0] "%zu regel gelezen (omgezet uit DOS- en Mac-indeling)"
-msgstr[1] "%zu regels gelezen (omgezet uit DOS- en Mac-indeling)"
+msgstr[0] "%zu 행 읽음(도스 형식, 맥 형식에서 변환함)"
 
 #: src/files.c:896
 #, c-format
 msgid "Read %zu line (Converted from Mac format)"
 msgid_plural "Read %zu lines (Converted from Mac format)"
-msgstr[0] "%zu regel gelezen (omgezet uit Mac-indeling)"
-msgstr[1] "%zu regels gelezen (omgezet uit Mac-indeling"
+msgstr[0] "%zu 행 읽음(맥 형식에서 변환함)"
 
 #: src/files.c:901
 #, c-format
 msgid "Read %zu line (Converted from DOS format)"
 msgid_plural "Read %zu lines (Converted from DOS format)"
-msgstr[0] "%zu regel gelezen (omgezet uit DOS-indeling)"
-msgstr[1] "%zu regels gelezen (omgezet uit DOS-indeling)"
+msgstr[0] "%zu 행 읽음(도스 형식에서 변환함)"
 
 #: src/files.c:907
 #, c-format
 msgid "Read %zu line"
 msgid_plural "Read %zu lines"
-msgstr[0] "%zu regel gelezen"
-msgstr[1] "%zu regels gelezen"
+msgstr[0] "%zu 행 읽음"
 
 #: src/files.c:941
 msgid "New File"
-msgstr "Nieuw bestand"
+msgstr "새 파일"
 
 #: src/files.c:946
 #, c-format
 msgid "File \"%s\" not found"
-msgstr "Bestand '%s' is niet gevonden"
+msgstr "\"%s\" 파일이 없습니다"
 
 #: src/files.c:953
 msgid "Reading from FIFO..."
-msgstr "Lezen van FIFO..."
+msgstr ""
 
 #: src/files.c:981
 msgid "Reading..."
-msgstr "Lezen..."
+msgstr ""
 
 #. TRANSLATORS: The next six messages are prompts.
 #: src/files.c:1047
 msgid "Command to execute in new buffer"
-msgstr "In nieuwe buffer uit te voeren opdracht"
+msgstr "새 버퍼에 실행할 명령"
 
 #: src/files.c:1050
 msgid "Command to execute"
-msgstr "Uit te voeren opdracht"
+msgstr "실행할 명령"
 
 #: src/files.c:1058
 #, c-format
 msgid "File to read unconverted into new buffer [from %s]"
-msgstr "In nieuwe buffer in te lezen bestand (ongeconverteerd) [vanuit %s]"
+msgstr "[%s에서] 새 버퍼로 변환하지 않고 읽을 파일"
 
 #: src/files.c:1061
 #, c-format
 msgid "File to read into new buffer [from %s]"
-msgstr "In nieuwe buffer in te lezen bestand [vanuit %s]"
+msgstr "[%s에서] 새 버퍼로 읽을 파일"
 
 #: src/files.c:1066
 #, c-format
 msgid "File to insert unconverted [from %s]"
-msgstr "In te voegen bestand (ongeconverteerd) [vanuit %s]"
+msgstr "[%s에서] 변환하지 않고 삽입할 파일"
 
 #: src/files.c:1069
 #, c-format
 msgid "File to insert [from %s]"
-msgstr "In te voegen bestand [vanuit %s]"
+msgstr "[%s에서] 삽입할 파일"
 
 #: src/files.c:1425
 #, c-format
 msgid "Invalid operating directory: %s\n"
-msgstr "Ongeldige werkmap: %s\n"
+msgstr "잘못된 처리 디렉터리: %s\n"
 
 #: src/files.c:1475
 msgid "Failed to write backup file; continue saving? (Say N if unsure.) "
-msgstr "Maken van reservekopie is mislukt; toch opslaan?  (N als onzeker) "
+msgstr "백업 파일 기록 실패. 계속 저장하시겠습니까? (잘 모르겠으면 N을 입력) "
 
 #: src/files.c:1492
 #, c-format
 msgid "Invalid backup directory: %s\n"
-msgstr "Ongeldige reservekopiemap: %s\n"
+msgstr "잘못된 백업 디렉터리: %s\n"
 
 #: src/files.c:1582
 #, c-format
 msgid "Can't write outside of %s"
-msgstr "Kan buiten %s niets opslaan"
+msgstr "%s 외부에 기록할 수 없습니다"
 
 #: src/files.c:1659 src/files.c:1683 src/files.c:1701 src/files.c:1715
 #: src/files.c:1727 src/files.c:1746
 #, c-format
 msgid "Error writing backup file %s: %s"
-msgstr "Fout bij schrijven van reservekopiebestand %s: %s"
+msgstr "%s 백업 파일 기록 오류: %s"
 
 #: src/files.c:1660 src/nano.c:596
 msgid "Too many backup files?"
-msgstr "Te veel reservekopieën?"
+msgstr "백업 파일이 너무 많지 않습니까?"
 
 #: src/files.c:1787 src/files.c:1809 src/text.c:2603 src/text.c:2621
 #, c-format
 msgid "Error writing temp file: %s"
-msgstr "Fout bij schrijven van tijdelijk bestand: %s"
+msgstr "임시 파일 기록 오류: %s"
 
 #: src/files.c:1817
 msgid "Writing to FIFO..."
-msgstr "Schrijven naar FIFO..."
+msgstr ""
 
 #: src/files.c:1843 src/files.c:1853 src/files.c:1875 src/files.c:1892
 #: src/files.c:1902 src/files.c:1935 src/files.c:1944
 #, c-format
 msgid "Error writing %s: %s"
-msgstr "Fout bij schrijven van %s: %s"
+msgstr "%s 기록 오류: %s"
 
 #: src/files.c:1861
 msgid "Writing..."
-msgstr "Schrijven..."
+msgstr ""
 
 #: src/files.c:1994
 #, c-format
 msgid "Wrote %zu line"
 msgid_plural "Wrote %zu lines"
-msgstr[0] "%zu regel geschreven"
-msgstr[1] "%zu regels geschreven"
+msgstr[0] "%zu 행 기록함"
 
 #: src/files.c:2075
 msgid " [DOS Format]"
-msgstr " [DOS-indeling]"
+msgstr " [도스 형식]"
 
 #: src/files.c:2076
 msgid " [Mac Format]"
-msgstr " [Mac-indeling]"
+msgstr " [맥 형식]"
 
 #: src/files.c:2077
 msgid " [Backup]"
-msgstr " [Kopie maken]"
+msgstr "[백업]"
 
 #. TRANSLATORS: The next six strings are prompts.
 #: src/files.c:2084
 msgid "Prepend Selection to File"
-msgstr "Selectie toevoegen vooraan bestand"
+msgstr "선택 영역 파일 앞부분에 덧붙이기"
 
 #: src/files.c:2085
 msgid "Append Selection to File"
-msgstr "Selectie toevoegen achteraan bestand"
+msgstr "선택 영역 파일 뒷부분에 덧붙이기"
 
 #: src/files.c:2086
 msgid "Write Selection to File"
-msgstr "Selectie opslaan in bestand"
+msgstr "선택 영역 파일에 기록"
 
 #: src/files.c:2088
 msgid "File Name to Prepend to"
-msgstr "Vooraan toevoegen aan bestand"
+msgstr "앞에 덧붙일 파일 이름"
 
 #: src/files.c:2089
 msgid "File Name to Append to"
-msgstr "Achteraan toevoegen aan bestand"
+msgstr "뒤에 덧붙일 파일 이름"
 
 #: src/files.c:2092
 msgid "File Name to Write"
-msgstr "Opslaan in bestand"
+msgstr "기록할 파일 이름"
 
 #. TRANSLATORS: Concisely say the screen is too small.
 #: src/files.c:2175
 msgid "Too tiny"
-msgstr "Te klein"
+msgstr "너무 작습니다"
 
 #. TRANSLATORS: Restricted mode forbids overwriting.
 #: src/files.c:2205
 msgid "File exists -- cannot overwrite"
-msgstr "Bestand bestaat al -- mag deze niet overschrijven"
+msgstr "파일이 이미 있습니다 -- 덮어쓰기 불가"
 
 #: src/files.c:2215
 msgid "Save file under DIFFERENT NAME? "
-msgstr "Bestand opslaan onder een ANDERE NAAM? "
+msgstr "*다른 이름*으로 파일을 저장하시겠습니까?"
 
 #: src/files.c:2223
 #, c-format
 msgid "File \"%s\" exists; OVERWRITE? "
-msgstr "Bestand '%s' bestaat al; OVERSCHRIJVEN? "
+msgstr "\"%s\" 파일이 이미 있습니다. *덮어쓰*시겠습니까?"
 
 #: src/files.c:2249
 msgid "File on disk has changed"
-msgstr "Bestand op schijf is gewijzigd"
+msgstr "디스크의 파일 내용이 바뀌었습니다"
 
 #: src/files.c:2251
 msgid "File was modified since you opened it; continue saving? "
-msgstr "Bestand is gewijzigd na opening; doorgaan met opslaan? "
+msgstr "이 파일을 열고난 후 파일을 수정했습니다. 계속 저장하시겠습니까? "
 
 #: src/files.c:2657
 msgid "(more)"
-msgstr "(meer)"
+msgstr "(더 보기)"
 
 #. TRANSLATORS: Try to keep the next two strings at most 10 characters.
 #: src/global.c:501
 msgid "Exit"
-msgstr "Afsluiten"
+msgstr "나가기"
 
 #: src/global.c:502
 msgid "Close"
-msgstr "Sluiten"
+msgstr "닫기"
 
 #. TRANSLATORS: The next long series of strings are shortcut descriptions;
 #. * they are best kept shorter than 56 characters, but may be longer.
 #: src/global.c:510
 msgid "Cancel the current function"
-msgstr "huidige functie annuleren"
+msgstr "현재 기능을 취소합니다"
 
 #: src/global.c:511
 msgid "Display this help text"
-msgstr "dit hulpscherm tonen"
+msgstr "이 도움말 텍스트를 표시합니다"
 
 #: src/global.c:513
 msgid "Close the current buffer / Exit from nano"
-msgstr "huidige buffer sluiten / nano afsluiten"
+msgstr "현재 버퍼를 닫고 나노를 빠져나갑니다"
 
 #: src/global.c:515
 msgid "Write the current buffer (or the marked region) to disk"
-msgstr "huidige buffer (of gemarkeerde regio) op schijf opslaan"
+msgstr "현재 버퍼(또는 표시 영역)를 디스크에 기록합니다"
 
 #: src/global.c:517
 msgid "Insert another file into current buffer (or into new buffer)"
-msgstr "een bestand in huidig buffer (of in nieuw buffer) invoegen"
+msgstr "다른 파일을 현재 버퍼(또는 새 버퍼)에 삽입합니다"
 
 #: src/global.c:519
 msgid "Search forward for a string or a regular expression"
-msgstr "voorwaarts zoeken naar tekst of reguliere expressie"
+msgstr "지정 문자열 또는 정규 표현식에 대해 다음 방향으로 검색합니다"
 
 #: src/global.c:521
 msgid "Search backward for a string or a regular expression"
-msgstr "achterwaarts zoeken naar tekst of reguliere expressie"
+msgstr "지정 문자열 또는 정규 표현식에 대해 이전 방향으로 검색합니다"
 
 #: src/global.c:523
 msgid "Search forward for a string"
-msgstr "deel van naam voorwaarts zoeken"
+msgstr "문자열에 대해 다음 방향으로 검색합니다"
 
 #: src/global.c:524
 msgid "Search backward for a string"
-msgstr "deel van naam achterwaarts zoeken"
+msgstr "문자열에 대한 이전 방향으로 검색합니다"
 
 #: src/global.c:525
 msgid "Refresh the file list"
-msgstr "de bestandenlijst verversen"
+msgstr "파일 목록을 새로 고칩니다"
 
 #: src/global.c:527
 msgid "Go to lefthand column"
-msgstr "naar de linkerkolom gaan"
+msgstr "좌측열로 이동합니다"
 
 #: src/global.c:528
 msgid "Go to righthand column"
-msgstr "naar de rechterkolom gaan"
+msgstr "우측열로 이동합니다"
 
 #: src/global.c:529
 msgid "Go to first row in this column"
-msgstr "naar bovenste rij in deze kolom gaan"
+msgstr "이 컬럼의 처음 행으로 이동합니다"
 
 #: src/global.c:530
 msgid "Go to last row in this column"
-msgstr "naar onderste rij in deze kolom gaan"
+msgstr "이 컬럼의 마지막 행으로 이동합니다"
 
 #: src/global.c:533
 msgid "Go one screenful up"
-msgstr "een schermvol terugscrollen"
+msgstr "화면 단위 위로 한번 이동합니다"
 
 #: src/global.c:534
 msgid "Go one screenful down"
-msgstr "een schermvol verderscrollen"
+msgstr "화면 단위 아래로 한번 이동합니다"
 
-# Het woord "huidige" is weggelaten, anders wordt de tekst te lang.
-# Ook zonder dat woord is het door de context duidelijk genoeg dat
-# het alleen om de huidige regel kan gaan.
 #: src/global.c:536
 msgid "Cut current line (or marked region) and store it in cutbuffer"
-msgstr "regel (of gemarkeerde regio) knippen en bewaren in knipbuffer"
+msgstr "현재 행(또는 표시 구역)을 잘라내고 잘라내기 버퍼에 저장합니다"
 
 #: src/global.c:538
 msgid "Paste the contents of cutbuffer at current cursor position"
-msgstr "de inhoud van de knipbuffer plakken op de cursorpositie"
+msgstr "잘라내기 버퍼의 내용을 현재 커서 위치에 붙여넣습니다"
 
 #: src/global.c:539
 msgid "Display the position of the cursor"
-msgstr "huidige cursorpositie tonen"
+msgstr "커서 위치를 표시합니다"
 
 #: src/global.c:541
 msgid "Invoke the spell checker, if available"
-msgstr "spellingscontrole aanroepen (indien beschikbaar)"
+msgstr "가능하면 문법 검사기를 실행합니다"
 
 #: src/global.c:543
 msgid "Replace a string or a regular expression"
-msgstr "tekst vervangen (of een reguliere expressie)"
+msgstr "문자 또는 정규식 조건에 따라 바꿉니다"
 
 #: src/global.c:544
 msgid "Go to line and column number"
-msgstr "naar op te geven regelnummer (en kolomnummer) gaan"
+msgstr "지정 행 열 번호로 이동합니다"
 
 #: src/global.c:546
 msgid "Mark text starting from the cursor position"
-msgstr "tekst markeren vanaf huidige cursorpositie"
+msgstr "커서 위치를 텍스트 시작 위치로 표시합니다"
 
 #: src/global.c:548
 msgid "Copy current line (or marked region) and store it in cutbuffer"
-msgstr "huidige regel (of gemarkeerde regio) kopiëren naar knipbuffer"
+msgstr "현재 줄(또는 표시 구역) 복사 후 잘라내기 버퍼에 저장합니다"
 
 #: src/global.c:549
 msgid "Throw away the current line (or marked region)"
-msgstr "huidige regel (of gemarkeerde regio) weggooien"
+msgstr "현재 줄(또는 표시 구역)을 버립니다"
 
 #: src/global.c:550
 msgid "Indent the current line (or marked lines)"
-msgstr "huidige regel (of gemarkeerde regels) laten inspringen"
+msgstr "현재 행(또는 표시행)을 들여쓰기 방향으로 움직입니다"
 
 #: src/global.c:551
 msgid "Unindent the current line (or marked lines)"
-msgstr "huidige regel (of gemarkeerde regels) laten terugspringen"
+msgstr "현재 행(또는 표시행)을 내어쓰기 방향으로 움직입니다"
 
 #: src/global.c:552
 msgid "Undo the last operation"
-msgstr "de laatste bewerking ongedaan maken"
+msgstr "마지막 동작을 취소합니다"
 
 #: src/global.c:553
 msgid "Redo the last undone operation"
-msgstr "de laatst ongedaangemaakte bewerking herdoen"
+msgstr "마지막 취소 동작을 다시 실행합니다"
 
 #: src/global.c:555
 msgid "Go back one character"
-msgstr "één teken achteruit"
+msgstr "한 문자 이전으로 이동합니다"
 
 #: src/global.c:556
 msgid "Go forward one character"
-msgstr "één teken vooruit"
+msgstr "한 문자 앞으로 이동합니다"
 
 #: src/global.c:557
 msgid "Go back one word"
-msgstr "één woord achteruit"
+msgstr "한 단어 이전으로 이동합니다"
 
 #: src/global.c:558
 msgid "Go forward one word"
-msgstr "één woord vooruit"
+msgstr "한 단어 앞으로 이동합니다"
 
 #: src/global.c:559
 msgid "Go to previous line"
-msgstr "naar de voorgaande regel"
+msgstr "이전 줄로 이동합니다"
 
 #: src/global.c:560
 msgid "Go to next line"
-msgstr "naar de volgende regel"
+msgstr "다음 줄로 이동합니다"
 
 #: src/global.c:561
 msgid "Go to beginning of current line"
-msgstr "naar het begin van de huidige regel"
+msgstr "현재 줄 처음으로 이동합니다"
 
 #: src/global.c:562
 msgid "Go to end of current line"
-msgstr "naar het eind van de huidige regel"
+msgstr "현재 줄 끝으로 이동합니다"
 
 #: src/global.c:563
 msgid "Go to previous block of text"
-msgstr "naar voorgaand tekstblok"
+msgstr "이전 텍스트 블록으로 이동합니다"
 
 #: src/global.c:564
 msgid "Go to next block of text"
-msgstr "naar volgend tekstblok"
+msgstr "다음 텍스트 블록으로 이동합니다"
 
 #: src/global.c:567
 msgid "Go to beginning of paragraph; then of previous paragraph"
-msgstr "naar het begin van huidige alinea; daarna naar vorige"
+msgstr "문단 처음으로 이동 후 이전 문단으로 이동합니다"
 
 #: src/global.c:569
 msgid "Go just beyond end of paragraph; then of next paragraph"
-msgstr "naar het eind van huidige alinea; daarna naar volgende"
+msgstr "문단 끝 다음으로 이동 후 다음 문단으로 이동합니다"
 
 #: src/global.c:571
 msgid "Go to the first line of the file"
-msgstr "naar de eerste regel (top) van het bestand"
+msgstr "파일의 처음 줄로 이동합니다"
 
 #: src/global.c:572
 msgid "Go to the last line of the file"
-msgstr "naar de laatste regel (eind) van het bestand"
+msgstr "파일의 마지막 줄로 이동합니다"
 
 #: src/global.c:574
 msgid "Go to the matching bracket"
-msgstr "naar bijbehorend haakje gaan"
+msgstr "일치하는 각괄호 위치로 이동합니다"
 
 #: src/global.c:578
 msgid "Scroll up one line without moving the cursor textually"
-msgstr "één regel terugscrollen (cursor niet verplaatsen in tekst)"
+msgstr "커서를 실제로 이동하지 않고 스크롤 위로 이동합니다"
 
 #: src/global.c:580
 msgid "Scroll down one line without moving the cursor textually"
-msgstr "één regel vooruitscrollen (cursor niet verplaatsen in tekst)"
+msgstr "커서를 실제로 이동하지 않고 스크롤 아래로 이동합니다"
 
 #: src/global.c:583
 msgid "Switch to the previous file buffer"
-msgstr "overschakelen naar voorgaande bestandsbuffer"
+msgstr "이전 파일 버퍼로 전환합니다"
 
 #: src/global.c:584
 msgid "Switch to the next file buffer"
-msgstr "overschakelen naar volgende bestandsbuffer"
+msgstr "다음 파일 버퍼로 전환합니다"
 
 #: src/global.c:586
 msgid "Insert the next keystroke verbatim"
-msgstr "eerstvolgende toetsaanslag verbatim invoegen"
+msgstr "다음 키 입력 그대로 삽입합니다"
 
 #: src/global.c:587
 msgid "Insert a tab at the cursor position"
-msgstr "een tab invoegen op de cursorpositie"
+msgstr "현재 커서 위치에 탭 간격을 넣습니다"
 
 #: src/global.c:588
 msgid "Insert a newline at the cursor position"
-msgstr "een regeleinde invoegen op de cursorpositie"
+msgstr "현재 커서 위치에서 줄을 바꿉니다"
 
 #: src/global.c:589
 msgid "Delete the character under the cursor"
-msgstr "het teken onder de cursor verwijderen"
+msgstr "현재 커서 위치의 문자를 삭제합니다"
 
 #: src/global.c:591
 msgid "Delete the character to the left of the cursor"
-msgstr "het teken links van de cursor verwijderen"
+msgstr "현재 커서 위치 좌측의 문자를 삭제합니다"
 
 #: src/global.c:594
 msgid "Delete backward from cursor to word start"
-msgstr "achterwaarts verwijderen tot begin van woord"
+msgstr "현재 커서 위치에서 앞 단어 시작 부분까지 삭제합니다"
 
 #: src/global.c:596
 msgid "Delete forward from cursor to next word start"
-msgstr "voorwaarts verwijderen tot begin van volgend woord"
+msgstr "현재 커서 위치에서 다음 단어 시작 부분까지 삭제합니다"
 
 #: src/global.c:598
 msgid "Cut from the cursor position to the end of the file"
-msgstr "de hele rest van het bestand knippen (vanaf de cursor)"
+msgstr "현재 커서 위치에서 파일 끝까지 내용을 잘라냅니다"
 
 #: src/global.c:601
 msgid "Justify the current paragraph"
-msgstr "huidige alinea uitvullen"
+msgstr "현재 문단을 정렬합니다"
 
 #: src/global.c:602
 msgid "Justify the entire file"
-msgstr "het gehele bestand uitvullen"
+msgstr "파일 전체를 정렬합니다"
 
 #: src/global.c:606
 msgid "Count the number of words, lines, and characters"
-msgstr "aantal woorden, regels en tekens in het bestand tellen"
+msgstr "단어, 행, 문자 갯수를 셉니다"
 
 #: src/global.c:609
 msgid "Refresh (redraw) the current screen"
-msgstr "het scherm verversen (opnieuw tekenen)"
+msgstr "현재 화면을 새로 고칩니다(새로 그림)"
 
 #: src/global.c:611
 msgid "Suspend the editor (if suspension is enabled)"
-msgstr "de editor laten pauzeren (indien pauzering is ingeschakeld)"
+msgstr "편집기 동작을 잠시 멈춥니다(잠시 멈춤 활성화했을 때)"
 
 #: src/global.c:613
 msgid "Try and complete the current word"
-msgstr "proberen het huidige woord te vervolledigen"
+msgstr "현재 단어 완성을 시도합니다"
 
 #: src/global.c:617
 msgid "Comment/uncomment the current line (or marked lines)"
-msgstr "commentaartekens invoegen/verwijderen (op gemarkeerde regels)"
+msgstr "현재 행(또는 표시행)을 주석처리/주석해제 합니다"
 
 #: src/global.c:619
 msgid "Save file without prompting"
-msgstr "bestand opslaan zonder te vragen"
+msgstr "묻지 않고 파일을 저장합니다"
 
 #: src/global.c:620
 msgid "Search next occurrence backward"
-msgstr "volgende voorkomen achterwaarts zoeken"
+msgstr "이전 대상을 검색합니다"
 
 #: src/global.c:621
 msgid "Search next occurrence forward"
-msgstr "volgende voorkomen voorwaarts zoeken"
+msgstr "다음 대상을 검색합니다"
 
 #: src/global.c:623
 msgid "Start/stop recording a macro"
-msgstr "opname van macro starten/stoppen"
+msgstr "매크로 기록을 시작/정지합니다"
 
 #: src/global.c:624
 msgid "Run the last recorded macro"
-msgstr "de laatst opgenomen macro afspelen"
+msgstr "마지막으로 기록한 매크로를 실행합니다"
 
 #: src/global.c:627
 msgid "Toggle the case sensitivity of the search"
-msgstr "hoofdlettergevoeligheid aan-/uitzetten"
+msgstr "검색시 대소문자 구별 여부 설정을 전환합니다"
 
 #: src/global.c:629
 msgid "Reverse the direction of the search"
-msgstr "de zoekrichting omdraaien"
+msgstr "검색 방향을 뒤로 돌립니다"
 
 #: src/global.c:631
 msgid "Toggle the use of regular expressions"
-msgstr "gebruik van reguliere expressies aan-/uitzetten"
+msgstr "정규표현식 사용 여부 설정을 전환합니다"
 
 #: src/global.c:634
 msgid "Recall the previous search/replace string"
-msgstr "eerdere zoek-/vervangtekst oproepen"
+msgstr "문자열 이전 검색/바꾸기를 다시 호출합니다"
 
 #: src/global.c:636
 msgid "Recall the next search/replace string"
-msgstr "latere zoek-/vervangtekst oproepen"
+msgstr "문자열 다음 검색/바꾸기를 다시 호출합니다"
 
 #: src/global.c:639
 msgid "Toggle the use of DOS format"
-msgstr "DOS-indeling aan-/uitzetten"
+msgstr "도스 형식 사용 여부 설정을 전환합니다"
 
 #: src/global.c:640
 msgid "Toggle the use of Mac format"
-msgstr "Mac-indeling aan-/uitzetten"
+msgstr "맥 형식 사용 여부 설정을 전환합니다"
 
 #: src/global.c:641
 msgid "Toggle appending"
-msgstr "achteraantoevoegen aan-/uitzetten"
+msgstr "뒷 부분 붙이기 여부 설정을 전환합니다"
 
 #: src/global.c:642
 msgid "Toggle prepending"
-msgstr "vooraantoevoegen aan-/uitzetten"
+msgstr "앞 부분 붙이기 여부 설정을 전환합니다"
 
 #: src/global.c:643
 msgid "Toggle backing up of the original file"
-msgstr "maken van reservekopieën aan-/uitzetten"
+msgstr "원본 파일 백업 여부 설정을 전환합니다"
 
 #: src/global.c:644
 msgid "Execute external command"
-msgstr "externe opdracht uitvoeren"
+msgstr "외부 명령을 실행합니다"
 
 #: src/global.c:646
 msgid "Pipe the current buffer (or marked region) to the command"
-msgstr "buffer (of gemarkeerde regio) naar het commando sluizen"
+msgstr "현재 버퍼(또는 표시 영역)을 명령으로 보냅니다"
 
 #: src/global.c:647
 msgid "Do not convert from DOS/Mac format"
-msgstr "omzetten uit DOS/Mac-opmaak aan-/uitzetten"
+msgstr "도스/맥 형식에서 변환하지 않습니다"
 
 #: src/global.c:650
 msgid "Toggle the use of a new buffer"
-msgstr "gebruik van een nieuwe buffer aan-/uitzetten"
+msgstr "새 버퍼 사용 여부 설정을 전환합니다"
 
 #: src/global.c:652
 msgid "Close buffer without saving it"
-msgstr "buffer sluiten zonder op te slaan"
+msgstr "저장하지 않고 버퍼를 닫습니다"
 
 #: src/global.c:654
 msgid "Go to file browser"
-msgstr "bestandenlijst oproepen"
+msgstr "파일 탐색기로 이동합니다"
 
 #: src/global.c:655
 msgid "Exit from the file browser"
-msgstr "bestandenlijst verlaten"
+msgstr "파일 탐색기에서 나갑니다"
 
 #: src/global.c:656
 msgid "Go to the first file in the list"
-msgstr "naar het eerste bestand in de lijst gaan"
+msgstr "목록의 첫번째 파일로 이동합니다"
 
 #: src/global.c:657
 msgid "Go to the last file in the list"
-msgstr "naar het laatste bestand in de lijst gaan"
+msgstr "목록의 마지막 파일로 이동합니다"
 
 #: src/global.c:658
 msgid "Go to the previous file in the list"
-msgstr "naar het vorige bestand in de lijst gaan"
+msgstr "목록의 이전 파일로 이동합니다"
 
 #: src/global.c:659
 msgid "Go to the next file in the list"
-msgstr "naar het volgende bestand in de lijst gaan"
+msgstr "목록의 다음 파일로 이동합니다"
 
 #: src/global.c:660
 msgid "Go to directory"
-msgstr "naar een op te geven map gaan"
+msgstr "디렉터리로 이동합니다"
 
 #: src/global.c:663
 msgid "Invoke the linter, if available"
-msgstr "een linter aanroepen (syntaxcontrole, indien beschikbaar)"
+msgstr "가능하다면 분석 도구 실행"
 
 #: src/global.c:664
 msgid "Go to previous linter msg"
-msgstr "naar de voorgaande lintermelding springen"
+msgstr "이전 분석 도구 메시지로 이동"
 
 #: src/global.c:665
 msgid "Go to next linter msg"
-msgstr "naar de volgende lintermelding springen"
+msgstr "다음 분석 도구 메시지로 이동"
 
 #. TRANSLATORS: Try to keep the next ninety strings or so at most 10
 #. * characters.  Some strings may be longer -- run nano and see.
 #: src/global.c:680
 msgid "Get Help"
-msgstr "Hulp"
+msgstr "도움말 보기"
 
 #: src/global.c:683 src/prompt.c:695
 msgid "Cancel"
-msgstr "Annuleren"
+msgstr "취소"
 
 #: src/global.c:696
 msgid "Write Out"
-msgstr "Opslaan"
+msgstr "기록 내보내기"
 
 #: src/global.c:704 src/global.c:1025
 msgid "Read File"
-msgstr "Inlezen"
+msgstr "파일 읽기"
 
 #: src/global.c:711 src/global.c:744
 msgid "Justify"
-msgstr "Uitvullen"
+msgstr "정렬"
 
 #: src/global.c:717 src/global.c:732 src/global.c:834 src/global.c:945
 msgid "Refresh"
-msgstr "Verversen"
+msgstr "새로 고침"
 
 #: src/global.c:722 src/global.c:810
 msgid "Where Is"
-msgstr "Zoeken"
+msgstr "현재 위치"
 
 #: src/global.c:725 src/global.c:783
 msgid "Replace"
-msgstr "Vervangen"
+msgstr "바꾸기"
 
 #: src/global.c:729
 msgid "Go To Dir"
-msgstr "Naar map"
+msgstr "디렉터리로 이동"
 
 #: src/global.c:736
 msgid "Cut Text"
-msgstr "Knippen"
+msgstr "텍스트 잘라내기"
 
 #: src/global.c:739
 msgid "Paste Text"
-msgstr "Plakken"
+msgstr "텍스트 붙여넣기"
 
 #: src/global.c:748
 msgid "To Spell"
-msgstr "Spelling"
+msgstr "해당 철자로"
 
 #: src/global.c:753
 msgid "Cur Pos"
-msgstr "Positie"
+msgstr "커서 위치"
 
 #: src/global.c:760 src/global.c:796 src/global.c:901
 msgid "Go To Line"
-msgstr "Naar regel"
+msgstr "지정 행으로 이동"
 
 #: src/global.c:765
 msgid "Undo"
-msgstr "Ongedaan maken"
+msgstr "실행 취소"
 
 #: src/global.c:767
 msgid "Redo"
-msgstr "Herdoen"
+msgstr "다시 실행"
 
 #: src/global.c:770
 msgid "Mark Text"
-msgstr "Markeren"
+msgstr "텍스트 표시"
 
 #: src/global.c:772
 msgid "Copy Text"
-msgstr "Kopiëren"
+msgstr "텍스트 복사"
 
 #: src/global.c:776
 msgid "Case Sens"
-msgstr "Hfdlgevoelig"
+msgstr "대소문구별"
 
 #: src/global.c:778
 msgid "Regexp"
-msgstr "Reg.exp."
+msgstr "정규식"
 
 #: src/global.c:780
 msgid "Backwards"
-msgstr "Achterwaarts"
+msgstr "후위"
 
 #: src/global.c:786
 msgid "No Replace"
-msgstr "Zoeken"
+msgstr "바꾼 항목 없음"
 
 #: src/global.c:790
 msgid "Older"
-msgstr "Eerdere"
+msgstr "이전 기록"
 
 #: src/global.c:792
 msgid "Newer"
-msgstr "Latere"
+msgstr "최근 기록"
 
 #: src/global.c:800 src/global.c:932
 msgid "FullJstify"
-msgstr "VolUitvullen"
+msgstr "전체 정렬"
 
 #: src/global.c:805
 msgid "To Bracket"
-msgstr "Naar haakje"
+msgstr "각 괄호로 이동"
 
 #. TRANSLATORS: This starts a backward search.
 #: src/global.c:812 src/global.c:818 src/global.c:832
 msgid "Where Was"
-msgstr "Terugzoeken"
+msgstr "이전 위치"
 
 #. TRANSLATORS: This refers to searching the preceding occurrence.
 #: src/global.c:822
 msgid "Previous"
-msgstr "Voorgaande"
+msgstr "이전"
 
 #: src/global.c:825 src/global.c:830
 msgid "Next"
-msgstr "Volgende"
+msgstr "다음"
 
 #. TRANSLATORS: This means move the cursor one character back.
 #: src/global.c:839 src/global.c:844
 msgid "Back"
-msgstr "Terug"
+msgstr "한 단어 뒤로"
 
 #: src/global.c:841 src/global.c:846
 msgid "Forward"
-msgstr "Vooruit"
+msgstr "앞으로"
 
 #: src/global.c:850
 msgid "Prev Word"
-msgstr "Woord terug"
+msgstr "이전 단어"
 
 #: src/global.c:852
 msgid "Next Word"
-msgstr "Woord verder"
+msgstr "다음 단어"
 
 #: src/global.c:855
 msgid "Home"
-msgstr "Begin"
+msgstr "Home"
 
 #: src/global.c:857
 msgid "End"
-msgstr "Eind"
+msgstr "End"
 
 #: src/global.c:860
 msgid "Prev Line"
-msgstr "Regel terug"
+msgstr "이전 행"
 
 #: src/global.c:862
 msgid "Next Line"
-msgstr "Regel verder"
+msgstr "다음 행"
 
 #: src/global.c:865
 msgid "Scroll Up"
-msgstr "Omhoog scrollen"
+msgstr "스크롤 위로 이동"
 
 #: src/global.c:867
 msgid "Scroll Down"
-msgstr "Omlaag scrollen"
+msgstr "스크롤 아래로 이동"
 
 #: src/global.c:871
 msgid "Prev Block"
-msgstr "Blok terug"
+msgstr "이전 블록"
 
 #: src/global.c:873
 msgid "Next Block"
-msgstr "Blok verder"
+msgstr "다음 블록"
 
 #: src/global.c:876
 msgid "Beg of Par"
-msgstr "Begin van alinea"
+msgstr "단락 시작"
 
 #: src/global.c:878
 msgid "End of Par"
-msgstr "Eind van alinea"
+msgstr "단락 끝"
 
 #: src/global.c:882 src/global.c:1035
 msgid "Prev Page"
-msgstr "Blad terug"
+msgstr "이전 페이지"
 
 #: src/global.c:884 src/global.c:1037
 msgid "Next Page"
-msgstr "Blad verder"
+msgstr "다음 페이지"
 
 #: src/global.c:887
 msgid "First Line"
-msgstr "Naar top"
+msgstr "처음 행"
 
 #: src/global.c:889
 msgid "Last Line"
-msgstr "Naar eind"
+msgstr "마지막 행"
 
 #: src/global.c:893
 msgid "Prev File"
-msgstr "Vorig bestand"
+msgstr "이전 파일"
 
 #: src/global.c:895
 msgid "Next File"
-msgstr "Volgend bestand"
+msgstr "다음 파일"
 
+# NOTE: DO NOT TRANSLATE - Key Name
 #: src/global.c:905
 msgid "Tab"
 msgstr "Tab"
 
+# NOTE: DO NOT TRANSLATE - Key Name
 #: src/global.c:907
 msgid "Enter"
 msgstr "Enter"
 
+# NOTE: DO NOT TRANSLATE - Key Name
 #: src/global.c:910
 msgid "Backspace"
 msgstr "Backspace"
 
+# NOTE: DO NOT TRANSLATE - Key Name
 #: src/global.c:912
 msgid "Delete"
 msgstr "Delete"
@@ -1054,194 +1042,194 @@ msgstr "Delete"
 #. TRANSLATORS: The next two strings refer to deleting words.
 #: src/global.c:923
 msgid "Chop Left"
-msgstr "Links kappen"
+msgstr "왼쪽 자르기"
 
 #: src/global.c:925
 msgid "Chop Right"
-msgstr "Rechts kappen"
+msgstr "오른쪽 자르기"
 
 #: src/global.c:927
 msgid "CutTillEnd"
-msgstr "RestKnippen"
+msgstr "마지막까지 자르기"
 
 #: src/global.c:937
 msgid "Word Count"
-msgstr "Woordentelling"
+msgstr "단어 계수"
 
 #: src/global.c:941
 msgid "Verbatim"
-msgstr "Verbatim"
+msgstr "입력 그대로"
 
 #: src/global.c:949
 msgid "Suspend"
-msgstr "Pauzeren"
+msgstr "잠시 멈춤"
 
 #: src/global.c:953
 msgid "Indent"
-msgstr "Inspringen"
+msgstr "들여쓰기"
 
 #: src/global.c:955
 msgid "Unindent"
-msgstr "Terugspringen"
+msgstr "내어쓰기"
 
 #: src/global.c:959
 msgid "Comment Lines"
-msgstr "Commentariseren"
+msgstr "행 주석 처리"
 
 #: src/global.c:963
 msgid "Complete"
-msgstr "Completeren"
+msgstr "완료"
 
 #: src/global.c:967
 msgid "Record"
-msgstr "Opnemen"
+msgstr "기록"
 
 #: src/global.c:969
 msgid "Run Macro"
-msgstr "Afspelen"
+msgstr "매크로 실행"
 
 #: src/global.c:972
 msgid "Zap Text"
-msgstr "Weggooien"
+msgstr "텍스트 없애기"
 
 #: src/global.c:977
 msgid "To Linter"
-msgstr "Linter"
+msgstr "분석 도구로"
 
 #: src/global.c:981
 msgid "Save"
-msgstr "Opslaan"
+msgstr "저장"
 
 #: src/global.c:984
 msgid "Go To Text"
-msgstr "Zoeken"
+msgstr "지정 텍스트로 이동"
 
 #: src/global.c:988
 msgid "DOS Format"
-msgstr "DOS-indeling"
+msgstr "도스 형식"
 
 #: src/global.c:990
 msgid "Mac Format"
-msgstr "Mac-indeling"
+msgstr "맥 형식"
 
 #: src/global.c:998
 msgid "Append"
-msgstr "Achtertoevoegen"
+msgstr "뒤에 붙여넣기"
 
 #: src/global.c:1000
 msgid "Prepend"
-msgstr "Voortoevoegen"
+msgstr "앞에 붙여넣기"
 
 #: src/global.c:1003
 msgid "Backup File"
-msgstr "Reservekopie"
+msgstr "백업 파일"
 
 #: src/global.c:1014
 msgid "No Conversion"
-msgstr "Geen omzetting"
+msgstr "변환 안함"
 
 #: src/global.c:1019
 msgid "Execute Command"
-msgstr "Opdracht uitvoeren"
+msgstr "명령 실행"
 
 #: src/global.c:1022
 msgid "Pipe Text"
-msgstr "Doorsluizen"
+msgstr "텍스트 내보내기"
 
 #: src/global.c:1032
 msgid "To Files"
-msgstr "Bestandenlijst"
+msgstr "파일로"
 
 #: src/global.c:1040
 msgid "First File"
-msgstr "Naar top"
+msgstr "처음 파일"
 
 #: src/global.c:1042
 msgid "Last File"
-msgstr "Naar eind"
+msgstr "마지막 파일"
 
 #: src/global.c:1045
 msgid "Left Column"
-msgstr "Linkerkolom"
+msgstr "좌측 열"
 
 #: src/global.c:1047
 msgid "Right Column"
-msgstr "Rechterkolom"
+msgstr "우측 열"
 
 #: src/global.c:1049
 msgid "Top Row"
-msgstr "Bovenste"
+msgstr "상단 행"
 
 #: src/global.c:1051
 msgid "Bottom Row"
-msgstr "Onderste"
+msgstr "하단 행"
 
 #: src/global.c:1056
 msgid "Discard buffer"
-msgstr "Verwerpen"
+msgstr "버퍼 내용 버리기"
 
 #. TRANSLATORS: Try to keep the next two strings at most 20 characters.
 #: src/global.c:1061
 msgid "Prev Lint Msg"
-msgstr "Vorig Lintbericht"
+msgstr "이전 분석 도구 메시지"
 
 #: src/global.c:1063
 msgid "Next Lint Msg"
-msgstr "Volgend Lintbericht"
+msgstr "다음 분석 도구 메시지"
 
 #. TRANSLATORS: The next fourteen strings are toggle descriptions;
 #. * they are best kept shorter than 40 characters, but may be longer.
 #: src/global.c:1385
 msgid "Help mode"
-msgstr "Hulpregels"
+msgstr "도움말 모드"
 
 #: src/global.c:1387
 msgid "Constant cursor position display"
-msgstr "Voortdurende cursorpositieweergave"
+msgstr "커서 위치 항상 표시"
 
 #: src/global.c:1389
 msgid "Soft wrapping of overlong lines"
-msgstr "Zachte terugloop van te lange regels"
+msgstr "줄 길이를 넘어가는 줄 나누기"
 
 #: src/global.c:1391
 msgid "Whitespace display"
-msgstr "Weergave van witruimte"
+msgstr "공백 영역 표시"
 
 #: src/global.c:1393
 msgid "Color syntax highlighting"
-msgstr "Syntaxaanduiding met kleuren"
+msgstr "색 문법 강조"
 
 #: src/global.c:1395
 msgid "Smart home key"
-msgstr "Slimme Home-toets"
+msgstr "똑똑한 Home 키"
 
 #: src/global.c:1397
 msgid "Auto indent"
-msgstr "Automatisch inspringen"
+msgstr "자동 들여쓰기"
 
 #: src/global.c:1399
 msgid "Cut to end"
-msgstr "Knippen vanaf cursor tot regeleinde"
+msgstr "마지막까지 자르기"
 
 #: src/global.c:1401
 msgid "Hard wrapping of overlong lines"
-msgstr "Afbreking van lange regels"
+msgstr "줄 길이를 넘어가는 줄 강제 개행"
 
 #: src/global.c:1403
 msgid "Conversion of typed tabs to spaces"
-msgstr "Omzetting van getypte tabs naar spaties"
+msgstr "탭 입력을 단일 공백으로 변환"
 
 #: src/global.c:1405
 msgid "Mouse support"
-msgstr "Muisondersteuning"
+msgstr "마우스 지원"
 
 #: src/global.c:1407
 msgid "Suspension"
-msgstr "Proces-pauzering"
+msgstr "잠시 멈춤"
 
 #: src/global.c:1409
 msgid "Line numbering"
-msgstr "Regelnummers"
+msgstr "행 번호 표시"
 
 #: src/help.c:283
 msgid ""
@@ -1255,15 +1243,16 @@ msgid ""
 "prompt.  Hitting Enter without entering any text will perform the previous "
 "search.  "
 msgstr ""
-"===  Zoeken  ===\n"
+"검색 명령 도움말 텍스트\n"
 "\n"
-" Voer de woorden of tekens in waar u naar wilt zoeken, en druk op Enter.  "
-"Als er een overeenkomst is voor de ingevoerde tekst, springt de cursor naar "
-"de plaats van de eerstvolgende overeenkomst.\n"
+"검색할 단어나 문자를 입력하고 Enter를 누르십시오.  입력한 내용과 일치하는 부"
+"분을 찾으면, 검색 문자열과 일치하는 부분에 가까운 위치로 화면이 새로 바뀝니"
+"다.\n"
 "\n"
-" Een eventuele vorige zoektekst wordt tussen rechte haken na de zoekprompt "
-"getoond: op Enter drukken zonder tekst in te voeren herhaalt deze vorige "
-"zoekopdracht.  "
+"\n"
+"이전 검색 문자열은 검색 프롬프트 다음에 각 괄호에 둘러싸여 나타납니다.  어떤 "
+"텍스트도 입력하지 않고 계속 Enter 키를 치면 앞선 검색 동작을 계속 진행합니"
+"다.  "
 
 #: src/help.c:292
 msgid ""
@@ -1273,10 +1262,10 @@ msgid ""
 " The following function keys are available in Search mode:\n"
 "\n"
 msgstr ""
-"Als u via markering tekst hebt geselecteerd en dan een zoek- en vervangactie "
-"doet, worden alleen de overeenkomsten in de geselecteerde tekst vervangen.\n"
+"텍스트를 선택 표시하고 검색 대상을 검색하면, 선택한 텍스트에서 일치하는 부분"
+"만 바꿉니다.\n"
 "\n"
-" De volgende toetsen zijn beschikbaar in 'Zoek'-modus:\n"
+"다음 기능 키를 검색 모드에서 쓸 수 있습니다:\n"
 "\n"
 
 #: src/help.c:298
@@ -1290,13 +1279,12 @@ msgid ""
 " The following function keys are available in Go To Line mode:\n"
 "\n"
 msgstr ""
-"===  Naar regel  ===\n"
+"행 이동 도움말 텍스트\n"
 "\n"
-" Voer het regelnummer in waar u naar toe wilt gaan, en druk op Enter.  Als "
-"er minder regels tekst zijn dan het ingevoerde getal, wordt u naar het einde "
-"van de tekst gebracht.\n"
+"이동하려는 행 번호를 입력하고 Enter 키를 누르십시오. 입력한 번호보다 행 수가 "
+"적으면 파일 마지막 줄로 이동합니다.\n"
 "\n"
-" De volgende toetsen zijn beschikbaar in 'Naar regel'-modus:\n"
+"다음 기능 키를 행 이동 모드에서 쓸 수 있습니다:\n"
 "\n"
 
 #: src/help.c:307
@@ -1311,16 +1299,14 @@ msgid ""
 "Meta-F toggle, or a nanorc file, inserting a file will cause it to be loaded "
 "into a separate buffer (use Meta-< and > to switch between file buffers).  "
 msgstr ""
-"===  Bestand invoegen  ===\n"
+"파일 삽입 도움말 텍스트\n"
 "\n"
-" Voer de naam in van een bestand dat ingevoegd moet worden op de plek van de "
-"cursor in het huidige bestand.\n"
+"현재 파일 버퍼의 현재 커서 위치에 넣을 파일 이름을 입력하십시오.\n"
 "\n"
-" Als nano gecompileerd is met ondersteuning voor meerdere bestandsbuffers en "
-"u deze ingeschakeld hebt (met de optie -F of --multibuffer, of met de Meta-F "
-"toets of via een nanorc-bestand), dan wordt het in te voegen bestand in een "
-"aparte buffer geladen.  Gebruik dan Meta-< en > om tussen bestandsbuffers te "
-"schakelen.  "
+"나노에 다중 파일 버퍼 지원을 컴파일했고, 명령행에서 -F 또는 --multibuffer 명"
+"령행 플래그를 넣었다면 다중 파일 버퍼 기능을 쓸 수 있습니다. Meta-F 토글, "
+"nanorc 파일에서 파일 내용을 넣으면 개별 버퍼에 불러올 수 있습니다(Meta-< 와 "
+"Meta-> 로 파일 버퍼를 이동할 수 있습니다).  "
 
 #: src/help.c:316
 msgid ""
@@ -1330,10 +1316,10 @@ msgid ""
 " The following function keys are available in Insert File mode:\n"
 "\n"
 msgstr ""
-"Als u een lege buffer nodig hebt, voer dan geen bestandsnaam in, of typ een "
-"niet-bestaande bestandsnaam, en druk op Enter.\n"
+"다른 빈 버퍼가 필요하다면, 파일 이름을 입력하지 않거나 없는 파일 이름을 프롬"
+"프트에 입력 후 Enter 키를 누르십시오.\n"
 "\n"
-" De volgende toetsen zijn beschikbaar in 'Bestand invoegen'-modus:\n"
+"다음 기능 키를 파일 삽입 모드에서 쓸 수 있습니다:\n"
 "\n"
 
 #: src/help.c:322
@@ -1351,17 +1337,16 @@ msgid ""
 " The following function keys are available in Write File mode:\n"
 "\n"
 msgstr ""
-"===  Bestand opslaan  ===\n"
+"파일 기록 도움말 텍스트\n"
 "\n"
-" Voer de naam in waaronder u de huidige bestandsbuffer op wilt slaan, en "
-"druk op Enter om het weg te schrijven.\n"
+"현재 파일 내용을 저장할 다른 파일의 이름을 입력하고 Enter 키를 눌러 파일을 저"
+"장하십시오.\n"
 "\n"
-" Als u tekst hebt gemarkeerd, dan wordt aangegeven dat alleen het "
-"geselecteerde deel opgeslagen wordt.  Om de kans te verkleinen dat u het "
-"huidige bestand op schijf overschrijft met slechts een deel ervan, is in "
-"deze modus de huidige bestandsnaam niet de standaardnaam.\n"
+"텍스트를 선택 표시했을 경우 선택한 부분만 다른 파일에 저장할 지 불어봅니다.  "
+"현재 파일에 해당 부분을 덮어쓰는 일을 막으려, 이 모드에서는 현재 파일 이름을 "
+"기본값으로 하지 않습니다.\n"
 "\n"
-" De volgende toetsen zijn beschikbaar in 'Bestand opslaan'-modus:\n"
+"다음 기능 키를 파일 기록 모드에서 쓸 수 있습니다:\n"
 "\n"
 
 #: src/help.c:336
@@ -1377,16 +1362,14 @@ msgid ""
 " The following function keys are available in the file browser:\n"
 "\n"
 msgstr ""
-"===  Bestandenlijst  ===\n"
+"파일 탐색기 도움말 텍스트\n"
 "\n"
-" De bestandenlijst kan worden gebruikt om op een visuele manier door de "
-"beschikbare mappen te bladeren en een bestand te selecteren.  U kunt de "
-"pijltjestoetsen of PageUp/PageDown gebruiken om door de bestanden te lopen, "
-"en S of Enter om het aangewezen bestand te kiezen of de aangewezen map "
-"binnen te gaan.  Kies de map \"..\" bovenaan de bestandenlijst om een niveau "
-"omhoog te gaan.\n"
+"파일 브라우저는 읽고 쓸 파일을 선택할 디렉터리 구조를 띄워 탐색하는데 씁니"
+"다.  파일을 찾아보려면 화살표 키 또는 Page Up/Page Down 키를 쓰고, 파일을 선"
+"택하려면 S 또는 Enter키를, 디렉터리를 선택하려면 Enter 키를 씁니다.  한 단계 "
+"위로 이동하려면 목록 상단의 \"..\" 디렉터리를 선택합니다.\n"
 "\n"
-" De volgende toetsen zijn beschikbaar in 'Bestandenlijst'-modus:\n"
+"다음 기능 키를 파일 브라우저에서 쓸 수 있습니다:\n"
 "\n"
 
 #: src/help.c:349
@@ -1402,15 +1385,14 @@ msgid ""
 "search.\n"
 "\n"
 msgstr ""
-"===  Bestand zoeken  ===\n"
+"브라우저 검색 명령 도움말 텍스트\n"
 "\n"
-" Voer het woord of de tekens in waar u naar wilt zoeken, en druk op Enter.  "
-"Als er een overeenkomst is voor de ingevoerde tekst, springt de cursor naar "
-"de plaats van de eerstvolgende overeenkomst.\n"
+"찾으려는 단어 또는 문자를 입력한 후 Enter 키를 누르십시오. 입력한 텍스트와 일"
+"치하는 항목이 있다면, 화면은 해당 문자열과 일치하는 위치 근처로 바뀝니다.\n"
 "\n"
-" Een eventuele vorige zoektekst wordt tussen rechte haken na de zoekprompt "
-"getoond: op Enter drukken zonder tekst in te voeren herhaalt deze vorige "
-"zoekopdracht.\n"
+"\n"
+"이전 검색 문자열은 검색 프롬프트 다음 각 괄호에 둘러싸입니다.  어떤 텍스트도 "
+"입력하지 않고 계속 Enter 키를 치면 앞선 검색 동작을 계속 진행합니다.\n"
 "\n"
 
 #: src/help.c:358
@@ -1418,7 +1400,7 @@ msgid ""
 " The following function keys are available in Browser Search mode:\n"
 "\n"
 msgstr ""
-" De volgende toetsen zijn beschikbaar in 'Bestand zoeken'-modus:\n"
+" 다음 기능 키를 브라우저 검색 모드에서 쓸 수 있습니다:\n"
 "\n"
 
 #: src/help.c:362
@@ -1433,15 +1415,14 @@ msgid ""
 " The following function keys are available in Browser Go To Directory mode:\n"
 "\n"
 msgstr ""
-"===  Naar map  ===\n"
+"브라우저 디렉터리 이동 도움말 텍스트\n"
 "\n"
-" Voer de naam in van de map waar u naar toe wilt gaan.\n"
+"탐색하려는 디렉터리 이름을 입력하십시오.\n"
 "\n"
-" Als Tab-aanvulling niet uitgeschakeld is, kunt u de Tab-toets gebruiken om "
-"(te proberen) de mapnaam automatisch aan te laten vullen.\n"
+"탭 자동 완성을 꺼두지 않았다면, Tab 키로 디렉터리 이름을 자동으로 완성(시도)"
+"할 수 있습니다.\n"
 "\n"
-" De volgende toetsen zijn beschikbaar in 'Naar map'-modus:\n"
-"\n"
+"다음 기능 키를 브라우저 디렉터리 이동 모드에서 쓸 수 있습니다:\n"
 
 #: src/help.c:375
 msgid ""
@@ -1456,16 +1437,14 @@ msgid ""
 " The following function keys are available in Spell Check mode:\n"
 "\n"
 msgstr ""
-"===  Spellingscontrole  ===\n"
+"철자 검사 도움말 텍스트\n"
 "\n"
-" Het spellingscontroleprogramma controleert de spelling van alle woorden in "
-"het huidige bestand.  Wanneer een onbekend woord wordt opgemerkt, zal het "
-"duidelijk aangegeven worden en kan een vervangend woord ingevoerd worden.  "
-"Daarna zal er gevraagd worden of elk voorkomen van het verkeerd gespelde "
-"woord vervangen moeten worden (in het hele huidige bestand, of alleen in de "
-"geselecteerde tekst als u tekst hebt gemarkeerd).\n"
+"철자 검사 프로그램은 현재 파일의 모든 텍스트 철자를 검사합니다.  모르는 단어"
+"를 헤아린 다음 강조 표시하며, 편집할 수 있는 바꿀 단어를 나타냅니다. 현재 파"
+"일에서 철자가 잘못된 단어를 한번에 모두 바꿀지 물어보거나, 표시한 텍스트 부분"
+"에 대해서만 바꿀지 확인합니다.\n"
 "\n"
-" De volgende toetsen zijn beschikbaar in 'Spellingscontrole'-modus:\n"
+"다음 기능 키를 철자 검사 모드에서 쓸 수 있습니다:\n"
 "\n"
 
 #: src/help.c:390
@@ -1477,20 +1456,18 @@ msgid ""
 "by '|' (the pipe symbol), the current contents of the buffer (or marked "
 "region) will be piped to the command.  "
 msgstr ""
-"===  Externe opdracht  ===\n"
+"명령 실행 도움말 텍스트\n"
 "\n"
-" Voer de shell-opdracht in waarvan de uitvoer in het huidige bestand (of in "
-"een nieuwe buffer) ingevoegd moet worden.  Als de opdracht voorafgegaan "
-"wordt door een '|' (het pijpsymbool), wordt de huidige inhoud van de buffer "
-"(of van de gemarkeerde regio) als invoer naar de opdracht gesluisd.  "
+"이 모드에서는 현재 버퍼(또는 새 버퍼)로 셸에서 실행한 명령 출력을 삽입할 수 "
+"있습니다.  명령 앞에 '|'(파이프 기호)가 붙을 경우, 현재 버퍼 내용(또는 선택 "
+"영역)을 명령으로 내보냅니다.  "
 
 #: src/help.c:396
 msgid ""
 "If you just need another blank buffer, do not enter any command.\n"
 "\n"
 msgstr ""
-"Als u slechts een lege buffer nodig hebt, kies dan 'Nieuwe buffer' en voer "
-"geen opdracht in.\n"
+"다른 빈 버퍼가 필요하다면, 어떤 명령도 입력하지 마십시오.\n"
 "\n"
 
 #: src/help.c:398
@@ -1498,7 +1475,7 @@ msgid ""
 " The following function keys are available in Execute Command mode:\n"
 "\n"
 msgstr ""
-" De volgende toetsen zijn beschikbaar in 'Externe opdracht'-modus:\n"
+" 다음 기능 키를 명령 실행 모드에서 쓸 수 있습니다:\n"
 "\n"
 
 #: src/help.c:401
@@ -1510,11 +1487,11 @@ msgid ""
 "PageDown you can switch to earlier and later messages.\n"
 "\n"
 msgstr ""
-"=== Linter ===\n"
+"=== 분석 도구 ===\n"
 "\n"
-" In deze modus toont de statusregel een foutmelding of waarschuwing, en is "
-"de cursor op de overeenkomende plek in het bestand geplaatst.  Met PageUp en "
-"PageDown kunt u naar voorgaande en nakomende berichten springen.\n"
+"이 모드에서, 상태 표시줄은 오류 메시지 또는 경고를 나타내며, 파일의 해당 위치"
+"에 커서가 놓입니다.  Page Up키와 Page Down키를 사용하여 이전/이후의 메시지로 "
+"전환할 수 있습니다.\n"
 "\n"
 
 #: src/help.c:406
@@ -1522,7 +1499,7 @@ msgid ""
 " The following function keys are available in Linter mode:\n"
 "\n"
 msgstr ""
-" De volgende toetsen zijn beschikbaar in 'Linter'-modus:\n"
+"다음 기능 키를 분석 도구 모드에서 쓸 수 있습니다:\n"
 "\n"
 
 #: src/help.c:413
@@ -1536,15 +1513,13 @@ msgid ""
 "showing the file being edited.  The status line is the third line from the "
 "bottom and shows important messages.  "
 msgstr ""
-"===  Beknopte handleiding  ===\n"
+"나노 전면 도움말 텍스트\n"
 "\n"
-" De Nano-editor is ontworpen om de functionaliteit en het gebruiksgemak van "
-"de Pico-editor te emuleren.  Het editorscherm bestaat uit vier onderdelen.  "
-"De bovenste regel toont links nano's naam en versienummer, in het midden de "
-"naam van het huidige bestand, en rechts of dit bestand gewijzigd is.  "
-"Daaronder begint het eigenlijke editvenster waarin het bestand getoond "
-"wordt.  De derde regel van onderen is de statusregel en toont belangrijke "
-"berichten.  "
+"나노 편집기는 UW 피코 텍스트 편집기 기능과 용이성을 흉내내도록 설계했습니"
+"다.  편집기에 네가지 주 섹션이 있습니다.  최상단에는 프로그램 버전과 현재 편"
+"집 중인 파일 이름, 파일을 수정했는지 여부를 나타냅니다.  다음은 현재 편집중"
+"인 파일의 내용을 나타내는 주 편집기 창입니다.  상태 표시줄은 바닥으로 부터 세"
+"번째 행이며 중요한 메시지를 나타냅니다.  "
 
 #: src/help.c:423
 msgid ""
@@ -1555,13 +1530,12 @@ msgid ""
 "twice.  Meta-key sequences are notated with 'M-' and can be entered using "
 "either the Alt, Cmd, or Esc key, depending on your keyboard setup.  "
 msgstr ""
-"De onderste twee regels tonen de meest gebruikte sneltoetsen.\n"
+"아래 두 줄은 편집기에서 주로 사용하는 바로 가기 키를 보여줍니다.\n"
 "\n"
-" Sneltoetsen worden als volgt geschreven: Control-toetscombinaties worden "
-"genoteerd met '^' en kunnen worden ingevoerd ofwel met de Ctrl-toets ofwel "
-"door twee keer op Esc te drukken.  Meta-toetscombinaties worden genoteerd "
-"met 'M-' en kunnen worden ingevoerd met Alt, Cmd, of Esc, afhankelijk van uw "
-"toetsenbordinstelling.  "
+"바로 가기 키는 다음과 같이 작성했습니다: Control 키 입력 순서는 '^'로 나타내"
+"며 Ctrl 키를 한번 누르거나 Esc 키를 두번 누르는 식으로 입력할 수 있습니다.  "
+"Meta 키는 'M-'으로 표기하며, 키보드 설정에 따라 Alt, Cmd, Esc 키로 입력할 수 "
+"있습니다.  "
 
 #: src/help.c:430
 msgid ""
@@ -1571,16 +1545,14 @@ msgid ""
 "keys are shown in parentheses:\n"
 "\n"
 msgstr ""
-"Verder zal het tweemaal op Escape drukken gevolgd door een decimaal getal "
-"van drie cijfers (van 000 tot 255) het teken met die waarde invoegen.\n"
-"\n"
-" De onderstaande toetscombinaties zijn beschikbaar in het hoofdvenster "
-"(alternatieve toetscombinaties staan tussen haakjes):\n"
+"또한 Esc 키를 두번 누르고 세자리 10진수를 입력하면 해당 값에 대응하는 문자가 "
+"들어갑니다.  주 편집기 창에서 다음 키 입력을 쑬 수 있습니다. 대안 키 입력은 "
+"괄호안에 표시했습니다:\n"
 "\n"
 
 #: src/help.c:462 src/help.c:534
 msgid "enable/disable"
-msgstr "aan-/uitzetten"
+msgstr "기능 켬/기능 끔"
 
 #: src/history.c:240
 #, c-format
@@ -1589,7 +1561,7 @@ msgid ""
 "Press Enter to continue\n"
 msgstr ""
 "\n"
-"Druk op Enter om verder te gaan.\n"
+"계속하려면 Enter를 누르십시오\n"
 
 #: src/history.c:283
 #, c-format
@@ -1597,9 +1569,8 @@ msgid ""
 "Unable to create directory %s: %s\n"
 "It is required for saving/loading search history or cursor positions.\n"
 msgstr ""
-"Kan map %s niet aanmaken: %s\n"
-"Deze is vereist voor opslaan en inlezen van zoekgeschiedenis en "
-"cursorposities.\n"
+"%s 디렉터리를 만들 수 없음: %s\n"
+"검색 기록 또는 커서 위치를 저장하고 불러올 때 필요합니다\n"
 
 #: src/history.c:290
 #, c-format
@@ -1607,26 +1578,25 @@ msgid ""
 "Path %s is not a directory and needs to be.\n"
 "Nano will be unable to load or save search history or cursor positions.\n"
 msgstr ""
-"Pad %s is geen map maar moet dit zijn.\n"
-"Nano kan nu de zoekgeschiedenis en cursorposities niet opslaan noch "
-"inlezen.\n"
+"%s 경로는 디렉터리여야 하지만 그렇지 않습니다.\n"
+"나노에서 검색 기록 또는 커서 위치를 불러오고 저장할 수 없습니다.\n"
 
 #: src/history.c:380 src/history.c:389 src/history.c:471 src/history.c:493
 #, c-format
 msgid "Error writing %s: %s\n"
-msgstr "Fout bij schrijven van %s: %s\n"
+msgstr "%s 기록 오류: %s\n"
 
 #: src/nano.c:465
 msgid "Key is invalid in view mode"
-msgstr "Toets is ongeldig in Kijkmodus"
+msgstr "뷰 모드에서 키 사용이 올바르지 않습니다"
 
 #: src/nano.c:471
 msgid "This function is disabled in restricted mode"
-msgstr "Deze functie is uitgeschakeld in beperkte modus"
+msgstr "이 기능은 제한 모드에서 사용할 수 없습니다"
 
 #: src/nano.c:479
 msgid "Help is not available"
-msgstr "Hulp is niet beschikbaar"
+msgstr "도움말이 없습니다"
 
 #: src/nano.c:590
 #, c-format
@@ -1635,7 +1605,7 @@ msgid ""
 "Buffer written to %s\n"
 msgstr ""
 "\n"
-"Buffer is geschreven naar %s\n"
+"%s에 버퍼 기록함\n"
 
 #: src/nano.c:592
 #, c-format
@@ -1644,7 +1614,7 @@ msgid ""
 "Buffer not written to %s: %s\n"
 msgstr ""
 "\n"
-"Buffer is niet geschreven naar %s: %s\n"
+"%s에 버퍼 기록하지 않음: %s\n"
 
 #: src/nano.c:595
 #, c-format
@@ -1653,7 +1623,7 @@ msgid ""
 "Buffer not written: %s\n"
 msgstr ""
 "\n"
-"Buffer is niet geschreven: %s\n"
+"버퍼 기록하지 않음: %s\n"
 
 #: src/nano.c:694
 #, c-format
@@ -1661,7 +1631,7 @@ msgid ""
 "Usage: nano [OPTIONS] [[+LINE[,COLUMN]] FILE]...\n"
 "\n"
 msgstr ""
-"Gebruik:  nano [OPTIES] [[+REGEL[,KOLOM]] BESTAND]...\n"
+"사용법: nano [<옵션>] [[+<행>[,<열>]] <파일>]...\n"
 "\n"
 
 #. TRANSLATORS: The next two strings are part of the --help output.
@@ -1672,9 +1642,9 @@ msgid ""
 "To place the cursor on a specific line of a file, put the line number with\n"
 "a '+' before the filename.  The column number can be added after a comma.\n"
 msgstr ""
-"Om de cursor op een specifieke regel te plaatsen, zet u het regelnummer met\n"
-"een '+' voor de bestandsnaam.  Een kolomnummer kunt u toevoegen na een "
-"komma.\n"
+"파일의 특정 행에 커서를 두려면, 파일 이름 앞에 '+'를 붙인 행 번호를 지정해두"
+"십시오.\n"
+"컬럼 번호는 쉼표입력후 추가할 수 있습니다.\n"
 
 #: src/nano.c:699
 #, c-format
@@ -1682,300 +1652,299 @@ msgid ""
 "When a filename is '-', nano reads data from standard input.\n"
 "\n"
 msgstr ""
-"Als een bestandsnaam '-' is, dan leest nano van standaardinvoer.\n"
+"파일 이름을 '-'으로 입력하면, 나노에서는 표준 입력에서 데이터를 가져옵니다.\n"
 "\n"
 
 #. TRANSLATORS: The next three are column headers of the --help output.
 #: src/nano.c:701
 msgid "Option"
-msgstr "Optie"
+msgstr ""
 
 #: src/nano.c:701
 msgid "Long option"
-msgstr "Lange optie"
+msgstr ""
 
 #: src/nano.c:701
 msgid "Meaning"
-msgstr "Betekenis"
+msgstr ""
 
 #. TRANSLATORS: The next forty or so strings are option descriptions
 #. * for the --help output.  Try to keep them at most 40 characters.
 #: src/nano.c:705
 msgid "Enable smart home key"
-msgstr "slimme Home-toets inschakelen"
+msgstr "똑똑한 Home 키 기능을 씁니다"
 
 #: src/nano.c:707
 msgid "Save backups of existing files"
-msgstr "van bestaand bestand reservekopie maken"
+msgstr "기존 파일 백업을 저장합니다"
 
 #: src/nano.c:708
 msgid "-C <dir>"
-msgstr "-C <map>"
+msgstr "-C <디렉터리>"
 
 #: src/nano.c:708
 msgid "--backupdir=<dir>"
-msgstr "--backupdir=<map>"
+msgstr "--backupdir=<디렉터리>"
 
 #: src/nano.c:709
 msgid "Directory for saving unique backup files"
-msgstr "unieke reservekopieën maken, in deze map"
+msgstr "유일한 백업 파일을 저장할 디렉터리를 지정합니다"
 
 #: src/nano.c:712
 msgid "Use bold instead of reverse video text"
-msgstr "vet in plaats van invers gebruiken"
+msgstr "역순 비디오 텍스트 대신 굵은 텍스트를 씁니다"
 
 #: src/nano.c:714
 msgid "Convert typed tabs to spaces"
-msgstr "getypte tabs omzetten naar spaties"
+msgstr "입력한 탭 문자를 공백문자로 바꿉니다"
 
 #: src/nano.c:719
 msgid "Read a file into a new buffer by default"
-msgstr "inlezen standaard in apart buffer doen"
+msgstr "파일을 기본 새 버퍼로 읽어들입니다"
 
 #: src/nano.c:722
 msgid "Use (vim-style) lock files"
-msgstr "(vim-)vergrendelingsbestanden gebruiken"
+msgstr "(vim 방식) 잠금 파일을 사용합니다"
 
 #: src/nano.c:727
 msgid "Log & read search/replace string history"
-msgstr "zoek/vervangteksten bewaren en gebruiken"
+msgstr "검색/바꾸기 문자열 기록을 기록하고 읽어옵니다"
 
 #: src/nano.c:730
 msgid "Don't look at nanorc files"
-msgstr "eventuele nanorc-bestanden negeren"
+msgstr "nanorc 파일을 찾아보지 않습니다"
 
 #: src/nano.c:734
 msgid "Show a guiding bar at this column"
-msgstr "een gidslijn tonen in deze kolom"
+msgstr "이 컬럼에 유도 막대를 표시합니다"
 
 #: src/nano.c:737
 msgid "Fix numeric keypad key confusion problem"
-msgstr "toetsverwarring numeriek bordje oplossen"
+msgstr "숫자 키 패드 키 혼동 문제를 해결합니다"
 
 #: src/nano.c:740
 msgid "Don't add an automatic newline"
-msgstr "geen magisch regeleindeteken toevoegen"
+msgstr "개행 문자를 자동으로 추가하지 않음"
 
 #: src/nano.c:744
 msgid "Trim tail spaces when hard-wrapping"
-msgstr "eindspaties verwijderen bij afbreken"
+msgstr "강제 개행시 줄 뒤의 공백 문자를 제거합니다"
 
 #: src/nano.c:748
 msgid "Don't convert files from DOS/Mac format"
-msgstr "bestand niet omzetten uit DOS/Mac-opmaak"
+msgstr "도스/맥 형식의 파일을 변환하지 않습니다"
 
 #: src/nano.c:753
 msgid "Log & read location of cursor position"
-msgstr "cursorpositie bewaren, later herstellen"
+msgstr "커서 위치를 기록하고 읽어들입니다"
 
 #: src/nano.c:756
 msgid "-Q <regex>"
-msgstr "-Q <reg.exp.>"
+msgstr "-Q <정규표현식>"
 
 #: src/nano.c:756
 msgid "--quotestr=<regex>"
-msgstr "--quotestr=<reg.exp.>"
+msgstr "--quotestr=<정규표현식>"
 
 #: src/nano.c:757
 msgid "Regular expression to match quoting"
-msgstr "expressie die met aanhaling overeenkomt"
+msgstr "검색에 일치할 정규 표현식을 따옴표로 둘러쌉니다"
 
 #: src/nano.c:760
 msgid "Restricted mode"
-msgstr "toegang tot bestandssysteem beperken"
+msgstr "제한 모드"
 
 #: src/nano.c:761
 msgid "-T <#cols>"
-msgstr "-T <getal>"
+msgstr "-T <컬럼 수>"
 
 #: src/nano.c:761
 msgid "--tabsize=<#cols>"
-msgstr "--tabsize=<getal>"
+msgstr "--tabsize=<컬럼 수>"
 
 #: src/nano.c:762
 msgid "Set width of a tab to #cols columns"
-msgstr "te gebruiken tabbreedte"
+msgstr "<컬럼 수> 만큼 컬럼의 탭 길이를 설정합니다"
 
 #: src/nano.c:763
 msgid "Do quick statusbar blanking"
-msgstr "statusregel na één toetsaanslag wissen"
+msgstr "상태 표시줄을 빨리 비웁니다"
 
 #: src/nano.c:764
 msgid "Print version information and exit"
-msgstr "programmaversie tonen en stoppen"
+msgstr "버전 정보를 출력하고 빠져나갑니다"
 
 #: src/nano.c:767
 msgid "Detect word boundaries more accurately"
-msgstr "woordgrenzen nauwkeuriger bepalen"
+msgstr "단어 구분을 더 정확하게 합니다"
 
 #: src/nano.c:768
 msgid "-X <str>"
-msgstr "-X <tekens>"
+msgstr "-X <문자열>"
 
 #: src/nano.c:768
 msgid "--wordchars=<str>"
-msgstr "--wordchars=<tekens>"
+msgstr "--wordchars=<문자열>"
 
 #: src/nano.c:769
 msgid "Which other characters are word parts"
-msgstr "welke andere tekens woordvormend zijn"
+msgstr "단어가 아닌 부분의 문자를 지정합니다"
 
 #: src/nano.c:773
 msgid "-Y <name>"
-msgstr "-Y <naam>"
+msgstr "-Y <이름>"
 
 #: src/nano.c:773
 msgid "--syntax=<name>"
-msgstr "--syntax=<naam>"
+msgstr "--syntax=<이름>"
 
 #: src/nano.c:774
 msgid "Syntax definition to use for coloring"
-msgstr "te gebruiken syntax (voor kleuring)"
+msgstr "색으로 문법 강조할 문법을 정의합니다"
 
 #: src/nano.c:777
 msgid "Let Bsp and Del erase a marked region"
-msgstr "Bsp en Del wissen een gemarkeerde regio"
+msgstr "Backspace와 Delete키로 선택 영역 삭제 가능"
 
 #: src/nano.c:778
 msgid "When soft-wrapping, do it at whitespace"
-msgstr "bij zachtafbreken, dit op witruimte doen"
+msgstr "공백 기준으로 줄을 나눕니다"
 
 #: src/nano.c:781
 msgid "Automatically hard-wrap overlong lines"
-msgstr "een lange regel automatisch afbreken"
+msgstr "줄 길이를 넘어가는 줄 강제 개행"
 
 #: src/nano.c:783
 msgid "Constantly show cursor position"
-msgstr "cursorpositie voortdurend tonen"
+msgstr "항상 커서 위치를 보여줍니다"
 
 #: src/nano.c:785
 msgid "Fix Backspace/Delete confusion problem"
-msgstr "Backspace/Delete-verwarring oplossen"
+msgstr "Backspace/Delete 혼동 문제를 해결합니다"
 
 #: src/nano.c:786
 msgid "Keep the line below the title bar empty"
-msgstr "regel onder de titelbalk leeg laten"
+msgstr "제목 줄 아래는 비워둔 채로 유지합니다"
 
 #: src/nano.c:789
 msgid "Show cursor in file browser & help text"
-msgstr "cursor tonen in bestandenlijst & hulp"
+msgstr "파일 브라우저와 도움말 텍스트에 커서를 나타냅니다"
 
 #: src/nano.c:791
 msgid "Show this help text and exit"
-msgstr "deze hulptekst tonen en stoppen"
+msgstr "이 도움말 텍스트를 나타내고 빠져나갑니다"
 
 #: src/nano.c:793
 msgid "Automatically indent new lines"
-msgstr "automatisch inspringen van nieuwe regels"
+msgstr "새 줄에서 자동으로 들여쓰기"
 
 #: src/nano.c:795
 msgid "Scroll per half-screen, not per line"
-msgstr "per halfscherm scrollen, niet per regel"
+msgstr "줄 단위가 아닌 화면 높이 반 단위로 스크롤 이동"
 
 #: src/nano.c:797
 msgid "Cut from cursor to end of line"
-msgstr "vanaf cursor knippen i.p.v. hele regel"
+msgstr "커서로부터 줄 마지막 까지 자르기"
 
 #: src/nano.c:800
 msgid "Show line numbers in front of the text"
-msgstr "regelnummers weergeven voor de tekst"
+msgstr "텍스트 앞에 줄 번호를 표시합니다"
 
 #: src/nano.c:803
 msgid "Enable the use of the mouse"
-msgstr "gebruik van de muis mogelijk maken"
+msgstr "마우스 사용 기능을 켭니다"
 
 #: src/nano.c:805
 msgid "Do not read the file (only write it)"
-msgstr "bestand niet lezen (alleen schrijven)"
+msgstr "파일을 읽지 않습니다(쓰기 전용)"
 
 #: src/nano.c:807
 msgid "-o <dir>"
-msgstr "-o <map>"
+msgstr "-o <디렉터리>"
 
 #: src/nano.c:807
 msgid "--operatingdir=<dir>"
-msgstr "--operatingdir=<map>"
+msgstr "--operatingdir=<디렉터리>"
 
 #: src/nano.c:808
 msgid "Set operating directory"
-msgstr "deze werkmap gebruiken"
+msgstr "처리 디렉터리 위치를 설정합니다"
 
 #: src/nano.c:810
 msgid "Preserve XON (^Q) and XOFF (^S) keys"
-msgstr "XON- en XOFF-toetsen behouden (^Q en ^S)"
+msgstr "XON (^Q) 키와 XOFF (^S) 키 사용 보류"
 
 #: src/nano.c:812
 msgid "-r <#cols>"
-msgstr "-r <getal>"
+msgstr "-r <컬럼 수>"
 
 #: src/nano.c:812
 msgid "--fill=<#cols>"
-msgstr "--fill=<getal>"
+msgstr "--fill=<컬럼 수>"
 
 #: src/nano.c:813
 msgid "Set width for hard-wrap and justify"
-msgstr "de breedte voor afbreken en uitvullen"
+msgstr "강제 개행 및 정렬시의 폭을 설정합니다"
 
 #: src/nano.c:817
 msgid "-s <prog>"
-msgstr "-s <programma>"
+msgstr "-s <프로그램>"
 
 #: src/nano.c:817
 msgid "--speller=<prog>"
-msgstr "--speller=<programma>"
+msgstr "--speller=<프로그램>"
 
 #: src/nano.c:818
 msgid "Enable alternate speller"
-msgstr "deze spellingscontroleur gebruiken"
+msgstr "대안 철자 목록 기능을 켭니다"
 
 #: src/nano.c:820
 msgid "Auto save on exit, don't prompt"
-msgstr "automatisch opslaan bij afsluiten"
+msgstr "빠져나갈 때 묻지 않고 자동 저장"
 
 #: src/nano.c:822
 msgid "Save a file by default in Unix format"
-msgstr "bestand standaard in Unix-opmaak opslaan"
+msgstr "유닉스 형식을 기본으로 파일 저장"
 
 #: src/nano.c:824
 msgid "View mode (read-only)"
-msgstr "kijkmodus (alleen lezen, geen bewerking)"
+msgstr "보기 모드(읽기 전용)"
 
 #: src/nano.c:826
 msgid "Don't hard-wrap long lines [default]"
-msgstr "lange regels niet afbreken [standaard]"
+msgstr "긴 줄 강제 개행 하지 않음 [기본 설정]"
 
 #: src/nano.c:828
 msgid "Don't show the two help lines"
-msgstr "de twee hulpregels niet tonen"
+msgstr "도움말 두 줄 표시하지 않음"
 
 #: src/nano.c:830
 msgid "Make Ctrl+Right stop at word ends"
-msgstr "Ctrl+Rechts laten stoppen na woordeindes"
+msgstr "Ctrl+Right 입력시 단어 마지막에 멈춤"
 
 #: src/nano.c:833
 msgid "Enable suspension"
-msgstr "pauzeren van editor toestaan"
+msgstr "잠시 멈춤 기능을 사용합니다"
 
 #: src/nano.c:835
 msgid "Enable soft line wrapping"
-msgstr "rest van lange regels tonen op volgende"
+msgstr "줄 나누기 기능을 사용합니다"
 
 #: src/nano.c:847
 #, c-format
 msgid " GNU nano, version %s\n"
-msgstr " GNU nano, versie %s\n"
+msgstr " GNU 나노. 버전 %s\n"
 
 #: src/nano.c:850
 #, c-format
 msgid " (C) 2014-%s the contributors to nano\n"
-msgstr " (C) 2014-%s de bijdragers aan nano\n"
+msgstr " (C) 2014-%s the contributors to nano\n"
 
 #: src/nano.c:851
 #, c-format
 msgid " Email: nano@nano-editor.org\tWeb: https://nano-editor.org/"
 msgstr ""
-" E-mail: <nano@nano-editor.org>  Website: https://nano-editor.org/\n"
-" Meld fouten in de vertaling aan <vertaling@vrijschrift.org>."
+" 전자메일 주소: nano@nano-editor.org\t웹 사이트: https://nano-editor.org/"
 
 #: src/nano.c:852
 #, c-format
@@ -1984,858 +1953,864 @@ msgid ""
 " Compiled options:"
 msgstr ""
 "\n"
-" Compilatie-opties:"
+"컴파일한 옵션:"
 
 #: src/nano.c:995
 msgid "No file name"
-msgstr "Geen bestandsnaam"
+msgstr "파일 이름이 없습니다"
 
 #: src/nano.c:997
 msgid "Save modified buffer? "
-msgstr "Gewijzigd buffer opslaan? "
+msgstr "수정한 버퍼 내용을 저장하시겠습니까? "
 
 #: src/nano.c:1066
 msgid "Could not reconnect stdin to keyboard\n"
-msgstr "Kan standaardinvoer niet herverbinden aan toetsenbord\n"
+msgstr ""
 
 #: src/nano.c:1087
 #, c-format
 msgid "Reading data from keyboard; type ^D or ^D^D to finish.\n"
-msgstr "Lezen van gegevens van toetsenbord; typ ^D of ^D^D om te stoppen.\n"
+msgstr ""
 
 #: src/nano.c:1097
 #, c-format
 msgid "Failed to open stdin: %s"
-msgstr "Openen van standaardinvoer is mislukt: %s"
+msgstr "표준 입력 열기 실패: %s"
 
 #: src/nano.c:1181
 msgid "Received SIGHUP or SIGTERM\n"
-msgstr "SIGHUP of SIGTERM ontvangen\n"
+msgstr "SIGHUP 또는 SIGTERM 시그널을 받았습니다\n"
 
 #: src/nano.c:1188
 #, c-format
 msgid "Sorry! Nano crashed!  Code: %d.  Please report a bug.\n"
-msgstr "Sorry! Nano is gecrasht!  Code: %d.  Deze fout graag rapporteren.\n"
+msgstr ""
+"아이고! 미안합니다! 나노가 깨져버렸네요! 코드: %d.  버그를 알려주세요.\n"
 
 #: src/nano.c:1204
 #, c-format
 msgid "Use \"fg\" to return to nano.\n"
-msgstr "Gebruik 'fg' om terug te keren naar nano.\n"
+msgstr "나노로 돌아가려면 \"fg\"를 사용하십시오.\n"
 
 #: src/nano.c:1225
 msgid "Suspension is not enabled"
-msgstr "Pauzering is niet ingeschakeld"
+msgstr "잠시 멈춤 기능을 활성화하지 않았습니다"
 
 #: src/nano.c:1374
 msgid "enabled"
-msgstr " (aangezet)"
+msgstr "기능 켬"
 
 #: src/nano.c:1374
 msgid "disabled"
-msgstr "is uitgezet"
+msgstr "기능 끔"
 
 #: src/nano.c:1525
 msgid "Unbound key"
-msgstr "Ongebonden toets"
+msgstr "연결하지 않은 키 입력"
 
 #: src/nano.c:1528
 msgid "Unbindable key: M-["
-msgstr "Onbindbare toets: M-["
+msgstr "연결할 수 없는 키 입력: M-["
 
 #: src/nano.c:1530
 #, c-format
 msgid "Unbound key: M-%c"
-msgstr "Ongebonden toets: M-%c"
+msgstr "연결하지 않은 키 입력: M-%c"
 
 #: src/nano.c:1532
 msgid "Unbindable key: ^["
-msgstr "Onbindbare toets: ^["
+msgstr "연결할 수 없는 키 입력: ^["
 
 #: src/nano.c:1534
 #, c-format
 msgid "Unbound key: ^%c"
-msgstr "Ongebonden toets: ^%c"
+msgstr "연결하지 않은 키 입력: ^%c"
 
 #: src/nano.c:1536
 #, c-format
 msgid "Unbound key: %c"
-msgstr "Ongebonden toets: %c"
+msgstr "연결하지 않은 키 입력: %c"
 
 #: src/nano.c:2086 src/rcfile.c:1204
 #, c-format
 msgid "Guide column \"%s\" is invalid"
-msgstr "Gidskolom '%s' is ongeldig"
+msgstr "유도 컬럼 \"%s\"은(는) 올바르지 않습니다"
 
 #: src/nano.c:2110 src/nano.c:2129
 #, c-format
 msgid "Option %s is ignored; it is the default\n"
-msgstr "Optie %s wordt genegeerd; het is de standaard\n"
+msgstr "%s 옵션을 무시합니다. 기본값입니다\n"
 
 #: src/nano.c:2135 src/rcfile.c:1260
 #, c-format
 msgid "Requested tab size \"%s\" is invalid"
-msgstr "Gevraagde tabgrootte '%s' is ongeldig"
+msgstr "요청한 \"%s\" 탭 간격 길이가 올바르지 않습니다"
 
 #: src/nano.c:2224 src/rcfile.c:1195
 #, c-format
 msgid "Requested fill size \"%s\" is invalid"
-msgstr "Gevraagde uitvulbreedte '%s' is ongeldig"
+msgstr "요청한 \"%s\" 채우기 용량이 올바르지 않습니다"
 
 #: src/nano.c:2271
 #, c-format
 msgid "Type '%s -h' for a list of available options.\n"
-msgstr "Typ '%s -h' voor een lijst van beschikbare opties.\n"
+msgstr "가용 옵션 목록을 보려면 '%s -h'를 입력하십시오.\n"
 
 #: src/nano.c:2456
 #, c-format
 msgid "Bad quoting regex \"%s\": %s\n"
-msgstr "Onjuiste reguliere expressie '%s': %s\n"
+msgstr "불량한 \"%s\" 정규표현식 인용: %s\n"
 
 #: src/nano.c:2590 src/search.c:782
 msgid "Invalid line or column number"
-msgstr "Ongeldig regel- of kolomnummer"
+msgstr "잘못된 행, 열 번호"
 
 #: src/nano.c:2641
 #, c-format
 msgid "Mistakes in '%s'"
-msgstr "Fouten in '%s'"
+msgstr "'%s'에 잘못된 설정"
 
 #: src/nano.c:2647
 msgid "Welcome to nano.  For basic help, type Ctrl+G."
-msgstr "Welkom bij nano.  Voor basishulp, typ Ctrl+G."
+msgstr "나노 사용을 환영합니다!  기본 도움말을 보려면 Ctrl+G키를 누르십시오."
 
+# NOTE: DO NOT TRANSLATE!! This is for giving hint of user input. Y/N/A or Yes/No/All
 #. TRANSLATORS: For the next three strings, specify the starting letters
 #. * of the translations for "Yes"/"No"/"All".  The first letter of each of
 #. * these strings MUST be a single-byte letter; others may be multi-byte.
 #: src/prompt.c:656
 msgid "Yy"
-msgstr "Jj"
+msgstr "Yy"
 
+# NOTE: DO NOT TRANSLATE!! This is for giving hint of user input. Y/N/A or Yes/No/All
 #: src/prompt.c:657
 msgid "Nn"
 msgstr "Nn"
 
-# Accepteert ook de "O" van "Overal":
+# NOTE: DO NOT TRANSLATE!! This is for giving hint of user input. Y/N/A or Yes/No/All
 #: src/prompt.c:658
 msgid "Aa"
-msgstr "AaOo"
+msgstr "Aa"
 
+# NOTE: DO NOT TRANSLATE!! This is for giving hint of user input. Y/N/A or Yes/No/All
 #: src/prompt.c:682
 msgid "Yes"
-msgstr "Ja"
+msgstr "Yes"
 
+# NOTE: DO NOT TRANSLATE!! This is for giving hint of user input. Y/N/A or Yes/No/All
 #: src/prompt.c:686
 msgid "No"
-msgstr "Nee"
+msgstr "No"
 
+# NOTE: DO NOT TRANSLATE!! This is for giving hint of user input. Y/N/A or Yes/No/All
 #: src/prompt.c:691
 msgid "All"
-msgstr "Alle"
+msgstr "All"
 
 #: src/rcfile.c:181
 #, c-format
 msgid "Error in %s on line %zu: "
-msgstr "Fout in %s op regel %zu: "
+msgstr "%s의 %zu번째 행 오류: "
 
 #: src/rcfile.c:230
 #, c-format
 msgid "Argument '%s' has an unterminated \""
-msgstr "Argument '%s' heeft een ongepaarde \""
+msgstr "'%s' 인자 값이 \" 문자로 끝나지 않았습니다"
 
 #: src/rcfile.c:255 src/rcfile.c:757 src/rcfile.c:804 src/rcfile.c:880
 msgid "Regex strings must begin and end with a \" character"
-msgstr "Reguliere expressies moeten tussen \"-tekens staan"
+msgstr "정규표현식 문자열은 \" 문자로 시작하고 끝나야 합니다"
 
 #: src/rcfile.c:280 src/search.c:44
 #, c-format
 msgid "Bad regex \"%s\": %s"
-msgstr "Onjuiste reguliere expressie '%s': %s"
+msgstr "잘못된 정규 표현식 \"%s\": %s"
 
 #: src/rcfile.c:302
 msgid "Missing syntax name"
-msgstr "Ontbrekende syntaxnaam"
+msgstr "문법 이름 빠짐"
 
 #: src/rcfile.c:310
 msgid "Unpaired quote in syntax name"
-msgstr "Ongepaard aanhalingsteken in syntaxnaam"
+msgstr "문법 이름에 짝이 맞지 않는 따옴표"
 
 #: src/rcfile.c:322
 msgid "The \"none\" syntax is reserved"
-msgstr "Het woordje 'none' is gereserveerd"
+msgstr "\"none\" 문법은 예약입니다"
 
 #: src/rcfile.c:351
 msgid "The \"default\" syntax does not accept extensions"
-msgstr "De syntax 'default' accepteert geen extensies"
+msgstr "\"default\" 문법은 확장에서 받아들일 수 없습니다"
 
 #: src/rcfile.c:366
 #, c-format
 msgid "Syntax \"%s\" has no color commands"
-msgstr "Bij syntax '%s' ontbreken 'color'-commando's"
+msgstr "\"%s\" 문법에 색 명령이 없습니다"
 
 #: src/rcfile.c:396
 msgid "Missing key name"
-msgstr "Ontbrekende toetsnaam"
+msgstr "키 이름 빠짐"
 
 #: src/rcfile.c:405 src/rcfile.c:416
 msgid "Key name is too short"
-msgstr "Toetsnaam is te kort"
+msgstr "키 이름이 너무 짧습니다"
 
 #: src/rcfile.c:426
 msgid "Key name must begin with \"^\", \"M\", or \"F\""
-msgstr "Toetsnaam moet beginnen met \"^\", \"M\", of \"F\""
+msgstr "키 이름은 \"^\", \"M\", \"F\"로 시작해야 합니다"
 
 #: src/rcfile.c:429
 #, c-format
 msgid "Key name %s is invalid"
-msgstr "Toetsnaam %s is ongeldig"
+msgstr "%s 키 이름이 올바르지 않습니다"
 
 #: src/rcfile.c:438
 msgid "Must specify a function to bind the key to"
-msgstr "Functie waaraan de toets gebonden moet worden ontbreekt"
+msgstr "키를 연결할 기능을 지정하십시오"
 
 #. TRANSLATORS: Do not translate the word "all".
 #: src/rcfile.c:449
 msgid "Must specify a menu (or \"all\") in which to bind/unbind the key"
-msgstr ""
-"Menu waarin de toets gebonden/ontbonden moet worden ontbreekt (of \"all\")"
+msgstr "키에 연결/연결 취소할 메뉴(또는 \"all\")를 지정하십시오"
 
 #: src/rcfile.c:468
 #, c-format
 msgid "Cannot map name \"%s\" to a function"
-msgstr "Kan in naam '%s' geen functie herkennen"
+msgstr "\"%s\" 이름을 기능에 대응할 수 없습니다"
 
 #: src/rcfile.c:475
 #, c-format
 msgid "Cannot map name \"%s\" to a menu"
-msgstr "Kan in naam '%s' geen menu herkennen"
+msgstr "\"%s\" 이름을 메뉴에 대응할 수 없습니다"
 
 #: src/rcfile.c:508
 #, c-format
 msgid "Function '%s' does not exist in menu '%s'"
-msgstr "Functie '%s' bestaat niet in menu '%s'"
+msgstr "'%s' 기능은 '%s' 메뉴에 없습니다"
 
 #: src/rcfile.c:519
 #, c-format
 msgid "Keystroke %s may not be rebound"
-msgstr "Toets '%s' mag niet herbonden worden"
+msgstr "%s 키 입력을 다시 연결할 수 없습니다"
 
 #: src/rcfile.c:606 src/rcfile.c:1108
 #, c-format
 msgid "Command \"%s\" not understood"
-msgstr "Commando '%s' is onbekend"
+msgstr "\"%s\" 명령을 이해할 수 없음"
 
 #: src/rcfile.c:639
 #, c-format
 msgid "Error expanding %s: %s"
-msgstr "Fout bij expanderen van %s: %s"
+msgstr "%s 확장 오류: %s"
 
 #: src/rcfile.c:679
 #, c-format
 msgid "Color \"%s\" not understood"
-msgstr "Kleur '%s' is onbekend"
+msgstr "\"%s\" 색상을 이해할 수 없습니다"
 
 #: src/rcfile.c:695
 msgid "A background color cannot be bright"
-msgstr "Een achtergrondkleur kan niet 'bright' zijn"
+msgstr "배경색은 밝을 수 없습니다"
 
 #: src/rcfile.c:727
 msgid "Missing color name"
-msgstr "Ontbrekende kleurnaam"
+msgstr "색 이름 빠짐"
 
 #: src/rcfile.c:737 src/rcfile.c:864
 #, c-format
 msgid "Missing regex string after '%s' command"
-msgstr "Ontbrekende reguliere expressie na '%s'-commando"
+msgstr "'%s' 명령 다음 정규 표현식 문자열이 빠짐"
 
 #: src/rcfile.c:768 src/rcfile.c:814
 msgid "Empty regex string"
-msgstr "Lege tekenreeks"
+msgstr "정규 표현식 문자열이 비어있음"
 
 #: src/rcfile.c:798
 msgid "\"start=\" requires a corresponding \"end=\""
-msgstr "'start=' vereist een bijbehorende 'end='"
+msgstr "\"end=\"에 해당하는 \"start=\"가 필요합니다"
 
 #: src/rcfile.c:853 src/rcfile.c:1088
 #, c-format
 msgid "A '%s' command requires a preceding 'syntax' command"
-msgstr "Een '%s'-commando vereist een voorafgaand 'syntax'-commando"
+msgstr "'%s' 명령 이전에 'syntax' 명령이 필요합니다"
 
 #: src/rcfile.c:859
 #, c-format
 msgid "The \"default\" syntax does not accept '%s' regexes"
-msgstr "De syntax 'default' accepteert geen '%s' ding"
+msgstr "\"기본\" 문법은 '%s' 정규 표현식을 허용하지 않습니다"
 
 #: src/rcfile.c:911
 #, c-format
 msgid "Missing argument after '%s'"
-msgstr "Ontbrekend argument na '%s'"
+msgstr "'%s' 다음 인자가 빠졌습니다"
 
 #: src/rcfile.c:921
 #, c-format
 msgid "Argument of '%s' lacks closing \""
-msgstr "Argument van '%s' heeft geen afsluitend aanhalingsteken"
+msgstr "'%s' 인자에 \" 닫기 부분이 빠졌습니다"
 
 #: src/rcfile.c:968
 #, c-format
 msgid "No key is bound to function '%s' in menu '%s'.  Exiting.\n"
-msgstr "Aan functie '%s' in menu '%s' is geen toets gebonden.  Gestopt.\n"
+msgstr "'%2$s' 메뉴의 '%1$s' 기능에 연결한 키가 없습니다.  빠져나감.\n"
 
 #: src/rcfile.c:971
 #, c-format
 msgid ""
 "If needed, use nano with the -I option to adjust your nanorc settings.\n"
-msgstr "Start eventueel nano met optie -I om uw nanorc te corrigeren.\n"
+msgstr "필요할 경우 nanorc 설정을 바꾸려면 -l 옵션을 사용하십시오.\n"
 
 #: src/rcfile.c:1034
 #, c-format
 msgid "Could not find syntax \"%s\" to extend"
-msgstr "Kan geen syntax '%s' vinden om aan toe te voegen"
+msgstr "확장할 \"%s\" 문법을 찾을 수 없습니다"
 
 #: src/rcfile.c:1079
 #, c-format
 msgid "Command \"%s\" not allowed in included file"
-msgstr "Commando '%s' is niet toegestaan in 'include'-bestand"
+msgstr "포함 파일에서 \"%s\" 명령을 허용하지 않습니다"
 
 #: src/rcfile.c:1116
 msgid "Missing option"
-msgstr "Ontbrekende optie"
+msgstr "옵션 빠짐"
 
 #: src/rcfile.c:1130
 #, c-format
 msgid "Unknown option \"%s\""
-msgstr "Onbekende optie '%s'"
+msgstr "알 수 없는 \"%s\" 옵션"
 
 #: src/rcfile.c:1145
 #, c-format
 msgid "Cannot unset option \"%s\""
-msgstr "Kan optie '%s' niet uitzetten"
+msgstr "\"%s\" 옵션 설정을 취소할 수 없습니다"
 
 #: src/rcfile.c:1150
 #, c-format
 msgid "Option \"%s\" requires an argument"
-msgstr "Optie '%s' vereist een argument"
+msgstr "\"%s\" 옵션에 인자가 필요합니다"
 
 #: src/rcfile.c:1164
 msgid "Argument is not a valid multibyte string"
-msgstr "Argument is geen geldige multibyte-tekenreeks"
+msgstr "인자 값은 올바른 다중바이트 문자열이 아닙니다"
 
 #: src/rcfile.c:1210 src/rcfile.c:1231 src/rcfile.c:1237
 msgid "Non-blank characters required"
-msgstr "Niet-blanco tekens zijn vereist"
+msgstr "비어있지 않은 문자가 필요합니다"
 
 #: src/rcfile.c:1213
 msgid "Even number of characters required"
-msgstr "Een even aantal tekens is vereist"
+msgstr "짝수 개 문자가 필요합니다"
 
 #: src/rcfile.c:1219
 msgid "Two single-column characters required"
-msgstr "Twee enkelkoloms-tekens zijn vereist"
+msgstr "두 단일 컬럼 문자가 필요합니다"
 
 #: src/rcfile.c:1321
 msgid "I can't find my home directory!  Wah!"
-msgstr "Kan de thuismap niet vinden!  Boehoe!"
+msgstr "내 기본 디렉터리가 없네요?! 이야~!"
 
 #. TRANSLATORS: The next five modify the search prompt.
 #: src/search.c:102
 msgid " [Case Sensitive]"
-msgstr " [Hoofdlettergevoelig]"
+msgstr "[대소문자 구분]"
 
 #: src/search.c:103
 msgid " [Regexp]"
-msgstr " [Reg.exp.]"
+msgstr " [정규 표현식]"
 
 #: src/search.c:107
 msgid " (to replace) in selection"
-msgstr " (om te vervangen) in selectie"
+msgstr " 선택 영역에서(바꾸기 대상)"
 
 #: src/search.c:109
 msgid " (to replace)"
-msgstr " (om te vervangen)"
+msgstr " (바꾸기 대상)"
 
 #. TRANSLATORS: This is shown when searching takes
 #. * more than half a second.
 #: src/search.c:218
 msgid "Searching..."
-msgstr "Zoeken..."
+msgstr "검색 중..."
 
 #: src/search.c:387
 #, c-format
 msgid "\"%.*s%s\" not found"
-msgstr "'%.*s%s' niet gevonden"
+msgstr "\"%.*s%s\" 대상이 없습니다"
 
 #. TRANSLATORS: This is a prompt.
 #: src/search.c:580
 msgid "Replace this instance?"
-msgstr "Deze overeenkomst vervangen?"
+msgstr "한 번에 바꾸시겠습니까?"
 
 #. TRANSLATORS: This is a prompt.
 #: src/search.c:702
 msgid "Replace with"
-msgstr "Vervangen door"
+msgstr "바꿀 단어"
 
 #: src/search.c:733
 #, c-format
 msgid "Replaced %zd occurrence"
 msgid_plural "Replaced %zd occurrences"
-msgstr[0] "%zd overeenkomst vervangen"
-msgstr[1] "%zd overeenkomsten vervangen"
+msgstr[0] "%zd번 바꾸었습니다"
 
 #. TRANSLATORS: This is a prompt.
 #: src/search.c:761
 msgid "Enter line number, column number"
-msgstr "Geef regelnummer, kolomnummer"
+msgstr "행, 열 번호를 입력하십시오"
 
 #: src/search.c:938
 msgid "Not a bracket"
-msgstr "Is geen haakje"
+msgstr "각 괄호 아님"
 
 #: src/search.c:981
 msgid "No matching bracket"
-msgstr "Geen overeenkomend haakje"
+msgstr "일치하는 각 괄호 없음"
 
 #: src/text.c:52
 msgid "Mark Set"
-msgstr "Markering is aangezet"
+msgstr "설정 표시"
 
 #: src/text.c:56
 msgid "Mark Unset"
-msgstr "Uitgezet"
+msgstr "설정 취소 표시"
 
 #: src/text.c:67
 #, c-format
 msgid "Error invoking \"%s\""
-msgstr "Fout bij aanroepen van '%s'"
+msgstr "\"%s\" 실행 오류"
 
 #: src/text.c:385
 msgid "Commenting is not supported for this file type"
-msgstr "Commentariseren is niet mogelijk in dit bestandstype"
+msgstr "이 파일 형식에서는 주석 처리를 지원하지 않습니다"
 
 #: src/text.c:395
 msgid "Cannot comment past end of file"
-msgstr "Kan niet commentariseren voorbij einde van bestand"
+msgstr "파일 마지막에는 주석을 달 수 없습니다"
 
 #: src/text.c:522
 msgid "Nothing to undo"
-msgstr "Er is niets om ongedaan te maken"
+msgstr "실행 취소할 작업 없음"
 
 #. TRANSLATORS: The next thirteen strings describe actions
 #. * that are undone or redone.  They are all nouns, not verbs.
 #: src/text.c:534 src/text.c:600 src/text.c:700 src/text.c:764
 msgid "addition"
-msgstr "Toevoeging"
+msgstr "추가"
 
 #: src/text.c:545 src/text.c:712
 msgid "line break"
-msgstr "Regelafbreking"
+msgstr "줄 바꿈"
 
 #: src/text.c:557 src/text.c:725
 msgid "deletion"
-msgstr "Verwijdering"
+msgstr "삭제"
 
 #: src/text.c:567 src/text.c:734
 msgid "line join"
-msgstr "Regelsamenvoeging"
+msgstr "행 결합"
 
 #: src/text.c:586 src/text.c:749
 msgid "replacement"
-msgstr "Vervanging"
+msgstr "바꾸기"
 
 #: src/text.c:604 src/text.c:768
 msgid "erasure"
-msgstr "Wissen"
+msgstr "소거"
 
 #. TRANSLATORS: Remember: these are nouns, NOT verbs.
 #: src/text.c:610 src/text.c:773
 msgid "cut"
-msgstr "Knippen"
+msgstr "잘라내기"
 
 #: src/text.c:614 src/text.c:777
 msgid "paste"
-msgstr "Plakken"
+msgstr "붙여넣기"
 
 #: src/text.c:618 src/text.c:781
 msgid "insertion"
-msgstr "Invoeging"
+msgstr "삽입"
 
 #: src/text.c:641 src/text.c:799
 msgid "indent"
-msgstr "Inspringing"
+msgstr "들여쓰기"
 
 #: src/text.c:645 src/text.c:803
 msgid "unindent"
-msgstr "Terugspringing"
+msgstr "내어쓰기"
 
 #: src/text.c:650 src/text.c:808
 msgid "comment"
-msgstr "Commentering"
+msgstr "주석 처리"
 
 #: src/text.c:654 src/text.c:812
 msgid "uncomment"
-msgstr "Oncommentering"
+msgstr "주석 처리 취소"
 
 #: src/text.c:662
 #, c-format
 msgid "Undid %s"
-msgstr "%s is ongedaan gemaakt"
+msgstr "%s 실행 취소함"
 
 #: src/text.c:687
 msgid "Nothing to redo"
-msgstr "Er is niets om opnieuw te doen"
+msgstr "다시 실행할 작업 없음"
 
 #: src/text.c:820
 #, c-format
 msgid "Redid %s"
-msgstr "%s is opnieuw gedaan"
+msgstr "%s 다시 실행함"
 
 #: src/text.c:952 src/text.c:2313 src/text.c:2694
 msgid "Could not create pipe"
-msgstr "Kan geen pijp aanmaken"
+msgstr "파이프를 만들 수 없습니다"
 
 #: src/text.c:988 src/text.c:2402 src/text.c:2526 src/text.c:2731
 msgid "Could not fork"
-msgstr "Kan geen nieuw proces starten"
+msgstr "포킹할 수 없습니다"
 
 #: src/text.c:993
 msgid "Executing..."
-msgstr "Uitvoeren..."
+msgstr "실행 중..."
 
 #: src/text.c:1009 src/text.c:1054
 msgid "filtering"
-msgstr "Filtering"
+msgstr "필터링"
 
 #: src/text.c:1048
 #, c-format
 msgid "Failed to open pipe: %s"
-msgstr "Openen van pijp is mislukt: %s"
+msgstr "파이프 열기 실패: %s"
 
 #: src/text.c:1995 src/text.c:2113
 msgid "justification"
-msgstr "Uitvullen"
+msgstr "정렬"
 
 #: src/text.c:2134
 msgid "Justified selection"
-msgstr "Selectie is uitgevuld"
+msgstr "선택 영역 정렬함"
 
 #: src/text.c:2138
 msgid "Justified file"
-msgstr "Gehele buffer is uitgevuld"
+msgstr "파일 정렬함"
 
 #: src/text.c:2140
 msgid "Justified paragraph"
-msgstr "Alinea is uitgevuld"
+msgstr "문단 정렬함"
 
 #: src/text.c:2234
 #, c-format
 msgid "Unfindable word: %s"
-msgstr "Onvindbaar woord: %s"
+msgstr "찾을 수 없는 단어: %s"
 
 #: src/text.c:2250
 msgid "Edit a replacement"
-msgstr "Geef de vervanging"
+msgstr "바꿀 단어 편집"
 
 #. TRANSLATORS: Shown after fixing misspellings in one word.
 #: src/text.c:2263
 msgid "Next word..."
-msgstr "Volgend woord..."
+msgstr "다음 단어..."
 
 #: src/text.c:2315
 msgid "Creating misspelled word list, please wait..."
-msgstr "Aanmaken van lijst van verkeerd gespelde woorden; even geduld..."
+msgstr "잘못된 철자 단어 목록을 만드는 중입니다, 잠시 기다리십시오..."
 
 #: src/text.c:2410 src/text.c:2740
 msgid "Could not get size of pipe buffer"
-msgstr "Kan grootte van doorsluisbuffer niet bepalen"
+msgstr "파이프 버퍼 크기를 가져올 수 없습니다"
 
 #: src/text.c:2469
 msgid "Error invoking \"uniq\""
-msgstr "Fout bij aanroepen van 'uniq'"
+msgstr "\"uniq\" 실행 오류"
 
 #: src/text.c:2472
 msgid "Error invoking \"sort -f\""
-msgstr "Fout bij aanroepen van 'sort -f'"
+msgstr "\"sort -f\" 실행 오류"
 
 #: src/text.c:2475
 msgid "Error invoking \"spell\""
-msgstr "Fout bij aanroepen van 'spell'"
+msgstr "\"spell\" 실행 오류"
 
 #: src/text.c:2645
 #, c-format
 msgid "%s: %s"
-msgstr "%s: %s"
+msgstr ""
 
 #: src/text.c:2647
 msgid "Finished checking spelling"
-msgstr "Spellingscontrole is voltooid"
+msgstr "철자 검사가 끝났습니다"
 
 #: src/text.c:2673
 msgid "No linter defined for this type of file!"
-msgstr "Er is geen linter gedefinieerd voor dit type bestand"
+msgstr "이 파일 형식에 맞는 분석 도구를 정의하지 않았습니다!"
 
 #: src/text.c:2683
 msgid "Save modified buffer before linting?"
-msgstr "Gewijzigd buffer opslaan alvorens te linten?"
+msgstr "분석 도구 실행 전 수정한 버퍼 내용을 저장하시겠습니까?"
 
 #: src/text.c:2700
 msgid "Invoking linter, please wait"
-msgstr "Aanroepen van de linter; even geduld..."
+msgstr "분석 도구 실행중입니다. 잠시 기다리십시오"
 
 #: src/text.c:2836
 #, c-format
 msgid "Got 0 parsable lines from command: %s"
-msgstr "Kreeg nul ontleedbare regels terug van commando '%s'"
+msgstr "명령에서 해석 가능한 줄이 없습니다: %s"
 
 #: src/text.c:2874
 #, c-format
 msgid "This message is for unopened file %s, open it in a new buffer?"
-msgstr "Melding is voor ongeopend bestand %s; in nieuwe buffer openen?"
+msgstr ""
+"이 메시지는 열지 않은 %s 파일에서 나왔습니다. 새 버퍼에서 여시겠습니까?"
 
 #: src/text.c:2913
 msgid "No messages for this file"
-msgstr "Geen berichten voor dit bestand"
+msgstr "이 파일에 대한 메시지 없음"
 
 #: src/text.c:2960
 msgid "At first message"
-msgstr "Dit is de eerste melding"
+msgstr "처음 메시지"
 
 #: src/text.c:2969
 msgid "At last message"
-msgstr "Dit is de laatste melding"
+msgstr "마지막 메시지"
 
 #: src/text.c:3046
 #, c-format
 msgid "%sWords: %zu  Lines: %zd  Chars: %zu"
-msgstr "%s%zu woorden,  %zd regels,  %zu tekens"
+msgstr "%s단어: %zu  행: %zd번째  문자: %zu"
 
 #: src/text.c:3047
 msgid "In Selection:  "
-msgstr "In de selectie:  "
+msgstr "선택:"
 
 #. TRANSLATORS: This is displayed when the next keystroke will be
 #. * inserted verbatim.
 #: src/text.c:3060
 msgid "Verbatim Input"
-msgstr "Verbatim invoer"
+msgstr "입력 그대로"
 
 #: src/text.c:3157
 msgid "No word fragment"
-msgstr "Geen woordfragment"
+msgstr "단어로 분할하지 않음"
 
 #: src/text.c:3249
 msgid "No further matches"
-msgstr "Geen verdere mogelijkheden"
+msgstr "더 이상 일치하는 항목 없음"
 
 #. TRANSLATORS: Shown when there are zero possible completions.
 #: src/text.c:3253
 msgid "No matches"
-msgstr "Geen overeenkomsten"
+msgstr "일치하는 항목 없음"
 
 #: src/utils.c:297 src/utils.c:309
 msgid "Nano is out of memory!\n"
-msgstr "Onvoldoende geheugen beschikbaar voor nano!\n"
+msgstr "나노에서 사용할 메모리가 부족합니다!\n"
 
 #: src/winio.c:89
 msgid "Recording a macro..."
-msgstr "Opname van macro..."
+msgstr "매크로 기록 중..."
 
 #: src/winio.c:92
 msgid "Stopped recording"
-msgstr "Opname is gestopt"
+msgstr "기록 멈춤"
 
 #: src/winio.c:103
 msgid "Cannot run macro while recording"
-msgstr "Kan macro niet afspelen tijdens opname"
+msgstr "기록 중에는 매크로를 실행할 수 없습니다"
 
 #: src/winio.c:109
 msgid "Macro is empty"
-msgstr "Macro is leeg"
+msgstr "매크로 내용이 없습니다"
 
 #: src/winio.c:210
 msgid "Too many errors from stdin\n"
-msgstr "Te veel fouten vanaf standaardinvoer\n"
+msgstr "표준 입력에 오류가 너무 많습니다\n"
 
 #. TRANSLATORS: This refers to a sequence of escape codes
 #. * (from the keyboard) that nano does not recognize.
 #: src/winio.c:1355
 msgid "Unknown sequence"
-msgstr "Onbekende toetscode"
+msgstr "알 수 없는 이스케이프 코드 시퀀스"
 
 #. TRANSLATORS: This is shown while a six-digit hexadecimal
 #. * Unicode character code (%s) is being typed in.
 #: src/winio.c:1494
 #, c-format
 msgid "Unicode Input: %s"
-msgstr "Invoer van Unicode: %s"
+msgstr "유니코드 입력: %s"
 
 #. TRANSLATORS: The next five are "labels" in the title bar.
 #: src/winio.c:2095
 msgid "Linting --"
-msgstr "Linten --"
+msgstr "분석 중 --"
 
 #: src/winio.c:2101
 msgid "DIR:"
-msgstr "Map:"
+msgstr "디렉터리:"
 
 #: src/winio.c:2122 src/winio.c:2128
 msgid "Modified"
-msgstr "Gewijzigd"
+msgstr "수정함"
 
 #: src/winio.c:2124
 msgid "View"
-msgstr "Kijken"
+msgstr "보기"
 
 #: src/winio.c:2126
 msgid "Restricted"
-msgstr "Beperkt"
+msgstr "제한"
 
 #: src/winio.c:2254
 msgid "Further warnings were suppressed"
-msgstr "Verdere waarschuwingen zijn onderdrukt"
+msgstr "더 이상 경고를 나타내지 않습니다"
 
 #: src/winio.c:3440
 #, c-format
 msgid "line %zd/%zd (%d%%), col %zu/%zu (%d%%), char %zu/%zu (%d%%)"
-msgstr "regel %zd/%zd (%d%%), kolom %zu/%zu (%d%%), teken %zu/%zu (%d%%)"
+msgstr ""
+"%zd행/전체 %zd행 (%d%%), %zu열/전체 %zu열 (%d%%), %zu번째 문자/전체 문자 %zu"
+"개 (%d%%)"
 
 #: src/winio.c:3632
 msgid "The nano text editor"
-msgstr "De nano-teksteditor"
+msgstr "나노 텍스트 편집기"
 
 #: src/winio.c:3633
 msgid "version"
-msgstr "versie"
+msgstr "버전"
 
 #: src/winio.c:3634
 msgid "Brought to you by:"
-msgstr "U bezorgd door:"
+msgstr "제공자:"
 
 #: src/winio.c:3635
 msgid "Special thanks to:"
-msgstr "Met speciale dank aan:"
+msgstr "특히 감사드릴 분들:"
 
 #: src/winio.c:3636
 msgid "The Free Software Foundation"
-msgstr "de Free Software Foundation"
+msgstr "자유 소프트웨어 재단"
 
 #: src/winio.c:3637
 msgid "the many translators and the TP"
-msgstr "de vele vertalers en de TP"
+msgstr "다수 번역자와 TranslationProject"
 
 #: src/winio.c:3638
 msgid "For ncurses:"
-msgstr "Voor ncurses:"
+msgstr "ncurses:"
 
 #: src/winio.c:3639
 msgid "and anyone else we forgot..."
-msgstr "en iedereen die we vergeten zijn..."
+msgstr "그리고 우리가 잊은 다른 분들..."
 
 #: src/winio.c:3640
 msgid "Thank you for using nano!"
-msgstr "Dank u voor het gebruiken van nano!"
+msgstr "나노를 사용해주셔서 감사합니다!"
 
 #: lib/getopt.c:278
 #, c-format
 msgid "%s: option '%s%s' is ambiguous\n"
-msgstr "%s: optie '%s%s' is niet eenduidig\n"
+msgstr "%s: '%s%s' 옵션이 모호합니다\n"
 
 #: lib/getopt.c:284
 #, c-format
 msgid "%s: option '%s%s' is ambiguous; possibilities:"
-msgstr "%s: optie '%s%s' is niet eenduidig; mogelijkheden zijn:"
+msgstr "%s: '%s%s' 옵션이 모호합니다. 가능한 옵션:"
 
 #: lib/getopt.c:319
 #, c-format
 msgid "%s: unrecognized option '%s%s'\n"
-msgstr "%s: onbekende optie '%s%s'\n"
+msgstr "%s: 인식할 수 없는 '%s%s' 옵션\n"
 
 #: lib/getopt.c:345
 #, c-format
 msgid "%s: option '%s%s' doesn't allow an argument\n"
-msgstr "%s: optie '%s%s' staat geen argument toe\n"
+msgstr "%s: '%s%s' 옵션에 인자를 허용하지 않습니다\n"
 
 #: lib/getopt.c:360
 #, c-format
 msgid "%s: option '%s%s' requires an argument\n"
-msgstr "%s: optie '%s%s' vereist een argument\n"
+msgstr "%s: '%s%s' 옵션에 인자가 필요합니다\n"
 
 #: lib/getopt.c:621
 #, c-format
 msgid "%s: invalid option -- '%c'\n"
-msgstr "%s: ongeldige optie -- '%c'\n"
+msgstr "%s: 잘못된 옵션 -- '%c'\n"
 
 #: lib/getopt.c:636 lib/getopt.c:682
 #, c-format
 msgid "%s: option requires an argument -- '%c'\n"
-msgstr "%s: optie vereist een argument -- '%c'\n"
+msgstr "%s: 옵션에 인자가 필요합니다 -- '%c'\n"
 
 #: lib/regcomp.c:135
 msgid "Success"
-msgstr "Gelukt"
+msgstr "성공"
 
 #: lib/regcomp.c:138
 msgid "No match"
-msgstr "Geen overeenkomsten"
+msgstr "일치 항목 없음"
 
 #: lib/regcomp.c:141
 msgid "Invalid regular expression"
-msgstr "Ongeldige reguliere expressie"
+msgstr "잘못된 정규 표현식"
 
-# Zie http://mailman.vrijschrift.org/pipermail/vertaling/2005-August/004670.html
 #: lib/regcomp.c:144
 msgid "Invalid collation character"
-msgstr "Ongeldig samengesteld teken"
+msgstr "잘못된 조합 문자"
 
 #: lib/regcomp.c:147
 msgid "Invalid character class name"
-msgstr "Ongeldige tekenklassenaam"
+msgstr "잘못된 문자 클래스 이름"
 
 #: lib/regcomp.c:150
 msgid "Trailing backslash"
-msgstr "Backslash aan het eind"
+msgstr "백 슬래시 문자가 따라옴"
 
 #: lib/regcomp.c:153
 msgid "Invalid back reference"
-msgstr "Ongeldige terugverwijzing"
+msgstr "잘못된 후위 참조"
 
 #: lib/regcomp.c:156
 msgid "Unmatched [, [^, [:, [., or [="
-msgstr "Ongepaarde [, [^, [:, [., of [="
+msgstr "일치하지 않는 [, [^, [:, [., [="
 
 #: lib/regcomp.c:159
 msgid "Unmatched ( or \\("
-msgstr "Ongepaarde ( of \\("
+msgstr "일치하지 않는 ( 또는 \\( 괄호"
 
 #: lib/regcomp.c:162
 msgid "Unmatched \\{"
-msgstr "Ongepaarde \\{"
+msgstr "일치하지 않는 \\{ 괄호"
 
 #: lib/regcomp.c:165
 msgid "Invalid content of \\{\\}"
-msgstr "Ongeldige inhoud van \\{\\}"
+msgstr "잘못된 \\{\\} 내용"
 
 #: lib/regcomp.c:168
 msgid "Invalid range end"
-msgstr "Ongeldig bereikeinde"
+msgstr "잘못된 범위 끝"
 
 #: lib/regcomp.c:171
 msgid "Memory exhausted"
-msgstr "Onvoldoende geheugen beschikbaar"
+msgstr "메모리가 바닥남"
 
 #: lib/regcomp.c:174
 msgid "Invalid preceding regular expression"
-msgstr "Ongeldige voorafgaande reguliere expressie"
+msgstr "잘못된 선행 정규 표현식"
 
 #: lib/regcomp.c:177
 msgid "Premature end of regular expression"
-msgstr "Voortijdig einde van reguliere expressie"
+msgstr "정규 표현식 마감 표현이 앞서있습니다"
 
 #: lib/regcomp.c:180
 msgid "Regular expression too big"
-msgstr "Reguliere expressie is te groot"
+msgstr "정규 표현식이 너무 깁니다"
 
 #: lib/regcomp.c:183
 msgid "Unmatched ) or \\)"
-msgstr "Ongepaarde ) of \\)"
+msgstr "일치하지 않는 ) 또는 \\) 괄호"
 
 #: lib/regcomp.c:676
 msgid "No previous regular expression"
-msgstr "Geen eerdere reguliere expressie"
+msgstr "이전 정규 표현식이 없습니다"

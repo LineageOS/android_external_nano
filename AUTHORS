@@ -5,11 +5,18 @@ nano editor.  Please see the ChangeLog for specific changes by author.
 Chris Allegretta <chrisa@asty.org>
 	* Original program author and long-time maintainer.
 
+Benno Schulenberg <bensberg@telfort.nl>
+	* An array of small bug fixes, the cut-word and block-jump
+	  routines, text selection by holding Shift, macro recording
+	  and replay, plus some key bindings.  Current maintainer.
+
 David Lawrence Ramsey <pooka109@gmail.com>
 	* Former stable series maintainer.  Multiple buffer support,
 	  operating dir (-o) option, bug fixes for display routines,
-	  wrapping code, spelling fixes, const mode, parts of the
-	  UTF-8 support, and various other fixes.
+	  wrapping code, spelling fixes, constantshow mode, parts of
+	  UTF-8 support, softwrap overhaul, undoable (un)indentations,
+	  undoable justifications, justifiable regions, and numerous
+	  other fixes.
 
 Jordi Mallach <jordi@gnu.org>
 	* Debian package maintainer, fellow bug squasher.
@@ -39,7 +46,8 @@ Mike Frysinger <vapier@gentoo.org>
 	* Gentoo package maintainer.  Whitespace display mode,
 	  --enable-utf8/--disable-utf8 configure options for ncurses,
 	  many new color regexes and improvements to existing color
-	  regexes in syntax/*.nanorc, and miscellaneous bug fixes.
+	  regexes in syntax/*.nanorc, the move from svn to git, the
+	  conversion to gnulib, and miscellaneous bug fixes.
 
 Mark Majeres <mark@engine12.com>
 	* A functional undo/redo system, and coloring nano's interface.
@@ -56,7 +64,11 @@ Faissal Bensefia <faissaloo@gmail.com>
 Sumedh Pendurkar <sumedh.pendurkar@gmail.com>
 	* The word-completion feature.
 
-Benno Schulenberg <bensberg@justemail.net>
-	* An array of small bug fixes, the cut-word and block-jump
-	  routines, text selection by holding Shift, and some extra
-	  key bindings.  Current maintainer.
+Rishabh Dave <rishabhddave@gmail.com>
+	* Searchable help.
+
+Marco Diego Aurélio Mesquita <marcodiegomesquita@gmail.com>
+	* Filtering text through an external command.
+
+Brand Huntsman <alpha@qzx.com>
+	* The delayed parsing of syntax files.
