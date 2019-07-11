@@ -1013,7 +1013,7 @@
 #define PACKAGE_URL "http://www.gnu.org/software/nano/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "4.2"
+#define PACKAGE_VERSION "4.3"
 
 /* Where data are placed to. */
 #define PKGDATADIR "/usr/local/share/nano"
@@ -1182,7 +1182,7 @@
 /* #undef USE_WINDOWS_THREADS */
 
 /* Version number of package */
-#define VERSION "4.2"
+#define VERSION "4.3"
 
 /* Define to l, ll, u, ul, ull, etc., as suitable for constants of type
    'wchar_t'. */
