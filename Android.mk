@@ -13,6 +13,7 @@ LOCAL_SRC_FILES:= \
 	src/files.c \
 	src/global.c \
 	src/help.c \
+	src/history.c \
 	src/move.c \
 	src/nano.c \
 	src/prompt.c \
@@ -31,6 +32,8 @@ LOCAL_CFLAGS += \
 	-DHAVE_CONFIG_H \
 	-DLOCALEDIR=\"/data/locale\" \
 	-DSYSCONFDIR=\"/system/etc/nano\"
+
+LOCAL_CFLAGS += -Wno-sign-compare -Wno-unused-parameter
 
 LOCAL_SHARED_LIBRARIES += \
 	libncurses \
