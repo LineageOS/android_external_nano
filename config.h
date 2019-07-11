@@ -1004,7 +1004,7 @@
 #define PACKAGE_NAME "GNU nano"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GNU nano 4.2"
+#define PACKAGE_STRING "GNU nano 4.3"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "nano"
