@@ -1,7 +1,7 @@
 ## Here is an example for Gentoo ebuilds/eclasses,
 ## and (further down) one for Portage control files.
 
-syntax "ebuild" "\.e(build|class|blit)$"
+syntax ebuild "\.e(build|class|blit)$"
 comment "#"
 
 ## All the standard portage functions:
@@ -24,7 +24,7 @@ color red "\<EBUILD_PHASE(_FUNC)?\>"
 color red "\<QA_((TEXTRELS|EXECSTACK|WX_LOAD)(_[a-zA-Z_0-9]+)?|DT_HASH|PRESTRIPPED)\>"
 color red "\<(PATCHES|(HTML_)?DOCS)\>" "\<WANT_(AUTO(CONF|MAKE)|LIBTOOL)\>" "\<AT_M4DIR\>"
 ## Portage commands:
-color magenta "\<(use(_(with|enable|if_iuse)|x)?|in_iuse)\> [!a-zA-Z0-9_+ -]*" "inherit.*"
+color magenta "\<(use(_(with|enable|if_iuse)|x)?|in_iuse) [!a-zA-Z0-9_+ -]*" "inherit.*"
 color brightblue "\<e(begin|end|conf|install|make|qmake4|ant|(qa)?warn|infon?|error|log|patch(_user)?|new(group|user))\>"
 color brightblue "\<e(pause|beep|mktemp|(cvs|svn)_clean|punt_cxx)\>" "\<e(aclocal|auto(reconf|header|conf|make)|libtoolize)\>"
 color brightblue "\<e(stack|shopts|umask)_(push|pop)\>" "\<version_is_at_least\>"
@@ -39,7 +39,7 @@ color brightblue "\<tc-(arch(-kernel)?|export|has-(tls|openmp))\>"
 ## Common commands used in ebuilds:
 color blue "\<(awk|cat|cd|chmod|chown|cp|echo|env|find|e?grep|ln|make|mkdir|mv|popd|printf|pushd|rm|rmdir|sed|set|tar|touch|unset|xargs)\>"
 ## Comments (doesn't work that well):
-color yellow "(^|[[:space:]])#.*$"
+color yellow "(^|[[:space:]])#.*"
 ## Strings (doesn't work that well):
 color brightyellow ""(\\.|[^\"])*"" "'(\\.|[^'])*'"
 ## Trailing space is bad!
@@ -48,11 +48,11 @@ color ,green "[[:space:]]+$"
 color ,green " 	"
 
 
-syntax "/etc/portage" "\.(accept_keywords|env|keywords|mask|unmask|use)(/.+)?$"
+syntax /etc/portage "\.(accept_keywords|env|keywords|mask|unmask|use)(/.+)?$"
 comment "#"
 
 ## Base text:
-color green "^.+$"
+color green ".+"
 ## Likely version and slot numbers:
 color magenta "-[[:digit:].]+(_(alpha|beta|pre|rc|p)[[:digit:]]*)*(-r[[:digit:]]+)?([:[:space:]]|$)"
 color magenta ":[^[:space:]]+([[:space:]]|$)"
@@ -67,7 +67,7 @@ color cyan "^[[:space:]]*[^/]*/"
 ## Masking regulators:
 color brightmagenta "^[[:space:]]*(=|~|<|<=|>|>=)"
 ## Comments:
-color yellow "#.*$"
+color yellow "#.*"
 ## Trailing space is bad!
 color ,green "[[:space:]]+$"
 ## Mixed whitespace is also bad.

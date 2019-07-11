@@ -1,6 +1,6 @@
 ## Here is an example for Autoconf.
 
-syntax "autoconf" "\.(ac|m4)$"
+syntax autoconf "\.(ac|m4)$"
 comment "#"
 
 # Keywords:
@@ -20,7 +20,7 @@ color red "\"[^"]*\""  "\'[^']*\'"
 color green "`[^`]*`"
 
 # Error lines:
-color brightred "^\*\*\*.*"
+color brightred "^[[:space:]]*\*\*\*.*"
 
 # Brackets:
 color magenta "\[|\]|\(|\)"
