@@ -645,7 +645,7 @@
 /* #undef HAVE_PTHREAD_RWLOCK_RDLOCK_PREFER_WRITER */
 
 /* Define to 1 if you have the <pwd.h> header file. */
-#define HAVE_PWD_H 1
+/* #undef HAVE_PWD_H */
 
 /* Define to 1 if you have the `raise' function. */
 #define HAVE_RAISE 1
