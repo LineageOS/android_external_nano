@@ -1120,7 +1120,7 @@ bool scoop_stdin(void)
 /* Register half a dozen signal handlers. */
 void signal_init(void)
 {
-	struct sigaction deed = {{0}};
+	struct sigaction deed = {0};
 
 	/* Trap SIGINT and SIGQUIT because we want them to do useful things. */
 	deed.sa_handler = SIG_IGN;
