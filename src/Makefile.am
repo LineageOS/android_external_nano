@@ -1,9 +1,10 @@
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -DSYSCONFDIR=\"$(sysconfdir)\"
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -DSYSCONFDIR=\"$(sysconfdir)\" \
+	-I$(top_builddir)/lib -I$(top_srcdir)/lib
 
 CLEANFILES = revision.h
 
 if BUILDING_FROM_GIT
-SOMETHING = "REVISION \"$(shell git describe --tags 2>/dev/null)\""
+SOMETHING = "REVISION \"`git describe --tags 2>/dev/null`\""
 else
 SOMETHING = "NOTHING \"from tarball\""
 endif
@@ -11,12 +12,13 @@ endif
 nano.o: revision.h
 winio.o: revision.h
 
-revision.h: update_revision
+# Always run the commands in this rule.  But update the target
+# only when the revision actually changed.
+revision.h: FORCE
 	@[ -f $@ ] || touch $@
 	@echo "#define $(SOMETHING)" | cmp -s $@ - || \
-	echo "#define $(SOMETHING)" > $@
-
-.PHONY: update_revision
+			echo "#define $(SOMETHING)" > $@
+FORCE:
 
 bin_PROGRAMS = 	nano
 nano_SOURCES =	browser.c \
@@ -26,6 +28,7 @@ nano_SOURCES =	browser.c \
 		files.c \
 		global.c \
 		help.c \
+		history.c \
 		move.c \
 		nano.c \
 		nano.h \
@@ -35,9 +38,10 @@ nano_SOURCES =	browser.c \
 		search.c \
 		text.c \
 		utils.c \
-		winio.c 
+		winio.c
 
-nano_LDADD = @GLIB_LIBS@ @LIBINTL@
+nano_LDADD = @LIBINTL@ $(top_builddir)/lib/libgnu.a \
+		$(LIB_CLOCK_GETTIME) $(LIBTHREAD)
 
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && rm -f rnano && $(LN_S) nano rnano

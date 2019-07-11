@@ -1,1256 +1,1236 @@
 # translation of nano to Turkish.
 # Copyright (C) 2003 Free Software Foundation, Inc.
 # This file is distributed under the same license as the nano package.
-#
-# A. Murat EREN <meren@comu.edu.tr>, 2003
+# A. Murat EREN <meren@comu.edu.tr>, 2003.
+# Mehmet Kececi <mkececi@mehmetkececi.com>, 2017, 2018, 2019.
+# Volkan Gezer <volkangezer@gmail.com>, 2017.
 msgid ""
 msgstr ""
-"Project-Id-Version: nano 1.2.1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-23 11:43+0100\n"
-"PO-Revision-Date: 2003-08-17 18:08+0300\n"
-"Last-Translator: A. Murat EREN <meren@comu.edu.tr>\n"
+"Project-Id-Version: nano-4.3-pre1\n"
+"Report-Msgid-Bugs-To: nano-devel@gnu.org\n"
+"POT-Creation-Date: 2019-06-18 10:30+0200\n"
+"PO-Revision-Date: 2019-06-06 17:59+0300\n"
+"Last-Translator: Mehmet Kececi <mkececi@mehmetkececi.com>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: KBabel 1.0\n"
+"X-Generator: Virtaal 0.7.1\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
 
-#: src/browser.c:72
-#, fuzzy, c-format
+#: src/browser.c:67
+#, c-format
 msgid "Cannot open directory: %s"
-msgstr "Bir üst dizine geçilemiyor"
+msgstr "Dizin açılamıyor: %s"
 
 #. TRANSLATORS: This is a prompt.
-#: src/browser.c:227
-#, fuzzy
+#: src/browser.c:226
 msgid "Go To Directory"
 msgstr "Dizine Git"
 
-#: src/browser.c:230 src/browser.c:682 src/files.c:1109 src/files.c:2239
-#: src/nano.c:1087 src/search.c:179 src/search.c:267 src/search.c:802
-#: src/search.c:861 src/text.c:3184 src/text.c:3389
+#: src/browser.c:227 src/browser.c:683 src/files.c:1091 src/files.c:2115
+#: src/nano.c:1005 src/search.c:114 src/search.c:208 src/search.c:712
+#: src/search.c:765 src/text.c:2686 src/text.c:2881
 msgid "Cancelled"
 msgstr "İptal edildi"
 
 #. TRANSLATORS: This refers to the confining effect of the
 #. * option --operatingdir, not of --restricted.
-#: src/browser.c:247 src/browser.c:279
-#, fuzzy, c-format
+#: src/browser.c:244 src/browser.c:275
+#, c-format
 msgid "Can't go outside of %s"
-msgstr "%s dışına yazılamıyor"
+msgstr "%s dışına çıkamazsın"
 
-#: src/browser.c:270
+#: src/browser.c:266
 msgid "Can't move up a directory"
 msgstr "Bir üst dizine geçilemiyor"
 
-#: src/browser.c:286 src/files.c:997 src/files.c:1003 src/files.c:1751
-#: src/files.c:1876 src/files.c:1920 src/files.c:1940 src/files.c:2052
-#: src/files.c:2945 src/files.c:3178 src/rcfile.c:562 src/rcfile.c:1263
-#, fuzzy, c-format
+#: src/browser.c:281 src/files.c:971 src/files.c:977 src/files.c:1623
+#: src/files.c:1736 src/files.c:1778 src/files.c:1798 src/files.c:1928
+#: src/history.c:311 src/history.c:407 src/rcfile.c:574 src/rcfile.c:1287
+#, c-format
 msgid "Error reading %s: %s"
-msgstr "Hatalı alıntı dizgesi %s: %s"
+msgstr "Okuma hatası %s: %s"
 
-#: src/browser.c:366
+#: src/browser.c:364
 msgid "The working directory has disappeared"
-msgstr ""
+msgstr "Çalışma dizini kayboldu"
 
 #. TRANSLATORS: Try to keep this at most 7 characters.
-#: src/browser.c:550 src/browser.c:557
+#: src/browser.c:554 src/browser.c:561
 msgid "(dir)"
-msgstr ""
+msgstr "(dizin)"
 
 #. TRANSLATORS: Try to keep this at most 12 characters.
-#: src/browser.c:554
+#: src/browser.c:558
 msgid "(parent dir)"
-msgstr ""
+msgstr "(üst dir)"
 
 #. TRANSLATORS: Try to keep this at most 7 characters.
 #. * If necessary, you can leave out the parentheses.
-#: src/browser.c:584
+#: src/browser.c:588
 msgid "(huge)"
-msgstr ""
+msgstr "(büyük)"
 
 #. TRANSLATORS: This is the main search prompt.
-#: src/browser.c:671 src/search.c:156
+#: src/browser.c:673 src/search.c:100
 msgid "Search"
 msgstr "Ara"
 
-#: src/browser.c:713 src/search.c:344
+#: src/browser.c:674 src/search.c:104
+msgid " [Backwards]"
+msgstr " [Geriye Doğru]"
+
+#: src/browser.c:713 src/browser.c:718 src/search.c:278
 msgid "Search Wrapped"
 msgstr "Arama Döngülendi"
 
-#: src/browser.c:723 src/search.c:472
+#: src/browser.c:729 src/search.c:414
 msgid "This is the only occurrence"
-msgstr "Bu tek bulgu"
+msgstr "Bu tek olaydır"
 
-#: src/browser.c:767 src/search.c:437
+#: src/browser.c:775 src/search.c:352
 msgid "No current search pattern"
-msgstr ""
+msgstr "Geçerli bir arama deseni yok"
 
-#: src/color.c:181
-#, fuzzy, c-format
+#: src/color.c:189
+#, c-format
 msgid "Unknown syntax name: %s"
-msgstr "Sözdizim ismi eksik"
+msgstr "Bilinmeyen sözdizimi adı: %s"
 
-#: src/color.c:242
+#: src/color.c:245
 #, c-format
 msgid "magic_load() failed: %s"
-msgstr ""
+msgstr "magic_load() hatalı: %s"
 
-#: src/color.c:246
+#: src/color.c:249
 #, c-format
 msgid "magic_file(%s) failed: %s"
-msgstr ""
+msgstr "magic_file(%s) hatalı: %s"
+
+#: src/cut.c:366 src/cut.c:433
+msgid "Nothing was cut"
+msgstr "Hiçbir şey kesilmedi"
+
+#: src/cut.c:476
+msgid "Cutbuffer is empty"
+msgstr "Kesimarabelleği boştur"
+
+#: src/files.c:45
+#, c-format
+msgid "Directory '%s' does not exist"
+msgstr "'%s' dizini içermemektedir"
 
 #: src/files.c:47
 #, c-format
-msgid "Directory '%s' does not exist"
-msgstr ""
+msgid "Path '%s': %s"
+msgstr "Yol '%s': %s"
 
 #: src/files.c:49
 #, c-format
-msgid "Path '%s': %s"
-msgstr ""
+msgid "Path '%s' is not a directory"
+msgstr "'%s' yolu bir dizin değildir"
 
 #: src/files.c:51
-#, fuzzy, c-format
-msgid "Path '%s' is not a directory"
-msgstr "\"%s\" bir dizin"
+#, c-format
+msgid "Path '%s' is not accessible"
+msgstr "'%s' yolu ulaşılamaz"
 
 #: src/files.c:53
 #, c-format
-msgid "Path '%s' is not accessible"
-msgstr ""
-
-#: src/files.c:55
-#, c-format
 msgid "Directory '%s' is not writable"
-msgstr ""
+msgstr "'%s' dizini yazılabilir değildir"
 
-#: src/files.c:191
+#. TRANSLATORS: Keep the next eight messages at most 76 characters.
+#: src/files.c:181
 msgid "Couldn't determine my identity for lock file (getpwuid() failed)"
-msgstr ""
+msgstr "Kilit dosyası için kimliğimi belirleyemedi (getpwuid() failed)"
 
-#: src/files.c:200
-#, fuzzy, c-format
+#: src/files.c:190
+#, c-format
 msgid "Couldn't determine hostname for lock file: %s"
-msgstr "%o izinleri %s dosyasına uygulanamadı: %s"
+msgstr "Kilit dosyası için ana bilgisayar adı belirlenemedi: %s"
 
-#: src/files.c:220 src/files.c:229 src/files.c:267 src/files.c:277
-#, fuzzy, c-format
+#: src/files.c:210 src/files.c:219 src/files.c:257 src/files.c:264
+#, c-format
 msgid "Error writing lock file %s: %s"
-msgstr "%s'nin %d. satırında hata: "
+msgstr "%s kilit dosyası yazılırken hata oluştu: %s"
 
-#: src/files.c:296
-#, fuzzy, c-format
+#: src/files.c:286
+#, c-format
 msgid "Error deleting lock file %s: %s"
-msgstr "%s'nin %d. satırında hata: "
+msgstr "%s kilit dosyası silinirken hata oluştu: %s"
 
-#: src/files.c:330
-#, fuzzy, c-format
+#: src/files.c:317
+#, c-format
 msgid "Error opening lock file %s: %s"
-msgstr "%s'nin %d. satırında hata: "
+msgstr "%s kilit dosyası açılırken hata oluştu: %s"
 
-#: src/files.c:344
+#: src/files.c:331
 #, c-format
 msgid "Error reading lock file %s: Not enough data read"
-msgstr ""
+msgstr "%s kilit dosyası okunurken hata oluştu: Veri okuma yeterli deği"
 
 #. TRANSLATORS: The second %s is the name of the user, the third that of the editor.
-#: src/files.c:365
+#: src/files.c:350
 #, c-format
 msgid "File %s is being edited (by %s with %s, PID %s); continue?"
-msgstr ""
+msgstr "%s dosyası düzenlenmiştir (%s ile %s, PID %s tarafından); sürekli mi?"
 
-#: src/files.c:442
+#: src/files.c:425
 #, c-format
-msgid "Can't insert file from outside of %s"
-msgstr "Dosya %s dışından eklenemiyor"
+msgid "Can't read file from outside of %s"
+msgstr "%s'in dışında dosyayı dışarıdan okuyamaz"
 
-#: src/files.c:457 src/files.c:987 src/rcfile.c:541
+#: src/files.c:436 src/rcfile.c:552
 #, c-format
 msgid "\"%s\" is a directory"
-msgstr "\"%s\" bir dizin"
+msgstr "\"%s\" bir dizindir"
 
-#: src/files.c:459
+#: src/files.c:441 src/rcfile.c:553
 #, c-format
-msgid "\"%s\" is not a normal file"
-msgstr ""
+msgid "\"%s\" is a device file"
+msgstr "\"%s\" bir aygıt dosyasıdır"
 
-#: src/files.c:583
-#, fuzzy
-msgid "No more open file buffers"
-msgstr "Başka açık dosya yok"
-
-#: src/files.c:598
+#: src/files.c:447
 #, c-format
-msgid "Switched to %s"
-msgstr "%s 'e geçildi"
+msgid "\"%s\" is a FIFO"
+msgstr "\"%s\" bir FIFO"
 
-#: src/files.c:600 src/global.c:997 src/winio.c:1990
+#: src/files.c:531 src/files.c:557
+msgid "spelling correction"
+msgstr "yazım düzeltmesi"
+
+#. TRANSLATORS: first %s is file name, second %s is file format.
+#: src/files.c:591
+#, c-format
+msgid "%s -- %zu line (%s)"
+msgid_plural "%s -- %zu lines (%s)"
+msgstr[0] "%s -- %zu satırları (%s)"
+
+#: src/files.c:593 src/files.c:599 src/global.c:1010 src/winio.c:2117
 msgid "New Buffer"
 msgstr "Yeni Arabellek"
 
-#: src/files.c:914
+#: src/files.c:594
+msgid "DOS"
+msgstr "DOS"
+
+#: src/files.c:594
+msgid "Mac"
+msgstr "Mac"
+
+#: src/files.c:597
+#, c-format
+msgid "%s -- %zu line"
+msgid_plural "%s -- %zu lines"
+msgstr[0] "%s -- %zu satırları"
+
+#: src/files.c:607
+msgid "No more open file buffers"
+msgstr "Artık açık dosya tamponları yok"
+
+#: src/files.c:748 src/files.c:969 src/files.c:1841
+msgid "Interrupted"
+msgstr "Kesilmiş"
+
+#: src/files.c:887
 #, c-format
 msgid "File '%s' is unwritable"
-msgstr ""
+msgstr "'%s' dosyası yazılabilir değildir"
 
 #. TRANSLATORS: Keep the next four messages at most 78 characters.
-#: src/files.c:918
-#, fuzzy, c-format
-msgid "Read %lu line (Converted from DOS and Mac format)"
-msgid_plural "Read %lu lines (Converted from DOS and Mac format)"
-msgstr[0] "%d satır okundu (Mac biçiminden dönüştürüldü)"
+#: src/files.c:891
+#, c-format
+msgid "Read %zu line (Converted from DOS and Mac format)"
+msgid_plural "Read %zu lines (Converted from DOS and Mac format)"
+msgstr[0] "%zu satır okundu (DOS ve Mac biçiminden dönüştürüldü)"
 
-#: src/files.c:923
-#, fuzzy, c-format
-msgid "Read %lu line (Converted from Mac format)"
-msgid_plural "Read %lu lines (Converted from Mac format)"
-msgstr[0] "%d satır okundu (Mac biçiminden dönüştürüldü)"
+#: src/files.c:896
+#, c-format
+msgid "Read %zu line (Converted from Mac format)"
+msgid_plural "Read %zu lines (Converted from Mac format)"
+msgstr[0] "%zu satır okundu (Mac biçiminden dönüştürüldü)"
 
-#: src/files.c:928
-#, fuzzy, c-format
-msgid "Read %lu line (Converted from DOS format)"
-msgid_plural "Read %lu lines (Converted from DOS format)"
-msgstr[0] "%d satır okundu (DOS biçiminden dönüştürüldü)"
+#: src/files.c:901
+#, c-format
+msgid "Read %zu line (Converted from DOS format)"
+msgid_plural "Read %zu lines (Converted from DOS format)"
+msgstr[0] "%zu satır okundu (DOS biçiminden dönüştürüldü)"
 
-#: src/files.c:934
-#, fuzzy, c-format
-msgid "Read %lu line"
-msgid_plural "Read %lu lines"
-msgstr[0] "%d satır okundu"
+#: src/files.c:907
+#, c-format
+msgid "Read %zu line"
+msgid_plural "Read %zu lines"
+msgstr[0] "%zu satırnı oku"
 
-#: src/files.c:973
+#: src/files.c:941
 msgid "New File"
 msgstr "Yeni Dosya"
 
-#: src/files.c:978
-#, fuzzy, c-format
+#: src/files.c:946
+#, c-format
 msgid "File \"%s\" not found"
-msgstr "\"%s\" bulunamadı"
+msgstr "\"%s\" dosyası bulunamadı"
 
-#: src/files.c:988 src/rcfile.c:542
-#, fuzzy, c-format
-msgid "\"%s\" is a device file"
-msgstr "\"%s\" bir aygıt dosyası"
+#: src/files.c:953
+msgid "Reading from FIFO..."
+msgstr "FIFO'dan okunuyor..."
 
-#: src/files.c:1006
-msgid "Reading File"
-msgstr "Dosya Okunuyor"
+#: src/files.c:981
+msgid "Reading..."
+msgstr "Okunuyor..."
 
-#. TRANSLATORS: The next four messages are prompts.
-#: src/files.c:1074
-#, fuzzy
+#. TRANSLATORS: The next six messages are prompts.
+#: src/files.c:1047
 msgid "Command to execute in new buffer"
-msgstr "Çalıştırılacak komut"
+msgstr "Yeni tamponda çalıştırılacak komut"
 
-#: src/files.c:1077
+#: src/files.c:1050
 msgid "Command to execute"
 msgstr "Çalıştırılacak komut"
 
-#: src/files.c:1083
+#: src/files.c:1058
 #, c-format
-msgid "File to insert into new buffer [from %s] "
-msgstr "Yeni arabelleğe eklenecek dosya [%s 'den]"
+msgid "File to read unconverted into new buffer [from %s]"
+msgstr "[%s'den] yeni arabelleğe dönüştürülmemiş okunacak dosya"
 
-#: src/files.c:1086
+#: src/files.c:1061
 #, c-format
-msgid "File to insert [from %s] "
-msgstr "Eklenecek dosya [%s tarafından] "
+msgid "File to read into new buffer [from %s]"
+msgstr "[%s'den] yeni arabelleğe okunacak dosya"
 
-#: src/files.c:1304
-#, fuzzy
-msgid "Key invalid in non-multibuffer mode"
-msgstr "Anahtar çoklu olmayan arabellek kipinde geçersiz"
+#: src/files.c:1066
+#, c-format
+msgid "File to insert unconverted [from %s]"
+msgstr "[%s tarafından] dönüştürülmemiş eklenecek dosya"
 
-#: src/files.c:1590
+#: src/files.c:1069
+#, c-format
+msgid "File to insert [from %s]"
+msgstr "Eklenecek dosya [%s tarafından]"
+
+#: src/files.c:1425
+#, c-format
+msgid "Invalid operating directory: %s\n"
+msgstr "Geçersiz işletim dizini: %s\n"
+
+#: src/files.c:1475
 msgid "Failed to write backup file; continue saving? (Say N if unsure.) "
 msgstr ""
+"Yedek dosya yazımı başarısız; kaydetmeye devam edecek misiniz? (Emin "
+"değilsen H deyin.) "
 
-#: src/files.c:1707
+#: src/files.c:1492
+#, c-format
+msgid "Invalid backup directory: %s\n"
+msgstr "Geçersiz yedek dizini: %s\n"
+
+#: src/files.c:1582
 #, c-format
 msgid "Can't write outside of %s"
-msgstr "%s dışına yazılamıyor"
+msgstr "%s'in dışına yazılamaz"
 
-#: src/files.c:1790 src/files.c:1815 src/files.c:1833 src/files.c:1846
-#: src/files.c:1857 src/files.c:1885
+#: src/files.c:1659 src/files.c:1683 src/files.c:1701 src/files.c:1715
+#: src/files.c:1727 src/files.c:1746
 #, c-format
 msgid "Error writing backup file %s: %s"
-msgstr ""
+msgstr "%s yedek dosyası yazılırken hata oluştu: %s"
 
-#: src/files.c:1791 src/nano.c:658
-#, fuzzy
+#: src/files.c:1660 src/nano.c:596
 msgid "Too many backup files?"
-msgstr ""
-"\n"
-"%s yazılmamış (çok fazla yedek dosyası?)\n"
+msgstr "Çok fazla yedek dosyası?"
 
-#: src/files.c:1929 src/files.c:1951 src/text.c:3114 src/text.c:3126
-#: src/text.c:3488 src/text.c:3497
+#: src/files.c:1787 src/files.c:1809 src/text.c:2603 src/text.c:2621
 #, c-format
 msgid "Error writing temp file: %s"
-msgstr ""
+msgstr "Geçici dosya yazarken hata oluştu: %s"
 
-#: src/files.c:1970 src/files.c:1980 src/files.c:2000 src/files.c:2017
-#: src/files.c:2027 src/files.c:2059 src/files.c:2066
-#, fuzzy, c-format
+#: src/files.c:1817
+msgid "Writing to FIFO..."
+msgstr "FIFO'ya yazmıyor..."
+
+#: src/files.c:1843 src/files.c:1853 src/files.c:1875 src/files.c:1892
+#: src/files.c:1902 src/files.c:1935 src/files.c:1944
+#, c-format
 msgid "Error writing %s: %s"
-msgstr "Hatalı alıntı dizgesi %s: %s"
+msgstr "Yazma hatası %s: %s"
 
-#: src/files.c:2105
-#, fuzzy, c-format
-msgid "Wrote %lu line"
-msgid_plural "Wrote %lu lines"
-msgstr[0] "%d satır yazıldı"
+#: src/files.c:1861
+msgid "Writing..."
+msgstr "Yazılıyor..."
 
-#: src/files.c:2201
+#: src/files.c:1994
+#, c-format
+msgid "Wrote %zu line"
+msgid_plural "Wrote %zu lines"
+msgstr[0] "%zu satır yazıldı"
+
+#: src/files.c:2075
 msgid " [DOS Format]"
 msgstr " [DOS Biçimi]"
 
-#: src/files.c:2202
+#: src/files.c:2076
 msgid " [Mac Format]"
 msgstr " [Mac Biçimi]"
 
-#: src/files.c:2204
+#: src/files.c:2077
 msgid " [Backup]"
 msgstr " [Yedek]"
 
 #. TRANSLATORS: The next six strings are prompts.
-#: src/files.c:2212
+#: src/files.c:2084
 msgid "Prepend Selection to File"
 msgstr "Seçimi Dosyanın Başına Ekle"
 
-#: src/files.c:2213
+#: src/files.c:2085
 msgid "Append Selection to File"
 msgstr "Seçimi Dosyanın Sonuna Ekle"
 
-#: src/files.c:2214
+#: src/files.c:2086
 msgid "Write Selection to File"
 msgstr "Seçimi Dosyaya Yaz"
 
-#: src/files.c:2217
+#: src/files.c:2088
 msgid "File Name to Prepend to"
 msgstr "Başına Eklenecek Dosya Adı"
 
-#: src/files.c:2218
+#: src/files.c:2089
 msgid "File Name to Append to"
 msgstr "Sonuna Eklenecek Dosya Adı"
 
-#: src/files.c:2219
+#: src/files.c:2092
 msgid "File Name to Write"
 msgstr "Yazılacak Dosya Adı"
 
-#: src/files.c:2248
-msgid "Save modified buffer anyway? "
-msgstr ""
+#. TRANSLATORS: Concisely say the screen is too small.
+#: src/files.c:2175
+msgid "Too tiny"
+msgstr "Çok küçük"
 
 #. TRANSLATORS: Restricted mode forbids overwriting.
-#: src/files.c:2341
+#: src/files.c:2205
 msgid "File exists -- cannot overwrite"
-msgstr ""
+msgstr "Dosya mevcut -- üzerine yazılamıyor"
 
-#: src/files.c:2351
+#: src/files.c:2215
 msgid "Save file under DIFFERENT NAME? "
-msgstr ""
+msgstr "Dosyayı FARKLI İSİMDE kaydet? "
 
-#: src/files.c:2359
-#, fuzzy, c-format
+#: src/files.c:2223
+#, c-format
 msgid "File \"%s\" exists; OVERWRITE? "
-msgstr "Dosya var, ÜSTÜNE YAZILSIN MI?"
+msgstr "\"%s\" dosyası mevcut; ÜZERİNE YAZ? "
 
-#: src/files.c:2380
+#: src/files.c:2249
+msgid "File on disk has changed"
+msgstr "Disk üzerindeki dosya değişmiştir"
+
+#: src/files.c:2251
 msgid "File was modified since you opened it; continue saving? "
-msgstr ""
+msgstr "Dosya açtığınızdan bu yana değiştirilmiş, kayda devam et? "
 
-#: src/files.c:2798
+#: src/files.c:2657
 msgid "(more)"
 msgstr "(daha)"
 
-#: src/files.c:2883
-#, fuzzy, c-format
-msgid ""
-"\n"
-"Press Enter to continue\n"
-msgstr ""
-"\n"
-"nano'yu başlatmaya devam etmek için Gir tuşuna basınız\n"
-
-#: src/files.c:2899
-#, c-format
-msgid ""
-"Unable to create directory %s: %s\n"
-"It is required for saving/loading search history or cursor positions.\n"
-msgstr ""
-
-#: src/files.c:2906
-#, c-format
-msgid ""
-"Path %s is not a directory and needs to be.\n"
-"Nano will be unable to load or save search history or cursor positions.\n"
-msgstr ""
-
-#: src/files.c:2928
-#, c-format
-msgid ""
-"Detected a legacy nano history file (%s) which I tried to move\n"
-"to the preferred location (%s) but encountered an error: %s"
-msgstr ""
-
-#: src/files.c:2932
-#, c-format
-msgid ""
-"Detected a legacy nano history file (%s) which I moved\n"
-"to the preferred location (%s)\n"
-"(see the nano FAQ about this change)"
-msgstr ""
-
-#: src/files.c:3014 src/files.c:3022 src/files.c:3045 src/files.c:3067
-#, c-format
-msgid "Error writing %s: %s\n"
-msgstr ""
-
-#. TRANSLATORS: Try to keep the next fifteen strings at most 10 characters.
-#: src/global.c:461
+#. TRANSLATORS: Try to keep the next two strings at most 10 characters.
+#: src/global.c:501
 msgid "Exit"
 msgstr "Çık"
 
-#: src/global.c:462
+#: src/global.c:502
 msgid "Close"
 msgstr "Kapat"
 
-#: src/global.c:463
-#, fuzzy
-msgid "Uncut Text"
-msgstr "Kesmeyi Geri Al"
-
-#: src/global.c:465
-#, fuzzy
-msgid "Unjustify"
-msgstr "Yaslamayı Geri Al"
-
-#: src/global.c:471
-msgid "Read File"
-msgstr "Dosya Oku"
-
-#: src/global.c:472
-msgid "Where Is"
-msgstr "Ara"
-
-#: src/global.c:473
-msgid "Replace"
-msgstr "Değiştir"
-
-#: src/global.c:474
-msgid "Go To Line"
-msgstr "Satıra Git"
-
-#: src/global.c:475
-#, fuzzy
-msgid "Prev Line"
-msgstr "Önceki Sayfa"
-
-#: src/global.c:476
-#, fuzzy
-msgid "Next Line"
-msgstr "Sonraki Dosya"
-
-#: src/global.c:477
-msgid "Prev Page"
-msgstr "Önceki Sayfa"
-
-#: src/global.c:478
-msgid "Next Page"
-msgstr "Sonraki Sayfa"
-
-#: src/global.c:480
-msgid "Justify"
-msgstr "Yasla"
-
-#: src/global.c:481
-#, fuzzy
-msgid "FullJstify"
-msgstr "Yasla"
-
-#: src/global.c:483
-msgid "Refresh"
-msgstr "Tazele"
-
-#. TRANSLATORS: Try to keep this string at most 12 characters.
-#: src/global.c:485
-#, fuzzy
-msgid "WhereIs Next"
-msgstr "Ara"
-
 #. TRANSLATORS: The next long series of strings are shortcut descriptions;
 #. * they are best kept shorter than 56 characters, but may be longer.
-#: src/global.c:491
-msgid "Justify the current paragraph"
-msgstr "Şu anki paragrafı yasla"
-
-#: src/global.c:493
+#: src/global.c:510
 msgid "Cancel the current function"
 msgstr "Yürürlükteki fonksiyonu iptal et"
 
-#: src/global.c:494
-msgid "Display this help text"
-msgstr ""
-
-#: src/global.c:497
-#, fuzzy
-msgid "Close the current file buffer / Exit from nano"
-msgstr "Yüklenmiş olan dosyayı kapat/nano'dan çık"
-
-#: src/global.c:499
-msgid "Exit from nano"
-msgstr "nano'dan çık"
-
-#: src/global.c:503
-msgid "Write the current file to disk"
-msgstr "Yürütülmekte olan dosyayı diske yaz"
-
-#: src/global.c:505
-msgid "Insert another file into the current one"
-msgstr "Şu anki dosyaya başka bir dosya ekle"
-
-#: src/global.c:507
-#, fuzzy
-msgid "Search for a string or a regular expression"
-msgstr "Düzenli ifade kullan"
-
-#: src/global.c:509
-msgid "Search for a string"
-msgstr ""
-
-#: src/global.c:510
-msgid "Refresh the file list"
-msgstr ""
-
 #: src/global.c:511
-msgid "Go to lefthand column"
-msgstr ""
+msgid "Display this help text"
+msgstr "Bu yardım metnini göster"
 
-#: src/global.c:512
-msgid "Go to righthand column"
-msgstr ""
-
-#: src/global.c:514
-msgid "Go one screenful up"
-msgstr ""
+#: src/global.c:513
+msgid "Close the current buffer / Exit from nano"
+msgstr "Geçerli dosya tamponunu kapat / Nanodan çık"
 
 #: src/global.c:515
-msgid "Go one screenful down"
-msgstr ""
+msgid "Write the current buffer (or the marked region) to disk"
+msgstr "Geçerli tamponu (veya işaretli bölgeyi) diske yazın"
 
 #: src/global.c:517
-msgid "Cut the current line and store it in the cutbuffer"
-msgstr "Şu anki satırı kes ve kesim arabelleğinde sakla"
+msgid "Insert another file into current buffer (or into new buffer)"
+msgstr "Geçerli arabelleğe (veya yeni arabelleğe) başka bir dosya ekleyin"
 
 #: src/global.c:519
-msgid "Uncut from the cutbuffer into the current line"
-msgstr "Şu anki satıra kesim arabelleğini yapıştır"
+msgid "Search forward for a string or a regular expression"
+msgstr "Bir dize veya normal ifade için ileriye doğru arama"
 
-#: src/global.c:520
-#, fuzzy
-msgid "Display the position of the cursor"
-msgstr "İmlecin pozisyonunu göster"
+#: src/global.c:521
+msgid "Search backward for a string or a regular expression"
+msgstr "Bir dize veya bir düzenli ifade için geriye doğru arama"
 
-#: src/global.c:522
-msgid "Invoke the spell checker, if available"
-msgstr "Yazım denetleyicisini çağır (eğer mümkün ise)"
+#: src/global.c:523
+msgid "Search forward for a string"
+msgstr "Bir dize için ileri arama"
 
 #: src/global.c:524
-#, fuzzy
-msgid "Replace a string or a regular expression"
-msgstr "Düzenli ifade kullan"
+msgid "Search backward for a string"
+msgstr "Bir dize için geri arama"
 
 #: src/global.c:525
-#, fuzzy
-msgid "Go to line and column number"
-msgstr "Satır numarasına git"
+msgid "Refresh the file list"
+msgstr "Dosya listesini yenile"
 
 #: src/global.c:527
-#, fuzzy
-msgid "Mark text starting from the cursor position"
-msgstr "İmleç hizasındaki metni işaretle"
+msgid "Go to lefthand column"
+msgstr "Sol sütuna geç"
 
 #: src/global.c:528
-msgid "Repeat the last search"
-msgstr ""
+msgid "Go to righthand column"
+msgstr "Sağ sütuna geç"
+
+#: src/global.c:529
+msgid "Go to first row in this column"
+msgstr "Bu sütundaki ilk satıra git"
 
 #: src/global.c:530
-#, fuzzy
-msgid "Copy the current line and store it in the cutbuffer"
-msgstr "Şu anki satırı kes ve kesim arabelleğinde sakla"
-
-#: src/global.c:531
-#, fuzzy
-msgid "Indent the current line"
-msgstr "Yürürlükteki dosyanın sonuna ekle"
-
-#: src/global.c:532
-#, fuzzy
-msgid "Unindent the current line"
-msgstr "Yürürlükteki dosyanın sonuna ekle"
+msgid "Go to last row in this column"
+msgstr "Bu sütundaki son satıra git"
 
 #: src/global.c:533
-msgid "Undo the last operation"
-msgstr ""
+msgid "Go one screenful up"
+msgstr "Bir ekran yukarı git"
 
 #: src/global.c:534
-msgid "Redo the last undone operation"
-msgstr ""
+msgid "Go one screenful down"
+msgstr "Bir ekran aşağı git"
 
 #: src/global.c:536
-#, fuzzy
-msgid "Go back one character"
-msgstr "Bir karakter geri gel"
+msgid "Cut current line (or marked region) and store it in cutbuffer"
+msgstr ""
+"Mevcut satırı kesin (veya işaretli bölge) ve kesme arabelleğinde saklayın"
 
-#: src/global.c:537
-#, fuzzy
+#: src/global.c:538
+msgid "Paste the contents of cutbuffer at current cursor position"
+msgstr "Kesme imlecinin içeriğini geçerli imleç konumuna yapıştırın"
+
+#: src/global.c:539
+msgid "Display the position of the cursor"
+msgstr "İmlecin konumunu göster"
+
+#: src/global.c:541
+msgid "Invoke the spell checker, if available"
+msgstr "Yazım denetleyicisini çağır, eğer mümkün ise"
+
+#: src/global.c:543
+msgid "Replace a string or a regular expression"
+msgstr "Bir dizgi ya da düzenli ifadeyi değiştir"
+
+#: src/global.c:544
+msgid "Go to line and column number"
+msgstr "Satır ve sütun numarasına git"
+
+#: src/global.c:546
+msgid "Mark text starting from the cursor position"
+msgstr "İmleç konumundan başlayan metni işaretle"
+
+#: src/global.c:548
+msgid "Copy current line (or marked region) and store it in cutbuffer"
+msgstr ""
+"Geçerli satırı (veya işaretli bölge) kopyalayıp kesme arabelleğinde saklayın"
+
+#: src/global.c:549
+msgid "Throw away the current line (or marked region)"
+msgstr "Mevcut çizgiyi (veya işaretli bölgeyi) atın"
+
+#: src/global.c:550
+msgid "Indent the current line (or marked lines)"
+msgstr "Geçerli satıra (veya işaretli satırlara) girinti yapın"
+
+#: src/global.c:551
+msgid "Unindent the current line (or marked lines)"
+msgstr "Geçerli satırı (veya işaretli satırları) kaldırın"
+
+#: src/global.c:552
+msgid "Undo the last operation"
+msgstr "Son işlemi geri al"
+
+#: src/global.c:553
+msgid "Redo the last undone operation"
+msgstr "Son geri alınan işlemi yeniden yap"
+
+#: src/global.c:555
+msgid "Go back one character"
+msgstr "Bir karakter geri git"
+
+#: src/global.c:556
 msgid "Go forward one character"
 msgstr "Bir karakter ileri git"
 
-#: src/global.c:538
-#, fuzzy
+#: src/global.c:557
 msgid "Go back one word"
-msgstr "Bir kelime geriye git"
+msgstr "Bir kelime geri git"
 
-#: src/global.c:539
-#, fuzzy
+#: src/global.c:558
 msgid "Go forward one word"
 msgstr "Bir kelime ileri git"
 
-#: src/global.c:540
-#, fuzzy
+#: src/global.c:559
 msgid "Go to previous line"
-msgstr "Önceki ekrana git"
+msgstr "Önceki satıra git"
 
-#: src/global.c:541
-#, fuzzy
+#: src/global.c:560
 msgid "Go to next line"
-msgstr "Bir satır aşağı in"
+msgstr "Sonraki satıra git"
 
-#: src/global.c:542
-#, fuzzy
+#: src/global.c:561
 msgid "Go to beginning of current line"
-msgstr "Şu anki satırın başına git"
+msgstr "Geçerli satırın başına git"
 
-#: src/global.c:543
-#, fuzzy
+#: src/global.c:562
 msgid "Go to end of current line"
-msgstr "Şu anki satırın sonuna git"
+msgstr "Geçerli satırın sonuna git"
 
-#: src/global.c:544
+#: src/global.c:563
 msgid "Go to previous block of text"
-msgstr ""
+msgstr "Önceki metin bloğuna git"
 
-#: src/global.c:545
+#: src/global.c:564
 msgid "Go to next block of text"
-msgstr ""
+msgstr "Sonraki metin bloğuna git"
 
-#: src/global.c:548
+#: src/global.c:567
 msgid "Go to beginning of paragraph; then of previous paragraph"
-msgstr ""
+msgstr "Paragrafın başına ve ardından önceki paragrafın başına git"
 
-#: src/global.c:550
+#: src/global.c:569
 msgid "Go just beyond end of paragraph; then of next paragraph"
-msgstr ""
+msgstr "Paragrafın sonuna ve ardından sonraki paragrafın sonuna git"
 
-#: src/global.c:552
+#: src/global.c:571
 msgid "Go to the first line of the file"
 msgstr "Dosyanın ilk satırına git"
 
-#: src/global.c:553
+#: src/global.c:572
 msgid "Go to the last line of the file"
 msgstr "Dosyanın son satırına git"
 
-#: src/global.c:555
-#, fuzzy
+#: src/global.c:574
 msgid "Go to the matching bracket"
-msgstr "Eşleşen ayraç yok"
+msgstr "Eşleşen paranteze git"
 
-#: src/global.c:557
-msgid "Scroll up one line without scrolling the cursor"
-msgstr ""
+#: src/global.c:578
+msgid "Scroll up one line without moving the cursor textually"
+msgstr "İmleci metinsel olarak hareket ettirmeden bir satır yukarı kaydır"
 
-#: src/global.c:559
-msgid "Scroll down one line without scrolling the cursor"
-msgstr ""
+#: src/global.c:580
+msgid "Scroll down one line without moving the cursor textually"
+msgstr "İmleci metinsel olarak hareket ettirmeden bir satır aşağı kaydır"
 
-#: src/global.c:562
-#, fuzzy
+#: src/global.c:583
 msgid "Switch to the previous file buffer"
-msgstr "Önceki ekrana git"
+msgstr "Bir önceki dosya arabelleğine geç"
 
-#: src/global.c:563
+#: src/global.c:584
 msgid "Switch to the next file buffer"
-msgstr ""
+msgstr "Sonraki dosya tamponuna geç"
 
-#: src/global.c:565
+#: src/global.c:586
 msgid "Insert the next keystroke verbatim"
-msgstr ""
+msgstr "Sonraki tuş vuruşunu birebir ekle"
 
-#: src/global.c:566
-#, fuzzy
+#: src/global.c:587
 msgid "Insert a tab at the cursor position"
-msgstr "İmlecin olduğu yerden satır başı yap"
+msgstr "İmleç konumunu bir sekme ekle"
 
-#: src/global.c:567
-#, fuzzy
+#: src/global.c:588
 msgid "Insert a newline at the cursor position"
-msgstr "İmlecin olduğu yerden satır başı yap"
+msgstr "İmleç konumuna yeni bir satır ekle"
 
-#: src/global.c:568
+#: src/global.c:589
 msgid "Delete the character under the cursor"
 msgstr "İmlecin altındaki karakteri sil"
 
-#: src/global.c:570
+#: src/global.c:591
 msgid "Delete the character to the left of the cursor"
 msgstr "İmlecin solundaki karakteri sil"
 
-#: src/global.c:573
-msgid "Cut backward from cursor to word start"
-msgstr ""
+#: src/global.c:594
+msgid "Delete backward from cursor to word start"
+msgstr "İmleçten sözcük başlangıcına geriye doğru sil"
 
-#: src/global.c:575
-msgid "Cut forward from cursor to next word start"
-msgstr ""
+#: src/global.c:596
+msgid "Delete forward from cursor to next word start"
+msgstr "Bir sonraki kelimyi başlatmak için imleci ileriye doğru sil"
 
-#: src/global.c:577
-#, fuzzy
+#: src/global.c:598
 msgid "Cut from the cursor position to the end of the file"
-msgstr "Şu anki satıra kesim arabelleğini yapıştır"
+msgstr "İmleç yerinden dosyanın sonuna kadar kes"
 
-#: src/global.c:580
-#, fuzzy
-msgid "Justify the entire file"
+#: src/global.c:601
+msgid "Justify the current paragraph"
 msgstr "Şu anki paragrafı yasla"
 
-#: src/global.c:584
-msgid "Count the number of words, lines, and characters"
-msgstr ""
+#: src/global.c:602
+msgid "Justify the entire file"
+msgstr "Dosyanın tamamını yasla"
 
-#: src/global.c:587
+#: src/global.c:606
+msgid "Count the number of words, lines, and characters"
+msgstr "Kelimeleri, satırları ve karakterleri say"
+
+#: src/global.c:609
 msgid "Refresh (redraw) the current screen"
 msgstr "Şu anki ekranı tazele (yeniden çiz)"
 
-#: src/global.c:589
+#: src/global.c:611
 msgid "Suspend the editor (if suspension is enabled)"
-msgstr ""
+msgstr "Düzenleyiciyi askıya al (askıya alma etkinse)"
 
-#: src/global.c:591
-#, fuzzy
+#: src/global.c:613
 msgid "Try and complete the current word"
-msgstr "Şu anki dosyaya başka bir dosya ekle"
-
-#: src/global.c:595
-msgid "Comment/uncomment the current line or marked lines"
-msgstr ""
-
-#: src/global.c:598
-msgid "Save file without prompting"
-msgstr ""
-
-#: src/global.c:599
-#, fuzzy
-msgid "Search next occurrence backward"
-msgstr "Geriye doğru ara"
-
-#: src/global.c:600
-msgid "Search next occurrence forward"
-msgstr ""
-
-#: src/global.c:602
-msgid "Toggle the case sensitivity of the search"
-msgstr ""
-
-#: src/global.c:604
-#, fuzzy
-msgid "Reverse the direction of the search"
-msgstr "İmlecin pozisyonunu göster"
-
-#: src/global.c:608
-#, fuzzy
-msgid "Toggle the use of regular expressions"
-msgstr "Düzenli ifade kullan"
-
-#: src/global.c:612
-#, fuzzy
-msgid "Recall the previous search/replace string"
-msgstr "Önceki arama/değiştirme dizgisini düzenle"
-
-#: src/global.c:614
-#, fuzzy
-msgid "Recall the next search/replace string"
-msgstr "Önceki arama/değiştirme dizgisini düzenle"
+msgstr "Geçerli kelimeyi tamamlamayı dene"
 
 #: src/global.c:617
-msgid "Go to file browser"
-msgstr "Dosya tarayıcısına git"
+msgid "Comment/uncomment the current line (or marked lines)"
+msgstr "Geçerli satırı (veya işaretli satırları) yorumlama/yorumlamama"
+
+#: src/global.c:619
+msgid "Save file without prompting"
+msgstr "Dosyayı sormadan kaydet"
 
 #: src/global.c:620
-#, fuzzy
-msgid "Toggle the use of DOS format"
-msgstr "Dosyayı DOS biçiminde yaz"
+msgid "Search next occurrence backward"
+msgstr "Geriye doğru sonrakini ara"
 
 #: src/global.c:621
-#, fuzzy
-msgid "Toggle the use of Mac format"
-msgstr "Dosyayı Mac biçiminde yaz"
-
-#: src/global.c:622
-msgid "Toggle appending"
-msgstr ""
+msgid "Search next occurrence forward"
+msgstr "Sonrakini ileri ara"
 
 #: src/global.c:623
-msgid "Toggle prepending"
-msgstr ""
+msgid "Start/stop recording a macro"
+msgstr "Bir makro kaydını başlat/durdur"
 
 #: src/global.c:624
-msgid "Toggle backing up of the original file"
-msgstr ""
+msgid "Run the last recorded macro"
+msgstr "Son kaydedilen makro çalıştırma"
 
-#: src/global.c:625
+#: src/global.c:627
+msgid "Toggle the case sensitivity of the search"
+msgstr "Büyük/küçük harfe duyarlı arama seçimi"
+
+#: src/global.c:629
+msgid "Reverse the direction of the search"
+msgstr "Arama yönünü tersine çevir"
+
+#: src/global.c:631
+msgid "Toggle the use of regular expressions"
+msgstr "Düzenli ifade kullanımını aç/kapat"
+
+#: src/global.c:634
+msgid "Recall the previous search/replace string"
+msgstr "Önceki arama/değiştirme dizgisini geri çağır"
+
+#: src/global.c:636
+msgid "Recall the next search/replace string"
+msgstr "Sonraki arama/değiştirme dizgisini geri çağır"
+
+#: src/global.c:639
+msgid "Toggle the use of DOS format"
+msgstr "DOS biçiminin kullanımını değiştir"
+
+#: src/global.c:640
+msgid "Toggle the use of Mac format"
+msgstr "Mac biçiminin kullanımını değiştir"
+
+#: src/global.c:641
+msgid "Toggle appending"
+msgstr "Eklemeyi aç/kapat"
+
+#: src/global.c:642
+msgid "Toggle prepending"
+msgstr "Öne eklemeyi aç/kapat"
+
+#: src/global.c:643
+msgid "Toggle backing up of the original file"
+msgstr "Özgün dosyanın yedeklenmesini aç/kapat"
+
+#: src/global.c:644
 msgid "Execute external command"
 msgstr "Harici komut çalıştır"
 
-#: src/global.c:627
-msgid "Close buffer without saving it"
-msgstr ""
+#: src/global.c:646
+msgid "Pipe the current buffer (or marked region) to the command"
+msgstr "Geçerli tamponu (veya işaretli bölgeyi) komuta yöneltin"
 
-#: src/global.c:629
-#, fuzzy
+#: src/global.c:647
+msgid "Do not convert from DOS/Mac format"
+msgstr "Dosyaları DOS/Mac biçiminden dönüştürme"
+
+#: src/global.c:650
 msgid "Toggle the use of a new buffer"
-msgstr "Yeni arabelleğe girişi aç/kapa"
+msgstr "Yeni bir tampon kullanımını aç/kapat"
 
-#: src/global.c:632
-#, fuzzy
-msgid "Exit from the file browser"
+#: src/global.c:652
+msgid "Close buffer without saving it"
+msgstr "Tamponu kaydetmeden kapat"
+
+#: src/global.c:654
+msgid "Go to file browser"
 msgstr "Dosya tarayıcısına git"
 
-#: src/global.c:633
-#, fuzzy
+#: src/global.c:655
+msgid "Exit from the file browser"
+msgstr "Dosya yöneticisinden çık"
+
+#: src/global.c:656
 msgid "Go to the first file in the list"
-msgstr "Dosyanın ilk satırına git"
+msgstr "Listedeki ilk dosyaya git"
 
-#: src/global.c:634
-#, fuzzy
+#: src/global.c:657
 msgid "Go to the last file in the list"
-msgstr "Dosyanın son satırına git"
+msgstr "Listedeki son dosyaya git"
 
-#: src/global.c:635
-#, fuzzy
+#: src/global.c:658
 msgid "Go to the previous file in the list"
-msgstr "Dosyanın ilk satırına git"
+msgstr "Listedeki önceki dosyaya git"
 
-#: src/global.c:636
-#, fuzzy
+#: src/global.c:659
 msgid "Go to the next file in the list"
-msgstr "Dosyanın son satırına git"
+msgstr "Listedeki sonraki dosyaya git"
 
-#: src/global.c:637
+#: src/global.c:660
 msgid "Go to directory"
 msgstr "Dizine git"
 
-#: src/global.c:640
-#, fuzzy
+#: src/global.c:663
 msgid "Invoke the linter, if available"
-msgstr "Yazım denetleyicisini çağır (eğer mümkün ise)"
+msgstr "Linter mevcutsa uygula"
 
-#: src/global.c:641
-#, fuzzy
+#: src/global.c:664
 msgid "Go to previous linter msg"
-msgstr "Satır numarasına git"
+msgstr "Bir önceki linter mesajına git"
 
-#: src/global.c:642
+#: src/global.c:665
 msgid "Go to next linter msg"
-msgstr ""
+msgstr "Bir sonraki linter mesajına git"
 
-#: src/global.c:644
-#, fuzzy
-msgid "Invoke formatter, if available"
-msgstr "Yazım denetleyicisini çağır (eğer mümkün ise)"
-
-#. TRANSLATORS: Try to keep the following strings at most 10 characters.
-#: src/global.c:659
+#. TRANSLATORS: Try to keep the next ninety strings or so at most 10
+#. * characters.  Some strings may be longer -- run nano and see.
+#: src/global.c:680
 msgid "Get Help"
 msgstr "Yardım Al"
 
-#: src/global.c:662 src/prompt.c:734
+#: src/global.c:683 src/prompt.c:695
 msgid "Cancel"
 msgstr "İptal"
 
-#: src/global.c:675
-#, fuzzy
+#: src/global.c:696
 msgid "Write Out"
 msgstr "Yaz"
 
-#: src/global.c:711
+#: src/global.c:704 src/global.c:1025
+msgid "Read File"
+msgstr "Dosya Oku"
+
+#: src/global.c:711 src/global.c:744
+msgid "Justify"
+msgstr "Yasla"
+
+#: src/global.c:717 src/global.c:732 src/global.c:834 src/global.c:945
+msgid "Refresh"
+msgstr "Tazele"
+
+#: src/global.c:722 src/global.c:810
+msgid "Where Is"
+msgstr "Ara"
+
+#: src/global.c:725 src/global.c:783
+msgid "Replace"
+msgstr "Değiştir"
+
+#: src/global.c:729
 msgid "Go To Dir"
 msgstr "Dizine Git"
 
-#: src/global.c:726
+#: src/global.c:736
 msgid "Cut Text"
 msgstr "Metni Kes"
 
-#: src/global.c:741
+#: src/global.c:739
+msgid "Paste Text"
+msgstr "Metni Yapıştır"
+
+#: src/global.c:748
 msgid "To Spell"
 msgstr "Denetime"
 
-#: src/global.c:745
-#, fuzzy
-msgid "To Linter"
-msgstr "Satıra Git"
-
-#: src/global.c:748
-#, fuzzy
-msgid "Formatter"
-msgstr "DOS Biçimi"
-
-#: src/global.c:754
+#: src/global.c:753
 msgid "Cur Pos"
 msgstr "İmleç Pozisyonu"
 
+#: src/global.c:760 src/global.c:796 src/global.c:901
+msgid "Go To Line"
+msgstr "Satıra Git"
+
 #: src/global.c:765
-msgid "Case Sens"
-msgstr "Harf Duyarlı"
+msgid "Undo"
+msgstr "Geri Al"
 
-#: src/global.c:768
-msgid "Regexp"
-msgstr "Düzenli İfade"
+#: src/global.c:767
+msgid "Redo"
+msgstr "Yinele"
 
-#: src/global.c:771
-#, fuzzy
-msgid "Backwards"
-msgstr " [Geriye Doğru]"
-
-#: src/global.c:777
-msgid "No Replace"
-msgstr "Değiştirme Yok"
-
-#: src/global.c:793
-msgid "First Line"
-msgstr "İlk Satır"
-
-#: src/global.c:795
-msgid "Last Line"
-msgstr "Son Satır"
-
-#: src/global.c:802
-#, fuzzy
-msgid "To Bracket"
-msgstr "Ayraç değil"
-
-#: src/global.c:805
+#: src/global.c:770
 msgid "Mark Text"
 msgstr "Metni İşaretle"
 
-#: src/global.c:808
-#, fuzzy
+#: src/global.c:772
 msgid "Copy Text"
-msgstr "Metni Kes"
+msgstr "Metni Kopyala"
 
-#: src/global.c:811
-#, fuzzy
-msgid "Indent Text"
-msgstr "Metni Kes"
+#: src/global.c:776
+msgid "Case Sens"
+msgstr "Harf Duyarlı"
 
-#: src/global.c:813
-msgid "Unindent Text"
-msgstr ""
+#: src/global.c:778
+msgid "Regexp"
+msgstr "Düzenli İfade"
 
-#: src/global.c:816
-msgid "Undo"
-msgstr ""
+#: src/global.c:780
+msgid "Backwards"
+msgstr "Geriye Doğru"
 
-#: src/global.c:818
-msgid "Redo"
-msgstr ""
+#: src/global.c:786
+msgid "No Replace"
+msgstr "Değiştirme Yok"
 
-#: src/global.c:822 src/global.c:828
+#: src/global.c:790
+msgid "Older"
+msgstr "Daha eski"
+
+#: src/global.c:792
+msgid "Newer"
+msgstr "Daha yeni"
+
+#: src/global.c:800 src/global.c:932
+msgid "FullJstify"
+msgstr "İki Yana Yaslama"
+
+#: src/global.c:805
+msgid "To Bracket"
+msgstr "Paranteze"
+
+#. TRANSLATORS: This starts a backward search.
+#: src/global.c:812 src/global.c:818 src/global.c:832
+msgid "Where Was"
+msgstr "Neredeydi"
+
+#. TRANSLATORS: This refers to searching the preceding occurrence.
+#: src/global.c:822
+msgid "Previous"
+msgstr "Önceki"
+
+#: src/global.c:825 src/global.c:830
+msgid "Next"
+msgstr "Sonraki"
+
+#. TRANSLATORS: This means move the cursor one character back.
+#: src/global.c:839 src/global.c:844
 msgid "Back"
 msgstr "Geri"
 
-#: src/global.c:824 src/global.c:830
+#: src/global.c:841 src/global.c:846
 msgid "Forward"
 msgstr "İleri"
 
-#: src/global.c:834
+#: src/global.c:850
 msgid "Prev Word"
 msgstr "Önceki Kelime"
 
-#: src/global.c:836
+#: src/global.c:852
 msgid "Next Word"
 msgstr "Sonraki Kelime"
 
-#: src/global.c:839
+#: src/global.c:855
 msgid "Home"
 msgstr "Ev"
 
-#: src/global.c:841
+#: src/global.c:857
 msgid "End"
 msgstr "Son"
 
-#: src/global.c:849
-#, fuzzy
-msgid "Prev Block"
-msgstr "Önceki Kelime"
-
-#: src/global.c:851
-#, fuzzy
-msgid "Next Block"
-msgstr "Sonraki Kelime"
-
-#: src/global.c:855
-msgid "Beg of Par"
-msgstr ""
-
-#: src/global.c:857
-msgid "End of Par"
-msgstr ""
+#: src/global.c:860
+msgid "Prev Line"
+msgstr "Önceki Satır"
 
 #: src/global.c:862
+msgid "Next Line"
+msgstr "Sonraki Satır"
+
+#: src/global.c:865
 msgid "Scroll Up"
-msgstr ""
+msgstr "Yukarı Kaydır"
 
-#: src/global.c:864
+#: src/global.c:867
 msgid "Scroll Down"
-msgstr ""
+msgstr "Aşağı Kaydır"
 
-#: src/global.c:869
-#, fuzzy
+#: src/global.c:871
+msgid "Prev Block"
+msgstr "Önceki Blok"
+
+#: src/global.c:873
+msgid "Next Block"
+msgstr "Sonraki Blok"
+
+#: src/global.c:876
+msgid "Beg of Par"
+msgstr "Par Başına"
+
+#: src/global.c:878
+msgid "End of Par"
+msgstr "Par Sonuna"
+
+#: src/global.c:882 src/global.c:1035
+msgid "Prev Page"
+msgstr "Önceki Sayfa"
+
+#: src/global.c:884 src/global.c:1037
+msgid "Next Page"
+msgstr "Sonraki Sayfa"
+
+#: src/global.c:887
+msgid "First Line"
+msgstr "İlk Satır"
+
+#: src/global.c:889
+msgid "Last Line"
+msgstr "Son Satır"
+
+#: src/global.c:893
 msgid "Prev File"
 msgstr "Önceki Dosya"
 
-#: src/global.c:871
+#: src/global.c:895
 msgid "Next File"
 msgstr "Sonraki Dosya"
 
-#: src/global.c:887
-msgid "Verbatim"
-msgstr ""
-
-#: src/global.c:890
+#: src/global.c:905
 msgid "Tab"
-msgstr "Sekme (TAB)"
+msgstr "Sekme"
 
-#: src/global.c:892
+#: src/global.c:907
 msgid "Enter"
-msgstr "Gir Tuşu (Enter)"
+msgstr "Gir Tuşu"
 
-#: src/global.c:895
-msgid "Delete"
-msgstr "Sil"
-
-#: src/global.c:897
+#: src/global.c:910
 msgid "Backspace"
 msgstr "Geri tuşu"
 
-#. TRANSLATORS: The next two strings refer to cutting words.
-#: src/global.c:908
-#, fuzzy
-msgid "Cut Left"
-msgstr "Metni Kes"
-
-#: src/global.c:910
-msgid "Cut Right"
-msgstr ""
-
 #: src/global.c:912
+msgid "Delete"
+msgstr "Sil"
+
+#. TRANSLATORS: The next two strings refer to deleting words.
+#: src/global.c:923
+msgid "Chop Left"
+msgstr "Sola Kırp"
+
+#: src/global.c:925
+msgid "Chop Right"
+msgstr "Sağa Kırp"
+
+#: src/global.c:927
 msgid "CutTillEnd"
-msgstr ""
+msgstr "SonaKadarKes"
 
-#: src/global.c:922
+#: src/global.c:937
 msgid "Word Count"
-msgstr ""
+msgstr "Kelime Sayısı"
 
-#: src/global.c:929
+#: src/global.c:941
+msgid "Verbatim"
+msgstr "Birebir"
+
+#: src/global.c:949
 msgid "Suspend"
 msgstr "Askıya Al"
 
-#: src/global.c:933
-msgid "Complete"
-msgstr ""
-
-#: src/global.c:937
-msgid "Comment Lines"
-msgstr ""
-
-#: src/global.c:941
-msgid "Save"
-msgstr ""
-
-#: src/global.c:944
-#, fuzzy
-msgid "Previous"
-msgstr "Önceki Dosya"
-
-#: src/global.c:946
-#, fuzzy
-msgid "Next"
-msgstr "Sonraki Sayfa"
-
-#: src/global.c:952
-#, fuzzy
-msgid "PrevHstory"
-msgstr "Geçmiş"
+#: src/global.c:953
+msgid "Indent"
+msgstr "Girinti"
 
 #: src/global.c:955
-#, fuzzy
-msgid "NextHstory"
-msgstr "Geçmiş"
+msgid "Unindent"
+msgstr "Girintiyi kaldır"
 
-#: src/global.c:964
-#, fuzzy
+#: src/global.c:959
+msgid "Comment Lines"
+msgstr "Satırları Yorumla"
+
+#: src/global.c:963
+msgid "Complete"
+msgstr "Tamam"
+
+#: src/global.c:967
+msgid "Record"
+msgstr "Kayıt"
+
+#: src/global.c:969
+msgid "Run Macro"
+msgstr "Makro çalıştır"
+
+#: src/global.c:972
+msgid "Zap Text"
+msgstr "Zap Metni"
+
+#: src/global.c:977
+msgid "To Linter"
+msgstr "Linter'a"
+
+#: src/global.c:981
+msgid "Save"
+msgstr "Kaydet"
+
+#: src/global.c:984
 msgid "Go To Text"
-msgstr "Satıra Git"
+msgstr "Yazıya Git"
 
-#: src/global.c:968
+#: src/global.c:988
 msgid "DOS Format"
 msgstr "DOS Biçimi"
 
-#: src/global.c:970
+#: src/global.c:990
 msgid "Mac Format"
 msgstr "Mac Biçimi"
 
-#: src/global.c:978
+#: src/global.c:998
 msgid "Append"
 msgstr "Sonuna Ekle"
 
-#: src/global.c:980
+#: src/global.c:1000
 msgid "Prepend"
 msgstr "Başına Ekle"
 
-#: src/global.c:983
+#: src/global.c:1003
 msgid "Backup File"
 msgstr "Yedek Dosyası"
 
-#: src/global.c:990
+#: src/global.c:1014
+msgid "No Conversion"
+msgstr "Dönüşüm Yok"
+
+#: src/global.c:1019
 msgid "Execute Command"
 msgstr "Komut Çalıştır"
 
-#: src/global.c:1005
+#: src/global.c:1022
+msgid "Pipe Text"
+msgstr "Taşınan Metin"
+
+#: src/global.c:1032
 msgid "To Files"
 msgstr "Dosyalara"
 
-#: src/global.c:1013
-#, fuzzy
+#: src/global.c:1040
 msgid "First File"
-msgstr "İlk Satır"
+msgstr "İlk Dosya"
 
-#: src/global.c:1015
-#, fuzzy
+#: src/global.c:1042
 msgid "Last File"
-msgstr "Son Satır"
+msgstr "Son Dosya"
 
-#: src/global.c:1019
-msgid "Discard buffer"
-msgstr ""
-
-#: src/global.c:1030
+#: src/global.c:1045
 msgid "Left Column"
-msgstr ""
+msgstr "Sol Sütun"
 
-#: src/global.c:1032
+#: src/global.c:1047
 msgid "Right Column"
-msgstr ""
+msgstr "Sağ Sütun"
+
+#: src/global.c:1049
+msgid "Top Row"
+msgstr "Üst Satır"
+
+#: src/global.c:1051
+msgid "Bottom Row"
+msgstr "Alt Satır"
+
+#: src/global.c:1056
+msgid "Discard buffer"
+msgstr "Tamponu unut"
 
 #. TRANSLATORS: Try to keep the next two strings at most 20 characters.
-#: src/global.c:1039
+#: src/global.c:1061
 msgid "Prev Lint Msg"
-msgstr ""
+msgstr "Önceki Lint Msj"
 
-#: src/global.c:1041
+#: src/global.c:1063
 msgid "Next Lint Msg"
-msgstr ""
+msgstr "Sonraki Lint Msj"
 
-#. TRANSLATORS: The next seventeen strings are toggle descriptions;
+#. TRANSLATORS: The next fourteen strings are toggle descriptions;
 #. * they are best kept shorter than 40 characters, but may be longer.
-#: src/global.c:1332
+#: src/global.c:1385
 msgid "Help mode"
 msgstr "Yardım Kipi"
 
-#: src/global.c:1334
-#, fuzzy
+#: src/global.c:1387
 msgid "Constant cursor position display"
-msgstr "Sabit imleç pozisyonu"
+msgstr "Sabit imleç pozisyonu gösterimi"
 
-#: src/global.c:1336
-msgid "Use of one more line for editing"
-msgstr ""
-
-#: src/global.c:1338
-msgid "Smooth scrolling"
-msgstr "Yumuşak kaydırma"
-
-#: src/global.c:1340
-#, fuzzy
+#: src/global.c:1389
 msgid "Soft wrapping of overlong lines"
-msgstr "Uzun satırları kaydırma"
+msgstr "Uzun satırların yumuşak kaydırılması"
 
-#: src/global.c:1342
+#: src/global.c:1391
 msgid "Whitespace display"
-msgstr ""
+msgstr "Boşluk göster"
 
-#: src/global.c:1344
+#: src/global.c:1393
 msgid "Color syntax highlighting"
 msgstr "Renkli sözdizimi vurgusu"
 
-#: src/global.c:1346
+#: src/global.c:1395
 msgid "Smart home key"
-msgstr ""
+msgstr "Akıllı ev tuşu"
 
-#: src/global.c:1348
+#: src/global.c:1397
 msgid "Auto indent"
 msgstr "Otomatik hizala"
 
-#: src/global.c:1350
+#: src/global.c:1399
 msgid "Cut to end"
 msgstr "Sonuna kes"
 
-#: src/global.c:1352
-#, fuzzy
+#: src/global.c:1401
 msgid "Hard wrapping of overlong lines"
-msgstr "Uzun satırları kaydırma"
+msgstr "Uzun satırların katı kaydırılması"
 
-#: src/global.c:1354
+#: src/global.c:1403
 msgid "Conversion of typed tabs to spaces"
-msgstr ""
+msgstr "Sekmelerin boşluğa dönüşümü"
 
-#: src/global.c:1356
-#, fuzzy
-msgid "Backup files"
-msgstr "Yedek Dosyası"
-
-#: src/global.c:1358
-msgid "Reading file into separate buffer"
-msgstr ""
-
-#: src/global.c:1360
+#: src/global.c:1405
 msgid "Mouse support"
 msgstr "Fare Desteği"
 
-#: src/global.c:1362
-msgid "No conversion from DOS/Mac format"
-msgstr "DOS/Mac biçimi ile ilgili bir şey yok"
-
-#: src/global.c:1364
-#, fuzzy
+#: src/global.c:1407
 msgid "Suspension"
-msgstr "Askıya Al"
+msgstr "Askıya al"
 
-#: src/global.c:1366
-#, fuzzy
+#: src/global.c:1409
 msgid "Line numbering"
-msgstr "Satır numarasını girin"
+msgstr "Satır numaralandırma"
 
-#: src/help.c:211
-#, fuzzy
+#: src/help.c:283
 msgid ""
 "Search Command Help Text\n"
 "\n"
@@ -1262,21 +1242,17 @@ msgid ""
 "prompt.  Hitting Enter without entering any text will perform the previous "
 "search.  "
 msgstr ""
-"Arama Komutu İçin Yardım Metni\n"
+"Arama Komutu Yardım Metni\n"
 "\n"
-" Aramak istediğiniz kelimeleri ya da karakterleri girin ve Giriş tuşuna "
-"basın.  Metin içinde aradığınıza karşı gelen bir kelime ya da karakter "
-"bulunursa, ekran tazelenir ve imleç sonucun bulunduğu en yakın noktaya "
-"konumlanır.\n"
+" Aramak istediğiniz kelime veya karakterleri girip Enter'a basın.  Eğer "
+"girdiğiniz metin ile bir eşleşme varsa, ekran bu metne en yakın konuma "
+"güncellenecektir.\n"
 "\n"
-" Önceki arama metni, Arama komut satırının sağında köşeli parantezler "
-"içerisinde gösterilir.  Hiç bir giriş yapmadan Giriş tuşuna basarsanız, "
-"arama işlemi köşeli parantezler içindeki kelime için tekrarlanır.\n"
-"\n"
-" Arama kipinde aşağıdaki anahtarlardan yararlanabilirsiniz:\n"
-"\n"
+" Önceki arama dizgesi arama isteminden sonra parantez içerisinde "
+"gösterilecektir.  Herhangi bir metin girmeden Enter'a basmak önceki aramayı "
+"tekrarlayacaktır.  "
 
-#: src/help.c:220
+#: src/help.c:292
 msgid ""
 "If you have selected text with the mark and then search to replace, only "
 "matches in the selected text will be replaced.\n"
@@ -1284,8 +1260,13 @@ msgid ""
 " The following function keys are available in Search mode:\n"
 "\n"
 msgstr ""
+"İşaretle ile metni seçip, değiştirmek üzere arama yaptıysanız, sadece "
+"seçilen metindeki eşleşmeler değiştirilecek.\n"
+"\n"
+" Arama kipinde aşağıdaki işlev tuşları kullanılabilir:\n"
+"\n"
 
-#: src/help.c:226
+#: src/help.c:298
 msgid ""
 "Go To Line Help Text\n"
 "\n"
@@ -1305,8 +1286,7 @@ msgstr ""
 " Satıra Git kipinde aşağıdaki anahtarlardan yararlanabilirsiniz:\n"
 "\n"
 
-#: src/help.c:235
-#, fuzzy
+#: src/help.c:307
 msgid ""
 "Insert File Help Text\n"
 "\n"
@@ -1318,25 +1298,18 @@ msgid ""
 "Meta-F toggle, or a nanorc file, inserting a file will cause it to be loaded "
 "into a separate buffer (use Meta-< and > to switch between file buffers).  "
 msgstr ""
-"Dosya Ekle Yardım Metni\n"
+"Dosya Ekleme Yardım Metni\n"
 "\n"
-" Yürürlükte olan dosyaya, imlecin bulunduğu noktadan itibaren eklenecek olan "
-"dosyanın adını yazın.\n"
+" Geçerli imleç konumundaki geçerli dosya tamponuna eklenmesi için dosyanın "
+"adını girin.\n"
 "\n"
-" Eğer nano'yu çoklu dosya arabelleği desteği ile beraber derlediyseniz ve "
-"çoklu arabelleği, -F ya da --multibuffer komut satırı bayrakları ile "
-"kullanılabilir hale getirdiyseniz, ismini yazdığınız dosya ayrı bir "
-"arabelleğe yüklenecektir. (Meta < ve > tuşları yardımıyla arabellekler "
-"arasında gezebilirsiniz).\n"
-"\n"
-" Eğer boş bir arabelleğe ihtiyacınız varsa, komut satırına herhangi bir "
-"dosya  adı girmeyin ya da var olmayan bir dosya adı girip Giriş tuşuna "
-"basın.\n"
-"\n"
-" Dosya Ekle kipinde aşağıdaki anahtarlardan yararlanabilirsiniz:\n"
-"\n"
+" Nano'yu çoklu dosya tamponu desteği ile derlemişseniz ve bunu -F ya da --"
+"multibuffer komut satırı bayrakları, Meta-F anahtarı veya bir nanorc dosyası "
+"ile etkinleştirmişseniz, dosyayı eklemek farklı bir tampona yüklenmesine "
+"sebep olacaktır (dosya tamponları arasında geçiş için Meta-< ve > "
+"kullanın).  "
 
-#: src/help.c:244
+#: src/help.c:316
 msgid ""
 "If you need another blank buffer, do not enter any filename, or type in a "
 "nonexistent filename at the prompt and press Enter.\n"
@@ -1344,9 +1317,13 @@ msgid ""
 " The following function keys are available in Insert File mode:\n"
 "\n"
 msgstr ""
+"Başka bir boş arabellek gerekiyorsa, herhangi bir dosya adı girmeyin veya "
+"isteminde varolmayan bir dosya adı yazın ve Enter tuşuna basın.\n"
+"\n"
+" Aşağıdaki işlev tuşlarını dosya ekle modunda kullanılabilir:\n"
+"\n"
 
-#: src/help.c:250
-#, fuzzy
+#: src/help.c:322
 msgid ""
 "Write File Help Text\n"
 "\n"
@@ -1361,21 +1338,19 @@ msgid ""
 " The following function keys are available in Write File mode:\n"
 "\n"
 msgstr ""
-"Dosyayı Yaz Yardım Metni\n"
+"Dosya Tarayıcısı Yardım Metni\n"
 "\n"
-" Dosyayı hangi isimle kaydetmek istiyorsanız o ismi yazıp Giriş tuşuna "
-"basınız.\n"
+" Dosya yardımcı metin türünü dosyayı kaydetmek için Enter tuşuna basın ve "
+"geçerli dosyayı farklı kaydet istediğiniz adı yazın.\n"
 "\n"
-" Eğer Ctrl-^ ile seçtiğiniz bir metin varsa, size sadece seçili olan kısmı "
-"ayrı bir dosyaya kaydedip kaydetmek istemeyeceğiniz sorulacaktır.  "
-"Yanlışlıkla dosyanızın bir kısmını, tamamının üzerine yazabilmeniz "
-"ihtimalini ortadan kaldırmak için, çalıştığınız dosya ismi bu kipte "
-"varsayılan dosya ismi olarak komut satırında yazmamaktadır..\n"
+" İşareti ile metni seçtiyseniz yalnızca seçili bölümü ayrı bir dosyaya "
+"kaydetmek için istenir.  Geçerli dosyanın sadece bir bölümü ile üzerine "
+"olasılığını azaltmak için geçerli dosya adı varsayılan bu modda değil.\n"
 "\n"
-" Dosyayı Yaz kipinde aşağıdaki anahtarlardan yararlanabilirsiniz:\n"
+" Aşağıdaki işlev tuşlarını dosya yazma modunda kullanılabilir:\n"
 "\n"
 
-#: src/help.c:264
+#: src/help.c:336
 msgid ""
 "File Browser Help Text\n"
 "\n"
@@ -1390,18 +1365,17 @@ msgid ""
 msgstr ""
 "Dosya Tarayıcısı Yardım Metni\n"
 "\n"
-" Dosya tarayıcısı, okumak ya da yazmak üzere bir dosya seçme işlemi "
-"esnasında dizin yapısı içerisinde görsel olarak gezinebilmenizi sağlar.   Ok "
-"ve Sayfa Aşağı/Yukarı tuşları yardımıyla dosyaları gezebilir, bir dizin veya "
-"dosya üzerindeyken S ya da Giriş tuşunuza basarak dizine geçebilir ya da "
-"dosyayı seçebilirsiniz. Bir üst dizine geçmek için listenin en üstünde "
+" Dosya tarayıcısı okumak veya yazmak üzere bir dosya seçme işlemi esnasında "
+"dizin yapısı içerisinde görsel olarak gezinebilmenizi sağlar.  Ok tuşları ve "
+"Sayfa Aşağı/Yukarı tuşları yardımıyla dosyaları gezebilir bir dizin veya "
+"dosya üzerindeyken S veya Giriş tuşunuza basarak dizine geçebilir ya da "
+"dosyayı seçebilirsiniz.  Bir üst dizine geçmek için listenin en üstünde "
 "bulunan \"..\" isimli dizini seçmeniz gerekmektedir.\n"
 "\n"
 " Dosya Tarayıcısı kipinde aşağıdaki anahtarlardan yararlanabilirsiniz:\n"
 "\n"
 
-#: src/help.c:277
-#, fuzzy
+#: src/help.c:349
 msgid ""
 "Browser Search Command Help Text\n"
 "\n"
@@ -1414,28 +1388,26 @@ msgid ""
 "search.\n"
 "\n"
 msgstr ""
-"Arama Komutu İçin Yardım Metni\n"
+"Arama Komutu Yardım Metni\n"
 "\n"
-" Aramak istediğiniz kelimeleri ya da karakterleri girin ve Giriş tuşuna "
-"basın.  Metin içinde aradığınıza karşı gelen bir kelime ya da karakter "
-"bulunursa, ekran tazelenir ve imleç sonucun bulunduğu en yakın noktaya "
-"konumlanır.\n"
+" Aramak istediğiniz kelime veya karakterleri girip Enter'a basın.  Eğer "
+"girdiğiniz metin ile bir eşleşme varsa, ekran bu metne en yakın konuma "
+"güncellenecektir.\n"
 "\n"
-" Önceki arama metni, Arama komut satırının sağında köşeli parantezler "
-"içerisinde gösterilir.  Hiç bir giriş yapmadan Giriş tuşuna basarsanız, "
-"arama işlemi köşeli parantezler içindeki kelime için tekrarlanır.\n"
-"\n"
-" Arama kipinde aşağıdaki anahtarlardan yararlanabilirsiniz:\n"
+" Önceki arama dizgesi arama isteminden sonra parantez içerisinde "
+"gösterilecektir.  Herhangi bir metin girmeden Enter'a basmak önceki aramayı "
+"tekrarlayacaktır.\n"
 "\n"
 
-#: src/help.c:286
+#: src/help.c:358
 msgid ""
 " The following function keys are available in Browser Search mode:\n"
 "\n"
 msgstr ""
+" Tarayıcı Arama kipinde aşağıdaki işlev tuşları kullanılabilir:\n"
+"\n"
 
-#: src/help.c:290
-#, fuzzy
+#: src/help.c:362
 msgid ""
 "Browser Go To Directory Help Text\n"
 "\n"
@@ -1447,18 +1419,18 @@ msgid ""
 " The following function keys are available in Browser Go To Directory mode:\n"
 "\n"
 msgstr ""
-"Tarayıcı Dizine Git Yardım Metni\n"
+"Tarayıcı Git Dizini Yardım Metni\n"
 "\n"
-" İçine girmek istediğiniz dizinin adını yazıp Giriş tuşuna basınız.\n"
+" Tarayıcı gözatmak için istediğiniz dizinin adını girin.\n"
 "\n"
-" Eğer isim tamamlama kullanılır durumda ise, klavyenizin Sekme tuşuna "
-"basarak dizinlerin isimlerinin tamamlanmasını sağlayabilirsiniz.\n"
+" Eğer sekme tamamlama devre dışı bırakıldıysa (denemek için) sekme tuşunu "
+"kullanabilirsiniz otomatik olarak dizin adı tamamlar.\n"
 "\n"
-" Tarayıcı Dizine Git kipinde aşağıdaki anahtarlardan yararlanabilirsiniz:\n"
+" Aşağıdaki işlev tuşlarını tarayıcı gitmek için dizin modunda "
+"kullanılabilir:\n"
 "\n"
 
-#: src/help.c:303
-#, fuzzy
+#: src/help.c:375
 msgid ""
 "Spell Check Help Text\n"
 "\n"
@@ -1473,37 +1445,71 @@ msgid ""
 msgstr ""
 "Yazım Denetimi Yardım Metni\n"
 "\n"
-" Yazım denetleyicisi, tüm metin içerisindeki yazımı denetler.  Bilinmeyen "
-"bir kelime ile karşılaştığında, kelimeyi vurgular ve kelimeyi "
-"değiştirebilmeniz için komut satırına yazar. Bu işlem yazım denetiminin "
-"metin içinde yanlış kabul ettiği her kelime için tekrarlanır.\n"
+" Yazım denetleyicisi, geçerli dosyadaki tüm metnin yazım denetimini "
+"denetler.  Bilinmeyen bir kelime karşılaşıldığında vurgulanmasını ve "
+"yenisini düzenlenebilir.  Geçerli dosyadaki verilen yanlış yazılmış sözcüğü "
+"her örneğini değiştirmek için daha sonra isteyecektir veya seçili metinde "
+"işaret ile seçilmiş metin.\n"
 "\n"
-" Yazım Denetimi kipinde aşağıdaki anahtarlardan yararlanabilirsiniz:\n"
+" Aşağıdaki işlev tuşlarını yazım denetimi modunda kullanılabilir:\n"
 "\n"
 
-#: src/help.c:318
-#, fuzzy
+#: src/help.c:390
 msgid ""
 "Execute Command Help Text\n"
 "\n"
 " This mode allows you to insert the output of a command run by the shell "
-"into the current buffer (or a new buffer in multiple file buffer mode).  If "
-"you need another blank buffer, do not enter any command.\n"
+"into the current buffer (or into a new buffer).  If the command is preceded "
+"by '|' (the pipe symbol), the current contents of the buffer (or marked "
+"region) will be piped to the command.  "
+msgstr ""
+"Komut Yardımı Metnini Çalıştırma\n"
 "\n"
+" Bu mod, kabuk tarafından çalıştırılan komutun çıktısını geçerli arabelleğe "
+"(veya yeni bir arabelleğe) eklemenizi sağlar. Komut önceliği ise '|' (boru "
+"sembolü), tamponun mevcut içeriğini (veya işaretli bölge) komuta verilir."
+
+#: src/help.c:396
+msgid ""
+"If you just need another blank buffer, do not enter any command.\n"
+"\n"
+msgstr ""
+"Sadece başka bir boş arabellek gerekiyorsa, herhangi bir komut girmeyin.\n"
+"\n"
+
+#: src/help.c:398
+msgid ""
 " The following function keys are available in Execute Command mode:\n"
 "\n"
 msgstr ""
-"Harici Komut Yardım Metni\n"
-"\n"
-" Bu menü, kabukta çalıştıracağınız bir komutun çıktısını yürürlükteki "
-"arabelleğe eklemenizi sağlar. (çoklu arabellek aktif ise diğer bir "
-"arabelleğe de ekleyebilirsiniz).\n"
-"\n"
-" Harici Komut kipinde aşağıdaki anahtarlardan yararlanabilirsiniz:\n"
+" Çalıştırılabilir Komut kipinde aşağıdaki işlev tuşları kullanılabilir:\n"
 "\n"
 
-#: src/help.c:331
-#, fuzzy
+#: src/help.c:401
+msgid ""
+"=== Linter ===\n"
+"\n"
+" In this mode, the status bar shows an error message or warning, and the "
+"cursor is put at the corresponding position in the file.  With PageUp and "
+"PageDown you can switch to earlier and later messages.\n"
+"\n"
+msgstr ""
+"=== Linter ===\n"
+"\n"
+" Bu modda, durum çubuğu bir hata mesajı veya uyarı gösterir ve imleç dosyada "
+"karşılık gelen konuma yerleştirilir. SayfaYukarı ve Sayfa Aşağı ile önceki "
+"ve sonraki mesajlara geçebilirsiniz.\n"
+"\n"
+
+#: src/help.c:406
+msgid ""
+" The following function keys are available in Linter mode:\n"
+"\n"
+msgstr ""
+" Aşağıdaki fonksiyon tuşları Linter modunda kullanılabilir:\n"
+"\n"
+
+#: src/help.c:413
 msgid ""
 "Main nano help text\n"
 "\n"
@@ -1514,26 +1520,16 @@ msgid ""
 "showing the file being edited.  The status line is the third line from the "
 "bottom and shows important messages.  "
 msgstr ""
-" nano yardım metni\n"
+"Ana nano yardım metni\n"
 "\n"
-" nano düzenleyicisi, UW Pico metin düenleyicisinin işlevselliğine ve kolay "
-"kullanımına öykünmesi için tasarlandı. Düzenleyicide dört ana bölüm "
-"bulunmaktadır: En üst satır programın sürümünü, o an düzenlenmekte olan "
-"dosyanın adını ve bu dosyanın değiştirilip değiştirilmediğini gösterir. Bir "
-"sonraki kısım ana düzenleyici penceresidir ve burada düzenlenmekte olan "
-"dosyanın içeriği gösterilir. Üçüncü kısım olan durum çubuğu, önemli "
-"mesajların gösterildiği kısımdır. En alttaki iki satır ise, düzenleyici "
-"içerisinde en sık kullanılan kısayolları gösterir.\n"
-"\n"
-" Kısayolların gösterimi ise şöyledir:  Kontrol (Ctrl) tuşu ile başlayan "
-"ardışıklıklar düzeltme işarteti (^) ile gösterilmiştir.  Kaçış tuşu (Esc) "
-"ardışıklıkları Meta (M) sembolü ile gösterilmiştir ve Esc, Alt ya da Meta "
-"tuşları M sembolü için kullanılabilir; bu sizin klavye yapılandırmanıza "
-"bağlıdır.  Takip eden tuş birleşimleri düzenleyicinin ana penceresinde "
-"kullanılabilir.  Alternatif tuşlar parantez içinde gösterilmişlerdir:\n"
-"\n"
+" Nano düzenleyicisi, UW Pico metin düzenleyicinin kolay kullanımını ve "
+"işlevlerini öykülemek için tasarlanmıştır.  Düzenleyicide dört ana bölüm "
+"bulunur.  Üst satır program sürümünü, şu anda düzenlenen dosya adını ve "
+"dosyanın düzenlenip düzenlenmediğini gösterir.  Ardından, düzenlenen "
+"dosyanın gösterildiği ana düzenleyici penceresi bulunur.  Alttan üçüncü "
+"satır durum satırıdır ve önemli mesajları gösterir.  "
 
-#: src/help.c:341
+#: src/help.c:423
 msgid ""
 "The bottom two lines show the most commonly used shortcuts in the editor.\n"
 "\n"
@@ -1542,8 +1538,14 @@ msgid ""
 "twice.  Meta-key sequences are notated with 'M-' and can be entered using "
 "either the Alt, Cmd, or Esc key, depending on your keyboard setup.  "
 msgstr ""
+"Son iki satır düzenleyicide en çok kullanılan kısayolları gösterir.\n"
+"\n"
+" Kısayollar şu şekilde yazılmıştır: CTRL tuş bileşimleri '^' ile "
+"gösterilmiştir ve CTRL tuşu ya da ESC tuşuna iki kez basılarak girilebilir.  "
+"Meta-tuşu bileşenleri 'M-' ile gösterilmiştir ve klavye yapılandırmasına "
+"göre Alt, Cmd veya ESC tuşları ile girilebilir.  "
 
-#: src/help.c:348
+#: src/help.c:430
 msgid ""
 "Also, pressing Esc twice and then typing a three-digit decimal number from "
 "000 to 255 will enter the character with the corresponding value.  The "
@@ -1551,26 +1553,61 @@ msgid ""
 "keys are shown in parentheses:\n"
 "\n"
 msgstr ""
+"Ayrıca, ESC tuşuna iki kez basıp 000 ile 255 arasında üç haneli bir sayı "
+"kullanımı, ilgili değere karşılık gelen karakteri girecektir.  Ana "
+"düzenleyici penceresinde aşağıdaki tuş basışları kullanılabilir.  Alternatif "
+"tuşlar parantez içinde gösterilmiştir:\n"
+"\n"
 
-#: src/help.c:380 src/help.c:461
+#: src/help.c:462 src/help.c:534
 msgid "enable/disable"
 msgstr "etkin/etkisiz"
 
-#: src/nano.c:529
-#, fuzzy
-msgid "Key is invalid in view mode"
-msgstr "GÖSTER kipi için geçersiz anahtar"
-
-#: src/nano.c:535
-#, fuzzy
-msgid "This function is disabled in restricted mode"
-msgstr "Kısıtlı kipte %s dışına çıkılamıyor"
-
-#: src/nano.c:543
-msgid "Help is not available"
+#: src/history.c:240
+#, c-format
+msgid ""
+"\n"
+"Press Enter to continue\n"
 msgstr ""
+"\n"
+"Devam etmek için Enter'a basın\n"
 
-#: src/nano.c:652
+#: src/history.c:283
+#, c-format
+msgid ""
+"Unable to create directory %s: %s\n"
+"It is required for saving/loading search history or cursor positions.\n"
+msgstr ""
+"%s dizini oluşturulamadı: %s\n"
+"Arama geçmişi veya imleç konumlarını kaydetme/yükleme için gerekli.\n"
+
+#: src/history.c:290
+#, c-format
+msgid ""
+"Path %s is not a directory and needs to be.\n"
+"Nano will be unable to load or save search history or cursor positions.\n"
+msgstr ""
+"%s yolu bir dizin değil ancak dizin olmalı.\n"
+"Nano arama geçmişi ve imleç konumlarını yükleyemeyecek/kaydedemeyecek.\n"
+
+#: src/history.c:380 src/history.c:389 src/history.c:471 src/history.c:493
+#, c-format
+msgid "Error writing %s: %s\n"
+msgstr "%s yazarken hata: %s\n"
+
+#: src/nano.c:465
+msgid "Key is invalid in view mode"
+msgstr "Tuş görünüm kipinde geçersizdir"
+
+#: src/nano.c:471
+msgid "This function is disabled in restricted mode"
+msgstr "Bu fonksiyon kısıtlı kipte geçersizdir"
+
+#: src/nano.c:479
+msgid "Help is not available"
+msgstr "Yardım kullanılabilir değil"
+
+#: src/nano.c:590
 #, c-format
 msgid ""
 "\n"
@@ -1579,327 +1616,345 @@ msgstr ""
 "\n"
 "Arabellek %s olarak yazıldı\n"
 
-#: src/nano.c:654
-#, fuzzy, c-format
+#: src/nano.c:592
+#, c-format
 msgid ""
 "\n"
 "Buffer not written to %s: %s\n"
 msgstr ""
 "\n"
-"Arabellek %s olarak yazıldı\n"
+"Arabellek %s'ye yazılamadı: %s\n"
 
-#: src/nano.c:657
-#, fuzzy, c-format
+#: src/nano.c:595
+#, c-format
 msgid ""
 "\n"
 "Buffer not written: %s\n"
 msgstr ""
 "\n"
-"Arabellek %s olarak yazıldı\n"
+"Arabellek yazılamadı: %s\n"
 
-#: src/nano.c:784
+#: src/nano.c:694
 #, c-format
 msgid ""
-"Usage: nano [OPTIONS] [[+LINE,COLUMN] FILE]...\n"
+"Usage: nano [OPTIONS] [[+LINE[,COLUMN]] FILE]...\n"
 "\n"
 msgstr ""
+"Kullanım: nano [SEÇENEKLER] [[+SATIR[,SÜTUN]] DOSYA]...\n"
+"\n"
 
-#: src/nano.c:786
-#, fuzzy, c-format
-msgid "Option\t\tGNU long option\t\tMeaning\n"
-msgstr "Seçenek\t\tUzun Seçenek\t\tAnlamı\n"
-
-#: src/nano.c:788
+#. TRANSLATORS: The next two strings are part of the --help output.
+#. * It's best to keep its lines within 80 characters.
+#: src/nano.c:697
 #, c-format
-msgid "Option\t\tMeaning\n"
-msgstr "Seçenek\t\tAnlamı\n"
-
-#: src/nano.c:790
-msgid "+LINE,COLUMN"
+msgid ""
+"To place the cursor on a specific line of a file, put the line number with\n"
+"a '+' before the filename.  The column number can be added after a comma.\n"
 msgstr ""
+"İmleci bir dosyanın belirli bir satırına yerleştirmek için, satır numarasını "
+"dosya adından\n"
+"önce '+' ile koyun.  Sütun numarası bir virgülden sonra eklenebilir.\n"
+
+#: src/nano.c:699
+#, c-format
+msgid ""
+"When a filename is '-', nano reads data from standard input.\n"
+"\n"
+msgstr ""
+"Nezaman bir dosya adı '-', nano veriyi standart girdiden okur.\n"
+"\n"
+
+#. TRANSLATORS: The next three are column headers of the --help output.
+#: src/nano.c:701
+msgid "Option"
+msgstr "Seçenek"
+
+#: src/nano.c:701
+msgid "Long option"
+msgstr "Uzun seçenek"
+
+#: src/nano.c:701
+msgid "Meaning"
+msgstr "Anlam"
 
 #. TRANSLATORS: The next forty or so strings are option descriptions
 #. * for the --help output.  Try to keep them at most 40 characters.
-#: src/nano.c:793
-#, fuzzy
-msgid "Start at line LINE, column COLUMN"
-msgstr "LINE satır numarasından başla"
-
-#: src/nano.c:795
-#, fuzzy
+#: src/nano.c:705
 msgid "Enable smart home key"
-msgstr "Fare etkin"
+msgstr "Akıllı ev tuşunu etkinleştir"
 
-#: src/nano.c:797
-#, fuzzy
+#: src/nano.c:707
 msgid "Save backups of existing files"
-msgstr "Kaydetme anında varolan dosyaların yedeğini al"
+msgstr "Var olan dosyaların yedeklerini kaydet"
 
-#: src/nano.c:798
+#: src/nano.c:708
 msgid "-C <dir>"
-msgstr ""
+msgstr "-C <dir>"
 
-#: src/nano.c:798
+#: src/nano.c:708
 msgid "--backupdir=<dir>"
-msgstr ""
+msgstr "--backupdir=<dir>"
 
-#: src/nano.c:799
+#: src/nano.c:709
 msgid "Directory for saving unique backup files"
-msgstr ""
+msgstr "Benzersiz yedek dosyalarını kaydetmek için dizin"
 
-#: src/nano.c:802
+#: src/nano.c:712
 msgid "Use bold instead of reverse video text"
-msgstr ""
+msgstr "Ters video metni yerine kalın kullan"
 
-#: src/nano.c:804
+#: src/nano.c:714
 msgid "Convert typed tabs to spaces"
-msgstr ""
+msgstr "Yazılan sekmeleri boşluklara dönüştür"
 
-#: src/nano.c:809
+#: src/nano.c:719
 msgid "Read a file into a new buffer by default"
-msgstr ""
+msgstr "Varsayılan olarak dosyayı yeni bir tampona oku"
 
-#: src/nano.c:812
+#: src/nano.c:722
 msgid "Use (vim-style) lock files"
-msgstr ""
+msgstr "Kilit dosyaları (vim biçemi) kullan"
 
-#: src/nano.c:817
+#: src/nano.c:727
 msgid "Log & read search/replace string history"
-msgstr "Metin arama/değiştirme geçmişini oku ve günlükle."
+msgstr "Metin arama/değiştirme geçmişini oku & günlükle"
 
-#: src/nano.c:821
+#: src/nano.c:730
 msgid "Don't look at nanorc files"
 msgstr "nanorc dosyalarına bakma"
 
-#: src/nano.c:824
+#: src/nano.c:734
+msgid "Show a guiding bar at this column"
+msgstr "Bu sütunda bir kılavuz çubuk göster"
+
+#: src/nano.c:737
 msgid "Fix numeric keypad key confusion problem"
-msgstr ""
+msgstr "Sayısal tuş karmaşıklığı sorununu çöz"
 
-#: src/nano.c:826
-msgid "Don't add newlines to the ends of files"
-msgstr ""
+#: src/nano.c:740
+msgid "Don't add an automatic newline"
+msgstr "Otomatik bir yeni satır eklemeyin"
 
-#: src/nano.c:829
+#: src/nano.c:744
+msgid "Trim tail spaces when hard-wrapping"
+msgstr "Sabit-sarma yaparken kuyruk boşluklarını kırp"
+
+#: src/nano.c:748
 msgid "Don't convert files from DOS/Mac format"
 msgstr "Dosyalaro DOS/Mac biçiminden dönüştürme"
 
-#: src/nano.c:831
-msgid "Use one more line for editing"
-msgstr ""
-
-#: src/nano.c:835
-#, fuzzy
+#: src/nano.c:753
 msgid "Log & read location of cursor position"
-msgstr "Sabit imleç pozisyonu"
+msgstr "İmleç konumunun konumunu tut ve oku"
 
-#: src/nano.c:838
-msgid "-Q <str>"
-msgstr ""
+#: src/nano.c:756
+msgid "-Q <regex>"
+msgstr "-Q <regex>"
 
-#: src/nano.c:838
-#, fuzzy
-msgid "--quotestr=<str>"
-msgstr "--quotestr=[metin]"
+#: src/nano.c:756
+msgid "--quotestr=<regex>"
+msgstr "--quotestr=<regex>"
 
-#: src/nano.c:838
-#, fuzzy
-msgid "Quoting string"
-msgstr "Alıntı dizgesi, öntanımlı \"> \""
+#: src/nano.c:757
+msgid "Regular expression to match quoting"
+msgstr "Alıntıyı eşleştirmek için normal ifade"
 
-#: src/nano.c:841
+#: src/nano.c:760
 msgid "Restricted mode"
-msgstr ""
+msgstr "Sınırlı mod"
 
-#: src/nano.c:843
-msgid "Scroll by line instead of half-screen"
-msgstr ""
-
-#: src/nano.c:845
-#, fuzzy
+#: src/nano.c:761
 msgid "-T <#cols>"
-msgstr "-r [#cols]"
+msgstr "-T <#cols>"
 
-#: src/nano.c:845
-#, fuzzy
+#: src/nano.c:761
 msgid "--tabsize=<#cols>"
-msgstr "--tabsize=[sayı]"
+msgstr "--tabsize=<#cols>"
 
-#: src/nano.c:846
-#, fuzzy
+#: src/nano.c:762
 msgid "Set width of a tab to #cols columns"
-msgstr "Sekmenin genişliğini numaraya ayarla"
+msgstr "Bir sekme genişliğini #süt sütuna ayarla"
 
-#: src/nano.c:848
+#: src/nano.c:763
 msgid "Do quick statusbar blanking"
-msgstr ""
+msgstr "Hızlı durum çubuğu boşaltması yap"
 
-#: src/nano.c:850
+#: src/nano.c:764
 msgid "Print version information and exit"
 msgstr "Sürüm bilgisini yaz ve çık"
 
-#: src/nano.c:853
+#: src/nano.c:767
 msgid "Detect word boundaries more accurately"
-msgstr ""
+msgstr "Kelime sınırlarını daha isabetli algıla"
 
-#: src/nano.c:854
+#: src/nano.c:768
 msgid "-X <str>"
-msgstr ""
+msgstr "-X <dizge>"
 
-#: src/nano.c:854
+#: src/nano.c:768
 msgid "--wordchars=<str>"
-msgstr ""
+msgstr "--wordchars=<dizge>"
 
-#: src/nano.c:855
+#: src/nano.c:769
 msgid "Which other characters are word parts"
-msgstr ""
+msgstr "Hangi diğer karakterler kelime bölümleri"
 
-#: src/nano.c:859
-msgid "-Y <str>"
-msgstr ""
+#: src/nano.c:773
+msgid "-Y <name>"
+msgstr "-Y <isim>"
 
-#: src/nano.c:859
-#, fuzzy
-msgid "--syntax=<str>"
-msgstr "--syntax [metin]"
+#: src/nano.c:773
+msgid "--syntax=<name>"
+msgstr "--syntax=<isim>"
 
-#: src/nano.c:860
-#, fuzzy
+#: src/nano.c:774
 msgid "Syntax definition to use for coloring"
-msgstr "Kullanılacak sözdizim tanımlaması"
+msgstr "Renklendirmek için sözdizimi tanımı"
 
-#: src/nano.c:862
+#: src/nano.c:777
+msgid "Let Bsp and Del erase a marked region"
+msgstr "BSP ve Del'in işaretli bir bölgeyi silmesine izin ver"
+
+#: src/nano.c:778
+msgid "When soft-wrapping, do it at whitespace"
+msgstr "Ne zaman yumuşak-kaydırma, onu boşluk yap"
+
+#: src/nano.c:781
+msgid "Automatically hard-wrap overlong lines"
+msgstr "Otomatik olarak hard-wrap uzun çizgiler"
+
+#: src/nano.c:783
 msgid "Constantly show cursor position"
 msgstr "İmleç pozisyonunu daimi göster"
 
-#: src/nano.c:864
+#: src/nano.c:785
 msgid "Fix Backspace/Delete confusion problem"
-msgstr ""
+msgstr "Backspace/Delete karışıklığını düzelt"
 
-#: src/nano.c:865
+#: src/nano.c:786
+msgid "Keep the line below the title bar empty"
+msgstr "Satır çubuğunun altındaki satırı boş bırak"
+
+#: src/nano.c:789
+msgid "Show cursor in file browser & help text"
+msgstr "İmleci dosya tarayıcısına ve yardım metninde göster"
+
+#: src/nano.c:791
 msgid "Show this help text and exit"
-msgstr ""
+msgstr "Bu yardım metnini göster ve çık"
 
-#: src/nano.c:867
+#: src/nano.c:793
 msgid "Automatically indent new lines"
 msgstr "Yeni satırlarda otomatik paragraf başı yap"
 
-#: src/nano.c:868
-#, fuzzy
+#: src/nano.c:795
+msgid "Scroll per half-screen, not per line"
+msgstr "Satır başına değil, yarım ekran başına kaydırma"
+
+#: src/nano.c:797
 msgid "Cut from cursor to end of line"
-msgstr ""
-"^K komutunun, imleç pozisyonundan satırın sonuna dek kesmesine izin ver"
+msgstr "İmlecin bulunduğu yerden satır sonuna kadar kes"
 
-#: src/nano.c:871
+#: src/nano.c:800
 msgid "Show line numbers in front of the text"
-msgstr ""
+msgstr "Metnin önünde satır numaralarını göster"
 
-#: src/nano.c:874
-#, fuzzy
+#: src/nano.c:803
 msgid "Enable the use of the mouse"
-msgstr "Fare etkin"
+msgstr "Fare kullanımı etkin"
 
-#: src/nano.c:876
+#: src/nano.c:805
 msgid "Do not read the file (only write it)"
-msgstr ""
+msgstr "Dosyayı okuma (sadece yaz)"
 
-#: src/nano.c:878
+#: src/nano.c:807
 msgid "-o <dir>"
-msgstr ""
+msgstr "-o <dir>"
 
-#: src/nano.c:878
-#, fuzzy
+#: src/nano.c:807
 msgid "--operatingdir=<dir>"
-msgstr "--operatingdir=[dizin]"
+msgstr "--operatingdir=<dir>"
 
-#: src/nano.c:879
+#: src/nano.c:808
 msgid "Set operating directory"
 msgstr "Çalışma dizinini belirle"
 
-#: src/nano.c:881
+#: src/nano.c:810
 msgid "Preserve XON (^Q) and XOFF (^S) keys"
 msgstr "XON (^Q) ve XOFF (^S) tuşlarını sakla"
 
-#: src/nano.c:885
-msgid "Silently ignore startup issues like rc file errors"
-msgstr ""
-
-#: src/nano.c:888
-#, fuzzy
+#: src/nano.c:812
 msgid "-r <#cols>"
-msgstr "-r [#cols]"
+msgstr "-r <#cols>"
 
-#: src/nano.c:888
-#, fuzzy
+#: src/nano.c:812
 msgid "--fill=<#cols>"
-msgstr "--fill=[#cols]"
+msgstr "--fill=<#cols>"
 
-#: src/nano.c:889
-msgid "Set hard-wrapping point at column #cols"
-msgstr ""
+#: src/nano.c:813
+msgid "Set width for hard-wrap and justify"
+msgstr "Hard-wrap ve iki yana yaslama için genişliği ayarlayın"
 
-#: src/nano.c:893
-#, fuzzy
+#: src/nano.c:817
 msgid "-s <prog>"
-msgstr "-s [prog]"
+msgstr "-s <prog>"
 
-#: src/nano.c:893
-#, fuzzy
+#: src/nano.c:817
 msgid "--speller=<prog>"
-msgstr "--speller=[prog]"
+msgstr "--speller=<prog>"
 
-#: src/nano.c:894
+#: src/nano.c:818
 msgid "Enable alternate speller"
 msgstr "Alternatif yazım kontrolcüsü etkin"
 
-#: src/nano.c:896
+#: src/nano.c:820
 msgid "Auto save on exit, don't prompt"
 msgstr "Çıkışta sormaksızın otomatik kaydet"
 
-#: src/nano.c:898
-#, fuzzy
+#: src/nano.c:822
 msgid "Save a file by default in Unix format"
-msgstr "Dosyayı DOS biçiminde yaz"
+msgstr "Dosyayı varsayılan olarak Unix biçiminde kaydet"
 
-#: src/nano.c:900
-#, fuzzy
+#: src/nano.c:824
 msgid "View mode (read-only)"
-msgstr "Göster (sadece okunur) kipi"
+msgstr "Görünüm modu (salt okunur)"
 
-#: src/nano.c:902
-#, fuzzy
-msgid "Don't hard-wrap long lines"
-msgstr "Uzun satırları kaydırma"
+#: src/nano.c:826
+msgid "Don't hard-wrap long lines [default]"
+msgstr "Uzun çizgileri hard-wrap yapmayın [varsayılan]"
 
-#: src/nano.c:904
-#, fuzzy
+#: src/nano.c:828
 msgid "Don't show the two help lines"
-msgstr "Yardım penceresini gösterme"
+msgstr "İki yardım satırını gösterme"
 
-#: src/nano.c:906
-#, fuzzy
+#: src/nano.c:830
+msgid "Make Ctrl+Right stop at word ends"
+msgstr "Ctrl+Sağ kelime bitiminde durdurur"
+
+#: src/nano.c:833
 msgid "Enable suspension"
-msgstr "Askıya almayı etkinleştir"
+msgstr "Asıkya alma aktif"
 
-#: src/nano.c:908
+#: src/nano.c:835
 msgid "Enable soft line wrapping"
-msgstr ""
+msgstr "Yumuşak satır kaydırmayı etkinleştir"
 
-#: src/nano.c:920
-#, fuzzy, c-format
-msgid " GNU nano, version %s\n"
-msgstr " GNU nano sürüm numarası: %s (%s, %s tarihinde derlendi)\n"
-
-#: src/nano.c:923
+#: src/nano.c:847
 #, c-format
-msgid " (C) 2014..%s the contributors to nano\n"
-msgstr ""
+msgid " GNU nano, version %s\n"
+msgstr " GNU nano, sürüm %s\n"
 
-#: src/nano.c:925
-#, fuzzy, c-format
+#: src/nano.c:850
+#, c-format
+msgid " (C) 2014-%s the contributors to nano\n"
+msgstr " (C) 2014-%s nano katkıcıları\n"
+
+#: src/nano.c:851
+#, c-format
 msgid " Email: nano@nano-editor.org\tWeb: https://nano-editor.org/"
-msgstr "E-Posta: nano@nano-editor.org\tWeb: http://www.nano-editor.org/"
+msgstr " E-posta: nano@nano-editor.org\tWeb: https://nano-editor.org/"
 
-#: src/nano.c:926
+#: src/nano.c:852
 #, c-format
 msgid ""
 "\n"
@@ -1908,1095 +1963,855 @@ msgstr ""
 "\n"
 " Derleme seçenekleri:"
 
-#: src/nano.c:1072
+#: src/nano.c:995
 msgid "No file name"
-msgstr ""
+msgstr "Dosya adı yok"
 
-#: src/nano.c:1074
-msgid "Save modified buffer?  (Answering \"No\" will DISCARD changes.) "
-msgstr ""
+#: src/nano.c:997
+msgid "Save modified buffer? "
+msgstr "Değiştirilen tamponu kaydet? "
 
-#: src/nano.c:1135
-msgid "Couldn't reopen stdin from keyboard, sorry\n"
-msgstr ""
+#: src/nano.c:1066
+msgid "Could not reconnect stdin to keyboard\n"
+msgstr "Stdin klavyeye yeniden bağlanamadı\n"
 
-#: src/nano.c:1159
+#: src/nano.c:1087
 #, c-format
-msgid "Reading from stdin, ^C to abort\n"
-msgstr ""
+msgid "Reading data from keyboard; type ^D or ^D^D to finish.\n"
+msgstr "Klavyeden veri okuyor; bitirmek için ^D veya ^D^D yazın.\n"
 
-#: src/nano.c:1223
+#: src/nano.c:1097
+#, c-format
+msgid "Failed to open stdin: %s"
+msgstr "Açılma hatası stdin: %s"
+
+#: src/nano.c:1181
 msgid "Received SIGHUP or SIGTERM\n"
 msgstr "SIGHUP ya da SIGTERM sinyali alındı\n"
 
-#: src/nano.c:1239
-#, fuzzy, c-format
+#: src/nano.c:1188
+#, c-format
+msgid "Sorry! Nano crashed!  Code: %d.  Please report a bug.\n"
+msgstr "Özür dileriz! Nano çöktü!  Kod: %d.  Lütfen bir hata bildirin.\n"
+
+#: src/nano.c:1204
+#, c-format
 msgid "Use \"fg\" to return to nano.\n"
-msgstr "nano'ya geri dönmek için \"fg\"'yi kullanın"
+msgstr "Nanoya geri dönmek için \"fg\" tkullan.\n"
 
-#: src/nano.c:1261
+#: src/nano.c:1225
 msgid "Suspension is not enabled"
-msgstr ""
+msgstr "Askıya alma etkin değil"
 
-#: src/nano.c:1406
+#: src/nano.c:1374
 msgid "enabled"
 msgstr "etkin"
 
-#: src/nano.c:1406
+#: src/nano.c:1374
 msgid "disabled"
 msgstr "etkisiz"
 
-#: src/nano.c:1533
+#: src/nano.c:1525
 msgid "Unbound key"
-msgstr ""
+msgstr "Tuş atamasını kaldır"
 
-#: src/nano.c:1536
+#: src/nano.c:1528
 msgid "Unbindable key: M-["
-msgstr ""
+msgstr "Atama kaldırılamaz tuş: M-["
 
-#: src/nano.c:1538
+#: src/nano.c:1530
 #, c-format
 msgid "Unbound key: M-%c"
-msgstr ""
+msgstr "Tuş atamasını kaldır: M-%c"
 
-#: src/nano.c:1540
+#: src/nano.c:1532
+msgid "Unbindable key: ^["
+msgstr "Bağlanamaz anahtarı: ^["
+
+#: src/nano.c:1534
 #, c-format
 msgid "Unbound key: ^%c"
-msgstr ""
+msgstr "Tuş atamasını kaldır: ^%c"
 
-#: src/nano.c:1542
+#: src/nano.c:1536
 #, c-format
 msgid "Unbound key: %c"
-msgstr ""
+msgstr "Tuş atamasını kaldır: %c"
 
-#: src/nano.c:1715
-#, fuzzy
-msgid "XON ignored, mumble mumble"
-msgstr "XON yoksayıldı."
+#: src/nano.c:2086 src/rcfile.c:1204
+#, c-format
+msgid "Guide column \"%s\" is invalid"
+msgstr "Kılavuz sütunu \"%s\" geçersizdir"
 
-#: src/nano.c:1720
-#, fuzzy
-msgid "XOFF ignored, mumble mumble"
-msgstr "XOFF yoksayıldı."
+#: src/nano.c:2110 src/nano.c:2129
+#, c-format
+msgid "Option %s is ignored; it is the default\n"
+msgstr "Seçenek %s dikkate alınmaz; bu varsayılandır\n"
 
-#: src/nano.c:2127 src/rcfile.c:1219
-#, fuzzy, c-format
+#: src/nano.c:2135 src/rcfile.c:1260
+#, c-format
 msgid "Requested tab size \"%s\" is invalid"
-msgstr "istenen Tab değeri %d geçerli değil"
+msgstr "İstenen sekme boyutu \"%s\" geçersiz"
 
-#: src/nano.c:2194 src/rcfile.c:1156
-#, fuzzy, c-format
+#: src/nano.c:2224 src/rcfile.c:1195
+#, c-format
 msgid "Requested fill size \"%s\" is invalid"
-msgstr "istenen doldurma değeri %d geçerli değil"
+msgstr "istenen doldurma değeri \"%s\" geçerli değil"
 
-#: src/nano.c:2248
+#: src/nano.c:2271
 #, c-format
 msgid "Type '%s -h' for a list of available options.\n"
-msgstr ""
+msgstr "Kullanılabilir seçeneklerin bir listesi için '%s -h' yazın.\n"
 
-#: src/nano.c:2562 src/nano.c:2588 src/search.c:879
+#: src/nano.c:2456
+#, c-format
+msgid "Bad quoting regex \"%s\": %s\n"
+msgstr "Kötü alıntı regex \"%s\": %s\n"
+
+#: src/nano.c:2590 src/search.c:782
 msgid "Invalid line or column number"
-msgstr ""
+msgstr "Geçersiz satır veya sütun numarası"
 
-#. TRANSLATORS: For the next three strings, if possible, specify
-#. * the single-byte shortcuts for both your language and English.
-#. * For example, in French: "OoYy", for both "Oui" and "Yes".
-#: src/prompt.c:696
+#: src/nano.c:2641
+#, c-format
+msgid "Mistakes in '%s'"
+msgstr "'%s' olarak hatalar"
+
+#: src/nano.c:2647
+msgid "Welcome to nano.  For basic help, type Ctrl+G."
+msgstr "Nano'ya hoşgeldiniz.  Temel yardım için Ctrl+G tuşlarına basın."
+
+#. TRANSLATORS: For the next three strings, specify the starting letters
+#. * of the translations for "Yes"/"No"/"All".  The first letter of each of
+#. * these strings MUST be a single-byte letter; others may be multi-byte.
+#: src/prompt.c:656
 msgid "Yy"
 msgstr "Ee"
 
-#: src/prompt.c:697
+#: src/prompt.c:657
 msgid "Nn"
 msgstr "Hh"
 
-#: src/prompt.c:698
+#: src/prompt.c:658
 msgid "Aa"
 msgstr "Tt"
 
-#: src/prompt.c:721
+#: src/prompt.c:682
 msgid "Yes"
 msgstr "Evet"
 
-#: src/prompt.c:726
-msgid "All"
-msgstr "Tümü"
-
-#: src/prompt.c:731
+#: src/prompt.c:686
 msgid "No"
 msgstr "Hayır"
 
-#: src/rcfile.c:155
-#, fuzzy, c-format
-msgid "Error in %s on line %lu: "
-msgstr "%s'nin %d. satırında hata: "
+#: src/prompt.c:691
+msgid "All"
+msgstr "Tümü"
 
-#: src/rcfile.c:214
-#, fuzzy, c-format
+#: src/rcfile.c:181
+#, c-format
+msgid "Error in %s on line %zu: "
+msgstr "Error in %s on line %zu: "
+
+#: src/rcfile.c:230
+#, c-format
 msgid "Argument '%s' has an unterminated \""
-msgstr "%s argümanında sonlanmamış \" var"
+msgstr "'%s' argümanı sonlandırılmamış bir \" içeriyor"
 
-#: src/rcfile.c:242 src/rcfile.c:694 src/rcfile.c:749 src/rcfile.c:853
-#, fuzzy
+#: src/rcfile.c:255 src/rcfile.c:757 src/rcfile.c:804 src/rcfile.c:880
 msgid "Regex strings must begin and end with a \" character"
-msgstr "Düzenli ifade katarları, \" karakteri ile başlamalı ve bitmeli\n"
+msgstr "Düzenli ifade satırları \" işareti ile başlamak ve bitmek zorundadır"
 
-#: src/rcfile.c:268 src/search.c:55
+#: src/rcfile.c:280 src/search.c:44
 #, c-format
 msgid "Bad regex \"%s\": %s"
-msgstr "\"%s\" yanlış bir düzenli ifade: %s"
+msgstr "Kötü düzenli i̇fade \"%s\": %s"
 
-#: src/rcfile.c:290
+#: src/rcfile.c:302
 msgid "Missing syntax name"
 msgstr "Sözdizim ismi eksik"
 
-#: src/rcfile.c:299
-msgid "A syntax name must be quoted"
-msgstr ""
+#: src/rcfile.c:310
+msgid "Unpaired quote in syntax name"
+msgstr "Sözdizimi adında eşleşmeyen alıntı"
 
-#: src/rcfile.c:308
+#: src/rcfile.c:322
 msgid "The \"none\" syntax is reserved"
-msgstr ""
+msgstr "\"none\" sözdizimi ayrılmış"
 
-#: src/rcfile.c:338
+#: src/rcfile.c:351
 msgid "The \"default\" syntax does not accept extensions"
-msgstr ""
+msgstr "\"default\" sözdizimi uzantıları kabul etmiyor"
 
-#: src/rcfile.c:378
-#, fuzzy
+#: src/rcfile.c:366
+#, c-format
+msgid "Syntax \"%s\" has no color commands"
+msgstr "Sözdizimi \"%s\" renk komutlarına sahip değildir"
+
+#: src/rcfile.c:396
 msgid "Missing key name"
-msgstr "Sözdizim ismi eksik"
+msgstr "Eksik anahtar adı"
 
-#: src/rcfile.c:387 src/rcfile.c:398
+#: src/rcfile.c:405 src/rcfile.c:416
 msgid "Key name is too short"
-msgstr ""
+msgstr "Tuş adı çok kısa"
 
-#: src/rcfile.c:408
+#: src/rcfile.c:426
 msgid "Key name must begin with \"^\", \"M\", or \"F\""
-msgstr ""
+msgstr "Tuş adı şunlarla başlamalı \"^\", \"M\", veya \"F\""
 
-#: src/rcfile.c:416
+#: src/rcfile.c:429
 #, c-format
 msgid "Key name %s is invalid"
-msgstr ""
+msgstr "Tuş adı %s geçersiz"
 
-#: src/rcfile.c:425
+#: src/rcfile.c:438
 msgid "Must specify a function to bind the key to"
-msgstr ""
+msgstr "Anahtarın bağlayacağı bir işlev belirtmeli"
 
 #. TRANSLATORS: Do not translate the word "all".
-#: src/rcfile.c:435
+#: src/rcfile.c:449
 msgid "Must specify a menu (or \"all\") in which to bind/unbind the key"
-msgstr ""
+msgstr "Anahtarın bağlanacağı/kaldırılacağı bir menü (veya \"all\") belirtmeli"
 
-#: src/rcfile.c:442
+#: src/rcfile.c:468
 #, c-format
 msgid "Cannot map name \"%s\" to a function"
-msgstr ""
+msgstr "\"%s\" adı bir işleve eşlenemiyor"
 
-#: src/rcfile.c:449
+#: src/rcfile.c:475
 #, c-format
 msgid "Cannot map name \"%s\" to a menu"
-msgstr ""
+msgstr "\"%s\" adı bir menüye eşlenemiyor"
 
-#: src/rcfile.c:483
+#: src/rcfile.c:508
 #, c-format
 msgid "Function '%s' does not exist in menu '%s'"
-msgstr ""
+msgstr "'%s' fonksiyonu '%s' menüsünde yok"
 
-#: src/rcfile.c:493
+#: src/rcfile.c:519
 #, c-format
-msgid "Sorry, keystroke \"%s\" may not be rebound"
-msgstr ""
+msgid "Keystroke %s may not be rebound"
+msgstr "Tuş vuruşu %s ribaunt olmayabilir"
 
-#: src/rcfile.c:597
+#: src/rcfile.c:606 src/rcfile.c:1108
+#, c-format
+msgid "Command \"%s\" not understood"
+msgstr "\"%s\" komutu anlaşılamadı"
+
+#: src/rcfile.c:639
 #, c-format
 msgid "Error expanding %s: %s"
-msgstr ""
+msgstr "%s genişletilirken hata: %s"
 
-#: src/rcfile.c:636
-#, fuzzy, c-format
-msgid ""
-"Color \"%s\" not understood.\n"
-"Valid colors are \"green\", \"red\", \"blue\",\n"
-"\"white\", \"yellow\", \"cyan\", \"magenta\" and\n"
-"\"black\", with the optional prefix \"bright\"\n"
-"for foreground colors."
-msgstr ""
-"%s rengi anlaşılamadı.\n"
-"Geçerli renkler \"green\", \"red\", \"blue\", \n"
-"\"white\", \"yellow\", \"cyan\", \"magenta\" ve \n"
-"\"black\", seçimli \"bright\" ön eki ile.\n"
-
-#: src/rcfile.c:657 src/rcfile.c:824 src/rcfile.c:887
+#: src/rcfile.c:679
 #, c-format
-msgid "A '%s' command requires a preceding 'syntax' command"
-msgstr ""
+msgid "Color \"%s\" not understood"
+msgstr "Renk \"%s\" anlaşılmadı"
 
-#: src/rcfile.c:663
+#: src/rcfile.c:695
+msgid "A background color cannot be bright"
+msgstr "Bir arka plan rengi parlak olamaz"
+
+#: src/rcfile.c:727
 msgid "Missing color name"
 msgstr "Renk ismi eksik"
 
-#: src/rcfile.c:673 src/rcfile.c:836
+#: src/rcfile.c:737 src/rcfile.c:864
 #, c-format
 msgid "Missing regex string after '%s' command"
-msgstr ""
+msgstr "'%s' komutundan sonra düzenli ifade eksik"
 
-#: src/rcfile.c:705 src/rcfile.c:759
+#: src/rcfile.c:768 src/rcfile.c:814
 msgid "Empty regex string"
-msgstr ""
+msgstr "Boş düzenli ifade dizgisi"
 
-#: src/rcfile.c:743
+#: src/rcfile.c:798
 msgid "\"start=\" requires a corresponding \"end=\""
-msgstr "\"start=\", \"end=\"e ihtiyaç duyar."
+msgstr "\"start=\", \"end=\"e ihtiyaç duyar"
 
-#: src/rcfile.c:797
+#: src/rcfile.c:853 src/rcfile.c:1088
 #, c-format
-msgid "Background color \"%s\" cannot be bright"
-msgstr ""
+msgid "A '%s' command requires a preceding 'syntax' command"
+msgstr "Bir '%s' komutu öncesinde bir 'sözdizimi' komutu gerektirir"
 
-#: src/rcfile.c:831
+#: src/rcfile.c:859
 #, c-format
 msgid "The \"default\" syntax does not accept '%s' regexes"
-msgstr ""
+msgstr "\"Varsayılan\" sözdizimi '%s' regexes kabul etmez"
 
-#: src/rcfile.c:892
+#: src/rcfile.c:911
 #, c-format
-msgid "Missing command after '%s'"
-msgstr ""
+msgid "Missing argument after '%s'"
+msgstr "'%s' sonrasında eksik değişken"
 
-#: src/rcfile.c:908
+#: src/rcfile.c:921
 #, c-format
 msgid "Argument of '%s' lacks closing \""
-msgstr ""
+msgstr "Bağımsız değişken '%s' kapanma eksikliği \""
 
-#: src/rcfile.c:939
+#: src/rcfile.c:968
 #, c-format
-msgid "Fatal error: no keys mapped for function \"%s\".  Exiting.\n"
-msgstr ""
+msgid "No key is bound to function '%s' in menu '%s'.  Exiting.\n"
+msgstr "Hiçbir anahtar '%s' menüsünde '%s' işlevine bağlı değildir. Çıkıyor.\n"
 
-#: src/rcfile.c:941
+#: src/rcfile.c:971
 #, c-format
 msgid ""
 "If needed, use nano with the -I option to adjust your nanorc settings.\n"
 msgstr ""
+"Gerekirse, nano ile -I seçeneğini kullanın nanorc ayarlarınızı belirlemek "
+"için.\n"
 
-#: src/rcfile.c:996
-#, fuzzy, c-format
-msgid "Could not find syntax \"%s\" to extend"
-msgstr "%s başına ekleme için açılamıyor: %s"
-
-#: src/rcfile.c:1018 src/rcfile.c:1230
+#: src/rcfile.c:1034
 #, c-format
-msgid "Syntax \"%s\" has no color commands"
-msgstr ""
+msgid "Could not find syntax \"%s\" to extend"
+msgstr "Sözdizimi genişletmek için \"%s\" bulunamadı"
 
-#: src/rcfile.c:1049
+#: src/rcfile.c:1079
 #, c-format
 msgid "Command \"%s\" not allowed in included file"
-msgstr ""
+msgstr "Dosyada \"%s\" komutunun kullanımına izin verilmiyor"
 
-#: src/rcfile.c:1064
-#, fuzzy, c-format
-msgid "Command \"%s\" not understood"
-msgstr "%s komutu anlaşılamadı"
-
-#: src/rcfile.c:1076
-#, fuzzy
+#: src/rcfile.c:1116
 msgid "Missing option"
-msgstr "Renk ismi eksik"
+msgstr "Eksik seçenek"
 
-#: src/rcfile.c:1090
+#: src/rcfile.c:1130
 #, c-format
 msgid "Unknown option \"%s\""
-msgstr ""
+msgstr "Bilinmeyen seçenek \"%s\""
 
-#: src/rcfile.c:1103
-#, fuzzy, c-format
+#: src/rcfile.c:1145
+#, c-format
 msgid "Cannot unset option \"%s\""
-msgstr "Üst pencere yeniden boyutlandırılamaz"
+msgstr "\"%s\" seçeneği silinemiyor"
 
-#: src/rcfile.c:1115
-#, fuzzy, c-format
+#: src/rcfile.c:1150
+#, c-format
 msgid "Option \"%s\" requires an argument"
-msgstr "%s seçeneği bir bağımsız değişken gerektiriyor"
+msgstr "\"%s\" seçeneği bir bağımsız değişkene ihtiyaç duyuyor"
 
-#: src/rcfile.c:1131
+#: src/rcfile.c:1164
 msgid "Argument is not a valid multibyte string"
-msgstr ""
+msgstr "Argüman geçerli bir çokbaytlı dizge değil"
 
-#: src/rcfile.c:1168 src/rcfile.c:1189 src/rcfile.c:1196
+#: src/rcfile.c:1210 src/rcfile.c:1231 src/rcfile.c:1237
 msgid "Non-blank characters required"
-msgstr ""
+msgstr "Boş olmayan karakter gerekli"
 
-#: src/rcfile.c:1175
+#: src/rcfile.c:1213
+msgid "Even number of characters required"
+msgstr "Gerekli karakterlerin çift sayısı"
+
+#: src/rcfile.c:1219
 msgid "Two single-column characters required"
-msgstr ""
+msgstr "İki tek sütün karakter gerekli"
 
-#: src/rcfile.c:1284
+#: src/rcfile.c:1321
 msgid "I can't find my home directory!  Wah!"
-msgstr "Ev dizinimi bulamıyorum!"
+msgstr "Ev dizinimi bulamıyorum!  Vay canına!"
 
-#: src/rcfile.c:1299
-#, fuzzy, c-format
-msgid ""
-"\n"
-"Press Enter to continue starting nano.\n"
-msgstr ""
-"\n"
-"nano'yu başlatmaya devam etmek için Gir tuşuna basınız\n"
-
-#: src/search.c:89
-#, fuzzy, c-format
-msgid "\"%.*s%s\" not found"
-msgstr "\"%s\" bulunamadı"
-
-#. TRANSLATORS: The next three modify the search prompt.
-#: src/search.c:158
+#. TRANSLATORS: The next five modify the search prompt.
+#: src/search.c:102
 msgid " [Case Sensitive]"
 msgstr " [Büyük / Küçük Harfe Duyarlı]"
 
-#: src/search.c:160
+#: src/search.c:103
 msgid " [Regexp]"
 msgstr " [Düzenli İfade]"
 
-#: src/search.c:163
-msgid " [Backwards]"
-msgstr " [Geriye Doğru]"
-
-#. TRANSLATORS: The next two modify the search prompt.
-#: src/search.c:166
-#, fuzzy
+#: src/search.c:107
 msgid " (to replace) in selection"
-msgstr " (değiştirmek için)"
+msgstr " (değiştirilecek) seçimde"
 
-#: src/search.c:168
+#: src/search.c:109
 msgid " (to replace)"
-msgstr " (değiştirmek için)"
+msgstr " (değiştirilecek)"
 
 #. TRANSLATORS: This is shown when searching takes
 #. * more than half a second.
-#: src/search.c:277
-#, fuzzy
+#: src/search.c:218
 msgid "Searching..."
-msgstr "Ara"
+msgstr "Aranıyor..."
+
+#: src/search.c:387
+#, c-format
+msgid "\"%.*s%s\" not found"
+msgstr "\"%.*s%s\" bulunamadı"
 
 #. TRANSLATORS: This is a prompt.
-#: src/search.c:653
+#: src/search.c:580
 msgid "Replace this instance?"
 msgstr "Bu bulgu değiştirilsin mi?"
 
 #. TRANSLATORS: This is a prompt.
-#: src/search.c:791
+#: src/search.c:702
 msgid "Replace with"
 msgstr "İle değiştir"
 
-#: src/search.c:821
-#, fuzzy, c-format
-msgid "Replaced %lu occurrence"
-msgid_plural "Replaced %lu occurrences"
-msgstr[0] "%d değiştirme yapıldı"
+#: src/search.c:733
+#, c-format
+msgid "Replaced %zd occurrence"
+msgid_plural "Replaced %zd occurrences"
+msgstr[0] "Değiştirilen %zd oluşumu"
 
 #. TRANSLATORS: This is a prompt.
-#: src/search.c:857
-#, fuzzy
+#: src/search.c:761
 msgid "Enter line number, column number"
-msgstr "Satır numarasını girin"
+msgstr "Satır numarasını, sütun numarasını girin"
 
-#: src/search.c:1031
+#: src/search.c:938
 msgid "Not a bracket"
 msgstr "Ayraç değil"
 
-#: src/search.c:1097
+#: src/search.c:981
 msgid "No matching bracket"
 msgstr "Eşleşen ayraç yok"
 
-#: src/text.c:66
+#: src/text.c:52
 msgid "Mark Set"
 msgstr "İşaretle"
 
-#: src/text.c:71
-#, fuzzy
+#: src/text.c:56
 msgid "Mark Unset"
-msgstr "İşareti Kaldır"
+msgstr "Metni İşaretleme"
 
-#: src/text.c:83
-#, fuzzy, c-format
+#: src/text.c:67
+#, c-format
 msgid "Error invoking \"%s\""
-msgstr "\"spell\" çağırılırken hata"
+msgstr "\"%s\" çağrılmasında hata"
 
-#: src/text.c:478
+#: src/text.c:385
 msgid "Commenting is not supported for this file type"
-msgstr ""
+msgstr "Yorumlama bu dosya türü için desteklenmiyor"
 
-#: src/text.c:494
+#: src/text.c:395
 msgid "Cannot comment past end of file"
-msgstr ""
+msgstr "Dosyanın sonundan sonra yorum yapılamaz"
+
+#: src/text.c:522
+msgid "Nothing to undo"
+msgstr "Geri alınacak bir şey yok"
+
+#. TRANSLATORS: The next thirteen strings describe actions
+#. * that are undone or redone.  They are all nouns, not verbs.
+#: src/text.c:534 src/text.c:600 src/text.c:700 src/text.c:764
+msgid "addition"
+msgstr "addition"
+
+#: src/text.c:545 src/text.c:712
+msgid "line break"
+msgstr "satır sonu"
+
+#: src/text.c:557 src/text.c:725
+msgid "deletion"
+msgstr "silme"
+
+#: src/text.c:567 src/text.c:734
+msgid "line join"
+msgstr "satırı birleştir"
+
+#: src/text.c:586 src/text.c:749
+msgid "replacement"
+msgstr "değiştirme"
+
+#: src/text.c:604 src/text.c:768
+msgid "erasure"
+msgstr "silinti"
+
+#. TRANSLATORS: Remember: these are nouns, NOT verbs.
+#: src/text.c:610 src/text.c:773
+msgid "cut"
+msgstr "kes"
+
+#: src/text.c:614 src/text.c:777
+msgid "paste"
+msgstr "yapıştır"
+
+#: src/text.c:618 src/text.c:781
+msgid "insertion"
+msgstr "yön"
+
+#: src/text.c:641 src/text.c:799
+msgid "indent"
+msgstr "girinti"
+
+#: src/text.c:645 src/text.c:803
+msgid "unindent"
+msgstr "Girintisini kaldır"
+
+#: src/text.c:650 src/text.c:808
+msgid "comment"
+msgstr "yorumla"
+
+#: src/text.c:654 src/text.c:812
+msgid "uncomment"
+msgstr "yorumu kaldır"
+
+#: src/text.c:662
+#, c-format
+msgid "Undid %s"
+msgstr "Geri alındı %s"
 
 #: src/text.c:687
-msgid "Nothing in undo buffer!"
-msgstr ""
+msgid "Nothing to redo"
+msgstr "Yinelenecek bir şey yok"
 
-#. TRANSLATORS: Eight of the next nine strings describe actions
-#. * that are undone or redone.  It are all nouns, not verbs.
-#: src/text.c:705 src/text.c:734 src/text.c:869 src/text.c:910
-msgid "text add"
-msgstr ""
-
-#: src/text.c:715 src/text.c:880
-#, fuzzy
-msgid "text delete"
-msgstr "Sonraki Dosya"
-
-#: src/text.c:738 src/text.c:919
-msgid "line join"
-msgstr ""
-
-#: src/text.c:757 src/text.c:935
-msgid "text cut"
-msgstr ""
-
-#: src/text.c:762 src/text.c:939
-msgid "text uncut"
-msgstr ""
-
-#: src/text.c:768 src/text.c:915
-msgid "Internal error: line is missing.  Please save your work."
-msgstr ""
-
-#: src/text.c:772 src/text.c:889
-msgid "line break"
-msgstr ""
-
-#: src/text.c:782 src/text.c:959
-msgid "comment"
-msgstr ""
-
-#: src/text.c:786 src/text.c:963
-msgid "uncomment"
-msgstr ""
-
-#: src/text.c:790 src/text.c:950
-#, fuzzy
-msgid "text insert"
-msgstr "Sonraki Dosya"
-
-#: src/text.c:810 src/text.c:943
-#, fuzzy
-msgid "text replace"
-msgstr " (değiştirmek için)"
-
-#: src/text.c:817 src/text.c:967 src/text.c:1288 src/text.c:1458
-msgid "Internal error: unknown type.  Please save your work."
-msgstr ""
-
-#: src/text.c:823
+#: src/text.c:820
 #, c-format
-msgid "Undid action (%s)"
-msgstr ""
+msgid "Redid %s"
+msgstr "Yeniden yapıldı %s"
 
-#: src/text.c:844
-msgid "Nothing to re-do!"
-msgstr ""
-
-#: src/text.c:853
-msgid "Internal error: cannot set up redo.  Please save your work."
-msgstr ""
-
-#: src/text.c:973
-#, c-format
-msgid "Redid action (%s)"
-msgstr ""
-
-#: src/text.c:1067 src/text.c:2746 src/text.c:3193
+#: src/text.c:952 src/text.c:2313 src/text.c:2694
 msgid "Could not create pipe"
 msgstr "Boru yaratılamadı"
 
-#: src/text.c:1093 src/text.c:2833 src/text.c:2986 src/text.c:3241
-#: src/text.c:3530
+#: src/text.c:988 src/text.c:2402 src/text.c:2526 src/text.c:2731
 msgid "Could not fork"
 msgstr "Fork işlemi gerçekleştirilemedi"
 
-#: src/text.c:2132
+#: src/text.c:993
+msgid "Executing..."
+msgstr "Yürütülüyor..."
+
+#: src/text.c:1009 src/text.c:1054
+msgid "filtering"
+msgstr "filtreleme"
+
+#: src/text.c:1048
 #, c-format
-msgid "Bad quote string %s: %s"
-msgstr "Hatalı alıntı dizgesi %s: %s"
+msgid "Failed to open pipe: %s"
+msgstr "Hat açılamadı: %s"
 
-#: src/text.c:2502
-msgid "Can now UnJustify!"
-msgstr "Şmdi yaslamayı geri alabilirsiniz!"
+#: src/text.c:1995 src/text.c:2113
+msgid "justification"
+msgstr "iki yana yaslama"
 
-#: src/text.c:2663
+#: src/text.c:2134
+msgid "Justified selection"
+msgstr "Seçim iki yana yaslandı"
+
+#: src/text.c:2138
+msgid "Justified file"
+msgstr "Dosyayı iki yana yasla"
+
+#: src/text.c:2140
+msgid "Justified paragraph"
+msgstr "Paragrafı iki yana yasla"
+
+#: src/text.c:2234
 #, c-format
 msgid "Unfindable word: %s"
-msgstr ""
+msgstr "Ulaşılamıyan kelime: %s"
 
-#: src/text.c:2679
+#: src/text.c:2250
 msgid "Edit a replacement"
 msgstr "Bir yerdeğiştirmeyi düzenle"
 
 #. TRANSLATORS: Shown after fixing misspellings in one word.
-#: src/text.c:2694
-#, fuzzy
+#: src/text.c:2263
 msgid "Next word..."
-msgstr "Sonraki Kelime"
+msgstr "Sonraki kelime..."
 
-#: src/text.c:2748
+#: src/text.c:2315
 msgid "Creating misspelled word list, please wait..."
-msgstr "Yazım hatası içeren kelimeler listeleniyor, lütfen bekleyiniz"
+msgstr "Yazım hatası içeren kelimeler listeleniyor, lütfen bekleyiniz..."
 
-#: src/text.c:2839 src/text.c:3248
+#: src/text.c:2410 src/text.c:2740
 msgid "Could not get size of pipe buffer"
 msgstr "Boru arabelleğinin boyutu alınamıyor"
 
-#: src/text.c:2888
-msgid "Error invoking \"spell\""
-msgstr "\"spell\" çağırılırken hata"
-
-#: src/text.c:2891
-msgid "Error invoking \"sort -f\""
-msgstr "\"sort -f\" çağırılırken hata"
-
-#: src/text.c:2894
+#: src/text.c:2469
 msgid "Error invoking \"uniq\""
 msgstr "\"uniq\" çağırılırken hata"
 
-#: src/text.c:3132
-#, fuzzy
-msgid "Invoking spell checker, please wait"
-msgstr "Yazım denetleyicisini çağır (eğer mümkün ise)"
+#: src/text.c:2472
+msgid "Error invoking \"sort -f\""
+msgstr "\"sort -f\" çağırılırken hata"
 
-#: src/text.c:3146
+#: src/text.c:2475
+msgid "Error invoking \"spell\""
+msgstr "\"spell\" çağırılırken hata"
+
+#: src/text.c:2645
 #, c-format
-msgid "Spell checking failed: %s"
-msgstr "Yazım kontrolü başarısız oldu: %s"
+msgid "%s: %s"
+msgstr "%s: %s"
 
-#: src/text.c:3148
-#, fuzzy, c-format
-msgid "Spell checking failed: %s: %s"
-msgstr "Yazım kontrolü başarısız oldu: %s"
-
-#: src/text.c:3151
+#: src/text.c:2647
 msgid "Finished checking spelling"
 msgstr "Yazım kontrolü bitti"
 
-#: src/text.c:3176
+#: src/text.c:2673
 msgid "No linter defined for this type of file!"
-msgstr ""
+msgstr "Bu dosya türü için tanımlanmış hiçbir linter yok!"
 
-#: src/text.c:3181
+#: src/text.c:2683
 msgid "Save modified buffer before linting?"
-msgstr ""
+msgstr "Haddelenmeden önce değiştirilmiş arabellek kaydedilsin mi?"
 
-#: src/text.c:3198
+#: src/text.c:2700
 msgid "Invoking linter, please wait"
-msgstr ""
+msgstr "Linter çağırma, lütfen bekleyin"
 
-#: src/text.c:3353
+#: src/text.c:2836
 #, c-format
 msgid "Got 0 parsable lines from command: %s"
-msgstr ""
+msgstr "Komuttan 0 ayrıştırılabilir satırlar var: %s"
 
-#: src/text.c:3383
+#: src/text.c:2874
 #, c-format
 msgid "This message is for unopened file %s, open it in a new buffer?"
 msgstr ""
+"Bu mesaj için %s açılmamış dosyası, yeni bir arabellekte mi onu açalım?"
 
-#: src/text.c:3400
-msgid "No more errors in unopened files, cancelling"
-msgstr ""
+#: src/text.c:2913
+msgid "No messages for this file"
+msgstr "Bu dosya için mesaj yok"
 
-#: src/text.c:3440
-#, fuzzy
-msgid "At last message"
-msgstr "Bu mesajı gösterir"
-
-#: src/text.c:3445
-#, fuzzy
+#: src/text.c:2960
 msgid "At first message"
-msgstr "Bu mesajı gösterir"
+msgstr "İlk mesajda"
 
-#: src/text.c:3481
-msgid "Finished"
-msgstr ""
+#: src/text.c:2969
+msgid "At last message"
+msgstr "Son mesajda"
 
-#: src/text.c:3503
-msgid "Invoking formatter, please wait"
-msgstr ""
-
-#: src/text.c:3563
-msgid "Finished formatting"
-msgstr ""
-
-#: src/text.c:3645
+#: src/text.c:3046
 #, c-format
-msgid "%sWords: %lu  Lines: %ld  Chars: %lu"
-msgstr ""
+msgid "%sWords: %zu  Lines: %zd  Chars: %zu"
+msgstr "%sKelimeler: %zu  Satırlar: %zd  Karakterler: %zu"
 
-#: src/text.c:3646
-#, fuzzy
+#: src/text.c:3047
 msgid "In Selection:  "
-msgstr "Seçimi Dosyanın Sonuna Ekle"
+msgstr "Seçimde:  "
 
 #. TRANSLATORS: This is displayed when the next keystroke will be
 #. * inserted verbatim.
-#: src/text.c:3660
+#: src/text.c:3060
 msgid "Verbatim Input"
-msgstr ""
+msgstr "Birebir Girdi"
 
-#: src/text.c:3858
+#: src/text.c:3157
+msgid "No word fragment"
+msgstr "Sözcük parçası yok"
+
+#: src/text.c:3249
 msgid "No further matches"
-msgstr ""
+msgstr "Başka eşleşme yok"
 
 #. TRANSLATORS: Shown when there are zero possible completions.
-#: src/text.c:3862
-#, fuzzy
+#: src/text.c:3253
 msgid "No matches"
-msgstr "Eşleşen ayraç yok"
+msgstr "Eşleşme yok"
 
-#: src/utils.c:410 src/utils.c:422
-msgid "nano is out of memory!"
-msgstr "nano bellek dışı!"
+#: src/utils.c:297 src/utils.c:309
+msgid "Nano is out of memory!\n"
+msgstr "Nano bellek dışı!\n"
 
-#: src/utils.c:594
-#, c-format
-msgid "Internal error: can't match line %ld.  Please save your work."
-msgstr ""
+#: src/winio.c:89
+msgid "Recording a macro..."
+msgstr "Bir makro kaydediliyor..."
+
+#: src/winio.c:92
+msgid "Stopped recording"
+msgstr "Kayıt durduruldu"
+
+#: src/winio.c:103
+msgid "Cannot run macro while recording"
+msgstr "Makro kayıt sırasında çalıştırılamıyor"
+
+#: src/winio.c:109
+msgid "Macro is empty"
+msgstr "Makro boştur"
+
+#: src/winio.c:210
+msgid "Too many errors from stdin\n"
+msgstr "stdin den çok sayıda hata\n"
 
 #. TRANSLATORS: This refers to a sequence of escape codes
-#. * (from the keyboard) that nano does not know about.
-#: src/winio.c:1197
+#. * (from the keyboard) that nano does not recognize.
+#: src/winio.c:1355
 msgid "Unknown sequence"
-msgstr ""
+msgstr "Bilinmeyen sıralama"
 
 #. TRANSLATORS: This is shown while a six-digit hexadecimal
 #. * Unicode character code (%s) is being typed in.
-#: src/winio.c:1361
+#: src/winio.c:1494
 #, c-format
 msgid "Unicode Input: %s"
-msgstr ""
+msgstr "Unicode giriş: %s"
 
-#: src/winio.c:1985
-#, fuzzy
+#. TRANSLATORS: The next five are "labels" in the title bar.
+#: src/winio.c:2095
+msgid "Linting --"
+msgstr "Linting --"
+
+#: src/winio.c:2101
 msgid "DIR:"
-msgstr " DİZİN: "
+msgstr "DIR:"
 
-#: src/winio.c:1993
-#, fuzzy
-msgid "File:"
-msgstr "Dosya: "
-
-#: src/winio.c:1997 src/winio.c:2001
-#, fuzzy
+#: src/winio.c:2122 src/winio.c:2128
 msgid "Modified"
-msgstr " Değiştirildi "
+msgstr "Değiştirildi"
 
-#: src/winio.c:1999
-#, fuzzy
+#: src/winio.c:2124
 msgid "View"
-msgstr " Göster "
+msgstr "Görünüm"
 
-#: src/winio.c:3071
-#, fuzzy, c-format
-msgid "line %ld/%ld (%d%%), col %lu/%lu (%d%%), char %lu/%lu (%d%%)"
-msgstr "satır %ld/%ld (%d%%), sütun %lu/%lu (%d%%), karakter %lu/%ld (%d%%)"
+#: src/winio.c:2126
+msgid "Restricted"
+msgstr "Kısıtlanmış"
 
-#: src/winio.c:3202
+#: src/winio.c:2254
+msgid "Further warnings were suppressed"
+msgstr "Diğer uyarılar bastırıldı"
+
+#: src/winio.c:3440
+#, c-format
+msgid "line %zd/%zd (%d%%), col %zu/%zu (%d%%), char %zu/%zu (%d%%)"
+msgstr "satır %zd/%zd (%d%%), sütun %zu/%zu (%d%%), karakter %zu/%zu (%d%%)"
+
+#: src/winio.c:3632
 msgid "The nano text editor"
-msgstr "nano metin editörü"
+msgstr "Nano metin düzenleyicisi"
 
-#: src/winio.c:3203
-#, fuzzy
+#: src/winio.c:3633
 msgid "version"
-msgstr "sürüm "
+msgstr "sürüm"
 
-#: src/winio.c:3204
+#: src/winio.c:3634
 msgid "Brought to you by:"
-msgstr "Size sağlayan: "
+msgstr "Size sağlayan:"
 
-#: src/winio.c:3205
+#: src/winio.c:3635
 msgid "Special thanks to:"
 msgstr "Özel teşekkürler:"
 
-#: src/winio.c:3206
+#: src/winio.c:3636
 msgid "The Free Software Foundation"
 msgstr "The Free Software Foundation"
 
-#: src/winio.c:3207
+#: src/winio.c:3637
 msgid "the many translators and the TP"
-msgstr ""
+msgstr "Birçok çevirmen ve TP"
 
-#: src/winio.c:3208
+#: src/winio.c:3638
 msgid "For ncurses:"
 msgstr "ncurses için:"
 
-#: src/winio.c:3209
+#: src/winio.c:3639
 msgid "and anyone else we forgot..."
 msgstr "ve unuttuğumuz kişilere..."
 
-#: src/winio.c:3210
-#, fuzzy
+#: src/winio.c:3640
 msgid "Thank you for using nano!"
-msgstr "nano kullandığınız için teşekkürler!\n"
+msgstr "Nano'yu kullandığınız için teşekkür ederiz!"
+
+#: lib/getopt.c:278
+#, c-format
+msgid "%s: option '%s%s' is ambiguous\n"
+msgstr "%s: seçeneği '%s%s' belirsizdir\n"
+
+#: lib/getopt.c:284
+#, c-format
+msgid "%s: option '%s%s' is ambiguous; possibilities:"
+msgstr "%s: seçeneği '%s%s' belirsizdir; olasılıklar:"
+
+#: lib/getopt.c:319
+#, c-format
+msgid "%s: unrecognized option '%s%s'\n"
+msgstr "%s: tanınmayan seçenek '%s%s'\n"
+
+#: lib/getopt.c:345
+#, c-format
+msgid "%s: option '%s%s' doesn't allow an argument\n"
+msgstr "%s: seçeneği '%s%s' bağımsız değişkene izin vermez\n"
+
+#: lib/getopt.c:360
+#, c-format
+msgid "%s: option '%s%s' requires an argument\n"
+msgstr "%s: seçeneği '%s%s' bir bağımsız değişken gerektirir\n"
+
+#: lib/getopt.c:621
+#, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: geçersiz seçenek -- '%c'\n"
+
+#: lib/getopt.c:636 lib/getopt.c:682
+#, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: seçeneği bir bağımsız değişken gerektirir -- '%c'\n"
+
+#: lib/regcomp.c:135
+msgid "Success"
+msgstr "Başarılı"
+
+#: lib/regcomp.c:138
+msgid "No match"
+msgstr "Eşleşme yok"
+
+#: lib/regcomp.c:141
+msgid "Invalid regular expression"
+msgstr "Geçersiz düzenli ifade"
+
+#: lib/regcomp.c:144
+msgid "Invalid collation character"
+msgstr "Geçersiz harmanlama karakteri"
+
+#: lib/regcomp.c:147
+msgid "Invalid character class name"
+msgstr "Geçersiz karakter sınıf adı"
+
+#: lib/regcomp.c:150
+msgid "Trailing backslash"
+msgstr "İzleyen ters kesme"
+
+#: lib/regcomp.c:153
+msgid "Invalid back reference"
+msgstr "Geçersiz geri referans"
+
+#: lib/regcomp.c:156
+msgid "Unmatched [, [^, [:, [., or [="
+msgstr "Eşleşmemiş [, [^, [:, [., or [="
+
+#: lib/regcomp.c:159
+msgid "Unmatched ( or \\("
+msgstr "Eşleşmemiş ( or \\("
+
+#: lib/regcomp.c:162
+msgid "Unmatched \\{"
+msgstr "Eşleşmemiş \\{"
+
+#: lib/regcomp.c:165
+msgid "Invalid content of \\{\\}"
+msgstr "Geçersiz içerik \\{\\}"
+
+#: lib/regcomp.c:168
+msgid "Invalid range end"
+msgstr "Geçersiz aralık sonu"
+
+#: lib/regcomp.c:171
+msgid "Memory exhausted"
+msgstr "Bellek tükendi"
+
+#: lib/regcomp.c:174
+msgid "Invalid preceding regular expression"
+msgstr "Önceki düzenli ifade geçersiz"
+
+#: lib/regcomp.c:177
+msgid "Premature end of regular expression"
+msgstr "Düzenli ifadede zamanından önce sonlanma"
+
+#: lib/regcomp.c:180
+msgid "Regular expression too big"
+msgstr "Düzenli ifade çok büyük"
+
+#: lib/regcomp.c:183
+msgid "Unmatched ) or \\)"
+msgstr "Eşleşmemiş ) or \\)"
 
-#~ msgid "add_to_cutbuffer() called with inptr->data = %s\n"
-#~ msgstr "add_to_cutbuffer(), inptr->data = %s ile çağırıldı\n"
-
-#~ msgid "Blew away cutbuffer =)\n"
-#~ msgstr "cutbuffer silindi =)\n"
-
-#~ msgid "File to insert into new buffer [from ./] "
-#~ msgstr "Yeni arabelleğe eklenecek dosya [./ 'den]"
-
-#~ msgid "File to insert [from ./] "
-#~ msgstr "Eklenecek dosya [./ 'den] "
-
-#~ msgid "filename is %s\n"
-#~ msgstr "dosya ismi %s\n"
-
-#~ msgid "%s: free'd a node, YAY!\n"
-#~ msgstr "%s: bir düğüm serbest bırakıldı\n"
-
-#~ msgid "%s: free'd last node.\n"
-#~ msgstr "%s: son düğüm serbest bırakıldı.\n"
-
-#~ msgid "Could not read %s for backup: %s"
-#~ msgstr "%s yedekleme için okunamadı: %s"
-
-#~ msgid "Couldn't write backup: %s"
-#~ msgstr "Yedek yazılamadı: %s"
-
-#~ msgid "Backing up %s to %s\n"
-#~ msgstr "%s, %s olarak yedekleniyor\n"
-
-#~ msgid "Could not set permissions %o on backup %s: %s"
-#~ msgstr "%o izinleri %s yedeğine uygulanamadı: %s"
-
-#~ msgid "Could not set owner %d/group %d on backup %s: %s"
-#~ msgstr ""
-#~ "Kullanıcısı %d/grubu %d olarak ayarlanamadı, %s yedek dosyasının: %s"
-
-#~ msgid "Could not set access/modification time on backup %s: %s"
-#~ msgstr "%s yedeğinin erişim/değiştirme zamanı ayarlanamadı: %s"
-
-#~ msgid "Could not open file for writing: %s"
-#~ msgstr "Dosya yazmak için açılamadı: %s"
-
-#~ msgid "Wrote >%s\n"
-#~ msgstr "Yazıldı >%s\n"
-
-#~ msgid "Could not close %s: %s"
-#~ msgstr "%s kapatılamadı: %s"
-
-#~ msgid "Could not reopen %s: %s"
-#~ msgstr "%s tekrar açılamadı: %s"
-
-#~ msgid "Could not open %s for writing: %s"
-#~ msgstr "%s yazmak için açılamadı: %s"
-
-#~ msgid "Can't open \"%s\": %s"
-#~ msgstr "\"%s\" açılamıyor: %s"
-
-#~ msgid "Goto Cancelled"
-#~ msgstr "İptal Edildi"
-
-#~ msgid "Unable to open ~/.nano_history file, %s"
-#~ msgstr "~/.nano_history dosyası açılamıyor, %s"
-
-#~ msgid "Unable to write ~/.nano_history file, %s"
-#~ msgstr "~/.nano_history dosyasına yazılamıyır, %s"
-
-#~ msgid "Writing file in DOS format"
-#~ msgstr "Dosya DOS biçiminde yazılıyor"
-
-#~ msgid "Writing file in Mac format"
-#~ msgstr "Dosya Mac biçiminde yazılıyor"
-
-#~ msgid "Backing up file"
-#~ msgstr "Dosya yedekleniyor"
-
-#~ msgid "Auto wrap"
-#~ msgstr "Otomatik kaydırma"
-
-#~ msgid "Multiple file buffers"
-#~ msgstr "Dosya arabelleklerini çokla"
-
-#~ msgid "Invoke the help menu"
-#~ msgstr "Yardım menüsünü çağır"
-
-#~ msgid "Unjustify after a justify"
-#~ msgstr "Yaslama işlemini geri al"
-
-#~ msgid "Replace text within the editor"
-#~ msgstr "Editör içindeki metin ile değiştir"
-
-#~ msgid "Search for text within the editor"
-#~ msgstr "Editör içinde metin ara"
-
-#~ msgid "Move to the next screen"
-#~ msgstr "Sonraki ekrana git"
-
-#~ msgid "Move up one line"
-#~ msgstr "Bir satır yukarı çık"
-
-#~ msgid "Insert a tab character"
-#~ msgstr "Bir TAB karakteri yerleştirir"
-
-#~ msgid "Make the current search or replace case (in)sensitive"
-#~ msgstr ""
-#~ "Şu anki aramayı ya da değiştirmeyi büyük-küçük harfe duyarlı(duyarsız) "
-#~ "gerçekleştir"
-
-#~ msgid "Prepend to the current file"
-#~ msgstr "Yürürlükteki dosyanın başına ekle"
-
-#~ msgid "Write file out in Mac format"
-#~ msgstr "Dosyayı Mac biçiminde yaz"
-
-#~ msgid "Back up original file when saving"
-#~ msgstr "Kaydederken özgün dosyayı yedekle"
-
-#~ msgid "Find other bracket"
-#~ msgstr "Diğer köşeli ayracı bul"
-
-#~ msgid "Open previously loaded file"
-#~ msgstr "Daha önce yüklenmiş dosyayı aç"
-
-#~ msgid "Open next loaded file"
-#~ msgstr "Sonraki yüklenmiş dosyayı aç"
-
-#~ msgid "Up"
-#~ msgstr "Yukarı"
-
-#~ msgid "Down"
-#~ msgstr "Aşağı"
-
-#~ msgid "Find Other Bracket"
-#~ msgstr "Diğer Köşeli Ayracı Bul"
-
-#~ msgid "Direction"
-#~ msgstr "Yön"
-
-#~ msgid "Window size is too small for nano...\n"
-#~ msgstr "Pencere boyutu nano için çok küçük...\n"
-
-#~ msgid "Space"
-#~ msgstr "Boşluk"
-
-#~ msgid ""
-#~ "Usage: nano [+LINE] [GNU long option] [option] [file]\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Kullanımı: nano [+LINE] [GNU uzun seçenekler] [seçenekler] [dosya]\n"
-#~ "\n"
-
-#~ msgid ""
-#~ "Usage: nano [+LINE] [option] [file]\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Kullanımı: nano [+LINE] [seçenekler] [dosya]\n"
-#~ "\n"
-
-#~ msgid "+LINE"
-#~ msgstr "+LINE"
-
-#~ msgid "Enable multiple file buffers"
-#~ msgstr "Çoklu dosya arabelleği aktif"
-
-#~ msgid "Use alternate keypad routines"
-#~ msgstr "Alternatif tuştakımı yordamlarını kullan"
-
-#~ msgid "-Q [str]"
-#~ msgstr "-Q [metin]"
-
-#~ msgid "Do regular expression searches"
-#~ msgstr "Düzenli ifade aramaları gerçekleştir"
-
-#~ msgid "-T [num]"
-#~ msgstr "-T [sayı]"
-
-#~ msgid "-Y [str]"
-#~ msgstr "-Y [metin]"
-
-#~ msgid "Don't follow symbolic links, overwrite"
-#~ msgstr "Simgesel bağları takip etme, üzerine yaz"
-
-#~ msgid "-o [dir]"
-#~ msgstr "-o [dizin]"
-
-#~ msgid "Set fill cols to (wrap lines at) #cols"
-#~ msgstr "Satırları #cols hizasından kaydır"
-
-#~ msgid "(ignored, for Pico compatibility)"
-#~ msgstr "(Pico uyumluluğu için yoksayıldı)"
-
-#~ msgid "Sorry, support for this function has been disabled"
-#~ msgstr "Özür dileriz, bu işlev için destek etkisiz kılınmış"
-
-#~ msgid "Could not pipe"
-#~ msgstr "Boru işlemi gerçekleştirilemedi"
-
-#~ msgid "current->data now = \"%s\"\n"
-#~ msgstr "current->data now = \"%s\"\n"
-
-#~ msgid "After, data = \"%s\"\n"
-#~ msgstr "Sonra, veri = \"%s\"\n"
-
-#~ msgid "Could not invoke \"%s\""
-#~ msgstr "\"%s\" çağırılamadı"
-
-#~ msgid "Could not create a temporary filename: %s"
-#~ msgstr "Geçici bir dosya adı yaratılamadı: %s"
-
-#~ msgid "Spell checking failed: unable to write temp file!"
-#~ msgstr "Yazım kontrolü başarısız oldu: geçici dosyaya yazılamıyor!"
-
-#~ msgid "Save modified buffer (ANSWERING \"No\" WILL DESTROY CHANGES) ? "
-#~ msgstr ""
-#~ "Değiştirilmiş arabellek kaydedilsin mi (\"Hayır\" CEVABI TÜM "
-#~ "DEĞİŞİKLİKLERİ YOK EDECEK) ? "
-
-#~ msgid "Cannot move top win"
-#~ msgstr "Üst pencere hareket ettirilemez"
-
-#~ msgid "Cannot resize edit win"
-#~ msgstr "Düzenleme penceresi yeniden boyutlandırılamaz"
-
-#~ msgid "Cannot move edit win"
-#~ msgstr "Düzenleme penceresi hareket ettirilemez"
-
-#~ msgid "Cannot resize bottom win"
-#~ msgstr "Alt pencere yeniden boyutlandırılamaz"
-
-#~ msgid "Cannot move bottom win"
-#~ msgstr "Alt pencere hareket ettirilemez"
-
-#~ msgid "NumLock glitch detected.  Keypad will malfunction with NumLock off"
-#~ msgstr ""
-#~ "NumLock hatası bulundu. Sayısal klavye NumLock basılı değil ise hata "
-#~ "verecek"
-
-#~ msgid "Tab size is too small for nano...\n"
-#~ msgstr "Tab boyutu nano için çok küçük...\n"
-
-#~ msgid "Main: set up windows\n"
-#~ msgstr "Ana: pencereleri ayarla\n"
-
-#~ msgid "Main: bottom win\n"
-#~ msgstr "Ana: alt pencere\n"
-
-#~ msgid "Main: open file\n"
-#~ msgstr "Ana: dosya aç\n"
-
-#~ msgid "AHA!  %c (%d)\n"
-#~ msgstr "AHA! %c (%d)\n"
-
-#~ msgid "I got Alt-O-%c! (%d)\n"
-#~ msgstr "Alt-O-%c bulundu! (%d)\n"
-
-#~ msgid "I got Alt-[-1-%c! (%d)\n"
-#~ msgstr "Alt-[-1-%c bulundu! (%d)\n"
-
-#~ msgid "I got Alt-[-2-%c! (%d)\n"
-#~ msgstr "Alt-[-2-%c bulundu! (%d)\n"
-
-#~ msgid "I got Alt-[-%c! (%d)\n"
-#~ msgstr "Alt-[-%c bulundu! (%d)\n"
-
-#~ msgid "I got Alt-%c! (%d)\n"
-#~ msgstr "Alt-%c bulundu! (%d)\n"
-
-#~ msgid "I got %c (%d)!\n"
-#~ msgstr "%c (%d) bulundu!\n"
-
-#~ msgid "Adding new syntax after 1st\n"
-#~ msgstr "Birinciden sonra yeni bir sözdizimi ekleniyor\n"
-
-#~ msgid "Starting a new syntax type\n"
-#~ msgstr "Yeni bir sözdizim tipine başlanıyor\n"
-
-#~ msgid "Cannot add a color directive without a syntax line"
-#~ msgstr "Sözdizimi satırı olmaksızın renk direktifi eklenemez"
-
-#~ msgid "Starting a new colorstring for fg %d bg %d\n"
-#~ msgstr ""
-#~ "Yeni bir renkli yazıya %d ön plan rengi ve %d arka plan rengi ile "
-#~ "başlanıyor\n"
-
-#~ msgid "Adding new entry for fg %d bg %d\n"
-#~ msgstr ""
-#~ "Yeni bir girdi, %d ön plan rengi ve %d arka plan rengi ile ekleniyor\n"
-
-#~ msgid "%s: Read a comment\n"
-#~ msgstr "%s: Bir açıklama oku\n"
-
-#~ msgid "%s: Parsing option %s\n"
-#~ msgstr "%s: %s seçeneği ayrıştırılıyor\n"
-
-#~ msgid "set flag %d!\n"
-#~ msgstr "%d bayrağı atandı!\n"
-
-#~ msgid "unset flag %d!\n"
-#~ msgstr "%d bayrağı boşaltıldı!\n"
-
-#~ msgid "Errors found in .nanorc file"
-#~ msgstr ".nanorc dosyası içerisinde hatalar bulundu"
-
-#~ msgid "Unable to open ~/.nanorc file, %s"
-#~ msgstr "~/.nanorc dosyası açılamıyor, %s"
-
-#~ msgid "\"%s...\" not found"
-#~ msgstr "\"%s...\" bulunamadı"
-
-#~ msgid "Invalid regex \"%s\""
-#~ msgstr "Geçersiz düzenli ifade \"%s\""
-
-#~ msgid "Search Cancelled"
-#~ msgstr "Arama İptal Edildi"
-
-#~ msgid "Replace Cancelled"
-#~ msgstr "Değiştirme İptal Edildi"
-
-#~ msgid "Replace failed: unknown subexpression!"
-#~ msgstr "Yerdeğiştirme başarısız oldu: bilinmeyen ifade parçası!"
-
-#~ msgid "Aborted"
-#~ msgstr "İptal edildi"
-
-#~ msgid "Come on, be reasonable"
-#~ msgstr "Hadi ama, mantıklı olun"
-
-#~ msgid "actual_x for xplus=%d returns %d\n"
-#~ msgstr "actual_x, xplus=%d değeri için %d döndürdü\n"
-
-#~ msgid "Aha! '%c' (%d)\n"
-#~ msgstr "Aha! '%c' (%d)\n"
-
-#~ msgid "input '%c' (%d)\n"
-#~ msgstr "girdi '%c' (%d)\n"
-
-#~ msgid "  File: ..."
-#~ msgstr "  Dosya: ..."
-
-#~ msgid "   DIR: ..."
-#~ msgstr "   DİZİN: ..."
-
-#~ msgid "Refusing 0 length regex match"
-#~ msgstr "0 uzunluktaki düzenli ifade eşi dikkate alınmadı"
-
-#~ msgid "Moved to (%d, %d) in edit buffer\n"
-#~ msgstr "Düzenleme arabelleği içine (%d, %d) taşındı\n"
-
-#~ msgid "I got \"%s\"\n"
-#~ msgstr "\"%s\" bulundu\n"
-
-#~ msgid "Dumping file buffer to stderr...\n"
-#~ msgstr "Dosya arabelleği stderr'a dökülüyor...\n"
-
-#~ msgid "Dumping cutbuffer to stderr...\n"
-#~ msgstr "Kesme arabelleği stderr'a dökülüyor...\n"
-
-#~ msgid "Dumping a buffer to stderr...\n"
-#~ msgstr "Arabellek stderr'a dökülüyor...\n"
-
-#~ msgid "Pico mode"
-#~ msgstr "Pico kipi"
+#: lib/regcomp.c:676
+msgid "No previous regular expression"
+msgstr "Düzenli ifadenin öncesi yok"
