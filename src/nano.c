@@ -1381,7 +1381,8 @@ void do_toggle(int flag)
 void disable_extended_io(void)
 {
 #ifdef HAVE_TERMIOS_H
-	struct termios term = {0};
+	struct termios term;
+	memset(&term, 0, sizeof(struct termios));
 
 	tcgetattr(0, &term);
 	term.c_lflag &= ~IEXTEN;
@@ -1394,7 +1395,8 @@ void disable_extended_io(void)
 void disable_kb_interrupt(void)
 {
 #ifdef HAVE_TERMIOS_H
-	struct termios term = {0};
+	struct termios term;
+	memset(&term, 0, sizeof(struct termios));
 
 	tcgetattr(0, &term);
 	term.c_lflag &= ~ISIG;
@@ -1406,7 +1408,8 @@ void disable_kb_interrupt(void)
 void enable_kb_interrupt(void)
 {
 #ifdef HAVE_TERMIOS_H
-	struct termios term = {0};
+	struct termios term;
+	memset(&term, 0, sizeof(struct termios));
 
 	tcgetattr(0, &term);
 	term.c_lflag |= ISIG;
