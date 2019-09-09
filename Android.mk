@@ -50,18 +50,18 @@ include $(BUILD_EXECUTABLE)
 NANO_ETC := $(TARGET_OUT_ETC)/$(LOCAL_MODULE)
 
 syntax_files := $(wildcard $(LOCAL_PATH)/syntax/*.nanorc)
-NANO_SYNTAX := $(addprefix $(LOCAL_PATH)/syntax/,$(notdir $(syntax_files)))
-$(NANO_SYNTAX): $(LOCAL_INSTALLED_MODULE)
+NANO_SYNTAX := $(addprefix $(NANO_ETC)/,$(notdir $(syntax_files)))
+$(NANO_SYNTAX): $(NANO_ETC)/%: $(LOCAL_PATH)/syntax/% | $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@ -> $(NANO_ETC)"
-	@mkdir -p $(NANO_ETC)
-	$(hide) cp $@ $(NANO_ETC)
+	@mkdir -p $(dir $@)
+	cp $< $@
 
 nanorc_file := $(LOCAL_PATH)/etc/nanorc
-NANO_NANORC := $(addprefix $(LOCAL_PATH)/etc/,$(notdir $(nanorc_file)))
-$(NANO_NANORC): $(LOCAL_INSTALLED_MODULE)
+NANO_NANORC := $(addprefix $(NANO_ETC)/,$(notdir $(nanorc_file)))
+$(NANO_NANORC): $(nanorc_file)
 	@echo "Install: $@ -> $(NANO_ETC)"
-	@mkdir -p $(NANO_ETC)
-	$(hide) cp $@ $(NANO_ETC)
+	@mkdir -p $(dir $@)
+	$(hide) cp $< $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(NANO_SYNTAX) $(NANO_NANORC)
 
