@@ -41,7 +41,7 @@ LOCAL_SHARED_LIBRARIES += \
 
 LOCAL_MODULE := nano
 LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
-LOCAL_MODULE_TAGS := debug
+LOCAL_MODULE_TAGS := optional
 include $(BUILD_EXECUTABLE)
 
 # ========================================================
