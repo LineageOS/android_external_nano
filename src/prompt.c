@@ -746,8 +746,6 @@ int do_yesno_prompt(bool all, const char *msg)
 			edit_refresh();
 		}
 #endif
-		else
-			beep();
 
 #ifndef NANO_TINY
 		/* Ignore the rest of an external paste. */
