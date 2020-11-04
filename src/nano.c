@@ -1397,7 +1397,7 @@ bool okay_for_view(const keystruct *shortcut)
 	return (item == NULL || item->viewok);
 }
 
-#ifndef NANO_TINY
+#if 0
 /* Read in all waiting input bytes and paste them into the buffer in one go. */
 void suck_up_input_and_paste_it(void)
 {
@@ -1675,7 +1675,7 @@ void process_a_keystroke(void)
 							shortcut->func == do_backspace))
 		update_line(openfile->current, openfile->current_x);
 
-#ifndef NANO_TINY
+#if 0
 	if (bracketed_paste)
 		suck_up_input_and_paste_it();
 
