@@ -22,6 +22,30 @@
       "revId": "ab42b619902aaf084cade5ff4dd4e7f3884809c3",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "849e511e_cb396b92",
+        "filename": "src/files.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 949,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2021-11-01T13:19:55Z",
+      "side": 1,
+      "message": "this is our change: https://github.com/LineageOS/android_external_nano/commit/be86c9f37df192deebe5c09f287447d47881b78c\n\ni don\u0027t know why i don\u0027t see it on gerrit.",
+      "parentUuid": "7ce9e79e_8e5dcb3f",
+      "range": {
+        "startLine": 949,
+        "startChar": 0,
+        "endLine": 949,
+        "endChar": 49
+      },
+      "revId": "ab42b619902aaf084cade5ff4dd4e7f3884809c3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
