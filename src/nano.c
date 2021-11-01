@@ -861,7 +861,6 @@ bool scoop_stdin(void)
 void signal_init(void)
 {
 	struct sigaction deed;
-	memset(&deed, 0, sizeof(struct sigaction));
 
 	/* Trap SIGINT and SIGQUIT because we want them to do useful things. */
 	deed.sa_handler = SIG_IGN;
