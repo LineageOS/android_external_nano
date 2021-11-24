@@ -31,7 +31,7 @@ LOCAL_C_INCLUDES += \
 LOCAL_CFLAGS += \
 	-DHAVE_CONFIG_H \
 	-DLOCALEDIR=\"/data/locale\" \
-	-DSYSCONFDIR=\"/system/etc/nano\"
+	-DSYSCONFDIR=\"/system_ext/etc/nano\"
 
 LOCAL_CFLAGS += -Wno-sign-compare -Wno-unused-parameter
 
@@ -40,14 +40,14 @@ LOCAL_SHARED_LIBRARIES += \
 	libssh
 
 LOCAL_MODULE := nano
-LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
 LOCAL_MODULE_TAGS := optional
+LOCAL_SYSTEM_EXT_MODULE := true
 include $(BUILD_EXECUTABLE)
 
 # ========================================================
 # nano configs
 # ========================================================
-NANO_ETC := $(TARGET_OUT_ETC)/$(LOCAL_MODULE)
+NANO_ETC := $(TARGET_OUT_SYSTEM_EXT_ETC)/$(LOCAL_MODULE)
 
 syntax_files := $(wildcard $(LOCAL_PATH)/syntax/*.nanorc)
 NANO_SYNTAX := $(addprefix $(NANO_ETC)/,$(notdir $(syntax_files)))
