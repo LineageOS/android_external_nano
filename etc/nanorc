@@ -233,4 +233,4 @@
 # bind kdel backspace all
 
 ## include various source coloring files
-include "/system/etc/nano/*.nanorc"
+include "/system_ext/etc/nano/*.nanorc"
