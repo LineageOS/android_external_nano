@@ -25,8 +25,7 @@ LOCAL_SRC_FILES:= \
 
 LOCAL_C_INCLUDES += \
 	$(LOCAL_PATH) \
-	external/libncurses/include \
-	external/openssh/openbsd-compat
+	external/libncurses/include
 
 LOCAL_CFLAGS += \
 	-DHAVE_CONFIG_H \
@@ -36,8 +35,7 @@ LOCAL_CFLAGS += \
 LOCAL_CFLAGS += -Wno-sign-compare -Wno-unused-parameter
 
 LOCAL_SHARED_LIBRARIES += \
-	libncurses \
-	libssh
+	libncurses
 
 LOCAL_MODULE := nano
 LOCAL_MODULE_TAGS := optional
