@@ -16,6 +16,23 @@
       "message": "Err... give it a new change-Id. The OG change is from htop, moving to /product.",
       "revId": "8bf8215462333d5418fe7d209534bda82a60a141",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7dcfc538_5940eaeb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2022-02-08T13:38:24Z",
+      "side": 1,
+      "message": "https://review.lineageos.org/c/LineageOS/android_external_nano/+/323232",
+      "revId": "8bf8215462333d5418fe7d209534bda82a60a141",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
