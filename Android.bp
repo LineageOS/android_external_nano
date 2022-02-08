@@ -1,0 +1,30 @@
+build = ["Android.sources.bp"]
+
+cc_binary {
+    name: "nano",
+    defaults: ["nano_etc_files"],
+    srcs: [":nano_sources"],
+    include_dirs: ["."],
+    cflags: [
+        "-DHAVE_CONFIG_H",
+        "-DLOCALEDIR=\"/data/locale\"",
+        "-DSYSCONFDIR=\"/product/etc/nano\"",
+        "-Wno-sign-compare",
+        "-Wno-unused-parameter",
+    ],
+    shared_libs: [
+        "libncurses",
+    ],
+    required: [
+        "nanorc",
+    ],
+    system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "nanorc",
+    src: "etc/nanorc",
+    filename_from_src: true,
+    relative_install_path: "nano",
+    system_ext_specific: true,
+}
