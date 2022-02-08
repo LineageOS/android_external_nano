@@ -1,16 +1,26 @@
 build = ["Android.sources.bp"]
 
-cc_binary {
-    name: "nano",
-    defaults: ["nano_etc_files"],
+cc_defaults {
+    name: "nano_defaults",
+    stem: "nano",
     srcs: [":nano_sources"],
     include_dirs: ["."],
     cflags: [
         "-DHAVE_CONFIG_H",
         "-DLOCALEDIR=\"/data/locale\"",
-        "-DSYSCONFDIR=\"/product/etc/nano\"",
         "-Wno-sign-compare",
         "-Wno-unused-parameter",
+    ],
+}
+
+cc_binary {
+    name: "nano",
+    defaults: [
+        "nano_defaults",
+        "nano_etc_files",
+    ],
+    cflags: [
+        "-DSYSCONFDIR=\"/product/etc/nano\"",
     ],
     shared_libs: [
         "libncurses",
@@ -21,10 +31,36 @@ cc_binary {
     system_ext_specific: true,
 }
 
+cc_binary {
+    name: "nano_recovery",
+    defaults: [
+        "nano_defaults",
+        "nano_etc_files_recovery",
+    ],
+    cflags: [
+        "-DSYSCONFDIR=\"/system/etc/nano\"",
+    ],
+    shared_libs: [
+        "libncurses_recovery",
+    ],
+    required: [
+        "nanorc_recovery",
+    ],
+    recovery: true,
+}
+
 prebuilt_etc {
     name: "nanorc",
     src: "etc/nanorc",
-    filename_from_src: true,
+    filename: "nanorc",
     relative_install_path: "nano",
     system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "nanorc_recovery",
+    src: "etc/nanorc_recovery",
+    filename: "nanorc",
+    relative_install_path: "nano",
+    recovery: true,
 }

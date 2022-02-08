@@ -28,6 +28,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -36,6 +37,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -44,6 +46,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -52,6 +55,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -60,6 +64,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -68,6 +73,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -76,6 +82,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -84,6 +91,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -92,6 +100,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -100,6 +109,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -108,6 +118,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -116,6 +127,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -124,6 +136,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -132,6 +145,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -140,6 +154,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -148,6 +163,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -156,6 +172,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -164,6 +181,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -172,6 +190,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -180,6 +199,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -188,6 +208,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -196,6 +217,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -204,6 +226,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -212,6 +235,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -220,6 +244,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -228,6 +253,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -236,6 +262,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -244,6 +271,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -252,6 +280,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -260,6 +289,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -268,6 +298,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -276,6 +307,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -284,6 +316,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -292,6 +325,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -300,6 +334,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -308,6 +343,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -316,6 +352,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -324,6 +361,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -332,6 +370,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 prebuilt_etc {
@@ -340,6 +379,7 @@ prebuilt_etc {
     filename_from_src: true,
     relative_install_path: "nano",
     system_ext_specific: true,
+    recovery_available: true,
 }
 
 cc_defaults {
@@ -385,5 +425,51 @@ cc_defaults {
         "tex.nanorc",
         "xml.nanorc",
         "yaml.nanorc",
+    ],
+}
+
+cc_defaults {
+    name: "nano_etc_files_recovery",
+    required: [
+        "asm.nanorc.recovery",
+        "autoconf.nanorc.recovery",
+        "awk.nanorc.recovery",
+        "changelog.nanorc.recovery",
+        "cmake.nanorc.recovery",
+        "c.nanorc.recovery",
+        "css.nanorc.recovery",
+        "default.nanorc.recovery",
+        "elisp.nanorc.recovery",
+        "email.nanorc.recovery",
+        "go.nanorc.recovery",
+        "groff.nanorc.recovery",
+        "guile.nanorc.recovery",
+        "html.nanorc.recovery",
+        "java.nanorc.recovery",
+        "javascript.nanorc.recovery",
+        "json.nanorc.recovery",
+        "lua.nanorc.recovery",
+        "makefile.nanorc.recovery",
+        "man.nanorc.recovery",
+        "markdown.nanorc.recovery",
+        "nanohelp.nanorc.recovery",
+        "nanorc.nanorc.recovery",
+        "nftables.nanorc.recovery",
+        "objc.nanorc.recovery",
+        "ocaml.nanorc.recovery",
+        "patch.nanorc.recovery",
+        "perl.nanorc.recovery",
+        "php.nanorc.recovery",
+        "po.nanorc.recovery",
+        "python.nanorc.recovery",
+        "ruby.nanorc.recovery",
+        "rust.nanorc.recovery",
+        "sh.nanorc.recovery",
+        "sql.nanorc.recovery",
+        "tcl.nanorc.recovery",
+        "texinfo.nanorc.recovery",
+        "tex.nanorc.recovery",
+        "xml.nanorc.recovery",
+        "yaml.nanorc.recovery",
     ],
 }
