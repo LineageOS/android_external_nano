@@ -30,6 +30,7 @@ for nanorc in $(ls -1 syntax/*.nanorc | tr '\n' '\0' | xargs -0 -n 1 basename); 
     filename_from_src: true,
     relative_install_path: \"nano\",
     system_ext_specific: true,
+    recovery_available: true,
 }
 " >> ${OUT}
 done
@@ -42,6 +43,22 @@ EOF
 
 for module in "${REQUIRED_MODULE_NAMES[@]}"; do
     echo "        \"${module}\"," >> ${OUT}
+done
+
+cat << EOF >> ${OUT}
+    ],
+}
+
+EOF
+
+cat << EOF >> ${OUT}
+cc_defaults {
+    name: "nano_etc_files_recovery",
+    required: [
+EOF
+
+for module in "${REQUIRED_MODULE_NAMES[@]}"; do
+    echo "        \"${module}.recovery\"," >> ${OUT}
 done
 
 cat << EOF >> ${OUT}
