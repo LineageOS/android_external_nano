@@ -1132,7 +1132,7 @@
 
 
 /* Flag(s) to use to get the full range of extended regular expressions */
-#define NANO_REG_EXTENDED REG_EXTENDED
+#define NANO_REG_EXTENDED (REG_EXTENDED | REG_GNU)
 
 /* Define this to make the nano executable as small as possible. */
 /* #undef NANO_TINY */
