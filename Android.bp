@@ -1,0 +1,35 @@
+prebuilt_etc_dir {
+    name: "nano-etc",
+    src_dir: "etc",
+    dest_dir: "nano",
+    system_ext_specific: true,
+}
+
+prebuilt_etc_dir {
+    name: "nano-syntax",
+    src_dir: "syntax",
+    dest_dir: "nano",
+    system_ext_specific: true,
+}
+
+cc_binary {
+    name: "nano",
+    srcs: [
+        "src/*.c",
+    ],
+    cflags: [
+        "-DHAVE_CONFIG_H",
+        "-DLOCALEDIR=\"/data/locale\"",
+        "-DSYSCONFDIR=\"/system_ext/etc/nano\"",
+        "-Wno-sign-compare",
+        "-Wno-unused-parameter",
+    ],
+    shared_libs: [
+        "libncurses",
+    ],
+    required: [
+        "nano-etc",
+        "nano-syntax",
+    ],
+    system_ext_specific: true,
+}

@@ -234,3 +234,4 @@
 
 ## include various source coloring files
 include "/system_ext/etc/nano/*.nanorc"
+include "/system_ext/etc/nano/extra/*.nanorc"
