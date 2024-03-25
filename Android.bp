@@ -1,0 +1,31 @@
+prebuilt_etc {
+    name: "nano-etc",
+    srcs: [
+        "etc/*",
+        "syntax/extra/*",
+        "syntax/*",
+    ],
+    sub_dir: "nano",
+    system_ext_specific: true,
+}
+
+cc_binary {
+    name: "nano",
+    srcs: [
+        "src/*.c",
+    ],
+    cflags: [
+        "-DHAVE_CONFIG_H",
+        "-DLOCALEDIR=\"/data/locale\"",
+        "-DSYSCONFDIR=\"/system_ext/etc/nano\"",
+        "-Wno-sign-compare",
+        "-Wno-unused-parameter",
+    ],
+    shared_libs: [
+        "libncurses",
+    ],
+    required: [
+        "nano-etc",
+    ],
+    system_ext_specific: true,
+}
