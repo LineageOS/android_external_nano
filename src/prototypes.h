@@ -1,7 +1,7 @@
 /**************************************************************************
  *   prototypes.h  --  This file is part of GNU nano.                     *
  *                                                                        *
- *   Copyright (C) 1999-2011, 2013-2021 Free Software Foundation, Inc.    *
+ *   Copyright (C) 1999-2011, 2013-2025 Free Software Foundation, Inc.    *
  *                                                                        *
  *   GNU nano is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published    *
@@ -14,7 +14,7 @@
  *   See the GNU General Public License for more details.                 *
  *                                                                        *
  *   You should have received a copy of the GNU General Public License    *
- *   along with this program.  If not, see http://www.gnu.org/licenses/.  *
+ *   along with this program.  If not, see https://gnu.org/licenses/.     *
  *                                                                        *
  **************************************************************************/
 
@@ -27,17 +27,21 @@ extern volatile sig_atomic_t the_window_resized;
 #endif
 
 extern bool on_a_vt;
+extern bool using_utf8;
 extern bool shifted_metas;
 
 extern bool meta_key;
 extern bool shift_held;
 extern bool mute_modifiers;
-extern bool bracketed_paste;
 
 extern bool we_are_running;
 extern bool more_than_one;
 extern bool report_size;
+
 extern bool ran_a_tool;
+extern char *foretext;
+
+extern int final_status;
 
 extern bool inhelp;
 extern char *title;
@@ -68,18 +72,19 @@ extern int controlup, controldown;
 extern int controlhome, controlend;
 #ifndef NANO_TINY
 extern int controldelete, controlshiftdelete;
-extern int shiftleft, shiftright;
 extern int shiftup, shiftdown;
 extern int shiftcontrolleft, shiftcontrolright;
 extern int shiftcontrolup, shiftcontroldown;
 extern int shiftcontrolhome, shiftcontrolend;
 extern int altleft, altright;
 extern int altup, altdown;
+extern int althome, altend;
 extern int altpageup, altpagedown;
 extern int altinsert, altdelete;
 extern int shiftaltleft, shiftaltright;
 extern int shiftaltup, shiftaltdown;
 #endif
+extern int mousefocusin, mousefocusout;
 
 #ifdef ENABLED_WRAPORJUSTIFY
 extern ssize_t fill;
@@ -87,15 +92,16 @@ extern size_t wrap_at;
 #endif
 
 extern WINDOW *topwin;
-extern WINDOW *edit;
-extern WINDOW *bottomwin;
+extern WINDOW *midwin;
+extern WINDOW *footwin;
 extern int editwinrows;
 extern int editwincols;
 extern int margin;
-extern int thebar;
+extern int sidebar;
 #ifndef NANO_TINY
 extern int *bardata;
 extern ssize_t stripe_column;
+extern int cycling_aim;
 #endif
 
 extern linestruct *cutbuffer;
@@ -141,6 +147,9 @@ extern char *alt_speller;
 extern syntaxtype *syntaxes;
 extern char *syntaxstr;
 extern bool have_palette;
+extern bool rescind_colors;
+extern bool perturbed;
+extern bool recook;
 #endif
 
 extern bool refresh_needed;
@@ -178,6 +187,9 @@ extern char *startup_problem;
 #endif
 #ifdef ENABLE_NANORC
 extern char *custom_nanorc;
+
+extern char *commandname;
+extern keystruct *planted_shortcut;
 #endif
 
 extern bool spotlighted;
@@ -195,10 +207,6 @@ void to_last_file(void);
 #endif
 
 /* Most functions in chars.c. */
-#ifdef ENABLE_UTF8
-void utf8_init(void);
-bool using_utf8(void);
-#endif
 bool is_alpha_char(const char *c);
 bool is_blank_char(const char *c);
 bool is_cntrl_char(const char *c);
@@ -231,6 +239,9 @@ char *mbrevstrpbrk(const char *head, const char *accept, const char *pointer);
 bool has_blank_char(const char *string);
 #endif
 bool white_string(const char *string);
+#if defined(ENABLE_SPELLER) || defined(ENABLE_COLOR)
+void strip_leading_blanks_from(char *string);
+#endif
 
 /* Most functions in color.c. */
 #ifdef ENABLE_COLOR
@@ -242,6 +253,7 @@ void precalc_multicolorinfo(void);
 #endif
 
 /* Most functions in cut.c. */
+void expunge(undo_type action);
 void do_delete(void);
 void do_backspace(void);
 #ifndef NANO_TINY
@@ -260,8 +272,8 @@ void cut_text(void);
 void cut_till_eof(void);
 void zap_text(void);
 void copy_marked_region(void);
-void copy_text(void);
 #endif
+void copy_text(void);
 void paste_text(void);
 
 /* Most functions in files.c. */
@@ -313,12 +325,12 @@ char *input_tab(char *buf, size_t *place, void (*refresh_func)(void), bool *list
 #endif
 
 /* Some functions in global.c. */
-const keystruct *first_sc_for(int menu, void (*func)(void));
+const keystruct *first_sc_for(int menu, void (*function)(void));
 size_t shown_entries_for(int menu);
-const keystruct *get_shortcut(int *keycode);
-functionptrtype func_from_key(int *keycode);
+const keystruct *get_shortcut(const int keycode);
+functionptrtype func_from_key(const int keycode);
 #if defined(ENABLE_BROWSER) || defined(ENABLE_HELP)
-functionptrtype interpret(int *keycode);
+functionptrtype interpret(const int keycode);
 #endif
 int keycode_from_string(const char *keystring);
 void shortcut_init(void);
@@ -343,7 +355,7 @@ void load_history(void);
 void save_history(void);
 void load_poshistory(void);
 void update_poshistory(void);
-bool has_old_position(const char *file, ssize_t *line, ssize_t *column);
+void restore_cursor_position_if_any(void);
 #endif
 
 /* Most functions in move.c. */
@@ -351,6 +363,12 @@ void to_first_line(void);
 void to_last_line(void);
 void do_page_up(void);
 void do_page_down(void);
+#ifndef NANO_TINY
+void to_top_row(void);
+void to_bottom_row(void);
+void do_cycle(void);
+void do_center(void);
+#endif
 #ifdef ENABLE_JUSTIFY
 void do_para_begin(linestruct **line);
 void do_para_end(linestruct **line);
@@ -370,7 +388,6 @@ void do_down(void);
 #if !defined(NANO_TINY) || defined(ENABLE_HELP)
 void do_scroll_up(void);
 void do_scroll_down(void);
-void do_center(void);
 #endif
 void do_left(void);
 void do_right(void);
@@ -421,7 +438,8 @@ void terminal_init(void);
 void confirm_margin(void);
 #endif
 void unbound_key(int code);
-bool okay_for_view(const keystruct *shortcut);
+bool changes_something(functionptrtype f);
+void suck_up_input_and_paste_it(void);
 void inject(char *burst, size_t count);
 
 /* Most functions in prompt.c. */
@@ -430,7 +448,7 @@ void put_cursor_at_end_of_answer(void);
 void add_or_remove_pipe_symbol_from_answer(void);
 int do_prompt(int menu, const char *provided, linestruct **history_list,
 		void (*refresh_func)(void), const char *msg, ...);
-int do_yesno_prompt(bool all, const char *msg);
+int ask_user(bool withall, const char *question);
 
 /* Most functions in rcfile.c. */
 #if defined(ENABLE_NANORC) || defined(ENABLE_HISTORIES)
@@ -438,6 +456,7 @@ void display_rcfile_errors(void);
 void jot_error(const char *msg, ...);
 #endif
 #ifdef ENABLE_NANORC
+keystruct *strtosc(const char *input);
 #ifdef ENABLE_COLOR
 void parse_one_include(char *file, syntaxtype *syntax);
 void grab_and_store(const char *kind, char *ptr, regexlisttype **storage);
@@ -462,7 +481,9 @@ ssize_t do_replace_loop(const char *needle, bool whole_word_only,
 		const linestruct *real_current, size_t *real_current_x);
 void do_replace(void);
 void ask_for_and_do_replacements(void);
+#if !defined(NANO_TINY) || defined(ENABLE_SPELLER) || defined (ENABLE_LINTER) || defined (ENABLE_FORMATTER)
 void goto_line_posx(ssize_t line, size_t pos_x);
+#endif
 void goto_line_and_column(ssize_t line, ssize_t column, bool retain_answer,
 		bool interactive);
 void do_gotolinecolumn(void);
@@ -513,15 +534,19 @@ void do_full_justify(void);
 #ifdef ENABLE_SPELLER
 void do_spell(void);
 #endif
-#ifdef ENABLE_COLOR
+#ifdef ENABLE_LINTER
 void do_linter(void);
+#endif
+#ifdef ENABLE_FORMATTER
 void do_formatter(void);
 #endif
 #ifndef NANO_TINY
 void count_lines_words_and_characters(void);
 #endif
 void do_verbatim_input(void);
+#ifdef ENABLE_WORDCOMPLETION
 void complete_a_word(void);
+#endif
 
 /* All functions in utils.c. */
 void get_homedir(void);
@@ -531,7 +556,7 @@ int digits(ssize_t n);
 bool parse_num(const char *str, ssize_t *result);
 bool parse_line_column(const char *str, ssize_t *line, ssize_t *column);
 void recode_NUL_to_LF(char *string, size_t length);
-void recode_LF_to_NUL(char *string);
+size_t recode_LF_to_NUL(char *string);
 #if !defined(ENABLE_TINY) || defined(ENABLE_TABCOMP) || defined(ENABLE_BROWSER)
 void free_chararray(char **array, size_t len);
 #endif
@@ -561,18 +586,21 @@ void get_region(linestruct **top, size_t *top_x, linestruct **bot, size_t *bot_x
 void get_range(linestruct **top, linestruct **bot);
 #endif
 size_t number_of_characters_in(const linestruct *begin, const linestruct *end);
-#ifndef NANO_TINY
+#if !defined(NANO_TINY) || defined(ENABLE_SPELLER) || defined (ENABLE_LINTER) || defined (ENABLE_FORMATTER)
 linestruct *line_from_number(ssize_t number);
 #endif
 
 /* Most functions in winio.c. */
+#ifndef NANO_TINY
 void record_macro(void);
 void run_macro(void);
-size_t get_key_buffer_len(void);
+#endif
+size_t waiting_keycodes(void);
+void put_back(int keycode);
 #ifdef ENABLE_NANORC
 void implant(const char *string);
 #endif
-int parse_kbinput(WINDOW *win);
+int get_input(WINDOW *win);
 int get_kbinput(WINDOW *win, bool showcursor);
 char *get_verbatim_kbinput(WINDOW *win, size_t *count);
 #ifdef ENABLE_MOUSE
@@ -582,7 +610,7 @@ void blank_edit(void);
 void blank_statusbar(void);
 void wipe_statusbar(void);
 void blank_bottombars(void);
-void check_statusblank(void);
+void blank_it_when_expired(void);
 void set_blankdelay_to_one(void);
 char *display_string(const char *buf, size_t column, size_t span,
 						bool isdata, bool isprompt);
@@ -604,8 +632,8 @@ int go_forward_chunks(int nrows, linestruct **line, size_t *leftedge);
 bool less_than_a_screenful(size_t was_lineno, size_t was_leftedge);
 void edit_scroll(bool direction);
 #ifndef NANO_TINY
-size_t get_softwrap_breakpoint(const char *text, size_t leftedge,
-								bool *end_of_line);
+size_t get_softwrap_breakpoint(const char *linedata, size_t leftedge,
+								bool *kickoff, bool *end_of_line);
 size_t get_chunk_and_edge(size_t column, linestruct *line, size_t *leftedge);
 size_t chunk_for(size_t column, linestruct *line);
 size_t leftedge_for(size_t column, linestruct *line);

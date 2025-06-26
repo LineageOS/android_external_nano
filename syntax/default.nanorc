@@ -8,8 +8,8 @@ comment "#"
 color ,red " +	+"
 
 # Nano's release motto, then name plus version.
-color italic,lime "\<[Nn]ano [1-6]\.[0-9][-.[:alnum:]]* "[^"]+""
-color brightred "\<(GNU )?[Nn]ano [1-6]\.[0-9][-.[:alnum:]]*\>"
+color italic,lime "\<[Nn]ano [1-8]\.[0-9][-.[:alnum:]]* "[^"]+""
+color brightred "\<(GNU )?[Nn]ano [1-8]\.[0-9][-.[:alnum:]]*\>"
 
 # Dates
 color latte "\<[12][0-9]{3}\.(0[1-9]|1[012])\.(0[1-9]|[12][0-9]|3[01])\>"
@@ -18,13 +18,16 @@ color latte "\<[12][0-9]{3}\.(0[1-9]|1[012])\.(0[1-9]|[12][0-9]|3[01])\>"
 color magenta "<[[:alnum:].%_+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,}>"
 
 # URLs.
-color lightblue "\<https?://\S+\.\S+[^[:space:],.)]"
+color lightblue "\<https?://\S+\.\S+[^])>[:space:],.]"
 
 # Bracketed captions in certain config files.
 color brightgreen "^\[[^][]+\]$"
 
 # Comments.
 color cyan "^[[:blank:]]*#.*"
+
+# Make hard (non-breaking) spaces noticeable.
+color ,#444 " "
 
 # Control codes.
 color orange "[[:cntrl:]]"

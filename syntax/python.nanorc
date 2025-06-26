@@ -5,10 +5,11 @@ header "^#!.*python"
 magic "Python script"
 comment "#"
 
+# Alternative linter: pylint --exit-zero
 linter pyflakes
 
 # Function definitions.
-color brightblue "def [0-9A-Za-z_]+"
+color brightblue "def [[:alnum:]_]+"
 # Keywords.
 color brightcyan "\<(and|as|assert|async|await|break|class|continue)\>"
 color brightcyan "\<(def|del|elif|else|except|finally|for|from)\>"
@@ -22,6 +23,9 @@ color brightcyan "\<(exec|print)([[:blank:]]|$)"
 
 # Special values.
 color brightmagenta "\<(False|None|True)\>"
+
+# Decorators.
+color cyan "@[[:alpha:]_][[:alnum:]_.]*"
 
 # Mono-quoted strings.
 color brightgreen "'([^'\]|\\.)*'|"([^"\]|\\.)*"|'''|""""

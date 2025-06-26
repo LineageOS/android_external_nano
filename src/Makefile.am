@@ -16,7 +16,8 @@ winio.o: revision.h
 # only when the revision actually changed.
 revision.h: FORCE
 	@[ -f $@ ] || touch $@
-	@echo "#define $(SOMETHING)" | cmp -s $@ - || \
+	@! git describe >/dev/null 2>&1 || \
+			echo "#define $(SOMETHING)" | cmp -s $@ - || \
 			echo "#define $(SOMETHING)" > $@
 FORCE:
 
@@ -41,8 +42,8 @@ nano_SOURCES = \
 		utils.c \
 		winio.c
 
-nano_LDADD = @LIBINTL@ $(top_builddir)/lib/libgnu.a \
-		$(LIB_CLOCK_GETTIME) $(LIBTHREAD)
+nano_LDADD = $(top_builddir)/lib/libgnu.a @LIBINTL@ \
+		$(GETRANDOM_LIB) $(CLOCK_TIME_LIB) $(LIBTHREAD)
 
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && rm -f rnano && $(LN_S) nano rnano

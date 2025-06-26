@@ -1,7 +1,7 @@
 /**************************************************************************
  *   utils.c  --  This file is part of GNU nano.                          *
  *                                                                        *
- *   Copyright (C) 1999-2011, 2013-2021 Free Software Foundation, Inc.    *
+ *   Copyright (C) 1999-2011, 2013-2025 Free Software Foundation, Inc.    *
  *   Copyright (C) 2016, 2017, 2019 Benno Schulenberg                     *
  *                                                                        *
  *   GNU nano is free software: you can redistribute it and/or modify     *
@@ -15,7 +15,7 @@
  *   See the GNU General Public License for more details.                 *
  *                                                                        *
  *   You should have received a copy of the GNU General Public License    *
- *   along with this program.  If not, see http://www.gnu.org/licenses/.  *
+ *   along with this program.  If not, see https://gnu.org/licenses/.     *
  *                                                                        *
  **************************************************************************/
 
@@ -126,29 +126,30 @@ bool parse_num(const char *string, ssize_t *result)
 	return TRUE;
 }
 
-/* Read two numbers, separated by a comma, from str, and store them in
- * *line and *column.  Return FALSE on error, and TRUE otherwise. */
-bool parse_line_column(const char *str, ssize_t *line, ssize_t *column)
+/* Read one number (or two numbers separated by comma, period, or colon)
+ * from the given string and store the number(s) in *line (and *column).
+ * Return FALSE on a failed parsing, and TRUE otherwise. */
+bool parse_line_column(const char *string, ssize_t *line, ssize_t *column)
 {
-	bool retval;
-	char *firstpart;
 	const char *comma;
+	char *firstpart;
+	bool retval;
 
-	while (*str == ' ')
-		str++;
+	while (*string == ' ')
+		string++;
 
-	comma = strpbrk(str, "m,. /;");
+	comma = strpbrk(string, ",.:");
 
 	if (comma == NULL)
-		return parse_num(str, line);
+		return parse_num(string, line);
 
 	retval = parse_num(comma + 1, column);
 
-	if (comma == str)
+	if (comma == string)
 		return retval;
 
-	firstpart = copy_of(str);
-	firstpart[comma - str] = '\0';
+	firstpart = copy_of(string);
+	firstpart[comma - string] = '\0';
 
 	retval = parse_num(firstpart, line) && retval;
 
@@ -168,14 +169,19 @@ void recode_NUL_to_LF(char *string, size_t length)
 	}
 }
 
-/* In the given string, recode each embedded newline as a NUL. */
-void recode_LF_to_NUL(char *string)
+/* In the given string, recode each embedded newline as a NUL,
+ * and return the number of bytes in the string. */
+size_t recode_LF_to_NUL(char *string)
 {
+	char *beginning = string;
+
 	while (*string != '\0') {
 		if (*string == '\n')
 			*string = '\0';
 		string++;
 	}
+
+	return (string - beginning);
 }
 
 #if !defined(ENABLE_TINY) || defined(ENABLE_TABCOMP) || defined(ENABLE_BROWSER)
@@ -282,34 +288,26 @@ const char *strstrwrapper(const char *haystack, const char *needle,
 		return mbstrcasestr(start, needle);
 }
 
-/* This is a wrapper for the malloc() function that properly handles
- * things when we run out of memory. */
+/* Allocate the given amount of memory and return a pointer to it. */
 void *nmalloc(size_t howmuch)
 {
-	void *r = malloc(howmuch);
+	void *section = malloc(howmuch);
 
-	if (howmuch == 0)
-		die("Allocating zero bytes.  Please report a bug.\n");
-
-	if (r == NULL)
+	if (section == NULL)
 		die(_("Nano is out of memory!\n"));
 
-	return r;
+	return section;
 }
 
-/* This is a wrapper for the realloc() function that properly handles
- * things when we run out of memory. */
-void *nrealloc(void *ptr, size_t howmuch)
+/* Reallocate the given section of memory to have the given size. */
+void *nrealloc(void *section, size_t howmuch)
 {
-	void *r = realloc(ptr, howmuch);
+	section = realloc(section, howmuch);
 
-	if (howmuch == 0)
-		die("Allocating zero bytes.  Please report a bug.\n");
-
-	if (r == NULL)
+	if (section == NULL)
 		die(_("Nano is out of memory!\n"));
 
-	return r;
+	return section;
 }
 
 /* Return an appropriately reallocated dest string holding a copy of src.
@@ -439,6 +437,8 @@ void remove_magicline(void)
 {
 	if (openfile->filebot->data[0] == '\0' &&
 				openfile->filebot != openfile->filetop) {
+		if (openfile->current == openfile->filebot)
+			openfile->current = openfile->current->prev;
 		openfile->filebot = openfile->filebot->prev;
 		delete_node(openfile->filebot->next);
 		openfile->filebot->next = NULL;
@@ -492,7 +492,9 @@ void get_range(linestruct **top, linestruct **bot)
 			also_the_last = TRUE;
 	}
 }
+#endif /* !NANO_TINY */
 
+#if !defined(NANO_TINY) || defined(ENABLE_SPELLER) || defined (ENABLE_LINTER) || defined (ENABLE_FORMATTER)
 /* Return a pointer to the line that has the given line number. */
 linestruct *line_from_number(ssize_t number)
 {
@@ -507,7 +509,7 @@ linestruct *line_from_number(ssize_t number)
 
 	return line;
 }
-#endif /* !NANO_TINY */
+#endif
 
 /* Count the number of characters from begin to end, and return it. */
 size_t number_of_characters_in(const linestruct *begin, const linestruct *end)

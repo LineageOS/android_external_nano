@@ -6,9 +6,9 @@ magic "^(C|C\+\+) (source|program)"
 comment "//"
 
 # Constants.
-color brightred "\<[A-Z_][0-9A-Z_]*\>"
+color brightred "\<[[:upper:]_][[:upper:][:digit:]_]*\>"
 # Labels.
-color brightmagenta "^[[:blank:]]*[A-Z_a-z][0-9A-Z_a-z]*:[[:blank:]]*$"
+color brightmagenta "^[[:blank:]]*[[:alpha:]_][[:alnum:]_]*:[[:blank:]]*$"
 color normal ":[[:blank:]]*$"
 
 # Types and related keywords.
@@ -26,17 +26,17 @@ color magenta "\<(break|continue|goto|return)\>"
 color brightmagenta "'([^'\]|\\(["'\abfnrtv]|x[[:xdigit:]]{1,2}|[0-3]?[0-7]{1,2}))'"
 
 # GCC builtins.
-color cyan "__attribute__[[:blank:]]*\(\([^)]*\)\)" "__(aligned|asm|builtin|hidden|inline|packed|restrict|section|typeof|weak)__"
+color cyan "__attribute__[[:blank:]]*\(\([^)]*\)\)|__(aligned|asm|builtin|hidden|inline|packed|restrict|section|typeof|weak)__"
 
 # Strings and names of included files.
-color brightyellow ""([^"]|\\")*"" "#[[:blank:]]*include[[:blank:]]*<[^>]+>"
+color brightyellow ""([^"]|\\")*"|#[[:blank:]]*include[[:blank:]]*<[^>]+>"
 
 # Preprocessor directives.
 color brightcyan start="^[[:blank:]]*#[[:blank:]]*(if(n?def)?|elif|warning|error|pragma)\>" end="(\`|[^\])$"
 color brightcyan "^[[:blank:]]*#[[:blank:]]*((define|else|endif|include(_next)?|line|undef)\>|$)"
 
 # Comments.
-color brightblue "//.*"
+color brightblue "//[^"]*$|(^|[[:blank:]])//.*"
 color brightblue start="/\*" end="\*/"
 
 # Reminders.

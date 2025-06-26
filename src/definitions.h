@@ -1,7 +1,7 @@
 /**************************************************************************
  *   definitions.h  --  This file is part of GNU nano.                    *
  *                                                                        *
- *   Copyright (C) 1999-2011, 2013-2021 Free Software Foundation, Inc.    *
+ *   Copyright (C) 1999-2011, 2013-2025 Free Software Foundation, Inc.    *
  *   Copyright (C) 2014-2017 Benno Schulenberg                            *
  *                                                                        *
  *   GNU nano is free software: you can redistribute it and/or modify     *
@@ -15,7 +15,7 @@
  *   See the GNU General Public License for more details.                 *
  *                                                                        *
  *   You should have received a copy of the GNU General Public License    *
- *   along with this program.  If not, see http://www.gnu.org/licenses/.  *
+ *   along with this program.  If not, see https://gnu.org/licenses/.     *
  *                                                                        *
  **************************************************************************/
 
@@ -108,6 +108,14 @@
 #define BACKWARD  FALSE
 #define FORWARD  TRUE
 
+#define YESORNO  FALSE
+#define YESORALLORNO  TRUE
+
+#define YES      1
+#define ALL      2
+#define NO       0
+#define CANCEL  -1
+
 #define BLIND  FALSE
 #define VISIBLE  TRUE
 
@@ -162,8 +170,6 @@
 		/* The start regex matches on an earlier line, the end regex on this one. */
 #define JUSTONTHIS   (1<<5)
 		/* Both the start and end regexes match within this line. */
-#define WOULDBE      (1<<6)
-		/* An unpaired start match is on or before this line. */
 #endif
 
 /* Basic control codes. */
@@ -189,6 +195,8 @@
 #define ALT_RIGHT     0x422
 #define ALT_UP        0x423
 #define ALT_DOWN      0x424
+#define ALT_HOME      0x425
+#define ALT_END       0x426
 #define ALT_PAGEUP    0x427
 #define ALT_PAGEDOWN  0x428
 #define ALT_INSERT    0x42C
@@ -197,8 +205,6 @@
 #define SHIFT_ALT_RIGHT  0x432
 #define SHIFT_ALT_UP     0x433
 #define SHIFT_ALT_DOWN   0x434
-//#define SHIFT_LEFT 0x451
-//#define SHIFT_RIGHT 0x452
 #define SHIFT_UP        0x453
 #define SHIFT_DOWN      0x454
 #define SHIFT_HOME      0x455
@@ -208,11 +214,28 @@
 #define SHIFT_DELETE    0x45D
 #define SHIFT_TAB       0x45F
 
-/* A special keycode for when <Tab> is pressed while the mark is on. */
-#define INDENT_KEY  0x4F1
+#define FOCUS_IN   0x491
+#define FOCUS_OUT  0x499
 
-/* A special keycode to signal the beginning and end of a bracketed paste. */
-#define BRACKETED_PASTE_MARKER  0x4FB
+/* Custom keycodes for signaling the start and end of a bracketed paste. */
+#define START_OF_PASTE  0x4B5
+#define END_OF_PASTE    0x4BE
+
+/* Special keycodes for when a string bind has been partially implanted
+ * or has an unpaired opening brace, or when a function in a string bind
+ * needs execution or a specified function name is invalid. */
+#define MORE_PLANTS        0x4EA
+#define MISSING_BRACE      0x4EB
+#define PLANTED_A_COMMAND  0x4EC
+#define NO_SUCH_FUNCTION   0x4EF
+
+#ifndef NANO_TINY
+/* A special keycode for Ctrl + the central key on the numeric keypad. */
+#define KEY_CENTER  0x4F0
+
+/* A special keycode for when we get a SIGWINCH (a window resize). */
+#define THE_WINDOW_RESIZED  0x4F7
+#endif
 
 /* A special keycode for when a key produces an unknown escape sequence. */
 #define FOREIGN_SEQUENCE  0x4FC
@@ -221,9 +244,6 @@
 #define KEY_FRESH  0x4FE
 
 #ifndef NANO_TINY
-/* A special keycode for when we get a SIGWINCH (a window resize). */
-#define KEY_WINCH  -2
-
 /* Some extra flags for the undo function. */
 #define WAS_BACKSPACE_AT_EOF  (1<<1)
 #define WAS_WHOLE_LINE        (1<<2)
@@ -269,7 +289,7 @@ typedef enum {
 } message_type;
 
 typedef enum {
-	OVERWRITE, APPEND, PREPEND
+	OVERWRITE, APPEND, PREPEND, EMERGENCY
 } kind_of_writing_type;
 
 typedef enum {
@@ -313,7 +333,6 @@ enum {
 	CASE_SENSITIVE,
 	CONSTANT_SHOW,
 	NO_HELP,
-	SUSPENDABLE,
 	NO_WRAP,
 	AUTOINDENT,
 	VIEW_MODE,
@@ -355,10 +374,12 @@ enum {
 	EMPTY_LINE,
 	INDICATOR,
 	BOOKSTYLE,
+	COLON_PARSING,
 	STATEFLAGS,
 	USE_MAGIC,
 	MINIBAR,
-	ZERO
+	ZERO,
+	MODERN_BINDINGS
 };
 
 /* Structure types. */
@@ -419,7 +440,7 @@ typedef struct syntaxtype {
 		/* The command with which to lint this type of file. */
 	char *formatter;
 		/* The command with which to format/modify/arrange this type of file. */
-	char *tab;
+	char *tabstring;
 		/* What the Tab key should produce; NULL for default behavior. */
 #ifdef ENABLE_COMMENT
 	char *comment;
@@ -427,7 +448,7 @@ typedef struct syntaxtype {
 #endif
 	colortype *color;
 		/* The colors and their regexes used in this syntax. */
-	short nmultis;
+	short multiscore;
 		/* How many multiline regex strings this syntax has. */
 	struct syntaxtype *next;
 		/* Next syntax. */
@@ -517,6 +538,8 @@ typedef struct poshiststruct {
 		/* The line where the cursor was when we closed the file. */
 	ssize_t columnnumber;
 		/* The column where the cursor was. */
+	char *anchors;
+		/* The line numbers where anchors were placed, in string form. */
 	struct poshiststruct *next;
 		/* The next item of position history. */
 } poshiststruct;
@@ -542,8 +565,8 @@ typedef struct openfilestruct {
 		/* The file's x-coordinate position. */
 	size_t placewewant;
 		/* The file's x position we would like. */
-	ssize_t current_y;
-		/* The file's y-coordinate position. */
+	ssize_t cursor_row;
+		/* The row in the edit window that the cursor is on. */
 	struct stat *statinfo;
 		/* The file's stat information from when it was opened or last saved. */
 #ifdef ENABLE_WRAPPING
@@ -622,17 +645,14 @@ typedef struct keystruct {
 typedef struct funcstruct {
 	void (*func)(void);
 		/* The actual function to call. */
-	const char *desc;
-		/* The function's short description, for example "Where Is". */
+	const char *tag;
+		/* The function's help-line label, for example "Where Is". */
 #ifdef ENABLE_HELP
-	const char *help;
-		/* The help-screen text for this function. */
+	const char *phrase;
+		/* The function's description for in the help viewer. */
 	bool blank_after;
-		/* Whether there should be a blank line after the help text
-		 * for this function. */
+		/* Whether to distance this function from the next in the help viewer. */
 #endif
-	bool viewok;
-		/* Is this function allowed when in view mode? */
 	int menus;
 		/* In what menus this function applies. */
 	struct funcstruct *next;
