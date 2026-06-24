@@ -35,7 +35,7 @@ To obtain the current nano development branch (called 'master'), use the
 following command.  It will create in your current working directory a
 subdirectory called 'nano' containing a copy of all of the files:
 
-    $ git clone git://git.savannah.gnu.org/nano.git
+    $ git clone git://git.git.savannah.gnu.org/nano.git
 
 
 Generate the configure script
@@ -56,6 +56,9 @@ To configure your build, run the configure script from the nano source
 directory:
 
     $ ./configure [--add-options-here]
+
+Use --sysconfdir=/etc when you want your self-compiled nano to read
+/etc/nanorc instead of /usr/local/etc/nanorc.
 
 
 Build and install

@@ -1,8 +1,8 @@
 /**************************************************************************
  *   utils.c  --  This file is part of GNU nano.                          *
  *                                                                        *
- *   Copyright (C) 1999-2011, 2013-2025 Free Software Foundation, Inc.    *
- *   Copyright (C) 2016, 2017, 2019 Benno Schulenberg                     *
+ *   Copyright (C) 1999-2011, 2013-2026 Free Software Foundation, Inc.    *
+ *   Copyright (C) 2016, 2017, 2019, 2020, 2026 Benno Schulenberg         *
  *                                                                        *
  *   GNU nano is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published    *
@@ -28,27 +28,25 @@
 #include <string.h>
 #include <unistd.h>
 
-/* Return the user's home directory.  We use $HOME, and if that fails,
- * we fall back on the home directory of the effective user ID. */
+/* Set global variable `homedir` to the user's home directory.  First try
+ * $HOME, otherwise consult the password database for the current UID. */
 void get_homedir(void)
 {
 	if (homedir == NULL) {
 		const char *homenv = getenv("HOME");
 
 #ifdef HAVE_PWD_H
-		/* When HOME isn't set, or when we're root, get the home directory
-		 * from the password file instead. */
+		/* When $HOME is unset, or when we're root, try the database. */
 		if (homenv == NULL || geteuid() == ROOT_UID) {
 			const struct passwd *userage = getpwuid(geteuid());
 
-			if (userage != NULL)
+			if (userage)
 				homenv = userage->pw_dir;
 		}
 #endif
 
-		/* Only set homedir if some home directory could be determined,
-		 * otherwise keep homedir NULL. */
-		if (homenv != NULL && *homenv != '\0')
+		/* Only set `homedir` if a home directory could be determined. */
+		if (homenv && *homenv)
 			homedir = copy_of(homenv);
 	}
 }
@@ -118,7 +116,7 @@ bool parse_num(const char *string, ssize_t *result)
 
 	value = (ssize_t)strtol(string, &excess, 10);
 
-	if (errno == ERANGE || *string == '\0' || *excess != '\0')
+	if (errno == ERANGE || *string == '\0' || *excess)
 		return FALSE;
 
 	*result = value;
@@ -175,7 +173,7 @@ size_t recode_LF_to_NUL(char *string)
 {
 	char *beginning = string;
 
-	while (*string != '\0') {
+	while (*string) {
 		if (*string == '\n')
 			*string = '\0';
 		string++;
@@ -199,16 +197,13 @@ void free_chararray(char **array, size_t len)
 #endif
 
 #ifdef ENABLE_SPELLER
-/* Is the word starting at the given position in 'text' and of the given
+/* Is the word starting at the given position in `text` and of the given
  * length a separate word?  That is: is it not part of a longer word? */
 bool is_separate_word(size_t position, size_t length, const char *text)
 {
 	const char *before = text + step_left(text, position);
 	const char *after = text + position + length;
 
-	/* If the word starts at the beginning of the line OR the character before
-	 * the word isn't a letter, and if the word ends at the end of the line OR
-	 * the character after the word isn't a letter, we have a whole word. */
 	return ((position == 0 || !is_alpha_char(before)) &&
 					(*after == '\0' || !is_alpha_char(after)));
 }
@@ -219,8 +214,7 @@ bool is_separate_word(size_t position, size_t length, const char *text)
  * than the given start; otherwise, we find the first match starting no earlier
  * than start.  If we are doing a regexp search, and we find a match, we fill
  * in the global variable regmatches with at most 9 subexpression matches. */
-const char *strstrwrapper(const char *haystack, const char *needle,
-		const char *start)
+const char *strstrwrapper(const char *haystack, const char *needle, const char *start)
 {
 	if (ISSET(USE_REGEXP)) {
 		if (ISSET(BACKWARDS_SEARCH)) {
@@ -250,16 +244,14 @@ const char *strstrwrapper(const char *haystack, const char *needle,
 				next_rung = step_right(haystack, last_find);
 				regmatches[0].rm_so = next_rung;
 				regmatches[0].rm_eo = far_end;
-				if (regexec(&search_regexp, haystack, 1, regmatches,
-										REG_STARTEND) != 0)
+				if (regexec(&search_regexp, haystack, 1, regmatches, REG_STARTEND) != 0)
 					break;
 			}
 
 			/* Find the last match again, to get possible submatches. */
 			regmatches[0].rm_so = floor;
 			regmatches[0].rm_eo = far_end;
-			if (regexec(&search_regexp, haystack, 10, regmatches,
-										REG_STARTEND) != 0)
+			if (regexec(&search_regexp, haystack, 10, regmatches, REG_STARTEND) != 0)
 				return NULL;
 
 			return haystack + regmatches[0].rm_so;
@@ -268,8 +260,7 @@ const char *strstrwrapper(const char *haystack, const char *needle,
 		/* Do a forward regex search from the starting point. */
 		regmatches[0].rm_so = start - haystack;
 		regmatches[0].rm_eo = strlen(haystack);
-		if (regexec(&search_regexp, haystack, 10, regmatches,
-										REG_STARTEND) != 0)
+		if (regexec(&search_regexp, haystack, 10, regmatches, REG_STARTEND) != 0)
 			return NULL;
 		else
 			return haystack + regmatches[0].rm_so;
@@ -352,6 +343,22 @@ char *free_and_assign(char *dest, char *src)
  * displayed in the edit window when the cursor is at the given column. */
 size_t get_page_start(size_t column)
 {
+#ifndef NANO_TINY
+	if (united_sidescroll) {
+		if (column < CUSHION)
+			return 0;
+		else if (column < openfile->brink + CUSHION) {
+			if (ISSET(JUMPY_SCROLLING))
+				return (column > editwincols / 2) ? column - editwincols / 2 : 0;
+			else
+				return column - CUSHION;
+		} else if (column > openfile->brink + editwincols - CUSHION - 1)
+			return column - editwincols + (ISSET(JUMPY_SCROLLING) ? editwincols / 2 : CUSHION) + 1;
+		else
+			return openfile->brink;
+	}
+#endif
+
 	if (column == 0 || column + 2 < editwincols || ISSET(SOFTWRAP))
 		return 0;
 	else if (editwincols > 8)
@@ -360,15 +367,8 @@ size_t get_page_start(size_t column)
 		return column - (editwincols - 2);
 }
 
-/* Return the placewewant associated with current_x, i.e. the zero-based
- * column position of the cursor. */
-size_t xplustabs(void)
-{
-	return wideness(openfile->current->data, openfile->current_x);
-}
-
-/* Return the index in text of the character that (when displayed) will
- * not overshoot the given column. */
+/* Return the index in the given text of the character that (when displayed)
+ * will not overshoot the given column. */
 size_t actual_x(const char *text, size_t column)
 {
 	const char *start = text;
@@ -376,7 +376,7 @@ size_t actual_x(const char *text, size_t column)
 	size_t width = 0;
 		/* The current accumulated span, in columns. */
 
-	while (*text != '\0') {
+	while (*text) {
 		int charlen = advance_over(text, &width);
 
 		if (width > column)
@@ -388,22 +388,21 @@ size_t actual_x(const char *text, size_t column)
 	return (text - start);
 }
 
-/* A strnlen() with tabs and multicolumn characters factored in:
- * how many columns wide are the first maxlen bytes of text? */
-size_t wideness(const char *text, size_t maxlen)
+/* Return the number of columns that the first count bytes of text occupy. */
+size_t wideness(const char *text, size_t count)
 {
 	size_t width = 0;
 
-	if (maxlen == 0)
+	if (count == 0)
 		return 0;
 
-	while (*text != '\0') {
+	while (*text) {
 		size_t charlen = advance_over(text, &width);
 
-		if (maxlen <= charlen)
+		if (count <= charlen)
 			break;
 
-		maxlen -= charlen;
+		count -= charlen;
 		text += charlen;
 	}
 
@@ -415,10 +414,16 @@ size_t breadth(const char *text)
 {
 	size_t span = 0;
 
-	while (*text != '\0')
+	while (*text)
 		text += advance_over(text, &span);
 
 	return span;
+}
+
+/* Return the (zero-based) column position of the cursor. */
+size_t xplustabs(void)
+{
+	return wideness(openfile->current->data, openfile->current_x);
 }
 
 /* Append a new magic line to the end of the buffer. */
@@ -435,8 +440,7 @@ void new_magicline(void)
  * it isn't the only line in the file. */
 void remove_magicline(void)
 {
-	if (openfile->filebot->data[0] == '\0' &&
-				openfile->filebot != openfile->filetop) {
+	if (openfile->filebot->data[0] == '\0' && openfile->filebot != openfile->filetop) {
 		if (openfile->current == openfile->filebot)
 			openfile->current = openfile->current->prev;
 		openfile->filebot = openfile->filebot->prev;

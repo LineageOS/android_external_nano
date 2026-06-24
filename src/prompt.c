@@ -1,8 +1,8 @@
 /**************************************************************************
  *   prompt.c  --  This file is part of GNU nano.                         *
  *                                                                        *
- *   Copyright (C) 1999-2011, 2013-2025 Free Software Foundation, Inc.    *
- *   Copyright (C) 2016, 2018, 2020, 2022 Benno Schulenberg               *
+ *   Copyright (C) 1999-2011, 2013-2026 Free Software Foundation, Inc.    *
+ *   Copyright (C) 2016, 2018, 2020-2022, 2025 Benno Schulenberg          *
  *                                                                        *
  *   GNU nano is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published    *
@@ -76,7 +76,7 @@ void do_statusbar_next_word(void)
 
 	/* Move forward until we reach either the end or the start of a word,
 	 * depending on whether the AFTER_ENDS flag is set or not. */
-	while (answer[typing_x] != '\0') {
+	while (answer[typing_x]) {
 		typing_x = step_right(answer, typing_x);
 
 		if (ISSET(AFTER_ENDS)) {
@@ -122,10 +122,10 @@ void do_statusbar_left(void)
 /* Move right one character in the answer. */
 void do_statusbar_right(void)
 {
-	if (answer[typing_x] != '\0') {
+	if (answer[typing_x]) {
 		typing_x = step_right(answer, typing_x);
 #ifdef ENABLE_UTF8
-		while (answer[typing_x] != '\0' && is_zerowidth(answer + typing_x))
+		while (answer[typing_x] && is_zerowidth(answer + typing_x))
 			typing_x = step_right(answer, typing_x);
 #endif
 	}
@@ -145,7 +145,7 @@ void do_statusbar_backspace(void)
 /* Delete one character in the answer. */
 void do_statusbar_delete(void)
 {
-	if (answer[typing_x] != '\0') {
+	if (answer[typing_x]) {
 		int charlen = char_length(answer + typing_x);
 
 		memmove(answer + typing_x, answer + typing_x + charlen,
@@ -184,8 +184,7 @@ void paste_into_answer(void)
 	size_t pastelen = strlen(cutbuffer->data);
 
 	answer = nrealloc(answer, strlen(answer) + pastelen + 1);
-	memmove(answer + typing_x + pastelen, answer + typing_x,
-								strlen(answer) - typing_x + 1);
+	memmove(answer + typing_x + pastelen, answer + typing_x, strlen(answer) - typing_x + 1);
 	strncpy(answer + typing_x, cutbuffer->data, pastelen);
 
 	typing_x += pastelen;
@@ -193,21 +192,21 @@ void paste_into_answer(void)
 #endif
 
 #ifdef ENABLE_MOUSE
-/* Handle a mouse click on the status-bar prompt or the shortcut list. */
-int do_statusbar_mouse(void)
+/* Handle a mouse click in the prompt bar or the help lines. */
+int process_prompt_click(void)
 {
 	int click_row, click_col;
-	int retval = get_mouseinput(&click_row, &click_col, TRUE);
+	int retval = get_mouseinput(&click_row, &click_col);  /* Handles shortcuts. */
 
-	/* We can click on the status-bar window text to move the cursor. */
+	/* When the click is in the prompt bar, position the cursor. */
 	if (retval == 0 && wmouse_trafo(footwin, &click_row, &click_col, FALSE)) {
 		size_t start_col = breadth(prompt) + 2;
 
-		/* Move to where the click occurred. */
-		if (click_row == 0 && click_col >= start_col)
-			typing_x = actual_x(answer,
-							get_statusbar_page_start(start_col, start_col +
-							wideness(answer, typing_x)) + click_col - start_col);
+		if (click_col >= start_col)
+			typing_x = actual_x(answer, get_statusbar_page_start(start_col, start_col +
+								wideness(answer, typing_x)) + click_col - start_col);
+		else
+			typing_x = 0;
 	}
 
 	return retval;
@@ -223,8 +222,7 @@ void inject_into_answer(char *burst, size_t count)
 			burst[index] = '\n';
 
 	answer = nrealloc(answer, strlen(answer) + count + 1);
-	memmove(answer + typing_x + count, answer + typing_x,
-								strlen(answer) - typing_x + 1);
+	memmove(answer + typing_x + count, answer + typing_x, strlen(answer) - typing_x + 1);
 	strncpy(answer + typing_x, burst, count);
 
 	typing_x += count;
@@ -263,8 +261,7 @@ void absorb_character(int input, functionptrtype function)
 	if (!function) {
 		if ((input < 0x20 && input != '\t') || meta_key || input > 0xFF)
 			beep();
-		else if (!ISSET(RESTRICTED) || currmenu != MWRITEFILE ||
-						openfile->filename[0] == '\0') {
+		else if (!ISSET(RESTRICTED) || currmenu != MWRITEFILE || openfile->filename[0] == '\0') {
 			/* When the input buffer (plus room for terminating NUL) is full,
 			 * extend it; otherwise, if it does not exist yet, create it. */
 			if (depth + 1 == capacity) {
@@ -305,8 +302,7 @@ bool handle_editing(functionptrtype function)
 		do_statusbar_end();
 	/* When in restricted mode at the "Write File" prompt and the
 	 * filename isn't blank, disallow any input and deletion. */
-	else if (ISSET(RESTRICTED) && currmenu == MWRITEFILE &&
-							openfile->filename[0] != '\0' &&
+	else if (ISSET(RESTRICTED) && currmenu == MWRITEFILE && openfile->filename[0] &&
 							(function == do_verbatim_input ||
 							function == do_delete || function == do_backspace ||
 							function == cut_text || function == paste_text))
@@ -323,7 +319,7 @@ bool handle_editing(functionptrtype function)
 	else if (function == copy_text)
 		copy_the_answer();
 	else if (function == paste_text) {
-		if (cutbuffer != NULL)
+		if (cutbuffer)
 			paste_into_answer();
 	}
 #endif
@@ -400,14 +396,14 @@ void draw_the_promptbar(void)
 /* Remove or add the pipe character at the answer's head. */
 void add_or_remove_pipe_symbol_from_answer(void)
 {
-	if (answer[0] == '|') {
+	if (*answer == '|') {
 		memmove(answer, answer + 1, strlen(answer));
 		if (typing_x > 0)
 			typing_x--;
 	} else {
 		answer = nrealloc(answer, strlen(answer) + 2);
 		memmove(answer + 1, answer, strlen(answer) + 1);
-		answer[0] = '|';
+		*answer = '|';
 		typing_x++;
 	}
 }
@@ -457,7 +453,7 @@ functionptrtype acquire_an_answer(int *actual, bool *listed,
 #endif
 #ifdef ENABLE_MOUSE
 		/* For a click on a shortcut, read in the resulting keycode. */
-		if (input == KEY_MOUSE && do_statusbar_mouse() == 1)
+		if (input == KEY_MOUSE && process_prompt_click() == 1)
 			input = get_kbinput(footwin, BLIND);
 		if (input == KEY_MOUSE)
 			continue;
@@ -489,13 +485,12 @@ functionptrtype acquire_an_answer(int *actual, bool *listed,
 #ifdef ENABLE_TABCOMP
 		if (function == do_tab) {
 #ifdef ENABLE_HISTORIES
-			if (history_list != NULL) {
+			if (history_list) {
 				if (!previous_was_tab)
 					fragment_length = strlen(answer);
 
 				if (fragment_length > 0) {
-					answer = get_history_completion(history_list,
-													answer, fragment_length);
+					answer = get_history_completion(history_list, answer, fragment_length);
 					typing_x = strlen(answer);
 				}
 			} else
@@ -506,7 +501,7 @@ functionptrtype acquire_an_answer(int *actual, bool *listed,
 		} else
 #endif
 #ifdef ENABLE_HISTORIES
-		if (function == get_older_item && history_list != NULL) {
+		if (function == get_older_item && history_list) {
 			/* If this is the first step into history, start at the bottom. */
 			if (stored_string == NULL)
 				reset_history_pointer_for(*history_list);
@@ -516,14 +511,14 @@ functionptrtype acquire_an_answer(int *actual, bool *listed,
 				stored_string = mallocstrcpy(stored_string, answer);
 
 			/* If there is an older item, move to it and copy its string. */
-			if ((*history_list)->prev != NULL) {
+			if ((*history_list)->prev) {
 				*history_list = (*history_list)->prev;
 				answer = mallocstrcpy(answer, (*history_list)->data);
 				typing_x = strlen(answer);
 			}
-		} else if (function == get_newer_item && history_list != NULL) {
+		} else if (function == get_newer_item && history_list) {
 			/* If there is a newer item, move to it and copy its string. */
-			if ((*history_list)->next != NULL) {
+			if ((*history_list)->next) {
 				*history_list = (*history_list)->next;
 				answer = mallocstrcpy(answer, (*history_list)->data);
 				typing_x = strlen(answer);
@@ -578,7 +573,7 @@ functionptrtype acquire_an_answer(int *actual, bool *listed,
 #endif
 #ifdef ENABLE_HISTORIES
 	/* If the history pointer was moved, point it at the bottom again. */
-	if (stored_string != NULL) {
+	if (stored_string) {
 		reset_history_pointer_for(*history_list);
 		free(stored_string);
 	}
@@ -750,19 +745,19 @@ int ask_user(bool withall, const char *question)
 		letter[index] = '\0';
 
 		/* See if the typed letter is in the Yes, No, or All strings. */
-		if (strstr(yesstr, letter) != NULL)
+		if (strstr(yesstr, letter))
 			choice = YES;
-		else if (strstr(nostr, letter) != NULL)
+		else if (strstr(nostr, letter))
 			choice = NO;
-		else if (withall && strstr(allstr, letter) != NULL)
+		else if (withall && strstr(allstr, letter))
 			choice = ALL;
 		else
 #endif /* ENABLE_NLS */
-		if (strchr("Yy", kbinput) != NULL)
+		if (strchr("Yy", kbinput))
 			choice = YES;
-		else if (strchr("Nn", kbinput) != NULL)
+		else if (strchr("Nn", kbinput))
 			choice = NO;
-		else if (withall && strchr("Aa", kbinput) != NULL)
+		else if (withall && strchr("Aa", kbinput))
 			choice = ALL;
 
 		if (choice != UNDECIDED)
@@ -800,7 +795,7 @@ int ask_user(bool withall, const char *question)
 		else if (kbinput == KEY_MOUSE) {
 			int mouse_x, mouse_y;
 			/* We can click on the Yes/No/All shortcuts to select an answer. */
-			if (get_mouseinput(&mouse_y, &mouse_x, FALSE) == 0 &&
+			if (get_mouseinput(&mouse_y, &mouse_x) == 0 &&
 						wmouse_trafo(footwin, &mouse_y, &mouse_x, FALSE) &&
 						mouse_x < (width * 2) && mouse_y > 0) {
 				int x = mouse_x / width;
